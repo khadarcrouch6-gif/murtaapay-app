@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:responsive_framework/responsive_framework.dart';
+import 'core/app_theme.dart';
+import 'core/app_state.dart';
+import 'features/onboarding/splash_screen.dart';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MurtaaxPayApp());
+}
+
+class MurtaaxPayApp extends StatelessWidget {
+  const MurtaaxPayApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final state = AppState();
+    
+    return ListenableBuilder(
+      listenable: state,
+      builder: (context, child) {
+        return MaterialApp(
+          title: 'MurtaaxPay',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: state.themeMode,
+          locale: state.locale,
+          // Correct delegates are vital for Somali support
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'),
+            Locale('so'),
+            Locale('ar'),
+            Locale('de'),
+          ],
+          builder: (context, child) {
+            return ResponsiveBreakpoints.builder(
+              child: child!,
+              breakpoints: [
+                const Breakpoint(start: 0, end: 450, name: MOBILE),
+                const Breakpoint(start: 451, end: 960, name: TABLET),
+                const Breakpoint(start: 961, end: 1440, name: DESKTOP),
+                const Breakpoint(start: 1441, end: double.infinity, name: '4K'),
+              ],
+            );
+          },
+          home: const SplashScreen(),
+        );
+      },
+    );
+  }
+}

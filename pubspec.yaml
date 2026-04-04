@@ -1,0 +1,54 @@
+name: murtaaxpay_app
+description: "MurtaaxPay - Premium Fintech for Somali Diaspora"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1
+  font_awesome_flutter: ^10.7.0
+  smooth_page_indicator: ^1.1.0
+  animate_do: ^3.3.4
+  glassmorphism: ^3.0.0
+  flutter_svg: ^2.0.10+1
+  audioplayers: ^5.2.1
+  camera: ^0.11.0+2
+  path_provider: ^2.1.2
+  path: ^1.9.0
+  url_launcher: ^6.3.1
+  local_auth: ^2.2.0
+  pdf: ^3.10.7
+  printing: ^5.11.1
+  lottie: ^3.1.0
+  intl: ^0.20.2
+  responsive_framework: ^1.5.1
+  animations: ^2.0.11
+  fl_chart: ^0.70.2 # Charting library lagu daray
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path_android: "assets/images/app_logo.png"
+  image_path_ios: "assets/images/app_logo_ios.jpg"
+  remove_alpha_ios: true
+  min_sdk_android: 21
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/sounds/
+    - assets/lottie/

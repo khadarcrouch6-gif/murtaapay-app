@@ -1,0 +1,57 @@
+/* MurtaaxPay Premium Fintech CSS */
+
+.fi-sidebar {
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+    border-right: 1px solid rgba(0,0,0,0.05);
+}
+
+.dark .fi-sidebar {
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.fi-wi-stats-overview-stat {
+    border-radius: 1.5rem !important;
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07) !important;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.dark .fi-wi-stats-overview-stat {
+    background: rgba(30, 41, 59, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12) !important;
+}
+
+/* Custom Status Badges */
+.fi-badge {
+    border-radius: 9999px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+}
+
+/* Pulse animation for pending states */
+.fi-badge-color-warning {
+    animation: pulse-subtle 2s infinite;
+}
+
+@keyframes pulse-subtle {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Premium Typography */
+.fi-header-heading {
+    letter-spacing: -0.02em;
+}
