@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_utils.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/detail_row.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class PayBillsScreen extends StatefulWidget {
@@ -156,7 +156,6 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (idController.text.isNotEmpty && amountController.text.isNotEmpty) {
-                    AppUtils.playSuccessSound(); // PLAY SOUND HERE
                     Navigator.pop(context);
                     _showSuccessDialog(context, state, category, amountController.text);
                   }
@@ -265,12 +264,12 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
               const SizedBox(height: 24),
               Text(state.translate("Bill Details", "Faahfaahinta Biilka", ar: "تفاصيل الفاتورة", de: "Rechnungsdetails"), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
               const SizedBox(height: 24),
-              _buildDetailRow(context, state.translate("Service Provider", "Bixiyaha Adeegga", ar: "مزود الخدمة", de: "Dienstanbieter"), title),
-              _buildDetailRow(context, state.translate("Category", "Qaybta", ar: "الفئة", de: "Kategorie"), state.translate(category, category, ar: _getArCategory(category), de: _getDeCategory(category))),
-              _buildDetailRow(context, state.translate("Account ID", "Aqoonsiga Xisaabta", ar: "رقم الحساب", de: "Konto-ID"), id),
-              _buildDetailRow(context, state.translate("Amount Paid", "Lacagta la bixiyay", ar: "المبلغ المدفوع", de: "Gezahlter Betrag"), amount),
-              _buildDetailRow(context, state.translate("Payment Date", "Taariikhda Lacag Bixinta", ar: "تاريخ الدفع", de: "Zahlungsdatum"), date),
-              _buildDetailRow(context, state.translate("Status", "Heerka", ar: "الحالة", de: "Status"), state.translate("Completed", "Dhammaystiran", ar: "مكتمل", de: "Abgeschlossen")),
+              DetailRow(label: state.translate("Service Provider", "Bixiyaha Adeegga", ar: "مزود الخدمة", de: "Dienstanbieter"), value: title),
+              DetailRow(label: state.translate("Category", "Qaybta", ar: "الفئة", de: "Kategorie"), value: state.translate(category, category, ar: _getArCategory(category), de: _getDeCategory(category))),
+              DetailRow(label: state.translate("Account ID", "Aqoonsiga Xisaabta", ar: "رقم الحساب", de: "Konto-ID"), value: id),
+              DetailRow(label: state.translate("Amount Paid", "Lacagta la bixiyay", ar: "المبلغ المدفوع", de: "Gezahlter Betrag"), value: amount),
+              DetailRow(label: state.translate("Payment Date", "Taariikhda Lacag Bixinta", ar: "تاريخ الدفع", de: "Zahlungsdatum"), value: date),
+              DetailRow(label: state.translate("Status", "Heerka", ar: "الحالة", de: "Status"), value: state.translate("Completed", "Dhammaystiran", ar: "مكتمل", de: "Abgeschlossen"), valueColor: AppColors.accentTeal),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -292,20 +291,6 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(BuildContext context, String label, String value) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: AppColors.grey)),
-          Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
-        ],
       ),
     );
   }

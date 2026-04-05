@@ -7,22 +7,30 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: AppColors.background, // Soft Slate/Off-White
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primaryDark,
         primary: AppColors.primaryDark,
         secondary: AppColors.accentTeal,
+        surface: AppColors.surface,
         onSurface: AppColors.textPrimary,
         brightness: Brightness.light,
       ),
-      // Inter font is the gold standard for Fintech apps (Clean & Readable)
+      // Typography: Using a soft dark slate instead of pure black for readability
       textTheme: GoogleFonts.interTextTheme().copyWith(
         displayLarge: GoogleFonts.inter(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
         displayMedium: GoogleFonts.inter(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
         titleLarge: GoogleFonts.inter(fontWeight: FontWeight.w700, color: AppColors.textPrimary),
         bodyLarge: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 16),
-        bodyMedium: GoogleFonts.inter(color: AppColors.textPrimary.withValues(alpha: 0.8), fontSize: 14),
-        labelLarge: GoogleFonts.inter(fontWeight: FontWeight.w600),
+        bodyMedium: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 14),
+        labelLarge: GoogleFonts.inter(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: GoogleFonts.inter(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18),
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -33,6 +41,11 @@ class AppTheme {
           minimumSize: const Size(double.infinity, 56),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
+      ),
+      cardTheme: CardThemeData(
+        color: AppColors.surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: AppColors.grey.withValues(alpha: 0.1))),
       ),
     );
   }
@@ -47,10 +60,9 @@ class AppTheme {
         primary: AppColors.accentTeal,
         secondary: AppColors.accentTeal,
         surface: const Color(0xFF0B121F),
-        onSurface: const Color(0xFFE2E8F0), // Soft off-white for eye comfort
+        onSurface: const Color(0xFFE2E8F0), 
         brightness: Brightness.dark,
       ),
-      // Dark Mode typography uses softer whites to prevent eye strain
       textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).copyWith(
         displayLarge: GoogleFonts.inter(fontWeight: FontWeight.bold, color: const Color(0xFFF8FAFC)),
         displayMedium: GoogleFonts.inter(fontWeight: FontWeight.bold, color: const Color(0xFFF8FAFC)),
@@ -72,4 +84,3 @@ class AppTheme {
     );
   }
 }
-

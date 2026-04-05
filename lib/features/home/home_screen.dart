@@ -8,6 +8,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import '../../core/widgets/transaction_item.dart';
 import '../send_money/send_amount_screen.dart';
 import '../history/history_screen.dart';
 import '../cards/cards_screen.dart';
@@ -38,8 +39,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Timer? _timer;
   final List<String> _names = ["Khadar", "Abdi", "Warsame"];
   
-  bool _isLoading = true;
-
   ChartType _selectedChartType = ChartType.bar;
   final List<double> _spendingData = [45, 80, 55, 95, 70, 40, 65];
   final List<String> _days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -54,13 +53,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       vsync: this,
     )..repeat(reverse: true);
     _startNameAnimation();
-    _fakeLoad();
-  }
-
-  void _fakeLoad() async {
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) setState(() => _isLoading = false);
   }
 
   void _startNameAnimation() {
@@ -315,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             const SizedBox(height: 32),
             SizedBox(
               height: 200,
-              child: _isLoading ? const Center(child: CircularProgressIndicator()) : _buildSelectedChart(theme),
+              child: _buildSelectedChart(theme),
             ),
           ],
         ),
@@ -552,7 +544,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
       child: GlassmorphicContainer(
         width: double.infinity,
-        height: 180,
+        height: 200 * context.fontSizeFactor,
         borderRadius: 24,
         blur: 15,
         alignment: Alignment.center,
@@ -609,11 +601,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   const SizedBox(height: 12),
                   Text(
                     state.translate("Get your secure virtual card and shop globally.", "Hadda qaado kaadhkaaga oo meel kasta ka adeegso."),
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
-                    height: 40,
+                    width: context.isTablet || context.isDesktop ? 180 : double.infinity,
+                    height: 44 * context.fontSizeFactor,
                     child: ElevatedButton(
                       onPressed: () => state.setNavIndex(3),
                       style: ElevatedButton.styleFrom(
@@ -621,8 +616,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         elevation: 0,
+                        padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor),
                       ),
-                      child: Text(state.translate("Get Started", "Bilow Hadda"), style: const TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(
+                        state.translate("Get Started", "Bilow Hadda"), 
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14 * context.fontSizeFactor,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -661,80 +663,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ]
           ),
-          _buildTransactionItem(context, state, "Mohamed Ali", "EVC Plus", "-\$250.00", "Success"),
-          _buildTransactionItem(context, state, "Ahmed Hersi", "ZAAD", "-\$100.00", "Pending"),
+          TransactionItem(
+            name: "Mohamed Ali",
+            type: "EVC Plus",
+            amount: "-\$250.00",
+            status: "Success",
+          ),
+          TransactionItem(
+            name: "Ahmed Hersi",
+            type: "ZAAD",
+            amount: "-\$100.00",
+            status: "Pending",
+          ),
         ]
       )
     );
   }
-
-  Widget _buildTransactionItem(BuildContext context, AppState state, String name, String type, String amount, String status) {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12), 
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20)),
-      child: Row(
-        children: [
-          Container(
-            height: 48, 
-            width: 48, 
-            decoration: BoxDecoration(color: theme.colorScheme.primary.withValues(alpha: 0.05), shape: BoxShape.circle), 
-            child: Center(child: Text(name[0], style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold)))
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, 
-              children: [
-                Text(
-                  name, 
-                  style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold), 
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis
-                ), 
-                Text(
-                  type, 
-                  style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis
-                )
-              ]
-            )
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end, 
-              children: [
-                Text(
-                  amount, 
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold, 
-                    color: amount.startsWith('+') ? AppColors.accentTeal : null
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis
-                ),
-                Text(
-                  status == "Success" ? state.translate("Success", "Guul") : state.translate("Pending", "Sugayn"), 
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: status == "Success" ? AppColors.accentTeal : Colors.orange, 
-                    fontWeight: FontWeight.bold
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis
-                ),
-              ]
-            ),
-          ),
-        ]
-      ),
-    );
-  }
-
-
 }
 

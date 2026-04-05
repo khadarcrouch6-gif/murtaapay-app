@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/detail_row.dart';
+import '../../core/widgets/transaction_item.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class Transaction {
@@ -30,11 +31,9 @@ class HistoryScreen extends StatefulWidget {
   State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProviderStateMixin {
+class _HistoryScreenState extends State<HistoryScreen> {
   String _selectedFilter = "All";
   final TextEditingController _searchController = TextEditingController();
-  bool _isLoading = true;
-  late AnimationController _shimmerController;
   
   final List<Transaction> _allTransactions = [
     Transaction(name: "Mohamed Ali", type: "EVC Plus", amount: r"-$250.00", date: "Oct 24, 2023", status: "Success", isSent: true),
@@ -57,20 +56,12 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
   void initState() {
     super.initState();
     _filteredTransactions = _allTransactions;
-    _shimmerController = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
-    _fakeLoad();
   }
 
   @override
   void dispose() {
-    _shimmerController.dispose();
+    _searchController.dispose();
     super.dispose();
-  }
-
-  void _fakeLoad() async {
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) setState(() => _isLoading = false);
   }
 
   void _runFilter() {
@@ -117,16 +108,22 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
                 const SizedBox(height: 8),
                 _buildSearchAndFilter(context, state, theme),
                 Expanded(
-                  child: _isLoading 
-                    ? _buildSkeletonLoader(context)
-                    : _filteredTransactions.isEmpty 
+                  child: _filteredTransactions.isEmpty
                         ? _buildEmptyState(context, state)
                         : ListView.builder(
                             padding: EdgeInsets.fromLTRB(context.horizontalPadding, 8, context.horizontalPadding, 120),
                             itemCount: _filteredTransactions.length,
                             itemBuilder: (context, index) {
                               final tx = _filteredTransactions[index];
-                              return _buildHistoryItem(context, state, tx, theme);
+                              return TransactionItem(
+                                name: tx.name,
+                                type: tx.type,
+                                amount: tx.amount,
+                                status: tx.status,
+                                date: tx.date,
+                                isSent: tx.isSent,
+                                onTap: () => _showTransactionDetails(context, state, tx),
+                              );
                             },
                           ),
                 ),
@@ -156,7 +153,6 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
             ),
           ),
           const SizedBox(height: 16),
-          // FIXED: Wrapped in SingleChildScrollView to prevent overflow when Somali text is long
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -191,110 +187,6 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildHistoryItem(BuildContext context, AppState state, Transaction tx, ThemeData theme) {
-    return GestureDetector(
-      onTap: () => _showTransactionDetails(context, state, tx),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))],
-        ),
-        child: Row(
-          children: [
-            Container(
-              height: 48, width: 48,
-              decoration: BoxDecoration(color: (tx.isSent ? Colors.red : AppColors.accentTeal).withValues(alpha: 0.1), shape: BoxShape.circle),
-              child: Center(child: Icon(tx.isSent ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown, color: tx.isSent ? Colors.red : AppColors.accentTeal, size: 16)),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    tx.name, 
-                    style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold), 
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis
-                  ),
-                  Text(
-                    "${tx.type} • ${tx.date}", 
-                    style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  tx.amount, 
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold, 
-                    color: tx.isSent ? theme.textTheme.bodyLarge?.color : AppColors.accentTeal
-                  ),
-                  maxLines: 1,
-                ),
-                Text(
-                  tx.status, 
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: tx.status == "Success" ? AppColors.accentTeal : Colors.orange, 
-                    fontWeight: FontWeight.bold
-                  ),
-                  maxLines: 1,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSkeletonLoader(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-      itemCount: 8,
-      itemBuilder: (context, index) => Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(20)),
-        child: Row(
-          children: [
-            _shimmerBox(context, 48, 48, isCircle: true),
-            const SizedBox(width: 16),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_shimmerBox(context, 120, 16), const SizedBox(height: 8), _shimmerBox(context, 80, 12)])),
-            _shimmerBox(context, 60, 16),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _shimmerBox(BuildContext context, double width, double height, {bool isCircle = false}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[200]!;
-    final highlightColor = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[100]!;
-    return AnimatedBuilder(
-      animation: _shimmerController,
-      builder: (context, child) => Container(
-        width: width, height: height,
-        decoration: BoxDecoration(
-          color: baseColor,
-          shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
-          borderRadius: isCircle ? null : BorderRadius.circular(6),
-          gradient: LinearGradient(colors: [baseColor, highlightColor, baseColor], stops: const [0.1, 0.5, 0.9], begin: Alignment(-1.0 + (_shimmerController.value * 2.0), 0.0), end: Alignment(1.0 + (_shimmerController.value * 2.0), 0.0)),
-        ),
-      ),
-    );
-  }
-
   void _showTransactionDetails(BuildContext context, AppState state, Transaction tx) {
     final theme = Theme.of(context);
     showModalBottomSheet(
@@ -313,11 +205,11 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
               const SizedBox(height: 24),
               Text(state.translate("Transaction Details", "Faahfaahinta"), style: theme.textTheme.titleLarge),
               const SizedBox(height: 32),
-              _buildDetailRow(context, state.translate("Recipient/Sender", "Qofka/Dhinaca"), tx.name),
-              _buildDetailRow(context, state.translate("Amount", "Lacagta"), tx.amount),
-              _buildDetailRow(context, state.translate("Type", "Nooca"), tx.type),
-              _buildDetailRow(context, state.translate("Date", "Taariikhda"), tx.date),
-              _buildDetailRow(context, state.translate("Status", "Heerka"), state.translate(tx.status, tx.status)),
+              DetailRow(label: state.translate("Recipient/Sender", "Qofka/Dhinaca"), value: tx.name),
+              DetailRow(label: state.translate("Amount", "Lacagta"), value: tx.amount, valueColor: tx.isSent ? null : AppColors.accentTeal),
+              DetailRow(label: state.translate("Type", "Nooca"), value: tx.type),
+              DetailRow(label: state.translate("Date", "Taariikhda"), value: tx.date),
+              DetailRow(label: state.translate("Status", "Heerka"), value: state.translate(tx.status, tx.status), valueColor: tx.status == "Success" ? AppColors.accentTeal : Colors.orange),
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
@@ -333,22 +225,7 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildDetailRow(BuildContext context, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16), 
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: Text(label, style: const TextStyle(color: AppColors.grey))),
-          const SizedBox(width: 16),
-          Flexible(child: Text(value, textAlign: TextAlign.end, style: const TextStyle(fontWeight: FontWeight.bold))),
-        ],
-      )
-    );
-  }
-
   Widget _buildEmptyState(BuildContext context, AppState state) {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.search_off_rounded, size: 80, color: AppColors.grey.withValues(alpha: 0.5)), const SizedBox(height: 16), Text(state.translate("No transactions found", "Dhaqdhaqaaq lama hayo"), style: const TextStyle(color: AppColors.grey))]));
   }
 }
-

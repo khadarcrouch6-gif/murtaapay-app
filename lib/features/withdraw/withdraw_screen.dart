@@ -3,13 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_utils.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/detail_row.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class WithdrawScreen extends StatefulWidget {
-  const WithdrawScreen({super.key});
+  final bool isTab;
+  const WithdrawScreen({super.key, this.isTab = false});
 
   @override
   State<WithdrawScreen> createState() => _WithdrawScreenState();
@@ -58,7 +59,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
+      appBar: widget.isTab ? null : AppBar(
         title: Text(state.translate("Withdraw Money", "Kala Bax Lacag", ar: "سحب الأموال", de: "Geld abheben"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
       ),
@@ -337,17 +338,16 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 const SizedBox(height: 24),
                 Text(state.translate("Review Withdrawal", "Dib u eegista Kala Bixista", ar: "مراجعة السحب", de: "Auszahlung überprüfen"), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
                 const SizedBox(height: 24),
-                _reviewRow(context, state.translate("Amount", "Cadadka", ar: "المبلغ", de: "Betrag"), "\$${_amountController.text}", state),
-                _reviewRow(context, state.translate("Method", "Habka", ar: "الطريقة", de: "Methode"), state.translate(method["title"], method["title"], ar: _getArMethodTitle(method["id"]), de: _getDeMethodTitle(method["id"])), state),
-                if (_field1Controller.text.isNotEmpty) _reviewRow(context, state.translate("Details", "Faahfaahinta", ar: "التفاصيل", de: "Details"), _field1Controller.text, state),
-                _reviewRow(context, state.translate("Fee", "Kharashka", ar: "الرسوم", de: "Gebühr"), "\$0.00", state, isFree: true),
-                _reviewRow(context, state.translate("Total Deducted", "Wadarta laga jaray", ar: "إجمالي المبلغ المخصوم", de: "Abgezogener Gesamtbetrag"), "\$${_amountController.text}", state),
+                DetailRow(label: state.translate("Amount", "Cadadka", ar: "المبلغ", de: "Betrag"), value: "\$${_amountController.text}"),
+                DetailRow(label: state.translate("Method", "Habka", ar: "الطريقة", de: "Methode"), value: state.translate(method["title"], method["title"], ar: _getArMethodTitle(method["id"]), de: _getDeMethodTitle(method["id"]))),
+                if (_field1Controller.text.isNotEmpty) DetailRow(label: state.translate("Details", "Faahfaahinta", ar: "التفاصيل", de: "Details"), value: _field1Controller.text),
+                DetailRow(label: state.translate("Fee", "Kharashka", ar: "الرسوم", de: "Gebühr"), value: state.translate("Free", "Bilaash", ar: "مجاني", de: "Kostenlos"), valueColor: AppColors.accentTeal),
+                DetailRow(label: state.translate("Total Deducted", "Wadarta laga jaray", ar: "إجمالي المبلغ المخصوم", de: "Abgezogener Gesamtbetrag"), value: "\$${_amountController.text}"),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      AppUtils.playSuccessSound();
                       Navigator.pop(ctx);
                       _showSuccess(context, state);
                     },
@@ -364,35 +364,6 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _reviewRow(BuildContext context, String label, String value, AppState state, {bool isFree = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Text(
-              label, 
-              style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)
-            ),
-          ),
-          const SizedBox(width: 16),
-          Flexible(
-            child: Text(
-              isFree ? state.translate("Free", "Bilaash", ar: "مجاني", de: "Kostenlos") : value, 
-              textAlign: TextAlign.end,
-              style: TextStyle(
-                fontWeight: FontWeight.bold, 
-                fontSize: 14 * context.fontSizeFactor, 
-                color: isFree ? AppColors.accentTeal : AppColors.primaryDark
-              )
-            ),
-          ),
-        ],
       ),
     );
   }

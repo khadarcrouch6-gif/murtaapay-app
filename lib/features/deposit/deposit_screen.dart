@@ -9,7 +9,8 @@ import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class DepositScreen extends StatefulWidget {
-  const DepositScreen({super.key});
+  final bool isTab;
+  const DepositScreen({super.key, this.isTab = false});
 
   @override
   State<DepositScreen> createState() => _DepositScreenState();

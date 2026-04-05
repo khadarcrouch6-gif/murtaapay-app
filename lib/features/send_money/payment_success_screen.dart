@@ -3,9 +3,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:lottie/lottie.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
-import '../../core/app_utils.dart';
-import '../../core/app_pdf_helper.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/detail_row.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
   final String amount;
@@ -22,7 +21,6 @@ class PaymentSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = AppState();
-    AppUtils.playSuccessSound();
 
     return PopScope(
       canPop: false,
@@ -61,7 +59,6 @@ class PaymentSuccessScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 20),
-                  // ... rest of the code remains same
                   FadeInDown(
                     child: Text(
                       state.translate("Transfer Successful!", "Lacagta waa la diray!", ar: "تمت العملية بنجاح!", de: "Überweisung erfolgreich!"),
@@ -113,13 +110,10 @@ class PaymentSuccessScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          _buildDetailRow(context, state.translate("Receiver", "Qaataha", ar: "المستلم", de: "Empfänger"), receiverName),
-                          const Divider(height: 32),
-                          _buildDetailRow(context, state.translate("Amount", "Cadadka", ar: "المبلغ", de: "Betrag"), "\$$amount"),
-                          const Divider(height: 32),
-                          _buildDetailRow(context, state.translate("Method", "Habka", ar: "الطريقة", de: "Methode"), method),
-                          const Divider(height: 32),
-                          _buildDetailRow(context, state.translate("Reference", "Tixraaca", ar: "المرجع", de: "Referenz"), "TRX-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}"),
+                          DetailRow(label: state.translate("Receiver", "Qaataha", ar: "المستلم", de: "Empfänger"), value: receiverName),
+                          DetailRow(label: state.translate("Amount", "Cadadka", ar: "المبلغ", de: "Betrag"), value: "\$$amount"),
+                          DetailRow(label: state.translate("Method", "Habka", ar: "الطريقة", de: "Methode"), value: method),
+                          DetailRow(label: state.translate("Reference", "Tixraaca", ar: "المرجع", de: "Referenz"), value: "TRX-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}"),
                         ],
                       ),
                     ),
@@ -131,28 +125,6 @@ class PaymentSuccessScreen extends StatelessWidget {
                     delay: const Duration(milliseconds: 600),
                     child: Column(
                       children: [
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            AppPdfHelper.generateTransactionReceipt(
-                              title: receiverName,
-                              amount: "\$$amount",
-                              date: DateTime.now().toString().split(' ')[0],
-                              category: "Money Transfer",
-                              reference: "TRX-${DateTime.now().millisecondsSinceEpoch}",
-                            );
-                          },
-                          icon: const Icon(Icons.picture_as_pdf_rounded, color: Colors.white),
-                          label: Text(
-                            state.translate("Download Receipt", "Soo deji Receipt-ka", ar: "تحميل الإيصال", de: "Beleg herunterladen"),
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accentTeal,
-                            minimumSize: const Size(double.infinity, 56),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            elevation: 0,
-                          ),
-                        ),
                         const SizedBox(height: 16),
                         TextButton(
                           onPressed: () {
@@ -178,15 +150,4 @@ class PaymentSuccessScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildDetailRow(BuildContext context, String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
-        Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.primaryDark)),
-      ],
-    );
-  }
 }
-

@@ -6,7 +6,8 @@ import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class SavingsScreen extends StatefulWidget {
-  const SavingsScreen({super.key});
+  final bool isTab;
+  const SavingsScreen({super.key, this.isTab = false});
 
   @override
   State<SavingsScreen> createState() => _SavingsScreenState();
@@ -21,7 +22,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
       listenable: state,
       builder: (context, child) => Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: AppBar(
+        appBar: widget.isTab ? null : AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           title: Text(state.translate("Savings & Goals", "Kaydka & Hadafka", ar: "الادخار والأهداف", de: "Ersparnisse & Ziele"), style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 20 * context.fontSizeFactor)),
@@ -87,25 +88,35 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     color: const Color(0xFFF43F5E),
                     delay: 300,
                   ),
-                  const SizedBox(height: 48),
-                  FadeInUp(
-                    delay: const Duration(milliseconds: 400),
-                    child: Center(
-                      child: MaxWidthBox(
-                        maxWidth: 400,
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 60 * context.fontSizeFactor,
-                          child: ElevatedButton.icon(
-                            onPressed: () {},
-                            icon: Icon(Icons.add_circle_outline_rounded, color: Colors.white, size: 24 * context.fontSizeFactor),
-                            label: Text(state.translate("Create New Goal", "Samee Hadaf Cusub", ar: "إنشاء هدف جديد", de: "Neues Ziel erstellen"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.primary,
-                              elevation: 4,
-                              shadowColor: theme.colorScheme.primary.withValues(alpha: 0.3),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            ),
+                  const SizedBox(height: 100), // Spacing for the fixed button
+                ],
+              ),
+            ),
+          ),
+        ),
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(context.horizontalPadding, 0, context.horizontalPadding, 20),
+            child: FadeInUp(
+              delay: const Duration(milliseconds: 400),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Center(
+                    child: MaxWidthBox(
+                      maxWidth: 400,
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 60 * context.fontSizeFactor,
+                        child: ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(Icons.add_circle_outline_rounded, color: Colors.white, size: 24 * context.fontSizeFactor),
+                          label: Text(state.translate("Create New Goal", "Samee Hadaf Cusub", ar: "إنشاء هدف جديد", de: "Neues Ziel erstellen"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.colorScheme.primary,
+                            elevation: 4,
+                            shadowColor: theme.colorScheme.primary.withValues(alpha: 0.3),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                           ),
                         ),
                       ),

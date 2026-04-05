@@ -105,7 +105,10 @@ class _SecurityPinScreenState extends State<SecurityPinScreen> {
                     ),
                   const SizedBox(height: 20),
                   
-                  _buildKeyboard(context, theme),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: 400 * context.fontSizeFactor),
+                    child: _buildKeyboard(context, theme),
+                  ),
                   const SizedBox(height: 40),
                 ],
               ),

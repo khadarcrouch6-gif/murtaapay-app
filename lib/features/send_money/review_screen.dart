@@ -3,7 +3,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
-
+import '../../core/widgets/detail_row.dart';
 import '../../core/responsive_utils.dart';
 import 'payment_screen.dart';
 
@@ -69,23 +69,21 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     ),
                     child: Column(
                       children: [
-                        _buildReviewRow(context, state.translate("You send", "Adiga ayaa diraya"), "${widget.amount} EUR"),
+                        DetailRow(label: state.translate("You send", "Adiga ayaa diraya"), value: "${widget.amount} EUR"),
                         const SizedBox(height: 16),
-                        _buildReviewRow(context, state.translate("Payment Method", "Habka Lacag-bixinta"), widget.method, isHighlight: true),
+                        DetailRow(label: state.translate("Payment Method", "Habka Lacag-bixinta"), value: widget.method, valueColor: AppColors.primaryDark),
                         const SizedBox(height: 16),
-                        _buildReviewRow(context, state.translate("Fee", "Khidmad"), "0.00 EUR", isFree: true),
-
+                        DetailRow(label: state.translate("Fee", "Khidmad"), value: "0.00 EUR", valueColor: AppColors.accentTeal),
                         const SizedBox(height: 16),
-                        _buildReviewRow(context, state.translate("Exchange rate", "Qiimaha sarrifka"), "1 EUR = 1.08 USD"),
+                        DetailRow(label: state.translate("Exchange rate", "Qiimaha sarrifka"), value: "1 EUR = 1.08 USD"),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 20 * context.fontSizeFactor),
                           child: const Divider(),
                         ),
-                        _buildReviewRow(
-                          context,
-                          state.translate("Receiver gets", "Qaataha wuxuu helayaa"),
-                          "\$${receivedAmount.toStringAsFixed(2)} USD",
-                          isHighlight: true,
+                        DetailRow(
+                          label: state.translate("Receiver gets", "Qaataha wuxuu helayaa"),
+                          value: "\$${receivedAmount.toStringAsFixed(2)} USD",
+                          valueColor: AppColors.primaryDark,
                         ),
                       ],
                     ),
@@ -139,34 +137,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
           ],
         ),
       ),
-    );
-  }
-
-
-  Widget _buildReviewRow(BuildContext context, String label, String value, {bool isHighlight = false, bool isFree = false}) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            label, 
-            style: TextStyle(color: AppColors.grey, fontSize: (isHighlight ? 14 : 14) * context.fontSizeFactor),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              fontWeight: isHighlight ? FontWeight.bold : FontWeight.w600,
-              fontSize: (isHighlight ? 16 : 14) * context.fontSizeFactor,
-              color: isFree ? AppColors.accentTeal : AppColors.textPrimary,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
