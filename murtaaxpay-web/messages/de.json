@@ -1,0 +1,429 @@
+{
+  "Navigation": {
+    "home": "Startseite",
+    "services": "Dienste",
+    "cards": "Karten",
+    "prices": "Preise",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "login": "Anmelden",
+    "signup": "Registrieren"
+  },
+  "Hero": {
+    "badgeNew": "Neues Update",
+    "badgeText": "Erleben Sie den globalen Standard",
+    "titlePrefix": "Globales Ausgeben,",
+    "titleHighlight": "Vereinfacht",
+    "subtitle": "Finanzierung ohne Grenzen. Aufladen, überweisen und verwalten Sie Ihr Geld weltweit mit MurtaaxPay.",
+    "ctaPrimary": "Kostenloses Konto eröffnen",
+    "ctaSecondary": "Dienste erkunden",
+    "trustText": "Vertraut von führenden Organisationen",
+    "floatingTransferLabel": "Überweisung gesendet",
+    "floatingBalanceLabel": "USD-Guthaben",
+    "floatingMonthBadge": "↑ 2,4 % diesen Monat"
+  },
+  "Features": {
+    "sectionTitle": "Banking, das Ihre Sprache spricht.",
+    "card1Badge": "MURTAAX EXKLUSIV",
+    "card1Title": "0 % Gebühr Murtaax Wallet",
+    "card1Desc": "Erledigen Sie Ihre Überweisungsabrechnungen reibungslos und ohne Kosten für jedes Murtaax-Geschäftszentrum, schnell und völlig kostenlos.",
+    "card1Cta": "Mehr erfahren",
+    "card2Title": "Integration von mobilem Geld",
+    "card2Desc": "Senden Sie Geld einfach über lokale Telekommunikationsanbieter wie Zaad, EVC und eDahab an Ihre Lieben.",
+    "card2Cta": "Mehr erfahren",
+    "card3Title": "Unterstützung mehrerer Sprachen",
+    "card3Desc": "Banking, das so stark ist wie Sie, mit voller lokaler Unterstützung in unserer App.",
+    "card3Cta": "Verfügbar auf Somalisch",
+    "card4Title": "Kostenlos für alle Staatsangehörigen",
+    "card4Desc": "Genießen Sie alle Funktionen unserer App zum Preis von 0 $. Ja, völlig kostenlos für alle Staatsangehörigen.",
+    "card4Cta": "Mehr erfahren"
+  },
+  "VirtualCard": {
+    "badge": "NEU: VIRTUELLE KARTE",
+    "title": "Globales Ausgeben, vereinfacht.",
+    "description": "Wir ermöglichen zu 100 % grenzenlose Zahlungen. Kaufen Sie online überall dort ein, wo Visa und Mastercard akzeptiert werden, von Mogadischu bis London. Bezahlen Sie für Netflix, Amazon und mehr ohne versteckte Gebühren.",
+    "cta": "Holen Sie sich jetzt Ihre Karte",
+    "supported": "Unterstützt von Visa und Mastercard",
+    "label": "Sicher und geschützt"
+  },
+  "Benefits": {
+    "title": "Mehr als nur Banking.",
+    "subtitle": "Entdecken Sie Funktionen, die für die einzigartigen Bedürfnisse der globalen Gemeinschaft entwickelt wurden.",
+    "fastSafe": "Am schnellsten und sichersten",
+    "fastSafeDesc": "Sofortige Überweisungen, die durch Verschlüsselung auf Militärniveau geschützt sind, um Ihr Geld und Ihre Daten zu schützen.",
+    "fastSafeLink": "Sicherheitsrichtlinie lesen",
+    "support": "Support rund um die Uhr",
+    "supportDesc": "Unser lokales Support-Team steht Ihnen jederzeit zur Verfügung, wenn Sie Hilfe benötigen – auf Englisch, Somalisch und mehr.",
+    "supportLink": "Support kontaktieren",
+    "murtaaxId": "Murtaax-ID",
+    "murtaaxIdDesc": "Senden Sie sofort Geld an jede Murtaax-ID, ohne Aufwand. Keine langen Bankverbindungen erforderlich.",
+    "murtaaxIdLink": "Mehr erfahren",
+    "virtualWallet": "Virtuelle Brieftasche",
+    "virtualWalletDesc": "Eine komplette globale Brieftasche direkt auf Ihrem Telefon. Sicher, zuverlässig und von überall aus zugänglich.",
+    "virtualWalletLink": "Funktionen anzeigen"
+  },
+  "Security": {
+    "title": "Sicherheit liegt in unserer DNA",
+    "subtitle": "Wir verwenden eine fortschrittliche Verschlüsselungsarchitektur, um sicherzustellen, dass jede Transaktion zu 100 % sicher ist.",
+    "liveProtection": "Live-Schutz",
+    "protectionDesc": "Echtzeitüberwachung und fortschrittliches ML verhindern Betrug, bevor er passiert.",
+    "report": "Sicherheitsbericht anzeigen"
+  },
+  "Services": {
+    "badge": "Mehr Services",
+    "title": "Alles was Sie brauchen, in einer Super-App.",
+    "subtitle": "Von einfachen Überweisungen bis hin zu Lifestyle-Belohnungen. MurtaaxPay bietet ein komplettes Ökosystem.",
+    "keyCapabilities": "Wichtige Funktionen",
+    "capabilityDesc": "Optimieren Sie Ihre {service}-Erfahrung mit modernster Technologie.",
+    "ctaTitle": "Bereit, {service} zu meistern?",
+    "ctaDesc": "Schließen Sie sich Tausenden von Nutzern an, die MurtaaxPay für ihre {service}-Bedürfnisse vertrauen.",
+    "ctaPrimary": "Jetzt loslegen",
+    "viewAll": "Alle Services erkunden",
+    "request": {
+      "title": "Geld anfordern",
+      "description": "Der einfachste Weg, Zahlungen weltweit anzufordern.",
+      "content": "Senden Sie Zahlungsaufforderungen an jeden, überall auf der Welt. Unser optimierter Prozess sorgt für schnellere Zahlungen.",
+      "features": [
+        "Globale Zahlungslinks",
+        "Echtzeit-Benachrichtigungen",
+        "Mehrwährungsunterstützung"
+      ]
+    },
+    "exchange": {
+      "title": "Wechselkurse",
+      "description": "Transparenz bei jeder Umrechnung.",
+      "content": "Erhalten Sie echte Mittelkurse ohne versteckte Aufschläge. Wechseln Sie sofort zwischen über 40 Währungen.",
+      "features": [
+        "Live-Marktdaten",
+        "Keine versteckten Gebühren",
+        "Historische Kurscharts"
+      ]
+    },
+    "savings": {
+      "title": "Sparen",
+      "description": "Sichern Sie Ihre finanzielle Zukunft.",
+      "content": "Beobachten Sie, wie Ihr Geld auf unseren hochverzinsten Sparkonten wächst. Setzen Sie Ziele und verfolgen Sie Ihre Fortschritte.",
+      "features": [
+        "Automatisiertes Sparen",
+        "Zielverfolgung",
+        "Zinseszinseffekt"
+      ]
+    },
+    "investments": {
+      "title": "Investitionen",
+      "description": "Lassen Sie Ihr Kapital gezielt wachsen.",
+      "content": "Greifen Sie auf globale Märkte und vielfältige Anlagemöglichkeiten zu. Verwalten Sie Ihr Portfolio an einem Ort.",
+      "features": [
+        "Aktienbruchteile",
+        "Portfolio-Analyse",
+        "Risikomanagement-Tools"
+      ]
+    },
+    "sadaqah": {
+      "title": "Sadaqah",
+      "description": "Ein stetiger Fluss des Guten.",
+      "content": "Wohltätige Spenden einfacher und transparenter machen. Leiten Sie Ihre Spenden an verifizierte Zwecke weiter.",
+      "features": [
+        "Verifizierte Organisationen",
+        "Wiederkehrende Spenden",
+        "Wirkungsberichte"
+      ]
+    },
+    "giftcards": {
+      "title": "Geschenkkarten",
+      "description": "Digitale Geschenke, sofort versendet.",
+      "content": "Kaufen und versenden Sie digitale Geschenkkarten von Hunderten globaler Marken. Das perfekte Geschenk für jeden Anlass.",
+      "features": [
+        "300+ globale Marken",
+        "Personalisierte Nachrichten",
+        "Sofortige Lieferung"
+      ]
+    },
+    "refer": {
+      "title": "Empfehlen & Verdienen",
+      "description": "Gemeinsam sind wir stärker.",
+      "content": "Teilen Sie das MurtaaxPay-Erlebnis mit Ihrem Netzwerk. Verdienen Sie Belohnungen für jede erfolgreiche Empfehlung.",
+      "features": [
+        "Cashback-Prämien",
+        "Gestaffelte Boni",
+        "Echtzeit-Tracking"
+      ]
+    },
+    "vouchers": {
+      "title": "Gutscheine",
+      "description": "Rechnungszahlungen einfach gemacht.",
+      "content": "Bezahlen Sie Ihre Rechnungen und laden Sie Guthaben für Versorgungsunternehmen einfach auf. Unser Gutscheinsystem deckt alles ab.",
+      "features": [
+        "Auto-Rechnungszahlung",
+        "Zahlungserinnerungen",
+        "Ermäßigte Gutscheine"
+      ]
+    }
+  },
+  "ServicesPage": {
+    "title": "Alles was Sie brauchen",
+    "titleHighlight": "In einer Super-App.",
+    "subtitle": "Von einfachen Überweisungen bis hin zu Lifestyle-Belohnungen. MurtaaxPay bietet ein komplettes Ökosystem.",
+    "explore": "Jetzt erkunden",
+    "badgeLabel": "Unsere Dienste",
+    "badgeSub": "8 leistungsstarke Tools",
+    "pillarInstant": "Sofortige Überweisungen",
+    "pillarSecurity": "Bankgrade-Sicherheit",
+    "pillarLicensed": "Vollständig lizenziert",
+    "ctaTitle": "Bereit für das nächste Level?",
+    "ctaPrimary": "Jetzt loslegen",
+    "ctaSecondary": "Vertrieb kontaktieren",
+    "items": {
+      "request": {
+        "title": "Geld anfordern",
+        "desc": "Der einfachste Weg, Zahlungen weltweit anzufordern."
+      },
+      "exchange": {
+        "title": "Wechselkurse",
+        "desc": "Transparenz bei jeder Umrechnung."
+      },
+      "savings": {
+        "title": "Sparen",
+        "desc": "Sichern Sie Ihre finanzielle Zukunft."
+      },
+      "investments": {
+        "title": "Investitionen",
+        "desc": "Lassen Sie Ihr Kapital gezielt wachsen."
+      },
+      "sadaqah": {
+        "title": "Sadaqah",
+        "desc": "Ein stetiger Fluss des Guten."
+      },
+      "giftcards": {
+        "title": "Geschenkkarten",
+        "desc": "Das perfekte Geschenk für jeden Anlass."
+      },
+      "refer": {
+        "title": "Empfehlen & Verdienen",
+        "desc": "Gemeinsam sind wir stärker."
+      },
+      "vouchers": {
+        "title": "Gutscheine",
+        "desc": "Rechnungszahlungen einfach gemacht."
+      }
+    }
+  },
+  "Testimonials": {
+    "title": "Hören Sie von unserer",
+    "highlight": "Gemeinschaft.",
+    "quote": "MurtaaxPay macht das Senden von Geld an meine Familie so einfach. Die Wechselkurse sind fair und der gesamte Prozess ist wunderbar reibungslos!",
+    "name": "Mahmoud Amin",
+    "role": "Inhaber"
+  },
+  "Cta": {
+    "title": "Beginnen Sie heute mit dem Geldversand",
+    "subtitle": "Schließen Sie sich Tausenden der somalischen Diaspora-Gemeinschaft an, die MurtaaxPay für ihre finanziellen Bedürfnisse nutzen.",
+    "signup": "Jetzt registrieren",
+    "download": "App herunterladen"
+  },
+  "About": {
+    "badge": "Über uns",
+    "title": "Finanzen für die moderne Welt neu definiert.",
+    "subtitle": "Wir haben MurtaaxPay mit einer einfachen Vision gestartet: Finanzgrenzen abzubauen und eine nahtlose, robuste Plattform bereitzustellen, auf der sich Ihr Geld so schnell bewegt wie Sie.",
+    "builtForYou": "Für Sie gebaut.",
+    "transactions": "Über 2 Millionen vertrauenswürdige Transaktionen weltweit.",
+    "activeUsers": "Aktiver Benutzer",
+    "growingDaily": "Wächst täglich",
+    "securityTitle": "Sicherheit auf Bankniveau",
+    "securityDesc": "Ihre Gelder sind durch branchenführende Verschlüsselung und biometrische Sperren geschützt.",
+    "fastTitle": "Blitzschnell",
+    "fastDesc": "Erleben Sie sofortige globale Überweisungen und Transaktionen ohne Verzögerung.",
+    "guaranteedTitle": "100 % garantiert",
+    "guaranteedDesc": "Wir sind lizenziert, konform und prüfbar für Ihren absoluten Seelenfrieden."
+  },
+  "Footer": {
+    "about": "Entwickelt für die globale Diaspora-Gemeinschaft. Senden Sie Geld schnell, sicher und transparent in die ganze Welt.",
+    "services": "Dienste",
+    "digitalWallet": "Digital Wallet",
+    "virtualCards": "Virtuelle Karten",
+    "moneyTransfer": "Geldtransfer",
+    "savings": "Sparen",
+    "company": "Unternehmen",
+    "aboutUs": "Über uns",
+    "careers": "Karriere",
+    "contact": "Kontakt",
+    "partners": "Partner",
+    "legal": "Rechtliches",
+    "privacy": "Datenschutz",
+    "terms": "Bedingungen",
+    "cookies": "Cookies",
+    "newsletter": "Auf dem Laufenden bleiben",
+    "newsletterDesc": "Melden Sie sich für unseren Newsletter an, um die neuesten Updates zu erhalten.",
+    "placeholder": "E-Mail-Adresse",
+    "idAppStore": "App Store",
+    "idPlayStore": "Play Store",
+    "rights": "MurtaaxPay Ltd. Alle Rechte vorbehalten. Für die globale Gemeinschaft gebaut."
+  },
+  "PricingPage": {
+    "badge": "Elite-Standards",
+    "titlePart1": "EIN WALLET.",
+    "titleHighlight": "GRENZENLOSER ZUGANG.",
+    "subtitle": "Erleben Sie die weltweit transparenteste und leistungsstärkste Finanz-Einstufung. Keine Geheimnisse. Einfach reinste Bank-Exzellenz.",
+    "matrixTitle": "DIE FEATURE",
+    "matrixHighlight": "MATRIX.",
+    "monthly": "Monatlich",
+    "freePlanName": "Free Explorer",
+    "freeBadge": "Basis-Stufe",
+    "freePlanDesc": "Für den digitalen Nomaden, der seine globale Reise beginnt. Wesentliche Tools, null Kosten.",
+    "freePlanCta": "Jetzt erkunden",
+    "proPlanName": "Platinum Pro",
+    "proBadge": "Beliebteste Wahl",
+    "proPlanDesc": "Für den Weltbürger, der felsenfeste Sicherheit und erstklassige Flexibilität verlangt.",
+    "proPlanCta": "Zu Platinum wechseln",
+    "checkPoints": {
+      "idTransfer": "ID-zu-ID Überweisungen",
+      "mobileMoney": "Mobile Money Bridge",
+      "virtualCard": "1x kostenlose virtuelle Karte",
+      "standardSupport": "Standard 24/7 Support",
+      "steelCard": "Präzisions-Stahlkarte",
+      "unlimitedAtm": "Unbegrenzter ATM-Zugang",
+      "priorityManager": "Kundenbetreuer",
+      "cryptoAccess": "Früher Krypto-Zugang"
+    },
+    "table": {
+      "maintenance": "Wartung",
+      "noFee": "$0 Keine Gebühr",
+      "transfers": "Überweisungen",
+      "instant": "Sofort kostenlos",
+      "withdrawal": "ATM-Limits",
+      "unlimited": "Unbegrenzt",
+      "wireFees": "Überweisungsgebühren",
+      "concierge": "Concierge",
+      "investments": "Investitionen"
+    }
+  },
+  "CardsPage": {
+    "badge": "Globale Premium-Karten",
+    "titlePrefix": "Eleganz bei",
+    "titleHighlight": "jeder Berührung.",
+    "subtitle": "Erleben Sie das fortschrittlichste virtuelle und physische Kartensystem der Welt. Nahtlos integriert in Ihr Murtaax-Globalkonto.",
+    "cta": "Kostenloses Konto eröffnen",
+    "noMonthlyFees": "Keine monatlichen Gebühren",
+    "midnightBlack": "Mitternachtsschwarz",
+    "murtaaxEmerald": "Murtaax Smaragd",
+    "titaniumSilver": "Titan-Silber",
+    "interactiveTitle": "Maßgeschneidert für Ihren Lebensstil.",
+    "interactiveP": "Drücken Sie Ihre finanzielle Identität mit unserem Sortiment an präzisionsgefertigten physischen und virtuellen Karten aus.",
+    "syncTitle": "Live-Synchronisierung.",
+    "syncP": "Jede Transaktion wird sofort aktualisiert. Keine Verzögerung, nur echte Echtzeitdaten.",
+    "uptime": "Uptime",
+    "latency": "Latenz",
+    "guardTitle": "Fraud Defense 2.0",
+    "guardP": "Fortschrittliche Überwachung sorgt dafür, dass Ihre Karte rund um die Uhr geschützt ist.",
+    "ibanTitle": "Globaler IBAN-Zugang",
+    "ibanP": "Ihre Karte wird mit einer dedizierten IBAN geliefert, die Sie mit globalen Zahlungsnetzwerken verbindet.",
+    "syncWalletTitle": "Globale Brieftasche synchronisieren.",
+    "syncWalletP": "Fügen Sie Ihre Murtaax-Karte zu Apple Pay oder Google Pay hinzu und bezahlen Sie überall auf der Welt.",
+    "finalTitle": "Bereit für die Zukunft des Geldes?",
+    "orderPlatinum": "Platinkarte bestellen",
+    "instantVirtual": "Sofortige virtuelle Karte"
+  },
+  "AboutPage": {
+    "heroTitle": "Neudefinition der",
+    "heroHighlight": "globalen Finanzen.",
+    "heroSubtitle": "Wir haben es uns zur Aufgabe gemacht, Barrieren abzubauen und die globale Diaspora sicher und sofort mit ihrer Heimat zu verbinden.",
+    "storyTitle": "Unsere Geschichte",
+    "storyP1": "MurtaaxPay wurde 2024 gegründet und entstand aus einem einfachen Grund: Grenzüberschreitende Zahlungen sind immer noch zu langsam und zu teuer.",
+    "storyP2": "Wir haben ein erstklassiges Team aufgebaut, um eine Plattform zu schaffen, die Ihr Geld mit dem Respekt behandelt, den es verdient.",
+    "point1": "Lizenziert und Reguliert",
+    "point2": "Verschlüsselung auf Militärniveau",
+    "point3": "Lokaler Support rund um die Uhr",
+    "stats": {
+      "users": "Aktive Nutzer",
+      "volume": "Handelsvolumen",
+      "countries": "Unterstützte Länder",
+      "support": "Kundensupport"
+    }
+  },
+  "Auth": {
+    "welcomeBack": "Willkommen zurück",
+    "signInSecurely": "Sicher anmelden",
+    "emailLabel": "E-Mail-Adresse",
+    "passwordLabel": "Passwort",
+    "loginSuccess": "Anmeldung erfolgreich!",
+    "signingIn": "Anmeldung läuft...",
+    "signupSuccess": "Konto erfolgreich erstellt!",
+    "signingUp": "Konto wird erstellt...",
+    "fullName": "Vollständiger Name",
+    "or": "oder",
+    "createAccount": "Konto erstellen",
+    "rememberMe": "Angemeldet bleiben",
+    "forgotPassword": "Passwort vergessen?",
+    "backHome": "Zurück zur Startseite",
+    "getStarted": "Jetzt starten",
+    "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+    "signInHere": "Hier anmelden",
+    "featureGlobal": "Land wählen",
+    "agreeTermsPrefix": "Mit der Anmeldung stimmen Sie unseren",
+    "terms": "Nutzungsbedingungen",
+    "and": "und",
+    "privacy": "Datenschutzbestimmungen zu"
+  },
+  "Dashboard": {
+    "overview": "Übersicht",
+    "overviewDesc": "Verfolgen Sie Ihre Guthaben, Aktivitäten und Ausgaben.",
+    "sync": "Synchronisieren",
+    "syncing": "Synchronisierung...",
+    "syncMsg": "Aktuelle Daten werden synchronisiert...",
+    "syncSuccess": "Konten erfolgreich synchronisiert.",
+    "totalBalance": "Gesamtguthaben",
+    "addMoney": "Geld hinzufügen",
+    "sendMoney": "Geld senden",
+    "monthlyIncome": "Monatliches Einkommen",
+    "monthlySpending": "Monatliche Ausgaben",
+    "recentActivity": "Letzte Aktivitäten",
+    "viewAll": "Alle anzeigen",
+    "categories": {
+      "software": "Software",
+      "income": "Einkommen",
+      "transport": "Transport",
+      "transfer": "Überweisung"
+    },
+    "nav": {
+      "overview": "Übersicht",
+      "transfers": "Überweisungen",
+      "wallet": "Wallet",
+      "bills": "Rechnungen",
+      "cards": "Karten",
+      "history": "Verlauf",
+      "more": "Mehr",
+      "settings": "Einstellungen",
+      "support": "Support"
+    },
+    "verifyIdentity": "Identität verifizieren",
+    "increaseLimits": "Limits erhöhen",
+    "signOut": "Abmelden",
+    "searchPlaceholder": "Transaktionen oder Kontakte suchen...",
+    "notifications": "Benachrichtigungen",
+    "newNotifs": "Neu",
+    "markRead": "Alles als gelesen markieren",
+    "close": "Fenster schließen",
+    "freePlan": "Kostenloser Plan"
+  },
+  "ContactPage": {
+    "title": "Wir sind hier, um zu helfen.",
+    "subtitle": "Haben Sie Fragen zu unseren Dienstleistungen? Unser engagiertes Support-Team steht Ihnen rund um die Uhr zur Verfügung, um Sie bei all Ihren finanziellen Bedürfnissen zu unterstützen.",
+    "emailTitle": "Schreiben Sie uns",
+    "emailDesc": "Unser Team antwortet innerhalb von 2 Stunden.",
+    "callTitle": "Support anrufen",
+    "callDesc": "Dedizierte Leitungen für regionalen Support.",
+    "chatTitle": "Live-Chat",
+    "chatDesc": "Chatten Sie in unserer App direkt mit einem Menschen.",
+    "availableInApp": "Verfügbar in der Murtaax App",
+    "formTitle": "Senden Sie uns eine Nachricht",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "emailAddress": "E-Mail-Adresse",
+    "message": "Ihre Nachricht",
+    "placeholderFirstName": "z.B. Mahmoud",
+    "placeholderLastName": "z.B. Amin",
+    "placeholderEmail": "mahmoud@example.com",
+    "placeholderMessage": "Wie können wir Ihnen heute helfen?",
+    "submit": "Nachricht senden"
+  }
+}
