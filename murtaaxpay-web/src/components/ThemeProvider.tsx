@@ -1,0 +1,28 @@
+"use client";
+
+import * as React from "react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import type { ThemeProviderProps } from "next-themes";
+
+// Suppress the React 19 script tag warning for next-themes in development
+// This is a known issue with next-themes and React 19 during client-side re-renders
+if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+  const originalError = console.error;
+  console.error = (...args: any[]) => {
+    if (
+      typeof args[0] === "string" &&
+      args[0].includes("Encountered a script tag while rendering React component")
+    ) {
+      return;
+    }
+    originalError.apply(console, args);
+  };
+}
+
+export default function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return (
+    <NextThemesProvider {...props} enableColorScheme={false}>
+      {children}
+    </NextThemesProvider>
+  );
+}

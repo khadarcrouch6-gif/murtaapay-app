@@ -1,0 +1,429 @@
+{
+  "Navigation": {
+    "home": "Hoyga",
+    "services": "Adeegyada",
+    "cards": "Kaararka",
+    "prices": "Qiimaha",
+    "about": "Nagu Saabsan",
+    "contact": "Lanala Xiriir",
+    "login": "Gal",
+    "signup": "Is-diiwaangeli"
+  },
+  "Hero": {
+    "badgeNew": "Cusboonaysiin Cusub",
+    "badgeText": "Khibrad u yeelo heerka caalamiga ah",
+    "titlePrefix": "Kharash bixinta Caalamiga ah,",
+    "titleHighlight": "La fududeeyay",
+    "subtitle": "Maaliyad Bilaa Xuduud ah. Ku shubo, xawaalad dir, oo ku maamul lacagtaada caalamka oo dhan MurtaaxPay.",
+    "ctaPrimary": "Furo Koonto Bilaash ah",
+    "ctaSecondary": "Sahan Adeegyada",
+    "trustText": "Waxaa ku kalsoon ururada hormuudka ah",
+    "floatingTransferLabel": "Xawaalad la diray",
+    "floatingBalanceLabel": "Haraaga USD",
+    "floatingMonthBadge": "↑ 2.4% bishaan"
+  },
+  "Features": {
+    "sectionTitle": "Bangiga ku hadla luuqaddaada.",
+    "card1Badge": "GAAR AH MURTAAX",
+    "card1Title": "0% Lacag la'aan Murtaax Wallet",
+    "card1Desc": "U sameyso biilasha xawaaladdaada si habsami leh adigoo eber kharash ka bixinaya meel kasta oo ganacsi oo Murtaax ah, si degdeg ah, oo runtii bilaash ah.",
+    "card1Cta": "Baro In Ka Badan",
+    "card2Title": "Isdhexgalka Mobile Money",
+    "card2Desc": "Si fudud lacag ugu dir dadka aad jeceshay adoo u marinaya adeegyada degaanka ee Zaad, EVC iyo eDahab.",
+    "card2Cta": "Baro in ka badan",
+    "card3Title": "Taageerada Luuqadaha Badan",
+    "card3Desc": "Bangiga u adag sidaada oo kale, isagoo leh taageero buuxda oo degaan ah oo ku dhex jirta abkayaga.",
+    "card3Cta": "Waxaa lagu heli karaa Af-Soomaali",
+    "card4Title": "Bilaash u ah Dhammaan Muwaadiniinta",
+    "card4Desc": "Ku raaxayso dhammaan astaamaha app-kayaga lacag la'aan ($0 cost). Haa, gabi ahaanba bilaash u ah dhammaan muwaadiniinta.",
+    "card4Cta": "Learn More"
+  },
+  "VirtualCard": {
+    "badge": "CUSUB: KAADHKA VIRTUAL-KA",
+    "title": "Kharash bixinta Caalamiga ah, La fududeeyay.",
+    "description": "Waxaan oggolaannaa 100% lacag bixin sharci darro ah. Ka iibso onlayn meel kasta oo laga aqbalo Visa iyo Mastercard, laga bilaabo Muqdisho ilaa London. Bixi Netflix, Amazon, iyo wax ka badan oo leh eber kharashyo qarsoon.",
+    "cta": "Hel Kaadhkaaga Hadda",
+    "supported": "Waxaa taageeraya Visa iyo Mastercard",
+    "label": "Sugan & Ammaan ah"
+  },
+  "Benefits": {
+    "title": "In ka badan bangi uun.",
+    "subtitle": "Baro muujiyeyaal loogu talagalay baahiyaha gaarka ah ee beesha caalamka.",
+    "fastSafe": "Ugu Degdegsan & Ugu Suggan",
+    "fastSafeDesc": "Xawaalado degdeg ah oo ay taageerayaan sirta heerka ciidanka si loo ilaaliyo lacagtaada iyo faahfaahintaada.",
+    "fastSafeLink": "Akhri siyaasadda amniga",
+    "support": "Taageero 24/7 ah",
+    "supportDesc": "Kooxdayada taageerada ee xaafadda ayaa diyaar u ah markasta oo aad caawimaad u baahato, oo ku hadla English, Somali iyo kuwo kale.",
+    "supportLink": "La xiriir Taageerada",
+    "murtaaxId": "Murtaax ID",
+    "murtaaxIdDesc": "Lacag isla markiiba ugu dir Murtaax ID kasta si dhib la'aan ah. Looma baahna faahfaahin dheer oo bangi.",
+    "murtaaxIdLink": "Baro in ka badan",
+    "virtualWallet": "Wallet Virtual ah",
+    "virtualWalletDesc": "Wallet caalami ah oo dhan oo toos ugu jira taleefankaaga. Sugan, la isku halleyn karo, lagana heli karo meel kasta.",
+    "virtualWalletLink": "Eeg muuqaallada"
+  },
+  "Security": {
+    "title": "Amnigu waa hidde-sidaheena (DNA)",
+    "subtitle": "Waxaan isticmaalnaa qaab-dhismeedka sirta ee horumarsan si loo hubiyo in xawaalad kasta ay 100% sugan tay.",
+    "liveProtection": "Ilaalinta tooska ah",
+    "protectionDesc": "Kormeerka waqti-dhabta ah iyo ML-ka horumarsan ayaa ka hortaga khiyaanada ka avant intaysan dhicin.",
+    "report": "Eeg Warbixinta Amniga"
+  },
+  "Testimonials": {
+    "title": "Ka maqal",
+    "highlight": "beeshayada.",
+    "quote": "MurtaaxPay waxay ka dhigaysaa lacag u dirista qoyskayga mid aad u fudud. Qiimaha sarrifka waa cadaalad, hawsha oo dhammuna waa mid si habsami leh u socota!",
+    "name": "Mahmoud Amin",
+    "role": "Mulkiile Ganacsi"
+  },
+  "Cta": {
+    "title": "Bilow Dirista Lacagta Maanta",
+    "subtitle": "Ku biir kumanaan ka mid ah jaaliyadda Soomaaliyeed ee isticmaala MurtaaxPay baahiyahooda maaliyadeed.",
+    "signup": "Is-diiwaangeli Hadda",
+    "download": "Degso App-ka"
+  },
+  "About": {
+    "badge": "Nagu Saabsan",
+    "title": "Dib-u-qeexidda Maaliyadda ee Adduunka Casriga ah.",
+    "subtitle": "Waxaan ku bilownay MurtaaxPay aragti fudud: inaan jebino xuduudaha maaliyadeed oo aan bixino madal sugan oo habsami leh halkaas oo lacagtaadu u socoto sida aad u socoto.",
+    "builtForYou": "Adiga ayaa laguu dhisay.",
+    "transactions": "In ka badan 2 milyan oo xawaaladood oo la isku halleyn karo oo ka dhacaya caalamka.",
+    "activeUsers": "Isticmaale Firfircoon",
+    "growingDaily": "Maalin walba kordhaya",
+    "securityTitle": "Amniga Heerka Bangiga",
+    "securityDesc": "Hantidaada waxaa lagu ilaaliyaa sirta hormuudka u ah warshadaha og qufulada biometric-ga.",
+    "fastTitle": "Aad u Degdeg Badan",
+    "fastDesc": "Khibrad u yeelo xawaaladaha caalamiga ah ee degdega ah iyo macaamil ganacsi oo dib-u-dhac la'aan ah.",
+    "guaranteedTitle": "100% La Hubo",
+    "guaranteedDesc": "Waxaan nahay kuwo si buuxda u haysta shati, u hoggaansan, lana baadhi karo si aad nabad buuxda u hesho."
+  },
+  "Services": {
+    "badge": "Adeegyo Dheeraad Ah",
+    "title": "Wax kasta oo aad u baahan tahay, hal super app gudihiis.",
+    "subtitle": "Laga soo bilaabo xawaaladaha fudud ilaa abaal-marinnada qaab nololeedka. MurtaaxPay wuxuu kuu keenayaa hab deegaan oo dhammaystiran.",
+    "keyCapabilities": "Awoodaha Muhiimka Ah",
+    "capabilityDesc": "Ku xoojinta khibradaada {service} farsamo heer sare ah.",
+    "ctaTitle": "Ma diyaar u tahay inaad barato {service}?",
+    "ctaDesc": "Ku biir kumanaan isticmaale oo ku kalsoon MurtaaxPay baahiyahooda {service}.",
+    "ctaPrimary": "Hadda Bilow",
+    "viewAll": "Baadh Dhammaan Adeegyada",
+    "request": {
+      "title": "Lacag Codso",
+      "description": "Habka ugu habboon ee lacag lagu codsado adduunka oo dhan.",
+      "content": "U dir codsiyada lacag bixinta qof kasta, meel kasta oo adduunka ah. Hannaankayaga casriga ah wuxuu hubiyaa inaad lacagtaada hesho si dhakhso ah.",
+      "features": [
+        "Xidhiidhada lacag bixinta caalamiga ah",
+        "Ogeysiisyada degdegga ah",
+        "Taageerada lacagaha kala duwan"
+      ]
+    },
+    "exchange": {
+      "title": "Sarrifka Lacagaha",
+      "description": "Hufnaan buuxda sarrif kasta.",
+      "content": "Hel qiimaha sarrifka ee suuqa ee dhabta ah adigoon lahayn kharashyo qarsoon. Ku kala beddel 40+ lacagood si dhakhso ah.",
+      "features": [
+        "Xogta suuqa ee tooska ah",
+        "Kharashyo qarsoon ma jiraan",
+        "Jaantusyada qiimaha taariikhiga ah"
+      ]
+    },
+    "savings": {
+      "title": "Kaydka",
+      "description": "Sug mustaqbalkaaga maaliyadeed.",
+      "content": "Daawo lacagtaada oo koraysa adoo isticmaalaya xisaabaadka kaydka ee faa'iidada badan. Deji hadafyo, la soco horumarka.",
+      "features": [
+        "Kayd otomaatig ah",
+        "La socodka hadafka",
+        "Dulsaarka isbiirsada"
+      ]
+    },
+    "investments": {
+      "title": "Maalgashiga",
+      "description": "Ku kori raasamaalkaaga ujeedo.",
+      "content": "Hel fursadaha maalgashiga caalamiga ah. Laga soo bilaabo saamiyada ilaa badeecadaha, ku maamul faylalkaaga hal meel.",
+      "features": [
+        "Saamiyada qaybsan",
+        "Falanqaynta faylalka",
+        "Aaladaha maareynta khatarta"
+      ]
+    },
+    "sadaqah": {
+      "title": "Sadaqo",
+      "description": "Socod xasiloon oo wanaag ah.",
+      "content": "Ka dhigaysa bixinta sadaqada mid sahlan oo hufan. U hag deeqahaaga sababo la xaqiijiyay.",
+      "features": [
+        "Ururada la xaqiijiyay",
+        "Deeqo joogto ah",
+        "Warbixinta saamaynta"
+      ]
+    },
+    "giftcards": {
+      "title": "Kaadhadhka Hadiyadda",
+      "description": "Hadiyadaha dhijitaalka ah, si degdeg ah loo diro.",
+      "content": "Iibso oo u dir kaadhadhka hadiyadda dhijitaalka ah boqolaal sumadood oo caalami ah. Habeen kasta waa hadiyadda ku habboon.",
+      "features": [
+        "300+ sumadood oo caalami ah",
+        "Fariimo shaqsiyaysan",
+        "Gaadhsiin degdeg ah"
+      ]
+    },
+    "refer": {
+      "title": "Soo tixraac & Guulayso",
+      "description": "Waan isku xoog weynahay.",
+      "content": "Lala wadaag waayo-aragnimada MurtaaxPay saaxiibadaada. Hel abaal-marinno tixraac kasta oo guulaysta.",
+      "features": [
+        "Abaal-marinnada lacag celinta",
+        "Gunnada heerka leh",
+        "La socodka waqtiga dhabta ah"
+      ]
+    },
+    "vouchers": {
+      "title": "Foojarrada",
+      "description": "Bixinta biilasha oo la fududeeyay.",
+      "content": "Bixi biilashaada oo dib u buuxi korontada si fudud. Nidaamkayaga foojarku wuxuu daboolayaa biyaha, korontada, iyo internetka.",
+      "features": [
+        "Bixinta biilka otomaatigga ah",
+        "Xusuusinta lacag bixinta",
+        "Foojarrada qiimo dhimista leh"
+      ]
+    }
+  },
+  "ServicesPage": {
+    "title": "Wax kasta oo aad u baahan tahay",
+    "titleHighlight": "Hal Super App gudihiis.",
+    "subtitle": "Laga soo bilaabo xawaaladaha fudud ilaa abaal-marinnada qaab nololeedka. MurtaaxPay wuxuu kuu keenayaa hab deegaan oo dhammaystiran.",
+    "explore": "Hadda Baadh",
+    "badgeLabel": "Adeegyadayada",
+    "badgeSub": "8 Qalab Xooggan",
+    "pillarInstant": "Xawaaladaha Degdegga ah",
+    "pillarSecurity": "Amniga Heerka Bangiga",
+    "pillarLicensed": "Shatiga leh oo Rasmiga ah",
+    "ctaTitle": "Ma diyaar u tahay heerka xiga?",
+    "ctaPrimary": "Hadda bilow",
+    "ctaSecondary": "La xiriir iibka",
+    "items": {
+      "request": {
+        "title": "Lacag Codso",
+        "desc": "Habka ugu fudud ee lacag lagu codsado adduunka oo dhan."
+      },
+      "exchange": {
+        "title": "Sarrifka Lacagaha",
+        "desc": "Hufnaan buuxda sarrif kasta."
+      },
+      "savings": {
+        "title": "Kaydka",
+        "desc": "Sug mustaqbalkaaga maaliyadeed."
+      },
+      "investments": {
+        "title": "Maalgashiga",
+        "desc": "Ku kori raasamaalkaaga ujeedo."
+      },
+      "sadaqah": {
+        "title": "Sadaqo",
+        "desc": "Socod xasiloon oo wanaag ah."
+      },
+      "giftcards": {
+        "title": "Kaadhadhka Hadiyadda",
+        "desc": "Hadiyadda ku habboon munaasabad kasta."
+      },
+      "refer": {
+        "title": "Soo tixraac & Guulayso",
+        "desc": "Waan isku xoog weynahay."
+      },
+      "vouchers": {
+        "title": "Foojarrada",
+        "desc": "Bixinta biilasha oo la fududeeyay."
+      }
+    }
+  },
+  "Footer": {
+    "about": "Waxaa loo dhisay jaaliyadda caalamka ee qurba-joogta ah. Lacag u dir si degdeg ah, sugan, oo hufan caalamka oo dhan.",
+    "services": "Adeegyada",
+    "digitalWallet": "Wallet-ka Digital-ka",
+    "virtualCards": "Kaararka Virtual-ka",
+    "moneyTransfer": "Xawaaladda Lacagta",
+    "savings": "Kaydka",
+    "company": "Shirkadda",
+    "aboutUs": "Nagu Saabsan",
+    "careers": "Shaqooyinka",
+    "contact": "Xiriir",
+    "partners": "Shuraakada",
+    "legal": "Sharci",
+    "privacy": "Qarsoodiga",
+    "terms": "Shuruudaha",
+    "cookies": "Cookies",
+    "newsletter": "La Soco Cusboonaysiinta",
+    "newsletterDesc": "Ku biir warsidahayaga si aad u hesho cusboonaysiintii ugu dambeysay.",
+    "placeholder": "Cinwaanka iimaylka",
+    "idAppStore": "App Store",
+    "idPlayStore": "Play Store",
+    "rights": "MurtaaxPay Ltd. Dhammaan xuquuqaha waa la dhowray. Waxaa loo dhisay beesha caalamka."
+  },
+  "PricingPage": {
+    "badge": "Heerarka Sare",
+    "titlePart1": "HAL BOORSO.",
+    "titleHighlight": "MOG KA HELID KALE",
+    "subtitle": "Khibrad u yeelo daahfurnaanta maaliyadeed iyo waxqabadka sare ee adduunka ugu horumarsan. Ma jirto sir. Kaliya xirfadda bangiyada oo heersare ah.",
+    "matrixTitle": "MUUQAALLADA",
+    "matrixHighlight": "MUUQAALLADA.",
+    "monthly": "Bishii",
+    "freePlanName": "Explorer Bilaash ah",
+    "freeBadge": "Heerka Hoose",
+    "freePlanDesc": "Loogu talagalay qofka bilaabaya safarkooda maaliyadeed. Qalab lagama maarmaan ah, oo bilaash ah.",
+    "freePlanCta": "Bilow Sahaminta",
+    "proPlanName": "Platinum Pro",
+    "proBadge": "Ugu Caansan",
+    "proPlanDesc": "Loogu talagalay muwaadinka caalamiga ah ee dalbanaya ammaan adag iyo dabacsanaan sare.",
+    "proPlanCta": "Noqo Platinum",
+    "checkPoints": {
+      "idTransfer": "Xawilaadaha ID-ilaa-ID",
+      "mobileMoney": "Mobile Money Bridge",
+      "virtualCard": "1x Kaadhka Virtual-ka oo bilaash ah",
+      "standardSupport": "24/7 Taageero Joogto ah",
+      "steelCard": "Kaadhka Steel-ka ah",
+      "unlimitedAtm": "Helitaanka ATM-ka oo aan xadidnayn",
+      "priorityManager": "Maareeyaha Akoonka",
+      "cryptoAccess": "Helitaanka Crypto-ga ee hore"
+    },
+    "table": {
+      "maintenance": "Dayactirka",
+      "noFee": "$0 Khidmad ma leh",
+      "transfers": "Xawilaadaha",
+      "instant": "Isla markiiba bilaash",
+      "withdrawal": "Xadka ATM-ka",
+      "unlimited": "Aan xadidnayn",
+      "wireFees": "Khidmadaha Wire-ka",
+      "concierge": "Concierge",
+      "investments": "Maalgashiga"
+    }
+  },
+  "CardsPage": {
+    "badge": "Kaararka Caalamiga ah ee Premium",
+    "titlePrefix": "Xarrago leh",
+    "titleHighlight": "Taabasho kasta.",
+    "subtitle": "Khibrad u yeelo nidaamka kaararka ee ugu horumarsan adduunka. Si habsami leh ugu dhex milmeen akoonkaaga caalamiga ah ee Murtaax.",
+    "cta": "Furo Akoon Bilaash ah",
+    "noMonthlyFees": "Ma jiraan khidmado bishiiba ah",
+    "midnightBlack": "Madowga Habeenkii",
+    "murtaaxEmerald": "Murtaax Emerald",
+    "titaniumSilver": "Silver Titanium",
+    "interactiveTitle": "Loo habeeyay qaab nololeedkaaga.",
+    "interactiveP": "Ku muuji aqoonsigaaga maaliyadeed noocyo kala duwan oo kaararkayaga ah.",
+    "syncTitle": "Isku xirka aaladaha.",
+    "syncP": "Macaamil kasta oo aad samayso ayaa isla markiiba lagu cusboonaysiiyaa jeebkaaga. Ma jiro dib u dhac.",
+    "uptime": "Uptime-ka",
+    "latency": "Latency-ga",
+    "guardTitle": "Fraud Defense 2.0",
+    "guardP": "Lasocodka ML ee horumarsan ayaa hubinaya in kaarkaaga la ilaaliyo 24/7.",
+    "ibanTitle": "Helitaanka IBAN Caalami ah",
+    "ibanP": "Kaarkaagu wuxuu la imanayaa IBAN u go'an, oo kugu xiraya shabakadaha lacag bixinta caalamiga ah.",
+    "syncWalletTitle": "Isku xir boorsadaada caalamiga ah.",
+    "syncWalletP": "Ku dar kaarkaaga Murtaax Apple Pay ama Google Pay oo wax ku iibso meel kasta oo adduunka ah.",
+    "finalTitle": "Ma u diyaarsan tahay mustaqbalka lacagta?",
+    "orderPlatinum": "Dalbo Kaarka Platinum",
+    "instantVirtual": "Dalbo Kaadhka Virtual-ka ah"
+  },
+  "AboutPage": {
+    "heroTitle": "Dib u qeexidda",
+    "heroHighlight": "Maaliyadda Caalamiga ah.",
+    "heroSubtitle": "Waxaan hadafkeenu yahay inaan duminno caqabadaha oo aan ku xirno qurba-joogta homes-kooda, si nabad ah iyo si degdeg ah.",
+    "storyTitle": "Sheekadeena",
+    "storyP1": "Lagu aasaasay 2024, MurtaaxPay waxay ka dhalatay u kuurgal fudud: u dirista lacagaha xudduudaha waxay wali tahay mid aad u gaabis ah, aad u qaali ah, oo aad u adag.",
+    "storyP2": "Waxaan dhisnay koox heer caalami ah oo injineero ah iyo khubarada maaliyadda si ay u abuuraan madal ula dhaqanta lacagtaada ixtiraamka ay mudan tahay.",
+    "point1": "Shatiga leh oo la nidaamiyay",
+    "point2": "Sirta Heerka Ciidanka",
+    "point3": "24/7 Taageerada Deegaanka",
+    "stats": {
+      "users": "Isticmaalayaasha firfircoon",
+      "volume": "Mugga Ganacsiga",
+      "countries": "Wadamada la taageeray",
+      "support": "Taageerada Macmiilka"
+    }
+  },
+  "Auth": {
+    "welcomeBack": "Koo soo dhawaada mar kale",
+    "signInSecurely": "Si sugan u gal",
+    "emailLabel": "Cinwaanka Iimaylka",
+    "passwordLabel": "Password-ka",
+    "loginSuccess": "Soo galiddu waa guul! Soo dhawoow mar kale.",
+    "signingIn": "Xaqiijinta xiriirka sugan...",
+    "signupSuccess": "Guul! Ku soo dhawoow MurtaaxPay.",
+    "signingUp": "Abuuridda koontadaada caalamiga ah...",
+    "fullName": "Magaca oo buuxa",
+    "or": "ama",
+    "createAccount": "sameyso akoon",
+    "rememberMe": "I xasuuso",
+    "forgotPassword": "Ma ilaawday password-ka?",
+    "backHome": "Ku laabo hoyga",
+    "getStarted": "Bilow",
+    "alreadyHaveAccount": "Horey ma u lahayd akoon?",
+    "signInHere": "Halkan ka gal",
+    "featureGlobal": "Dooro Waddanka",
+    "agreeTermsPrefix": "Markaad isdiiwaangeliso, waxaad ku raacaysaa annaga",
+    "terms": "Shuruudaha Adeegga",
+    "and": "iyo",
+    "privacy": "Siyaasadda Qarsoodiga"
+  },
+  "Dashboard": {
+    "overview": "Dulmarka",
+    "overviewDesc": "Lasoco hadhaagaaga, dhaqdhaqaaqaaga, iyo kharashaadkaaga.",
+    "sync": "Isku-dheelitir",
+    "syncing": "Isku-dheelitirid...",
+    "syncMsg": "Isku-dheelitiridda xogta ugu dambeysay...",
+    "syncSuccess": "Akoonnada hadda waa isku-dheelitiran yihiin.",
+    "totalBalance": "Hadhaaga Guud",
+    "addMoney": "Lacag ku dar",
+    "sendMoney": "Lacag dir",
+    "monthlyIncome": "Dakhliga Bisha",
+    "monthlySpending": "Kharashka Bisha",
+    "recentActivity": "Dhaqdhaqaaqii ugu dambeeyay",
+    "viewAll": "Arag dhammaan",
+    "categories": {
+      "software": "Software",
+      "income": "Dakhliga",
+      "transport": "Gaadiidka",
+      "transfer": "Xawaaladda"
+    },
+    "nav": {
+      "overview": "Dulmarka",
+      "transfers": "Xawaaladaha",
+      "wallet": "Wallet-ka",
+      "bills": "Biilasha",
+      "cards": "Kaararka",
+      "history": "Dhaqdhaqaaqa",
+      "more": "Dheeraad",
+      "settings": "Settings",
+      "support": "Taageerada"
+    },
+    "verifyIdentity": "Hubi Aqoonsiga",
+    "increaseLimits": "Kordhi xadkayga",
+    "signOut": "Ka bax",
+    "searchPlaceholder": "Raadi xawaaladaha, kaararka, ama xiriirada...",
+    "notifications": "Ogaysiisyada",
+    "newNotifs": " الجديدة",
+    "markRead": "Wada akhri",
+    "close": "Xir Daaqadda",
+    "freePlan": "Planka Bilaashka ah"
+  },
+  "ContactPage": {
+    "title": "Halkan ayaan u joognaa inaan ku caawino.",
+    "subtitle": "Ma haysaa wax su'aalo ah oo ku saabsan adeegyadayada? Kooxdayada taageerada u go'an waxay diyaar u yihiin 24/7 si ay kaaga caawiyaan dhammaan baahiyahaaga maaliyadeed.",
+    "emailTitle": "Email noogu soo dir",
+    "emailDesc": "Kooxdayadu waxay kuugu soo jawaabayaan muddo 2 saacadood gudahood ah.",
+    "callTitle": "Wac Taageerada",
+    "callDesc": "Laba khad oo u go'an taageerada gobolka.",
+    "chatTitle": "Wadahadal Toos ah",
+    "chatDesc": "Si toos ah ula hadal bini'aadam ku jira app-kayaga.",
+    "availableInApp": "Waxaa laga helayaa Murtaax App",
+    "formTitle": "Farari noogu soo dir",
+    "firstName": "Magaca Koowaad",
+    "lastName": "Magaca dambe",
+    "emailAddress": "Cinwaanka Email-ka",
+    "message": "Farari-gaaga",
+    "placeholderFirstName": "Tusaale: Mahmoud",
+    "placeholderLastName": "Tusaale: Amin",
+    "placeholderEmail": "mahmoud@example.com",
+    "placeholderMessage": "Sidee kuugu caawin karnaa maanta?",
+    "submit": "Dir Farari-ga"
+  }
+}

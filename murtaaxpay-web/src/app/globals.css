@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  /* Brand Colors */
+  --color-brand-teal: #059669; /* Emerald 600 */
+  --color-brand-teal-dark: #047857; /* Emerald 700 */
+  --color-brand-teal-light: #d1fae5; /* Emerald 100 */
+  --color-brand-navy: #0f172a; /* Slate 900 */
+  --color-brand-navy-dark: #0b1120; /* Darker Slate */
+  --color-brand-navy-light: #1e293b; /* Slate 800 */
+  
+  --color-murtaax-green: #10b981; /* Primary CTA green */
+  --color-murtaax-green-dark: #059669; 
+  --color-murtaax-green-light: #34d399;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbar for clean look in carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  flex-wrap: nowrap;
+  animation: marquee 40s linear infinite;
+}
+
+.pause-marquee:hover .animate-marquee {
+  animation-play-state: paused;
+}
