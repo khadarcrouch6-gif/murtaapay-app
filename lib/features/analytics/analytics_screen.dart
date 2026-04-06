@@ -296,7 +296,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildCategoryItem(BuildContext context, String title, String amount, Color color, IconData icon) {
+  Widget _buildCategoryItem(BuildContext context, String title, String amount, Color color, dynamic icon) {
     final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -310,7 +310,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: Icon(icon, color: color, size: 18),
+            child: AdaptiveIcon(icon, color: color, size: 18),
           ),
           const SizedBox(width: 16),
           Expanded(

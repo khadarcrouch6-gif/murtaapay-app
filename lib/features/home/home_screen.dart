@@ -339,35 +339,36 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(24), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 8))]),
           child: Column(
             children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child: Text(state.translate("Spending Analysis", "Isticmaalka", ar: "تحليل الإنفاق", de: "Ausgabenanalyse"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor), overflow: TextOverflow.ellipsis)),
-                const SizedBox(width: 8),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildChartTypeToggle(ChartType.bar, Icons.bar_chart_rounded),
-                    _buildChartTypeToggle(ChartType.line, Icons.show_chart_rounded),
-                    _buildChartTypeToggle(ChartType.pie, Icons.pie_chart_rounded),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 200,
-              child: _buildSelectedChart(theme),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(child: _buildStatItem(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden"), r"$4,250", Colors.blue)),
-                Expanded(child: _buildStatItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen"), r"$1,120", Colors.orange)),
-                Expanded(child: _buildStatItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah"), r"$450", AppColors.accentTeal)),
-              ],
-            ),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(child: Text(state.translate("Spending Analysis", "Isticmaalka", ar: "تحليل الإنفاق", de: "Ausgabenanalyse"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor), overflow: TextOverflow.ellipsis)),
+                  const SizedBox(width: 8),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildChartTypeToggle(ChartType.bar, Icons.bar_chart_rounded),
+                      _buildChartTypeToggle(ChartType.line, Icons.show_chart_rounded),
+                      _buildChartTypeToggle(ChartType.pie, Icons.pie_chart_rounded),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                height: 200,
+                child: _buildSelectedChart(theme),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(child: _buildStatItem(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden"), r"$4,250", Colors.blue)),
+                  Expanded(child: _buildStatItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen"), r"$1,120", Colors.orange)),
+                  Expanded(child: _buildStatItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah"), r"$450", AppColors.accentTeal)),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -576,7 +577,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
             getTooltipColor: (_) => AppColors.primaryDark,
-            tooltipRoundedRadius: 8,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               return BarTooltipItem(
                 '${_days[group.x.toInt()]}\n',

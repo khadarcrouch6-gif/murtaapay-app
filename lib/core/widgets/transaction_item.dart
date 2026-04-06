@@ -152,9 +152,9 @@ class TransactionItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ShimmerPlaceholder(width: 120, height: 16),
-                  SizedBox(height: 8),
-                  ShimmerPlaceholder(width: 80, height: 12),
+                  const ShimmerPlaceholder(width: 120, height: 16),
+                  const SizedBox(height: 8),
+                  const ShimmerPlaceholder(width: 80, height: 12),
                 ],
               ),
             ),
@@ -164,9 +164,9 @@ class TransactionItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  ShimmerPlaceholder(width: 60, height: 16),
-                  SizedBox(height: 8),
-                  ShimmerPlaceholder(width: 40, height: 12),
+                  const ShimmerPlaceholder(width: 60, height: 16),
+                  const SizedBox(height: 8),
+                  const ShimmerPlaceholder(width: 40, height: 12),
                 ],
               ),
             ),

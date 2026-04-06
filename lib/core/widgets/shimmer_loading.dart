@@ -41,13 +41,11 @@ class ShimmerPlaceholder extends StatelessWidget {
     this.shape = const RoundedRectangleBorder(),
   });
 
-  factory ShimmerPlaceholder.circular({required double size}) {
-    return ShimmerPlaceholder(
-      width: size,
-      height: size,
-      shape: const CircleBorder(),
-    );
-  }
+  const ShimmerPlaceholder.circular({super.key, required double size})
+      : width = size,
+        height = size,
+        borderRadius = 0,
+        shape = const CircleBorder();
 
   @override
   Widget build(BuildContext context) {
