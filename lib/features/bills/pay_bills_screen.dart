@@ -126,7 +126,7 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
                     child: Icon(icon, color: color, size: 24),
                   ),
                   const SizedBox(width: 12),
-                  Text("${state.translate("Pay", "Bixi", ar: "دفع", de: "Bezahlen")} ${state.translate(category, category, ar: _getArCategory(category), de: _getDeCategory(category))}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
+                  Text(state.translate(category, category, ar: _getArCategory(category), de: _getDeCategory(category)), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color)),
                 ],
               ),
               const SizedBox(height: 24),
@@ -146,7 +146,7 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
                 style: TextStyle(color: theme.textTheme.bodyLarge?.color),
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: state.translate("Amount to Pay (\$)", "Cadadka la bixinayo (\$)", ar: "المبلغ المراد دفعه (\$)", de: "Zu zahlender Betrag (\$)"),
+                  labelText: state.translate("Amount to Pay (\$)", "Cadadka la bixinayo (\$)", ar: "المبلغ المطلوب دفعه (\$)", de: "Zu zahlender Betrag (\$)"),
                   labelStyle: TextStyle(color: AppColors.grey),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   prefixIcon: const Icon(Icons.attach_money, color: AppColors.grey),
@@ -186,10 +186,10 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
           children: [
             const Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 80),
             const SizedBox(height: 24),
-            Text(state.translate("Payment Successful!", "Lacag bixinta waa lagu guulaystay!", ar: "تم الدفع بنجاح!", de: "Zahlung erfolgreich!"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: theme.textTheme.bodyLarge?.color)),
+            Text(state.translate("Payment Successful!", "Lacag bixinta waa lagu guulaystay!", ar: "تمت عملية الدفع بنجاح!", de: "Zahlung erfolgreich!"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: theme.textTheme.bodyLarge?.color)),
             const SizedBox(height: 12),
             Text(
-              "${state.translate("Your payment of", "Lacag bixintaadi", ar: "دفعتك بمبلغ", de: "Ihre Zahlung von")} \$$amount ${state.translate("for", "ee", ar: "لـ", de: "für")} ${state.translate(category, category, ar: _getArCategory(category), de: _getDeCategory(category))} ${state.translate("has been processed.", "waa laga gudubay.", ar: "تمت معالجتها.", de: "wurde bearbeitet.")}",
+              "${state.translate("Your payment of", "Lacag bixintaadi", ar: "دفعتك بقيمة", de: "Ihre Zahlung von")} \$$amount ${state.translate("for", "ee", ar: "لـ", de: "für")} ${state.translate(category, category, ar: _getArCategory(category), de: _getDeCategory(category))} ${state.translate("has been processed.", "waa laga gudubay.", ar: "تمت معالجتها.", de: "wurde bearbeitet.")}",
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppColors.grey),
             ),
@@ -266,7 +266,7 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
               const SizedBox(height: 24),
               DetailRow(label: state.translate("Service Provider", "Bixiyaha Adeegga", ar: "مزود الخدمة", de: "Dienstanbieter"), value: title),
               DetailRow(label: state.translate("Category", "Qaybta", ar: "الفئة", de: "Kategorie"), value: state.translate(category, category, ar: _getArCategory(category), de: _getDeCategory(category))),
-              DetailRow(label: state.translate("Account ID", "Aqoonsiga Xisaabta", ar: "رقم الحساب", de: "Konto-ID"), value: id),
+              DetailRow(label: state.translate("Account ID", "Aqoonsiga Xisaabta", ar: "معرف الحساب", de: "Konto-ID"), value: id),
               DetailRow(label: state.translate("Amount Paid", "Lacagta la bixiyay", ar: "المبلغ المدفوع", de: "Gezahlter Betrag"), value: amount),
               DetailRow(label: state.translate("Payment Date", "Taariikhda Lacag Bixinta", ar: "تاريخ الدفع", de: "Zahlungsdatum"), value: date),
               DetailRow(label: state.translate("Status", "Heerka", ar: "الحالة", de: "Status"), value: state.translate("Completed", "Dhammaystiran", ar: "مكتمل", de: "Abgeschlossen"), valueColor: AppColors.accentTeal),
@@ -307,6 +307,18 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
     }
   }
 
+  String _getEtCategory(String title) {
+    switch (title) {
+      case "Electricity": return "Elekter";
+      case "Water": return "Vesi";
+      case "Internet": return "Internet";
+      case "TV Cable": return "Kaabeltelevisioon";
+      case "Education": return "Haridus";
+      case "Gov Services": return "Riigiteenused";
+      default: return title;
+    }
+  }
+
   String _getDeCategory(String title) {
     switch (title) {
       case "Electricity": return "Strom";
@@ -319,4 +331,3 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
     }
   }
 }
-

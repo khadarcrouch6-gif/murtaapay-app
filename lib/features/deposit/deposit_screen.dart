@@ -127,7 +127,7 @@ class _DepositScreenState extends State<DepositScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(state.translate("Enter Amount to Deposit", "Gali cadadka aad dhigato", ar: "أدخل المبلغ المراد إيداعه", de: "Einzahlungsbetrag eingeben"), style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 14 * context.fontSizeFactor)),
+                            Text(state.translate("Enter Amount to Deposit", "Gali cadadka aad dhigato", ar: "أدخل المبلغ للإيداع", de: "Einzahlungsbetrag eingeben"), style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 14 * context.fontSizeFactor)),
                             const SizedBox(height: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -405,8 +405,8 @@ class _DepositScreenState extends State<DepositScreen> {
   String _getArabicMethodTitle(String id) {
     switch (id) {
       case "stripe": return "سترايب";
-      case "card": return "بطاقة الخصم / الائتمان";
-      case "mobile": return "تحويل عبر الهاتف";
+      case "card": return "بطاقة دفع / ائتمان";
+      case "mobile": return "نقد عبر الهاتف";
       case "bank": return "تحويل بنكي";
       default: return "";
     }
@@ -434,9 +434,9 @@ class _DepositScreenState extends State<DepositScreen> {
 
   String _getArabicMethodDesc(String id) {
     switch (id) {
-      case "stripe": return "الإيداع عبر حساب سترايب";
-      case "card": return "فيزا أو ماستركارد - فوري";
-      case "mobile": return "ZAAD، EVC Plus، eDahab";
+      case "stripe": return "إيداع عبر حساب سترايب الخاص بك";
+      case "card": return "فيزا أو ماستركارد — فوري";
+      case "mobile": return "ZAAD, EVC Plus, eDahab";
       case "bank": return "تحويل SEPA / IBAN";
       default: return "";
     }
@@ -604,7 +604,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    Text(state.translate("Deposit Successful!", "Dhigashadu waa lagu guulaystay!", ar: "تم الإيداع بنجاح!", de: "Einzahlung erfolgreich!"), style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
+                    Text(state.translate("Deposit Successful!", "Dhigashadu waa lagu guulaystay!", ar: "نجح الإيداع!", de: "Einzahlung erfolgreich!"), style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
                     const SizedBox(height: 12),
                     Text(
                       "\$${_amountController.text} ${state.translate("has been added to your wallet.", "waa lagu daray boorsadaada.", ar: "تمت إضافتها إلى محفظتك.", de: "wurde Ihrem Wallet hinzugefügt.")}",
@@ -667,4 +667,3 @@ class ExpiryDateInputFormatter extends TextInputFormatter {
     return newValue.copyWith(text: string, selection: TextSelection.collapsed(offset: string.length));
   }
 }
-

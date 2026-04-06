@@ -5,12 +5,14 @@ class DetailRow extends StatelessWidget {
   final String label;
   final String value;
   final Color? valueColor;
+  final bool isBold;
 
   const DetailRow({
     super.key,
     required this.label,
     required this.value,
     this.valueColor,
+    this.isBold = true,
   });
 
   @override
@@ -33,7 +35,7 @@ class DetailRow extends StatelessWidget {
               value,
               textAlign: TextAlign.end,
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
                 color: valueColor ?? theme.textTheme.bodyLarge?.color,
               ),
             ),

@@ -159,9 +159,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
               children: [
                 _buildFilterChip(context, state, "All", state.translate("All", "Dhammaan", ar: "الكل", de: "Alle")),
                 const SizedBox(width: 8),
-                _buildFilterChip(context, state, "Sent", state.translate("Sent", "La Diray", ar: "مرسل", de: "Gesendet")),
+                _buildFilterChip(context, state, "Sent", state.translate("Sent", "La Diray", ar: "تم الإرسال", de: "Gesendet")),
                 const SizedBox(width: 8),
-                _buildFilterChip(context, state, "Received", state.translate("Received", "La Helay", ar: "مستلم", de: "Empfangen")),
+                _buildFilterChip(context, state, "Received", state.translate("Received", "La Helay", ar: "تم الاستلام", de: "Empfangen")),
               ],
             ),
           ),

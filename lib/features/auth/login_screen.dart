@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'security_pin_screen.dart';
@@ -43,7 +44,7 @@ class LoginScreen extends StatelessWidget {
                     FadeInDown(
                       delay: const Duration(milliseconds: 200),
                       child: Text(
-                        "Welcome Back",
+                        AppState().translate("Welcome Back", "Ku soo dhawaaw", ar: "مرحباً بعودتك", de: "Willkommen zurück"),
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 28 * context.fontSizeFactor),
                       ),
                     ),
@@ -51,7 +52,7 @@ class LoginScreen extends StatelessWidget {
                     FadeInDown(
                       delay: const Duration(milliseconds: 300),
                       child: Text(
-                        "Enter your phone number to continue",
+                        AppState().translate("Enter your phone number to continue", "Gali lambarkaaga taleefanka si aad u sii wadato", ar: "أدخل رقم هاتفك للمتابعة", de: "Geben Sie Ihre Telefonnummer ein, um fortzufahren"),
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppColors.grey, fontSize: 16 * context.fontSizeFactor),
                       ),
                     ),
@@ -64,7 +65,7 @@ class LoginScreen extends StatelessWidget {
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         decoration: InputDecoration(
-                          hintText: "Phone Number",
+                          hintText: AppState().translate("Phone Number", "Lambarka Taleefanka", ar: "رقم الهاتف", de: "Telefonnummer"),
                           hintStyle: const TextStyle(color: AppColors.grey),
                           prefixIcon: const Icon(Icons.phone_iphone_rounded, color: AppColors.grey),
                           border: OutlineInputBorder(
@@ -90,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                             MaterialPageRoute(builder: (context) => const SecurityPinScreen()),
                           );
                         },
-                        child: Text("Continue", style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
+                        child: Text(AppState().translate("Continue", "Sii wad", ar: "متابعة", de: "Weiter"), style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -103,7 +104,7 @@ class LoginScreen extends StatelessWidget {
                           );
                         },
                         child: Text(
-                          "Don't have an account? Sign Up",
+                          AppState().translate("Don't have an account? Sign Up", "Miyaadan lahayn akoon? Is qor", ar: "ليس لديك حساب؟ سجل الآن", de: "Haben Sie noch kein Konto? Registrieren"),
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.w600,

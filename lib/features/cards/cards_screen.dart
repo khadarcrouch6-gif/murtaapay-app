@@ -40,7 +40,7 @@ class _CardsScreenState extends State<CardsScreen> {
     Clipboard.setData(const ClipboardData(text: "4580123456789012"));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(state.translate("Card number copied!", "Lambarada waa la koobiyeeyay!")),
+        content: Text(state.translate("Card number copied!", "Lambarada waa la koobiyeeyay!", ar: "تم نسخ رقم البطاقة!", de: "Kartennummer kopiert!")),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         backgroundColor: AppColors.accentTeal,
@@ -117,7 +117,7 @@ class _CardsScreenState extends State<CardsScreen> {
                     children: [
                       Icon(Icons.add_circle_outline_rounded, size: 20 * context.fontSizeFactor),
                       const SizedBox(width: 8),
-                      Text(state.translate("Add New Card", "Ku dar Kaadh Cusub"), style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(state.translate("Add New Card", "Ku dar Kaadh Cusub", ar: "إضافة بطاقة جديدة", de: "Neue Karte hinzufügen"), style: const TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -148,13 +148,13 @@ class _CardsScreenState extends State<CardsScreen> {
               physics: const BouncingScrollPhysics(),
               child: Row(
                 children: [
-                  _buildQuickAction(context, state, "Deposit", Icons.add_circle_outline_rounded, AppColors.accentTeal, const DepositScreen()),
+                  _buildQuickAction(context, state, "Deposit", state.translate("Deposit", "Dhigasho", ar: "إيداع", de: "Einzahlung"), Icons.add_circle_outline_rounded, AppColors.accentTeal, const DepositScreen()),
                   const SizedBox(width: 10),
-                  _buildQuickAction(context, state, "Withdraw", Icons.file_upload_outlined, Colors.orange, const WithdrawScreen()),
+                  _buildQuickAction(context, state, "Withdraw", state.translate("Withdraw", "Kala Bax", ar: "سحب", de: "Abheben"), Icons.file_upload_outlined, Colors.orange, const WithdrawScreen()),
                   const SizedBox(width: 10),
-                  _buildQuickAction(context, state, "Savings", Icons.account_balance_outlined, Colors.blue, const SavingsScreen()),
+                  _buildQuickAction(context, state, "Savings", state.translate("Savings", "Kayd", ar: "مدخرات", de: "Ersparnisse"), Icons.account_balance_outlined, Colors.blue, const SavingsScreen()),
                   const SizedBox(width: 10),
-                  _buildQuickAction(context, state, "Invest", Icons.auto_graph_rounded, Colors.purple, const InvestmentsScreen()),
+                  _buildQuickAction(context, state, "Invest", state.translate("Invest", "Maalgashi", ar: "استثمار", de: "Investieren"), Icons.auto_graph_rounded, Colors.purple, const InvestmentsScreen()),
                 ],
               ),
             ),
@@ -164,7 +164,7 @@ class _CardsScreenState extends State<CardsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(state.translate("Transactions", "Dhaqdhaqaaqa"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                Text(state.translate("Transactions", "Dhaqdhaqaaqa", ar: "المعاملات", de: "Transaktionen"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                 IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded)),
               ],
             ),
@@ -236,12 +236,12 @@ class _CardsScreenState extends State<CardsScreen> {
               children: [
                 Expanded(child: PieChart(PieChartData(sectionsSpace: 4, centerSpaceRadius: 30, sections: [PieChartSectionData(color: AppColors.accentTeal, value: 30, title: '30%'), PieChartSectionData(color: Colors.orange, value: 20, title: '20%'), PieChartSectionData(color: Colors.blue, value: 50, title: '50%')]))),
                 const SizedBox(width: 16),
-                Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [_legendItem("Food", AppColors.accentTeal), _legendItem("Shopping", Colors.orange), _legendItem("Bills", Colors.blue)]),
+                Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [_legendItem(state.translate("Food", "Cunto", ar: "طعام", de: "Essen"), AppColors.accentTeal), _legendItem(state.translate("Shopping", "Adeegasho", ar: "تسوق", de: "Einkaufen"), Colors.orange), _legendItem(state.translate("Bills", "Biillasha", ar: "فواتير", de: "Rechnungen"), Colors.blue)]),
               ],
             ),
           ),
           const Divider(height: 32),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text("Monthly Budget", style: TextStyle(fontWeight: FontWeight.bold)), Text(r"$850 / $1000", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor))]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(state.translate("Monthly Budget", "Miisaaniyadda Bisha", ar: "الميزانية الشهرية", de: "Monatliches Budget"), style: const TextStyle(fontWeight: FontWeight.bold)), Text(r"$850 / $1000", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor))]),
           const SizedBox(height: 8),
           ClipRRect(borderRadius: BorderRadius.circular(10), child: const LinearProgressIndicator(value: 0.85, minHeight: 8, backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation(Colors.redAccent))),
         ],
@@ -251,13 +251,13 @@ class _CardsScreenState extends State<CardsScreen> {
 
   Widget _legendItem(String label, Color color) => Row(children: [Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)), const SizedBox(width: 8), Text(label, style: const TextStyle(fontSize: 12))]);
 
-  Widget _buildQuickAction(BuildContext context, AppState state, String title, IconData icon, Color color, Widget screen) {
+  Widget _buildQuickAction(BuildContext context, AppState state, String title, String translatedTitle, IconData icon, Color color, Widget screen) {
     return GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => screen)),
       child: Container(
         width: 85 * context.fontSizeFactor, padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(16)),
-        child: Column(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(icon, color: color, size: 22)), const SizedBox(height: 8), Text(state.translate(title, title), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold))]),
+        child: Column(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(icon, color: color, size: 22)), const SizedBox(height: 8), Text(translatedTitle, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold))]),
       ),
     );
   }
@@ -281,10 +281,10 @@ class _CardsScreenState extends State<CardsScreen> {
   Widget _buildFilterChip(String label, bool sel) => Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: (_) {}, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
 
   void _showCardSettings(BuildContext context, AppState state) {
-    showModalBottomSheet(context: context, builder: (_) => Container(padding: const EdgeInsets.all(32), child: Column(mainAxisSize: MainAxisSize.min, children: [ListTile(leading: const Icon(Icons.lock_outline), title: const Text("Change PIN")), ListTile(leading: const Icon(Icons.ac_unit), title: Text(_isFrozen ? "Unfreeze" : "Freeze"), onTap: () { setState(() => _isFrozen = !_isFrozen); Navigator.pop(context); })])));
+    showModalBottomSheet(context: context, builder: (_) => Container(padding: const EdgeInsets.all(32), child: Column(mainAxisSize: MainAxisSize.min, children: [ListTile(leading: const Icon(Icons.lock_outline), title: Text(state.translate("Change PIN", "Beddel PIN-ka", ar: "تغيير رمز PIN", de: "PIN ändern"))), ListTile(leading: const Icon(Icons.ac_unit), title: Text(_isFrozen ? state.translate("Unfreeze", "Ka qaad xanibaadda", ar: "إلغاء التجميد", de: "Entsperren") : state.translate("Freeze", "Xanib", ar: "تجميد", de: "Einfrieren")), onTap: () { setState(() => _isFrozen = !_isFrozen); Navigator.pop(context); })])));
   }
 
   void _showAddCardDialog(BuildContext context, AppState state) {
-    showModalBottomSheet(context: context, builder: (_) => Container(padding: const EdgeInsets.all(32), child: Column(mainAxisSize: MainAxisSize.min, children: [ListTile(leading: const Icon(Icons.add_card), title: const Text("Order Virtual Card")), ListTile(leading: const Icon(Icons.link), title: const Text("Link Physical Card"))])));
+    showModalBottomSheet(context: context, builder: (_) => Container(padding: const EdgeInsets.all(32), child: Column(mainAxisSize: MainAxisSize.min, children: [ListTile(leading: const Icon(Icons.add_card), title: Text(state.translate("Order Virtual Card", "Dalbo Kaadh Virtual ah", ar: "طلب بطاقة افتراضية", de: "Virtuelle Karte bestellen"))), ListTile(leading: const Icon(Icons.link), title: Text(state.translate("Link Physical Card", "Ku xidh Kaadh Jirka ah", ar: "ربط بطاقة فعلية", de: "Physische Karte verknüpfen")))])));
   }
 }

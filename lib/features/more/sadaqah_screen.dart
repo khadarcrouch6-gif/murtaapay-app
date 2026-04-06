@@ -41,8 +41,8 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     return [
       Campaign(
         id: "1",
-        title: state.translate("Medical Emergency", "Xaalad Caafimaad", ar: "طوارئ طبية", de: "Medizinischer Notfall"),
-        description: state.translate("Help Ahmed cover his heart surgery expenses in Turkey.", "Ka caawi Axmed kharashka qalliinka wadnaha ee Turkiga.", ar: "ساعد أحمد في تغطية تكاليف جراحة القلب في تركيا.", de: "Helfen Sie Ahmed, seine Kosten für die Herzoperation in der Türkei zu decken."),
+        title: state.translate("Medical Emergency", "Xaalad Caafimaad", ar: "حالة طبية طارئة", de: "Medizinischer Notfall"),
+        description: state.translate("Help Ahmed cover his heart surgery expenses in Turkey.", "Ka caawi Axmed kharashka qalliinka wadnaha ee Turkiga.", ar: "ساعد أحمد في تغطية تكاليف جراحة قلبه في تركيا.", de: "Helfen Sie Ahmed, seine Kosten für die Herzoperation in der Türkei zu decken."),
         goalAmount: 5000,
         raisedAmount: 3250,
         creator: "Ali Abdi",
@@ -51,7 +51,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
       ),
       Campaign(
         id: "2",
-        title: state.translate("Village Water Well", "Ceelka Biyaha Tuulada", ar: "بئر مياه القرية", de: "Dorfbrunnen"),
+        title: state.translate("Village Water Well", "Ceelka Biyaha Tuulada", ar: "بئر ماء للقرية", de: "Dorfbrunnen"),
         description: state.translate("Building a permanent water source for a village in Gedo.", "Dhisidda il biyo oo joogto ah oo loo sameeyo tuulo ku taal Gedo.", ar: "بناء مصدر مياه دائم لقرية في جيدو.", de: "Bau einer dauerhaften Wasserquelle für ein Dorf in Gedo."),
         goalAmount: 2000,
         raisedAmount: 1800,
@@ -224,7 +224,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
           children: [
             Icon(Icons.verified_rounded, color: const Color(0xFF10B981), size: 16 * context.fontSizeFactor),
             const SizedBox(width: 6),
-            Text(state.translate("Verified", "La Hubiyay", ar: "موثق", de: "Verifiziert"), style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+            Text(state.translate("Verified", "La Hubiyay", ar: "تم التحقق منه", de: "Verifiziert"), style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -257,7 +257,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
               children: [
                 Text("\$${campaign.raisedAmount.toInt()}", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 22 * context.fontSizeFactor)),
                 const SizedBox(height: 2),
-                Text(state.translate("Raised", "La Ururiyay", ar: "تم جمعه", de: "Gesammelt"), style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                Text(state.translate("Raised", "La Ururiyay", ar: "تم جمعها", de: "Gesammelt"), style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
               ],
             ),
             Column(
@@ -318,7 +318,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                 elevation: 8,
                 shadowColor: theme.colorScheme.primary.withOpacity(0.3),
               ),
-              child: Text(state.translate("Start a Fundraiser", "Bilow Ururinta Sadaqo", ar: "ابدأ حملة تبرع", de: "Fundraiser starten"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+              child: Text(state.translate("Start a Fundraiser", "Bilow Ururinta Sadaqo", ar: "بدء حملة تبرع", de: "Fundraiser starten"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
             ),
           ),
         ),

@@ -57,7 +57,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          state.translate("Murtaax Transfer", "Wareejinta Murtaax"), 
+          state.translate("Murtaax Transfer", "Wareejinta Murtaax", ar: "تحويل مرتاح", de: "Murtaax Transfer"), 
           style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
@@ -69,13 +69,13 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
             children: [
               FadeInDown(
                 child: Text(
-                  state.translate("Enter Receiver's Wallet ID", "Geli ID-ga Boorsada Qaataha"),
+                  state.translate("Enter Receiver's Wallet ID", "Geli ID-ga Boorsada Qaataha", ar: "أدخل معرف المحفظة للمستلم", de: "Wallet-ID des Empfängers eingeben"),
                   style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                state.translate("Money will be instantly transferred to the specified Murtaax ID.", "Lacagta waxaa isla markaaba loo wareejin doonaa ID-ga Murtaax ee la cayimay."),
+                state.translate("Money will be instantly transferred to the specified Murtaax ID.", "Lacagta waxaa isla markaaba loo wareejin doonaa ID-ga Murtaax ee la cayimay.", ar: "سيتم تحويل الأموال على الفور إلى معرف مرتاح المحدد.", de: "Das Geld wird sofort auf die angegebene Murtaax-ID übertragen."),
                 style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor),
               ),
               const SizedBox(height: 32),
@@ -88,7 +88,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                   keyboardType: TextInputType.number,
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   decoration: InputDecoration(
-                    hintText: state.translate("Enter Wallet ID (e.g. 102234)", "Geli ID-ga Boorsada (tusaale 102234)"),
+                    hintText: state.translate("Enter Wallet ID (e.g. 102234)", "Geli ID-ga Boorsada (tusaale 102234)", ar: "أدخل معرف المحفظة (مثال 102234)", de: "Wallet-ID eingeben (z. B. 102234)"),
                     prefixIcon: const Icon(Icons.account_circle_outlined, color: AppColors.accentTeal),
                     suffixIcon: _isSearching 
                       ? const Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator(strokeWidth: 2))
@@ -125,7 +125,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                state.translate("VERIFIED RECEIVER", "QAATAHA LA XAQIIJIYEY"), 
+                                state.translate("VERIFIED RECEIVER", "QAATAHA LA XAQIIJIYEY", ar: "مستلم تم التحقق منه", de: "VERIFIZIERTER EMPFÄNGER"), 
                                 style: const TextStyle(color: AppColors.accentTeal, fontSize: 10, fontWeight: FontWeight.bold)),
                               Text(_verifiedReceiverName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                             ],
@@ -142,11 +142,11 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    state.translate("Recent Contacts", "Xiriirada Dhawaan"), 
+                    state.translate("Recent Contacts", "Xiriirada Dhawaan", ar: "جهات الاتصال الأخيرة", de: "Letzte Kontakte"), 
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   TextButton(
                     onPressed: () {}, 
-                    child: Text(state.translate("View All", "Eeg Dhammaan"))),
+                    child: Text(state.translate("View All", "Eeg Dhammaan", ar: "عرض الكل", de: "Alle anzeigen"))),
                 ],
               ),
               const SizedBox(height: 16),
@@ -184,7 +184,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                       ),
                     );
                   },
-                  child: Text(state.translate("Continue to Review", "Sii soco Dib-u-eegis")),
+                  child: Text(state.translate("Continue to Review", "Sii soco Dib-u-eegis", ar: "متابعة المراجعة", de: "Weiter zur Überprüfung")),
                 ),
               ),
             ],

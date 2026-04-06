@@ -20,7 +20,9 @@ class AppState extends ChangeNotifier {
   Locale _locale = const Locale('en');
   Locale get locale => _locale;
 
-  bool get isRtl => _locale.languageCode == 'ar';
+  // Estonian is not RTL, so we can remove or update this check.
+  // Arabic was RTL.
+  bool get isRtl => _locale.languageCode == 'ar'; 
 
   int _selectedNavIndex = 0;
   int get selectedNavIndex => _selectedNavIndex;
@@ -84,10 +86,11 @@ class AppState extends ChangeNotifier {
   }
 
   // Helper for translations
-  String translate(String en, String so, {String ar = '', String de = ''}) {
+  String translate(String en, String so, {String ar = '', String et = '', String de = ''}) {
     switch (_locale.languageCode) {
       case 'so': return so.isNotEmpty ? so : en;
-      case 'ar': return ar.isNotEmpty ? ar : (so.isNotEmpty ? so : en);
+      case 'ar': return ar.isNotEmpty ? ar : en;
+      case 'et': return et.isNotEmpty ? et : (so.isNotEmpty ? so : en);
       case 'de': return de.isNotEmpty ? de : en;
       default:   return en;
     }

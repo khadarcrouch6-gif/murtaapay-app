@@ -61,7 +61,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   FadeInDown(
                     child: Text(
-                      state.translate("Transfer Successful!", "Lacagta waa la diray!", ar: "تمت العملية بنجاح!", de: "Überweisung erfolgreich!"),
+                      state.translate("Transfer Successful!", "Lacagta waa la diray!", ar: "تم التحويل بنجاح!", de: "Überweisung erfolgreich!"),
                       style: TextStyle(
                         fontSize: 26 * context.fontSizeFactor,
                         fontWeight: FontWeight.bold,
@@ -79,7 +79,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                       state.translate(
                         "$amount has been securely sent to $receiverName.",
                         "\$$amount waxaa si ammaan ah loogu diray $receiverName.",
-                        ar: "تم إرسال $amount بنجاح إلى $receiverName.",
+                        ar: "تم إرسال $amount بأمان إلى $receiverName.",
                         de: "$amount wurde sicher an $receiverName gesendet."
                       ),
                       textAlign: TextAlign.center,
@@ -131,7 +131,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                             Navigator.popUntil(context, (route) => route.isFirst);
                           },
                           child: Text(
-                            state.translate("Back to Home", "Ku noqo Home-ka", ar: "العودة للرئيسية", de: "Zurück zur Startseite"),
+                            state.translate("Back to Home", "Ku noqo Home-ka", ar: "العودة إلى الصفحة الرئيسية", de: "Zurück zur Startseite"),
                             style: TextStyle(
                               color: AppColors.primaryDark,
                               fontWeight: FontWeight.bold,

@@ -40,7 +40,7 @@ class MurtaaxPayApp extends StatelessWidget {
           supportedLocales: const [
             Locale('en'),
             Locale('so'),
-            Locale('ar'),
+            Locale('ar'), 
             Locale('de'),
           ],
           builder: (context, child) {

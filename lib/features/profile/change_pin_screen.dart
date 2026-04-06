@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 
 class ChangePinScreen extends StatefulWidget {
   const ChangePinScreen({super.key});
@@ -66,9 +67,9 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              "Your Transaction PIN has been changed successfully.",
+              AppState().translate("Your Transaction PIN has been changed successfully.", "PIN-kaaga macaamilka si guul leh ayaa loo beddelay.", ar: "تم تغيير رقم PIN الخاص بالمعاملات بنجاح.", de: "Ihre Transaktions-PIN wurde erfolgreich geändert."),
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.grey, fontSize: 14),
+              style: const TextStyle(color: AppColors.grey, fontSize: 14),
             ),
             const SizedBox(height: 32),
             SizedBox(
@@ -83,9 +84,9 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
-                child: const Text(
-                  "Done",
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
+                child: Text(
+                  AppState().translate("Done", "Dhameeyay", ar: "تم", de: "Fertig"),
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
                 ),
               ),
             ),
@@ -107,7 +108,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Change PIN", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppState().translate("Change PIN", "Beddel PIN-ka", ar: "تغيير رقم PIN", de: "PIN ändern"), style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -120,28 +121,28 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Create New PIN",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Text(
+                AppState().translate("Create New PIN", "Abuur PIN Cusub", ar: "إنشاء رقم PIN جديد", de: "Neue PIN erstellen"),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
-                "Your new PIN must be 4 digits and different from your previous PIN.",
-                style: TextStyle(fontSize: 14, color: AppColors.grey),
+                AppState().translate("Your new PIN must be 4 digits and different from your previous PIN.", "PIN-kaaga cusub waa inuu ahaadaa 4 god oo ka duwan kii hore.", ar: "يجب أن يتكون رقم PIN الجديد الخاص بك من 4 أرقام ومختلفاً عن رقم PIN السابق.", de: "Ihre neue PIN muss 4-stellig sein und sich von Ihrer vorherigen PIN unterscheiden."),
+                style: const TextStyle(fontSize: 14, color: AppColors.grey),
               ),
               const SizedBox(height: 32),
               
               _buildPinField(
-                label: "Current PIN",
+                label: AppState().translate("Current PIN", "PIN-ka Hadda", ar: "رقم PIN الحالي", de: "Aktuelle PIN"),
                 controller: _oldPinController,
                 obscureText: _obscureOld,
                 onToggleVisibility: () => setState(() => _obscureOld = !_obscureOld),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Fadlan geli PIN-kaagii hore";
+                    return AppState().translate("Please enter your current PIN", "Fadlan geli PIN-kaagii hore", ar: "يرجى إدخال رقم PIN الحالي", de: "Bitte geben Sie Ihre aktuelle PIN ein");
                   }
                   if (value.length < 4) {
-                    return "PIN-ku waa inuu ahaadaa 4 god";
+                    return AppState().translate("PIN must be 4 digits", "PIN-ku waa inuu ahaadaa 4 god", ar: "يجب أن يتكون رقم PIN من 4 أرقام", de: "PIN muss 4 Stellen haben");
                   }
                   return null;
                 },
@@ -149,19 +150,19 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
               const SizedBox(height: 20),
               
               _buildPinField(
-                label: "New PIN",
+                label: AppState().translate("New PIN", "PIN Cusub", ar: "رقم PIN الجديد", de: "Neue PIN"),
                 controller: _newPinController,
                 obscureText: _obscureNew,
                 onToggleVisibility: () => setState(() => _obscureNew = !_obscureNew),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Fadlan geli PIN cusub";
+                    return AppState().translate("Please enter new PIN", "Fadlan geli PIN cusub", ar: "يرجى إدخال رقم PIN الجديد", de: "Bitte geben Sie eine neue PIN ein");
                   }
                   if (value.length < 4) {
-                    return "PIN-ku waa inuu ahaadaa 4 god";
+                    return AppState().translate("PIN must be 4 digits", "PIN-ku waa inuu ahaadaa 4 god", ar: "يجب أن يتكون رقم PIN من 4 أرقام", de: "PIN muss 4 Stellen haben");
                   }
                   if (value == _oldPinController.text) {
-                    return "Kama mid noqon karo kii hore";
+                    return AppState().translate("Cannot be the same as old", "Kama mid noqon karo kii hore", ar: "لا يمكن أن يكون هو نفسه القديم", de: "Darf nicht mit der alten PIN identisch sein");
                   }
                   return null;
                 },
@@ -169,16 +170,16 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
               const SizedBox(height: 20),
               
               _buildPinField(
-                label: "Confirm New PIN",
+                label: AppState().translate("Confirm New PIN", "Xaqiiji PIN-ka Cusub", ar: "تأكيد رقم PIN الجديد", de: "Neue PIN bestätigen"),
                 controller: _confirmPinController,
                 obscureText: _obscureConfirm,
                 onToggleVisibility: () => setState(() => _obscureConfirm = !_obscureConfirm),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Fadlan xaqiiji PIN-ka cusub";
+                    return AppState().translate("Please confirm new PIN", "Fadlan xaqiiji PIN-ka cusub", ar: "يرجى تأكيد رقم PIN الجديد", de: "Bitte bestätigen Sie die neue PIN");
                   }
                   if (value != _newPinController.text) {
-                    return "PIN-yadu isma le'eka";
+                    return AppState().translate("PINs do not match", "PIN-yadu isma le'eka", ar: "أرقام PIN غير متطابقة", de: "PINs stimmen nicht überein");
                   }
                   return null;
                 },
@@ -195,9 +196,9 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
-                  child: const Text(
-                    "Save Changes",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  child: Text(
+                    AppState().translate("Save Changes", "Kaydi Isbeddelka", ar: "حفظ التغييرات", de: "Änderungen speichern"),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),

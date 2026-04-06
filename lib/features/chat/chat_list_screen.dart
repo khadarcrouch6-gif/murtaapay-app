@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -131,7 +132,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         elevation: 0,
         backgroundColor: Colors.white,
         title: Text(
-          'Messages',
+          AppState().translate("Messages", "Farimaha", ar: "الرسائل", de: "Nachrichten"),
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 24 * context.fontSizeFactor,
@@ -149,9 +150,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   iconSize: 28 * context.fontSizeFactor,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Start new conversation'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text(AppState().translate("Start new conversation", "Bilow wada hadal cusub", ar: "بدء محادثة جديدة", de: "Neues Gespräch beginnen")),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -175,7 +176,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       controller: _searchController,
                       style: TextStyle(fontSize: 14 * context.fontSizeFactor),
                       decoration: InputDecoration(
-                        hintText: 'Search conversations...',
+                        hintText: AppState().translate("Search conversations...", "Raadi wada sheekaysiga...", ar: "البحث في المحادثات...", de: "Gespräche suchen..."),
                         hintStyle: TextStyle(
                           color: AppColors.grey,
                           fontSize: 14 * context.fontSizeFactor,
@@ -302,7 +303,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       Expanded(
                         child: Text(
                           conversation.lastMessage?.content ??
-                              'No messages',
+                              AppState().translate("No messages", "Farimo ma jiraan", ar: "لا توجد رسائل", de: "Keine Nachrichten"),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -351,14 +352,15 @@ class _ChatListScreenState extends State<ChatListScreen> {
     final now = DateTime.now();
     final difference = now.difference(time);
 
+    final state = AppState();
     if (difference.inMinutes < 1) {
-      return 'now';
+      return state.translate("now", "hadda", ar: "الآن", de: "jetzt");
     } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
+      return "${difference.inMinutes}${state.translate("m ago", "d horta", ar: "د مضت", de: "M vor")}";
     } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
+      return "${difference.inHours}${state.translate("h ago", "saac horta", ar: "س مضت", de: "Std vor")}";
     } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
+      return "${difference.inDays}${state.translate("d ago", "maalmood horta", ar: "ي مضت", de: "T vor")}";
     } else {
       return '${time.day}/${time.month}';
     }

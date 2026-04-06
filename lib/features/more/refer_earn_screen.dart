@@ -19,7 +19,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
     Clipboard.setData(ClipboardData(text: code));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(state.translate("Referral code copied to clipboard!", "Koodhka tixraaca waa la koobiyeeyay!", ar: "تم نسخ رمز الإحالة!", de: "Empfehlungscode kopiert!")),
+        content: Text(state.translate("Referral code copied to clipboard!", "Koodhka tixraaca waa la koobiyeeyay!", ar: "تم نسخ كود التوصية إلى الحافظة!", de: "Empfehlungscode in die Zwischenablage kopiert!")),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         backgroundColor: AppColors.primaryDark,
@@ -41,7 +41,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text(state.translate("Refer & Earn", "Tixraac & Guulayso", ar: "أحل واربح", de: "Empfehlen & Verdienen"), 
+          title: Text(state.translate("Refer & Earn", "Tixraac & Guulayso", ar: "شارك واكسب", de: "Empfehlen & Verdienen"), 
               style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color, fontSize: 20 * context.fontSizeFactor)),
           centerTitle: true,
           leading: IconButton(
@@ -94,7 +94,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                                     child: Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 40 * context.fontSizeFactor),
                                   ),
                                   const SizedBox(height: 20),
-                                  Text(state.translate("Rewards Waiting", "Abaalmarino ku sugaya", ar: "مكافآت بانتظارك", de: "Belohnungen warten"), style: TextStyle(color: Colors.white, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                                  Text(state.translate("Rewards Waiting", "Abaalmarino ku sugaya", ar: "مكافآت في انتظارك", de: "Belohnungen warten"), style: TextStyle(color: Colors.white, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                                 ],
                               ),
                             ],
@@ -108,7 +108,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                     child: MaxWidthBox(
                       maxWidth: 600,
                       child: Text(
-                        state.translate("Invite Friends, Get \$10", "Saaxiibbadaa casuun, hel \$10", ar: "ادعُ الأصدقاء، واحصل على 10 دولار", de: "Freunde einladen, 10 \$ erhalten"),
+                        state.translate("Invite Friends, Get \$10", "Saaxiibbadaa casuun, hel \$10", ar: "ادعُ الأصدقاء، واحصل على 10 دولارات", de: "Freunde einladen, 10 \$ erhalten"),
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 26 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color),
                       ),
@@ -120,7 +120,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                     child: MaxWidthBox(
                       maxWidth: 600,
                       child: Text(
-                        state.translate("Share MurtaaxPay with your friends and you both get \$10 when they make their first transfer of \$50 or more.", "La wadaag MurtaaxPay saaxiibbadaa oo labadiinaba waxaad helaysaan \$10 marka ay sameeyaan xawaaladdooda ugu horreysa oo \$50 ama ka badan ah.", ar: "شارك MurtaaxPay مع أصدقائك وستحصلان كلاكما على 10 دولارات عند قيامهم بأول تحويل بقيمة 50 دولارًا أو أكثر.", de: "Teilen Sie MurtaaxPay mit Ihren Freunden und Sie beide erhalten 10 \$, wenn diese ihre erste Überweisung von 50 \$ oder mehr tätigen."),
+                        state.translate("Share MurtaaxPay with your friends and you both get \$10 when they make their first transfer of \$50 or more.", "La wadaag MurtaaxPay saaxiibbadaa oo labadiinaba waxaad helaysaan \$10 marka ay sameeyaan xawaaladdooda ugu horreysa oo \$50 ama ka badan ah.", ar: "شارك MurtaaxPay مع أصدقائك وستحصلان كلاكما على 10 دولارات عندما يقومون بأول تحويل بقيمة 50 دولارًا أو أكثر.", de: "Teilen Sie MurtaaxPay mit Ihren Freunden und Sie beide erhalten 10 \$, wenn diese ihre erste Überweisung von 50 \$ oder mehr tätigen."),
                         textAlign: TextAlign.center,
                         style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7), fontSize: 15 * context.fontSizeFactor, height: 1.6, fontWeight: FontWeight.w500),
                       ),
@@ -136,7 +136,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                         maxWidth: 600,
                         child: Column(
                           children: [
-                            Text(state.translate("Your Referral Code", "Koodhkaaga Tixraaca", ar: "رمز الإحالة الخاص بك", de: "Ihr Empfehlungscode"), style: TextStyle(fontSize: 13 * context.fontSizeFactor, color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6), fontWeight: FontWeight.bold, letterSpacing: 1)),
+                            Text(state.translate("Your Referral Code", "Koodhkaaga Tixraaca", ar: "كود التوصية الخاص بك", de: "Ihr Empfehlungscode"), style: TextStyle(fontSize: 13 * context.fontSizeFactor, color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6), fontWeight: FontWeight.bold, letterSpacing: 1)),
                             const SizedBox(height: 12),
                             Container(
                               padding: const EdgeInsets.all(8),

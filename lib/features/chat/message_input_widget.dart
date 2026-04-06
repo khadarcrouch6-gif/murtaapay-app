@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
 import 'personal_info_share_screen.dart';
@@ -74,9 +75,9 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
     setState(() => _showMediaOptions = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('SMS sent successfully!'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(AppState().translate("SMS sent successfully!", "SMS-ka si guul leh ayaa loo diray", ar: "تم إرسال SMS بنجاح!", de: "SMS erfolgreich gesendet!")),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -98,9 +99,9 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
     setState(() => _showMediaOptions = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Audio message sent!'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(AppState().translate("Audio message sent!", "Fariintii codka ahayd waa la diray!", ar: "تم إرسال الرسالة الصوتية!", de: "Audionachricht gesendet!")),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -122,9 +123,9 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
     setState(() => _showMediaOptions = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Image sent!'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(AppState().translate("Image sent!", "Sawirkii waa la diray!", ar: "تم إرسال الصورة!", de: "Bild gesendet!")),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -148,9 +149,9 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
     setState(() => _showMediaOptions = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Document sent!'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(AppState().translate("Document sent!", "Dukumiintigii waa la diray!", ar: "تم إرسال المستند!", de: "Dokument gesendet!")),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -177,9 +178,9 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
             setState(() => _showMediaOptions = false);
 
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Personal information shared!'),
-                duration: Duration(seconds: 2),
+              SnackBar(
+                content: Text(AppState().translate("Personal information shared!", "Xogta shakhsiga ah waa la wadaagay!", ar: "تم مشاركة المعلومات الشخصية!", de: "Persönliche Informationen geteilt!")),
+                duration: const Duration(seconds: 2),
               ),
             );
           },
@@ -243,7 +244,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                     maxLines: 4,
                     minLines: 1,
                     decoration: InputDecoration(
-                      hintText: 'Type a message...',
+                      hintText: AppState().translate("Type a message...", "Qor fariin...", ar: "اكتب رسالة...", de: "Nachricht schreiben..."),
                       hintStyle: TextStyle(
                         color: AppColors.grey,
                         fontSize: 14 * context.fontSizeFactor,
@@ -327,7 +328,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Share Content',
+            AppState().translate("Share Content", "Wadaag Macluumaadka", ar: "مشاركة المحتوى", de: "Inhalt teilen"),
             style: TextStyle(
               color: AppColors.grey,
               fontSize: 12 * context.fontSizeFactor,
@@ -344,7 +345,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                   context: context,
                   theme: theme,
                   icon: FontAwesomeIcons.sms,
-                  label: 'SMS',
+                  label: AppState().translate("SMS", "SMS", ar: "SMS", de: "SMS"),
                   onTap: _sendSMS,
                   color: Colors.blue,
                 ),
@@ -353,7 +354,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                   context: context,
                   theme: theme,
                   icon: FontAwesomeIcons.image,
-                  label: 'Gallery',
+                  label: AppState().translate("Gallery", "Sawirrada", ar: "المعرض", de: "Galerie"),
                   onTap: _sendImage,
                   color: Colors.purple,
                 ),
@@ -362,7 +363,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                   context: context,
                   theme: theme,
                   icon: FontAwesomeIcons.fileLines,
-                  label: 'File',
+                  label: AppState().translate("File", "Fayl", ar: "ملف", de: "Datei"),
                   onTap: _sendDocument,
                   color: Colors.orange,
                 ),
@@ -371,7 +372,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                   context: context,
                   theme: theme,
                   icon: FontAwesomeIcons.idCard,
-                  label: 'Contact',
+                  label: AppState().translate("Contact", "Xiriirka", ar: "جهة الاتصال", de: "Kontakt"),
                   onTap: _sharePersonalInfo,
                   color: AppColors.accentTeal,
                 ),
@@ -380,7 +381,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                   context: context,
                   theme: theme,
                   icon: FontAwesomeIcons.locationDot,
-                  label: 'Location',
+                  label: AppState().translate("Location", "Goobta", ar: "الموقع", de: "Standort"),
                   onTap: () {},
                   color: Colors.red,
                 ),

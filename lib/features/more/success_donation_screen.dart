@@ -64,7 +64,7 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
               FadeInUp(
                 duration: const Duration(milliseconds: 600),
                 child: Text(
-                  state.translate("Deeqdu Way Guulaysatay!", "Deeqdu Way Guulaysatay!", ar: "تم التبرع بنجاح!", de: "Spende erfolgreich!"),
+                  state.translate("Donation Successful!", "Deeqdu Way Guulaysatay!", ar: "تم التبرع بنجاح!", de: "Spende erfolgreich!"),
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color),
                 ),
@@ -74,7 +74,7 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
                 delay: const Duration(milliseconds: 200),
                 child: Text(
                   state.translate(
-                    "Waad ku mahadsan tahay deeqdaada \$${widget.amount.toInt()}. Waxay wax weyn ka tari doontaa nolosha dadka u baahan.",
+                    "Thank you for your donation of \$${widget.amount.toInt()}. It will make a big difference in the lives of those in need.",
                     "Waad ku mahadsan tahay deeqdaada \$${widget.amount.toInt()}. Waxay wax weyn ka tari doontaa nolosha dadka u baahan.",
                     ar: "شكراً لتبرعك بمبلغ \$${widget.amount.toInt()}. سيحدث فرقاً كبيراً في حياة المحتاجين.",
                     de: "Vielen Dank für Ihre Spende von \$${widget.amount.toInt()}. Sie wird einen großen Unterschied im Leben der Bedürftigen machen.",

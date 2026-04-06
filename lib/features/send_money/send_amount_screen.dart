@@ -159,7 +159,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                           if (!state.hasSufficientBalance(amount)) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(state.translate("Insufficient Balance", "Haraagu kuguma filna", ar: "رصيد غير كاف", de: "Unzureichendes Guthaben")),
+                                content: Text(state.translate("Insufficient Balance", "Haraagu kuguma filna", ar: "رصيد غير كافٍ", de: "Unzureichendes Guthaben")),
                                 backgroundColor: Colors.red,
                               )
                             );
@@ -172,7 +172,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                           }
                         },
                         child: Text(
-                          state.translate("Continue", "Sii soco", ar: "استمرار", de: "Weiter"),
+                          state.translate("Continue", "Sii soco", ar: "متابعة", de: "Weiter"),
                           style: TextStyle(fontSize: 16 * context.fontSizeFactor),
                         ),
                       ),

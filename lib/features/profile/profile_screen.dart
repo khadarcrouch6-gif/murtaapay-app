@@ -67,14 +67,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Identity Verification (KYC)", "Xaqiijinta Aqoonsiga", ar: "التحقق من الهوية", de: "Identitätsprüfung"), 
+                        state.translate("Identity Verification (KYC)", "Xaqiijinta Aqoonsiga", ar: "تحقق الهوية (KYC)", de: "Identitätsprüfung"), 
                         Icons.verified_user_rounded, 
                         () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen()))
                       ),
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Security & PIN", "Amniga & PIN", ar: "الأمن ورمز PIN", de: "Sicherheit & PIN"), 
+                        state.translate("Security & PIN", "Amniga & PIN", ar: "الأمان وكلمة السر", de: "Sicherheit & PIN"), 
                         FontAwesomeIcons.shieldHalved, 
                         () => _showSecuritySettings(context, state)
                       ),
@@ -84,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Linked Bank Accounts", "Bangiyada ku Xidhan", ar: "الحسابات البنكية المرتبطة", de: "Verknüpfte Bankkonten"), 
+                        state.translate("Linked Bank Accounts", "Bangiyada ku Xidhan", ar: "حسابات بنكية مرتبطة", de: "Verknüpfte Bankkonten"), 
                         FontAwesomeIcons.buildingColumns, 
                         () => _showLinkedBanks(context, state)
                       ),
@@ -108,11 +108,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
 
                       const SizedBox(height: 24),
-                      _buildSectionTitle(state.translate("Others", "Kuwa kale", ar: "أخرى", de: "Andere")),
+                      _buildSectionTitle(state.translate("Others", "Kuwa kale", ar: "آخرون", de: "Andere")),
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Refer & Earn", "Tixraac & Guulayso", ar: "أحل واربح", de: "Empfehlen & Verdienen"), 
+                        state.translate("Refer & Earn", "Tixraac & Guulayso", ar: "دعوة الأصدقاء", de: "Empfehlen & Verdienen"), 
                         FontAwesomeIcons.userPlus, 
                         () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ReferEarnScreen()))
                       ),
@@ -241,7 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(state.translate("Edit Personal Information", "Wax ka beddel Xogta", ar: "تعديل المعلومات الشخصية", de: "Persönliche Daten bearbeiten"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 24),
               _buildEditorField(nameCtrl, state.translate("Full Name", "Magaca oo dhammaystiran", ar: "الاسم الكامل", de: "Vollständiger Name"), Icons.person_outline),
-              _buildEditorField(emailCtrl, state.translate("Email Address", "Boostada qoraalka", ar: "البريد الإلكتروني", de: "E-Mail-Adresse"), Icons.email_outlined),
+              _buildEditorField(emailCtrl, state.translate("Email Address", "Boostada qoraalka", ar: "عنوان البريد الإلكتروني", de: "E-Mail-Adresse"), Icons.email_outlined),
               _buildEditorField(phoneCtrl, state.translate("Phone Number", "Lambarka taleefanka", ar: "رقم الهاتف", de: "Telefonnummer"), Icons.phone_outlined),
               _buildEditorField(addressCtrl, state.translate("Current Address", "Meesha uu degan yahay", ar: "العنوان الحالي", de: "Aktuelle Adresse"), Icons.location_on_outlined),
               const SizedBox(height: 32),
@@ -390,7 +390,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         ListTile(
           leading: const Icon(Icons.password, color: AppColors.accentTeal),
-          title: Text(state.translate("Change PIN", "Beddel PIN-ka", ar: "تغيير رمز PIN", de: "PIN ändern")),
+          title: Text(state.translate("Change PIN", "Beddel PIN-ka", ar: "تغيير رقم PIN", de: "PIN ändern")),
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePinScreen())),
         ),
       ]),
@@ -405,12 +405,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 20),
         ListTile(
           leading: const Icon(Icons.account_balance, color: AppColors.accentTeal),
-          title: const Text("Premier Bank"),
+          title: const Text("LHV Pank"),
           subtitle: const Text("**** 8829"),
         ),
         ListTile(
           leading: const Icon(Icons.account_balance, color: AppColors.accentTeal),
-          title: const Text("IBS Bank"),
+          title: const Text("Swedbank"),
           subtitle: const Text("**** 1120"),
         ),
       ]),

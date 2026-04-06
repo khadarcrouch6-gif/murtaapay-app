@@ -1,140 +1,137 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
-import '../../core/widgets/detail_row.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/detail_row.dart';
 import 'payment_screen.dart';
 
-class ReviewScreen extends StatefulWidget {
+class ReviewScreen extends StatelessWidget {
   final String amount;
   final String receiverName;
   final String receiverPhone;
-  final String method;
+  final String? method;
 
   const ReviewScreen({
     super.key,
     required this.amount,
     required this.receiverName,
     required this.receiverPhone,
-    required this.method,
+    this.method,
   });
-
-
-  @override
-  State<ReviewScreen> createState() => _ReviewScreenState();
-}
-
-class _ReviewScreenState extends State<ReviewScreen> {
-  void _handlePayment() async {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => PaymentScreen(
-          amount: widget.amount,
-          receiverName: widget.receiverName,
-          receiverPhone: widget.receiverPhone,
-          initialMethod: widget.method,
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     final state = AppState();
-    double sendAmount = double.tryParse(widget.amount) ?? 0;
-    double receivedAmount = sendAmount * 1.08;
+    final theme = Theme.of(context);
+    
+    // Calculation (Mock)
+    double amountVal = double.tryParse(amount) ?? 0;
+    double fee = amountVal * 0.01; // 1% fee
+    double total = amountVal + fee;
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text(
-          state.translate("Review Transfer", "Dib-u-eegis", ar: "مراجعة التحويل", de: "Überprüfung"), 
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor)),
+          state.translate("Review Transfer", "Dib-u-eegis", ar: "مراجعة التحويل", de: "Überprüfung"),
+          style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color, fontSize: 20 * context.fontSizeFactor),
+        ),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20 * context.fontSizeFactor, color: theme.iconTheme.color),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(context.horizontalPadding),
-        child: Column(
-          children: [
-                FadeInDown(
-                  child: Container(
-                    padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10)),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        DetailRow(label: state.translate("You send", "Adiga ayaa diraya", ar: "أنت ترسل", de: "Sie senden"), value: "${widget.amount} EUR"),
-                        const SizedBox(height: 16),
-                        DetailRow(label: state.translate("Payment Method", "Habka Bixinta", ar: "طريقة الدفع", de: "Zahlungsmethode"), value: widget.method, valueColor: AppColors.primaryDark),
-                        const SizedBox(height: 16),
-                        DetailRow(label: state.translate("Fee", "Khidmad", ar: "رسوم", de: "Gebühr"), value: "0.00 EUR", valueColor: AppColors.accentTeal),
-                        const SizedBox(height: 16),
-                        DetailRow(label: state.translate("Exchange rate", "Sarrifka", ar: "سعر الصرف", de: "Wechselkurs"), value: "1 EUR = 1.08 USD"),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20 * context.fontSizeFactor),
-                          child: const Divider(),
-                        ),
-                        DetailRow(
-                          label: state.translate("Receiver gets", "Qaataha wuxuu helayaa", ar: "المستلم يستلم", de: "Empfänger erhält"),
-                          value: "\$${receivedAmount.toStringAsFixed(2)} USD",
-                          valueColor: AppColors.primaryDark,
-                        ),
-                      ],
-                    ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(context.horizontalPadding),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              FadeInDown(
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surface,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      DetailRow(label: state.translate("You send", "Adiga ayaa diraya", ar: "أنت ترسل", de: "Du sendest"), value: "\$$amount"),
+                      const SizedBox(height: 12),
+                      DetailRow(label: state.translate("Payment Method", "Habka Bixinta", ar: "طريقة الدفع", de: "Zahlungsmethode"), value: method ?? "Murtaax Wallet"),
+                      const SizedBox(height: 12),
+                      DetailRow(label: state.translate("Fee", "Khidmad", ar: "رسوم", de: "Gebühr"), value: "\$${fee.toStringAsFixed(2)}"),
+                      const SizedBox(height: 12),
+                      DetailRow(label: state.translate("Exchange rate", "Sarrifka", ar: "سعر الصرف", de: "Wechselkurs"), value: "1 USD = 1 USD"),
+                      const Divider(height: 32),
+                      DetailRow(
+                        label: state.translate("Receiver gets", "Qaataha wuxuu helayaa", ar: "المستلم يستلم", de: "Empfänger erhält"), 
+                        value: "\$$amount",
+                        isBold: true,
+                        valueColor: AppColors.accentTeal,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 32),
-                FadeInUp(
-                  child: Container(
-                    padding: EdgeInsets.all(20 * context.fontSizeFactor),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryDark.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(20),
+              ),
+              const Spacer(),
+              FadeInUp(
+                child: Column(
+                  children: [
+                    Text(
+                      state.translate(
+                        "Money will be delivered instantly.", 
+                        "Lacagtu waxay gaadhaysaa isla markiiba.", 
+                        ar: "سيتم تسليم الأموال فوراً.", 
+                        de: "Das Geld wird sofort zugestellt."
+                      ),
+                      style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor),
                     ),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56 * context.fontSizeFactor,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PaymentMethodScreen(
+                                amount: amount,
+                                receiverName: receiverName,
+                                receiverPhone: receiverPhone,
+                                // total: total.toStringAsFixed(2), // PaymentMethodScreen uses amount to calculate fee
+                              ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryDark,
-                          radius: 20 * context.fontSizeFactor,
-                          child: FaIcon(FontAwesomeIcons.user, color: Colors.white, size: 16 * context.fontSizeFactor),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          elevation: 0,
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(widget.receiverName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
-                              Text(widget.receiverPhone, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
-                            ],
-                          ),
+                        child: Text(
+                          state.translate("Confirm & Pay", "Xaqiiji & Bixi", ar: "تأكيد والدفع", de: "Bestätigen & Bezahlen"),
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 48),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 200),
-                  child: ElevatedButton(
-                    onPressed: _handlePayment,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentTeal,
-                      minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    ),
-                    child: Text(
-                      state.translate("Confirm & Pay", "Xaqiiji & Bixi", ar: "تأكيد والدفع", de: "Bestätigen & Zahlen"), 
-                      style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: Colors.white)),
-                  ),
-                ),
-                const SizedBox(height: 20),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

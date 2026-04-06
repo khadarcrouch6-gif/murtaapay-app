@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../auth/login_screen.dart';
@@ -16,24 +17,30 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   bool isLastPage = false;
+  late List<OnboardingData> _pages;
 
-  final List<OnboardingData> _pages = [
-    OnboardingData(
-      title: "Send Money Home, Instantly",
-      subtitle: "Support your family in Somalia with the fastest transfer service.",
-      image: "assets/images/logo.png",
-    ),
-    OnboardingData(
-      title: "Fast & Secure Transfers",
-      subtitle: "Bank-level security ensures your money reaches its destination safely.",
-      image: "assets/images/logo.png",
-    ),
-    OnboardingData(
-      title: "Send to ZAAD, EVC, eDahab",
-      subtitle: "Direct transfers to all major Somali mobile money platforms.",
-      image: "assets/images/logo.png",
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    final state = AppState();
+    _pages = [
+      OnboardingData(
+        title: state.translate("Send Money Home, Instantly", "Lacag u Dir Guriga, Degdeg", ar: "أرسل الأموال إلى المنزل فوراً", de: "Geld sofort nach Hause senden"),
+        subtitle: state.translate("Support your family in Somalia with the fastest transfer service.", "Ku taageer qoyskaaga Soomaaliya adeegga ugu xawaaraha badan.", ar: "ادعم عائلتك في الصومال بأسرع خدمة تحويل.", de: "Unterstützen Sie Ihre Familie in Somalia mit dem schnellsten Transferservice."),
+        image: "assets/images/logo.png",
+      ),
+      OnboardingData(
+        title: state.translate("Fast & Secure Transfers", "Xawaalad Degdeg ah & Ammaan ah", ar: "تحويلات سريعة وآمنة", de: "Schnelle & sichere Überweisungen"),
+        subtitle: state.translate("Bank-level security ensures your money reaches its destination safely.", "Amniga heerka bangiga ayaa hubinaya in lacagtaadu si nabad ah ku gaadho meeshii loogu talagalay.", ar: "أمان بمستوى البنك يضمن وصول أموالك إلى وجهتها بأمان.", de: "Sicherheit auf Bankenniveau sorgt dafür, dass Ihr Geld sicher ans Ziel kommt."),
+        image: "assets/images/logo.png",
+      ),
+      OnboardingData(
+        title: state.translate("Send to ZAAD, EVC, eDahab", "U dir ZAAD, EVC, eDahab", ar: "أرسل إلى ZAAD ، EVC ، eDahab", de: "Senden an ZAAD, EVC, eDahab"),
+        subtitle: state.translate("Direct transfers to all major Somali mobile money platforms.", "Xawilaad toos ah dhammaan barmaamijyada lacagaha gacanta ee Soomaaliya.", ar: "تحويلات مباشرة إلى جميع منصات الأموال المحمولة الصومالية الرئيسية.", de: "Direkte Überweisungen an alle wichtigen somalischen Mobile-Money-Plattformen."),
+        image: "assets/images/logo.png",
+      ),
+    ];
+  }
 
   @override
   void dispose() {
@@ -97,7 +104,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             minimumSize: Size(120 * context.fontSizeFactor, 56 * context.fontSizeFactor),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                           ),
-                          child: Text(isLastPage ? "Get Started" : "Next", style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
+                          child: Text(
+                            isLastPage ? AppState().translate("Get Started", "Bilow Hadda", ar: "ابدأ الآن", de: "Loslegen") : AppState().translate("Next", "Xiga", ar: "التالي", de: "Nächste"), 
+                            style: TextStyle(fontSize: 14 * context.fontSizeFactor)
+                          ),
                         ),
                       ),
                     ],

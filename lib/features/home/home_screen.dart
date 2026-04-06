@@ -167,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   crossAxisAlignment: CrossAxisAlignment.start, 
                   children: [
                     Text(
-                      state.translate("Welcome back,", "Ku soo dhawaaw,", ar: "أهلاً بك،", de: "Willkommen zurück,"), 
+                      state.translate("Welcome back,", "Ku soo dhawaaw,", ar: "مرحباً بعودتك،", de: "Willkommen zurück,"), 
                       style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor)
                     ),
                     Text(
@@ -344,8 +344,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             children: [
               _buildFeatureItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen"), Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
               _buildFeatureItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah"), Icons.volunteer_activism_rounded, AppColors.accentTeal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
-              _buildFeatureItem(context, state.translate("Exchange", "Sarifka", ar: "الصرف", de: "Wechselkurs"), Icons.currency_exchange_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
-              _buildFeatureItem(context, state.translate("Vouchers", "Waatsharrada", ar: "القسائم", de: "Gutscheine"), Icons.confirmation_number_rounded, Colors.purple, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))),
+              _buildFeatureItem(context, state.translate("Exchange", "Sarifka", ar: "صرف", de: "Wechselkurs"), Icons.currency_exchange_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
+              _buildFeatureItem(context, state.translate("Vouchers", "Waatsharrada", ar: "قسائم", de: "Gutscheine"), Icons.confirmation_number_rounded, Colors.purple, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))),
             ],
           ),
         ],
@@ -379,7 +379,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       const SizedBox(height: 12),
                       Text(state.translate("Virtual Card", "Kaadhka Online-ka ah", ar: "بطاقة افتراضية", de: "Virtuelle Karte"), style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
                       const SizedBox(height: 4),
-                      Text(state.translate("Get your secure virtual card and shop globally.", "Hadda qaado kaadhkaaga online-ka ah si aad wax u iibsato.", ar: "احصل على بطاقتك الافتراضية الآمنة وتسوق عالميًا.", de: "Holen Sie sich Ihre sichere virtuelle Karte und kaufen Sie weltweit ein."), style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
+                      Text(state.translate("Get your secure virtual card and shop globally.", "Hadda qaado kaadhkaaga online-ka ah si aad wax u iibsato.", ar: "احصل على بطاقتك الافتراضية الآمنة وتسوق عالمياً.", de: "Holen Sie sich Ihre sichere virtuelle Karte und kaufen Sie weltweit ein."), style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
                     ],
                   ),
                 ),

@@ -64,8 +64,8 @@ class InvestmentsScreen extends StatelessWidget {
           const SizedBox(height: 40),
           Text(state.translate("Your Portfolio", "Sanduuqaaga", ar: "محفظتك", de: "Ihr Portfolio"), style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
           const SizedBox(height: 20),
-          _buildAssetCard(context, state, state.translate("Bitcoin", "Bitcoin"), "BTC", "0.45", "\$18,240.00", 5.2, FontAwesomeIcons.bitcoin, const Color(0xFFF7931A), 200, theme, isDark),
-          _buildAssetCard(context, state, state.translate("Ethereum", "Ethereum"), "ETH", "2.5", "\$4,820.50", -2.1, FontAwesomeIcons.ethereum, const Color(0xFF627EEA), 300, theme, isDark),
+          _buildAssetCard(context, state, state.translate("Bitcoin", "Bitcoin", ar: "بيتكوين", de: "Bitcoin"), "BTC", "0.45", "\$18,240.00", 5.2, FontAwesomeIcons.bitcoin, const Color(0xFFF7931A), 200, theme, isDark),
+          _buildAssetCard(context, state, state.translate("Ethereum", "Ethereum", ar: "إيثيريوم", de: "Ethereum"), "ETH", "2.5", "\$4,820.50", -2.1, FontAwesomeIcons.ethereum, const Color(0xFF627EEA), 300, theme, isDark),
           _buildAssetCard(context, state, state.translate("Gold", "Dahab", ar: "ذهب", de: "Gold"), "XAU", "10 oz", "\$20,450.00", 0.8, FontAwesomeIcons.coins, const Color(0xFFFFD700), 400, theme, isDark),
           
           const SizedBox(height: 40),

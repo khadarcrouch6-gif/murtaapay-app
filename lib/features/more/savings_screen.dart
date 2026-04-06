@@ -25,7 +25,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
         appBar: widget.isTab ? null : AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text(state.translate("Savings & Goals", "Kaydka & Hadafka", ar: "الادخار والأهداف", de: "Ersparnisse & Ziele"), style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 20 * context.fontSizeFactor)),
+          title: Text(state.translate("Savings & Goals", "Kaydka & Hadafka", ar: "المدخرات والأهداف", de: "Ersparnisse & Ziele"), style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 20 * context.fontSizeFactor)),
           centerTitle: true,
           leading: IconButton(
             icon: Icon(state.isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.colorScheme.primary),
@@ -53,7 +53,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       Text(state.translate("Active Goals", "Hadafyada Socda", ar: "الأهداف النشطة", de: "Aktive Ziele"), style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
                       TextButton(
                         onPressed: () {},
-                        child: Text(state.translate("See All", "Arag Dhammaan", ar: "عرض الكل", de: "Alle sehen"), style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                        child: Text(state.translate("See All", "Arag Dhammaan", ar: "مشاهدة الكل", de: "Alle sehen"), style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
                       ),
                     ],
                   ),
@@ -282,4 +282,3 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 }
-

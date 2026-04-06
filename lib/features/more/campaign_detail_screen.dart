@@ -77,7 +77,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                           children: [
                             const Icon(Icons.verified_rounded, color: AppColors.accentTeal, size: 16),
                             const SizedBox(width: 6),
-                            Text(state.translate("Verified Organizer", "Qaban-qaabiye la Hubiyay", ar: "منظم موثق", de: "Verifizierter Organisator"), style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 12)),
+                            Text(state.translate("Verified Organizer", "Qaban-qaabiye la Hubiyay", ar: "منظم تم التحقق منه", de: "Verifizierter Organisator"), style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 12)),
                           ],
                         ),
                       ),
@@ -90,7 +90,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                     const SizedBox(height: 8),
                     FadeInUp(
                       delay: const Duration(milliseconds: 200),
-                      child: Text("${state.translate("Organized by", "Waxaa qaban-qaabiyay", ar: "منظمة بواسطة", de: "Organisiert von")} ${widget.campaign.creator}", style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey)),
+                      child: Text("${state.translate("Organized by", "Waxaa qaban-qaabiyay", ar: "تم تنظيمه بواسطة", de: "Organisiert von")} ${widget.campaign.creator}", style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey)),
                     ),
                     const SizedBox(height: 32),
                     FadeInUp(
@@ -156,7 +156,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("\$${widget.campaign.raisedAmount.toInt()}", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark)),
-                  Text("${state.translate("Raised of", "Laga ururiyay", ar: "تم جمعه من", de: "Gesammelt von")} \$${widget.campaign.goalAmount.toInt()} ${state.translate("goal", "hadaf", ar: "هدف", de: "Ziel")}", style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 12)),
+                  Text("${state.translate("Raised of", "Laga ururiyay", ar: "تم جمع من", de: "Gesammelt von")} \$${widget.campaign.goalAmount.toInt()} ${state.translate("goal", "hadaf", ar: "الهدف", de: "Ziel")}", style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 12)),
                 ],
               ),
               Container(
@@ -181,7 +181,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
             children: [
               Icon(Icons.people_alt_rounded, color: theme.textTheme.bodySmall?.color ?? AppColors.grey, size: 16),
               const SizedBox(width: 8),
-              Text("124 ${state.translate("people donated", "qof ayaa deeq bixiyay", ar: "شخص تبرعوا", de: "Personen haben gespendet")}", style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 13)),
+              Text("124 ${state.translate("people donated", "qof ayaa deeq bixiyay", ar: "أشخاص تبرعوا", de: "Personen haben gespendet")}", style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 13)),
             ],
           )
         ],
@@ -248,7 +248,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("Thank you for your generous donation!", "Waad ku mahadsan tahay deeqdaada deeqsinimada leh!", ar: "شكراً لك على تبرعك العظيم!", de: "Vielen Dank für Ihre großzügige Spende!"))));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("Thank you for your generous donation!", "Waad ku mahadsan tahay deeqdaada deeqsinimada leh!", ar: "شكراً لك على تبرعك السخي!", de: "Vielen Dank für Ihre großzügige Spende!"))));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.accentTeal,

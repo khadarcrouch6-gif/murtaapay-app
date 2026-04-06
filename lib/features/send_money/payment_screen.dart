@@ -8,13 +8,13 @@ import 'stripe_screen.dart';
 import 'wallet_payment_screen.dart';
 import 'payment_success_screen.dart';
 
-class PaymentScreen extends StatefulWidget {
+class PaymentMethodScreen extends StatefulWidget {
   final String amount;
   final String receiverName;
   final String receiverPhone;
   final String? initialMethod;
 
-  const PaymentScreen({
+  const PaymentMethodScreen({
     super.key,
     required this.amount,
     required this.receiverName,
@@ -23,10 +23,10 @@ class PaymentScreen extends StatefulWidget {
   });
 
   @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
+  State<PaymentMethodScreen> createState() => _PaymentMethodScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   String _selectedPaymentMethod = "";
   bool _isProcessing = false;
 
@@ -146,7 +146,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     const SizedBox(height: 12),
                     _buildSummaryRow(state.translate("Amount", "Lacagta", ar: "المبلغ", de: "Betrag"), "${widget.amount} EUR"),
                     _buildSummaryRow(state.translate("Fee", "Khidmadda", ar: "الرسوم", de: "Gebühr"), "${fee.toStringAsFixed(2)} EUR", isTeal: fee == 0),
-                    _buildSummaryRow(state.translate("Total to pay", "Wadarta", ar: "الإجمالي", de: "Gesamtbetrag"), "${totalToPay.toStringAsFixed(2)} EUR", isBold: true),
+                    _buildSummaryRow(state.translate("Total to pay", "Wadarta", ar: "المجموع للدفع", de: "Gesamtbetrag"), "${totalToPay.toStringAsFixed(2)} EUR", isBold: true),
                     const Divider(height: 24),
                     _buildSummaryRow(state.translate("Receiver gets", "Qaataha helaya", ar: "المستلم يستلم", de: "Empfänger erhält"), "\$${receivedAmount.toStringAsFixed(2)} USD", isTeal: true, isBold: true),
                   ],
@@ -160,7 +160,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
             _buildPaymentMethodCard(
               title: state.translate("Murtaax Wallet", "Murtaax Wallet", ar: "محفظة مرتاح", de: "Murtaax Wallet"),
-              subtitle: state.translate("Instant payment from wallet", "Bixin degdeg ah", ar: "دفع فوري من المحفظة", de: "Sofortzahlung aus Wallet"),
+              subtitle: state.translate("Instant payment from wallet", "Bixin degdeg ah", ar: "دفع فوري من المحفظة", de: "Sofortige Zahlung aus der Wallet"),
               imagePath: "assets/images/walletlogo.png",
               methodId: "wallet",
               isSelected: _selectedPaymentMethod == "wallet",
@@ -169,7 +169,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 12),
             _buildPaymentMethodCard(
               title: "EVC Plus",
-              subtitle: state.translate("Pay via Hormuud EVC Plus", "Hormuud EVC Plus", ar: "الدفع عبر EVC Plus", de: "Zahlen per EVC Plus"),
+              subtitle: state.translate("Pay via Hormuud EVC Plus", "Hormuud EVC Plus", ar: "الدفع عبر Hormuud EVC Plus", de: "Zahlen per Hormuud EVC Plus"),
               imagePath: "assets/images/evc.png",
               methodId: "evc",
               isSelected: _selectedPaymentMethod == "evc",
@@ -178,7 +178,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 12),
             _buildPaymentMethodCard(
               title: "ZAAD Service",
-              subtitle: state.translate("Pay via Telesom ZAAD", "Telesom ZAAD", ar: "الدفع عبر ZAAD", de: "Zahlen per ZAAD"),
+              subtitle: state.translate("Pay via Telesom ZAAD", "Telesom ZAAD", ar: "الدفع عبر Telesom ZAAD", de: "Zahlen per Telesom ZAAD"),
               imagePath: "assets/images/zaad.png",
               methodId: "zaad",
               isSelected: _selectedPaymentMethod == "zaad",
@@ -187,7 +187,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 12),
             _buildPaymentMethodCard(
               title: "e-Dahab",
-              subtitle: state.translate("Pay via Somtel e-Dahab", "Somtel e-Dahab", ar: "الدفع عبر e-Dahab", de: "Zahlen per e-Dahab"),
+              subtitle: state.translate("Pay via Somtel e-Dahab", "Somtel e-Dahab", ar: "الدفع عبر Somtel e-Dahab", de: "Zahlen per Somtel e-Dahab"),
               imagePath: "assets/images/edahab.png",
               methodId: "edahab",
               isSelected: _selectedPaymentMethod == "edahab",
@@ -196,7 +196,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 12),
             _buildPaymentMethodCard(
               title: state.translate("Bank Transfer", "Wareejin Bangi", ar: "تحويل بنكي", de: "Banküberweisung"),
-              subtitle: state.translate("Local Somali Bank transfer", "Bangi gudaha ah", ar: "تحويل بنكي محلي", de: "Lokale Banküberweisung"),
+              subtitle: state.translate("Local Somali Bank transfer", "Bangi gudaha ah", ar: "تحويل بنكي صومالي محلي", de: "Lokale somalische Banküberweisung"),
               imagePath: "assets/images/bank.png",
               methodId: "bank",
               isSelected: _selectedPaymentMethod == "bank",
@@ -207,7 +207,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const Divider(),
             const SizedBox(height: 24),
             
-            Text(state.translate("International Methods", "Hababka Caalamiga ah", ar: "طرق دولية", de: "Internationale Methoden"), style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(state.translate("International Methods", "Hababka Caalamiga ah", ar: "الأساليب الدولية", de: "Internationale Methoden"), style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14)),
             const SizedBox(height: 12),
             
             _buildPaymentMethodCard(

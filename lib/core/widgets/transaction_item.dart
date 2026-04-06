@@ -114,7 +114,7 @@ class TransactionItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    status == "Success" ? state.translate("Success", "Guul") : state.translate("Pending", "Sugayn"),
+                    status == "Success" ? state.translate("Success", "Guul", ar: "ناجح", de: "Erfolgreich") : state.translate("Pending", "Sugayn", ar: "قيد الانتظار", de: "Ausstehend"),
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: status == "Success" ? AppColors.accentTeal : Colors.orange,
                       fontWeight: FontWeight.bold,

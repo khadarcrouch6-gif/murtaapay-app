@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -63,10 +64,10 @@ class _SplashScreenState extends State<SplashScreen> {
                   const SizedBox(height: 50), // Spacing-ka ayaan xoogaa kordhiyey
                   FadeInUp(
                     duration: const Duration(milliseconds: 1500),
-                    child: const Text(
-                      "Trusted Somali Partner",
+                    child: Text(
+                      AppState().translate("Trusted Somali Partner", "Saaxiibka Soomaaliyeed ee lagu kalsoon yahay", ar: "شريك صومالي موثوق", de: "Vertrauenswürdiger Partner"),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColors.primaryDark,
                         fontSize: 28,
                         fontWeight: FontWeight.w800,
@@ -79,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     delay: const Duration(milliseconds: 2000),
                     duration: const Duration(seconds: 1),
                     child: Text(
-                      "Safe • Fast • Reliable",
+                      AppState().translate("Safe • Fast • Reliable", "Ammaan • Degdeg • Lagu kalsoon yahay", ar: "آمن • سريع • موثوق", de: "Sicher • Schnell • Zuverlässig"),
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 18,

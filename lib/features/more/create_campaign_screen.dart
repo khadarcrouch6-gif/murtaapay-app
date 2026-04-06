@@ -68,7 +68,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            state.translate("Raise funds for a cause you care about. We'll verify your campaign to build trust.", "Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doonaa ololahaaga si loo dhiso kalsoonida.", ar: "اجمع الأموال لقضية تهمك. سنقوم بالتحقق من حملتك لبناء الثقة.", de: "Sammeln Sie Spenden für einen Zweck, der Ihnen am Herzen liegt. Wir verifizieren Ihre Kampagne, um Vertrauen aufzubauen."),
+                            state.translate("Raise funds for a cause you care about. We'll verify your campaign to build trust.", "Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doonaa ololahaaga si loo dhiso kalsoonida.", ar: "اجمع التبرعات لقضية تهمك. سنتحقق من حملتك لبناء الثقة.", de: "Sammeln Sie Spenden für einen Zweck, der Ihnen am Herzen liegt. Wir verifizieren Ihre Kampagne, um Vertrauen aufzubauen."),
                             style: TextStyle(
                               color: theme.textTheme.bodyMedium?.color ?? AppColors.textPrimary,
                               fontSize: 13,
@@ -98,7 +98,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
               delay: const Duration(milliseconds: 200),
               child: _buildTextField(
                 state.translate("Campaign Title", "Cinwaanka Ololaha", ar: "عنوان الحملة", de: "Kampagnentitel"),
-                state.translate("E.g. Help build a water well in Gedo", "Tusaale: Caawi dhisidda ceel biyood Gedo", ar: "مثال: ساعد في بناء بئر مياه في جيدو", de: "Z. B. Hilfe beim Bau eines Wasserbrunnens in Gedo"),
+                state.translate("E.g. Help build a water well in Gedo", "Tusaale: Caawi dhisidda ceel biyood Gedo", ar: "مثلاً: ساعد في بناء بئر ماء في جيدو", de: "Z. B. Hilfe beim Bau eines Wasserbrunnens in Gedo"),
                 Icons.title_rounded,
                 theme,
                 isDark,
@@ -108,7 +108,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
             FadeInUp(
               delay: const Duration(milliseconds: 300),
               child: _buildTextField(
-                state.translate("Goal Amount (USD)", "Cadadka Hadafka (USD)", ar: "المبلغ المستهدف (USD)", de: "Zielbetrag (USD)"),
+                state.translate("Goal Amount (USD)", "Cadadka Hadafka (USD)", ar: "المبلغ المستهدف (بالدولار الأمريكي)", de: "Zielbetrag (USD)"),
                 "E.g. 5000",
                 Icons.attach_money_rounded,
                 theme,
@@ -161,7 +161,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      state.translate("Tap to upload photo", "Taabo si aad sawir u soo geliso", ar: "انقر لتحميل الصورة", de: "Tippen, um ein Foto hochzuladen"),
+                      state.translate("Tap to upload photo", "Taabo si aad sawir u soo geliso", ar: "اضغط لتحميل الصورة", de: "Tippen, um ein Foto hochzuladen"),
                       style: TextStyle(
                         color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
                         fontWeight: FontWeight.bold,
@@ -169,7 +169,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      state.translate("JPG, PNG up to 5MB", "JPG, PNG ilaa 5MB", ar: "JPG، PNG حتى 5 ميغابايت", de: "JPG, PNG bis zu 5 MB"),
+                      state.translate("JPG, PNG up to 5MB", "JPG, PNG ilaa 5MB", ar: "JPG، PNG حتى 5 ميجابايت", de: "JPG, PNG bis zu 5 MB"),
                       style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 12),
                     ),
                   ],
