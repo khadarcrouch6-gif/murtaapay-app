@@ -5,6 +5,7 @@ import 'core/app_theme.dart';
 import 'core/app_state.dart';
 import 'core/somali_localizations.dart';
 import 'features/onboarding/splash_screen.dart';
+import 'l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,25 +25,21 @@ class MurtaaxPayApp extends StatelessWidget {
       listenable: state,
       builder: (context, child) {
         return MaterialApp(
-          title: 'MurtaaxPay',
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: state.themeMode,
           locale: state.locale,
           localizationsDelegates: const [
+            AppLocalizations.delegate,
             SomaliLocalizationsDelegate(), // Fallback for Somali Material
             SomaliCupertinoLocalizationsDelegate(), // Fallback for Somali Cupertino
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('en'),
-            Locale('so'),
-            Locale('ar'), 
-            Locale('de'),
-          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) {
             return ResponsiveBreakpoints.builder(
               child: child!,

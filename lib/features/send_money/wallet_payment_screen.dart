@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import 'payment_success_screen.dart';
 
 class WalletPaymentScreen extends StatefulWidget {
@@ -53,9 +54,10 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Murtaax Wallet", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text("${l10n.appTitle} Wallet", style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -79,12 +81,12 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("Wallet Balance", style: TextStyle(color: AppColors.grey, fontSize: 12)),
-                          Text("€2,450.00", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.primaryDark)),
+                          Text(l10n.walletBalance, style: const TextStyle(color: AppColors.grey, fontSize: 12)),
+                          const Text("\$2,450.00", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.primaryDark)),
                         ],
                       ),
                     ),
-                    const Text("Active", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
+                    Text(l10n.active, style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -116,15 +118,15 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Murtaax Pay", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                        Image.asset("assets/images/app_logo.png", height: 24, errorBuilder: (context, error, stackTrace) => const Icon(Icons.wallet, color: Colors.white70)),
+                        Text("${l10n.appTitle} Pay", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                        const Icon(Icons.wallet, color: Colors.white70),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("AVAILABLE BALANCE", style: TextStyle(color: Colors.white54, fontSize: 10)),
-                        const Text("€2,450.00", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                        Text(l10n.availableBalance, style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                        const Text("\$2,450.00", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
@@ -134,9 +136,9 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
 
             const SizedBox(height: 40),
 
-            const Text("Security Verification", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(l10n.securityVerification, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 8),
-            const Text("Enter your 4-digit transaction PIN to authorize this payment.", style: TextStyle(color: AppColors.grey, fontSize: 13)),
+            Text(l10n.enterTransactionPin, style: const TextStyle(color: AppColors.grey, fontSize: 13)),
             const SizedBox(height: 24),
 
             // PIN Input
@@ -183,16 +185,16 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: _isProcessing
-                      ? const Row(
+                      ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
-                            SizedBox(width: 12),
-                            Text("Authorizing...", style: TextStyle(color: Colors.white, fontSize: 16)),
+                            const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+                            const SizedBox(width: 12),
+                            Text(l10n.authorizing, style: const TextStyle(color: Colors.white, fontSize: 16)),
                           ],
                         )
                       : Text(
-                          "Confirm Payment (€${widget.amount})",
+                          l10n.confirmPaymentAmount("\$${widget.amount}"),
                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                 ),
@@ -204,10 +206,10 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                 padding: const EdgeInsets.only(top: 16),
                 child: Center(
                   child: FadeIn(
-                    child: const Text(
-                      "Securely verifying transaction with Murtaax server...",
+                    child: Text(
+                      l10n.verifyingTransaction,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.grey, fontSize: 12, fontStyle: FontStyle.italic),
+                      style: const TextStyle(color: AppColors.grey, fontSize: 12, fontStyle: FontStyle.italic),
                     ),
                   ),
                 ),
@@ -217,7 +219,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
             Center(
               child: TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Cancel and change method", style: TextStyle(color: Colors.redAccent)),
+                child: Text(l10n.cancelAndChangeMethod, style: const TextStyle(color: Colors.redAccent)),
               ),
             ),
           ],

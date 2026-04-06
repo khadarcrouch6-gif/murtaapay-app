@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:lottie/lottie.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/detail_row.dart';
 
@@ -20,7 +20,7 @@ class PaymentSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
 
     return PopScope(
       canPop: false,
@@ -61,7 +61,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   FadeInDown(
                     child: Text(
-                      state.translate("Transfer Successful!", "Lacagta waa la diray!", ar: "تم التحويل بنجاح!", de: "Überweisung erfolgreich!"),
+                      l10n.transferSuccessful,
                       style: TextStyle(
                         fontSize: 26 * context.fontSizeFactor,
                         fontWeight: FontWeight.bold,
@@ -76,12 +76,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                   FadeInUp(
                     delay: const Duration(milliseconds: 200),
                     child: Text(
-                      state.translate(
-                        "$amount has been securely sent to $receiverName.",
-                        "\$$amount waxaa si ammaan ah loogu diray $receiverName.",
-                        ar: "تم إرسال $amount بأمان إلى $receiverName.",
-                        de: "$amount wurde sicher an $receiverName gesendet."
-                      ),
+                      l10n.transferSentMessage(amount, receiverName),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColors.grey,
@@ -110,10 +105,10 @@ class PaymentSuccessScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          DetailRow(label: state.translate("Receiver", "Qaataha", ar: "المستلم", de: "Empfänger"), value: receiverName),
-                          DetailRow(label: state.translate("Amount", "Cadadka", ar: "المبلغ", de: "Betrag"), value: "\$$amount"),
-                          DetailRow(label: state.translate("Method", "Habka", ar: "الطريقة", de: "Methode"), value: method),
-                          DetailRow(label: state.translate("Reference", "Tixraaca", ar: "المرجع", de: "Referenz"), value: "TRX-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}"),
+                          DetailRow(label: l10n.receiver, value: receiverName),
+                          DetailRow(label: l10n.amount, value: "\$$amount"),
+                          DetailRow(label: l10n.method, value: method),
+                          DetailRow(label: l10n.reference, value: "TRX-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}"),
                         ],
                       ),
                     ),
@@ -131,7 +126,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                             Navigator.popUntil(context, (route) => route.isFirst);
                           },
                           child: Text(
-                            state.translate("Back to Home", "Ku noqo Home-ka", ar: "العودة إلى الصفحة الرئيسية", de: "Zurück zur Startseite"),
+                            l10n.backToHome,
                             style: TextStyle(
                               color: AppColors.primaryDark,
                               fontWeight: FontWeight.bold,

@@ -3,6 +3,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
+import '../../l10n/app_localizations.dart';
 import 'credit_card_screen.dart';
 import 'stripe_screen.dart';
 import 'wallet_payment_screen.dart';
@@ -44,8 +45,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     }
   }
 
-  void _handleFinalPayment() async {
-    final state = AppState();
+    void _handleFinalPayment() async {
     if (_selectedPaymentMethod == "wallet") {
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -115,7 +115,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
     double sendAmount = double.tryParse(widget.amount) ?? 0;
     double fee = (_selectedPaymentMethod == "visa" || _selectedPaymentMethod == "mastercard" || _selectedPaymentMethod == "stripe") ? sendAmount * 0.019 : 0;
     double totalToPay = sendAmount + fee;
@@ -123,7 +123,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(state.translate("Choose Payment Method", "Dooro Habka Bixinta", ar: "اختر طريقة الدفع", de: "Zahlungsmethode wählen"), style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(l10n.choosePaymentMethod, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -142,25 +142,25 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(state.translate("Final Summary", "Soo Koobid", ar: "الملخص النهائي", de: "Zusammenfassung"), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    Text(l10n.finalSummary, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                     const SizedBox(height: 12),
-                    _buildSummaryRow(state.translate("Amount", "Lacagta", ar: "المبلغ", de: "Betrag"), "${widget.amount} EUR"),
-                    _buildSummaryRow(state.translate("Fee", "Khidmadda", ar: "الرسوم", de: "Gebühr"), "${fee.toStringAsFixed(2)} EUR", isTeal: fee == 0),
-                    _buildSummaryRow(state.translate("Total to pay", "Wadarta", ar: "المجموع للدفع", de: "Gesamtbetrag"), "${totalToPay.toStringAsFixed(2)} EUR", isBold: true),
+                    _buildSummaryRow(l10n.amount, "${widget.amount} USD"),
+                    _buildSummaryRow(l10n.fee, "${fee.toStringAsFixed(2)} USD", isTeal: fee == 0),
+                    _buildSummaryRow(l10n.totalToPay, "${totalToPay.toStringAsFixed(2)} USD", isBold: true),
                     const Divider(height: 24),
-                    _buildSummaryRow(state.translate("Receiver gets", "Qaataha helaya", ar: "المستلم يستلم", de: "Empfänger erhält"), "\$${receivedAmount.toStringAsFixed(2)} USD", isTeal: true, isBold: true),
+                    _buildSummaryRow(l10n.receiverGets, "\$${receivedAmount.toStringAsFixed(2)}", isTeal: true, isBold: true),
                   ],
                 ),
               ),
             ),
 
             const SizedBox(height: 32),
-            Text(state.translate("Select Payment Method", "Dooro Habka Bixinta", ar: "اختر طريقة الدفع", de: "Zahlungsmethode auswählen"), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(l10n.selectPaymentMethod, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 16),
 
             _buildPaymentMethodCard(
-              title: state.translate("Murtaax Wallet", "Murtaax Wallet", ar: "محفظة مرتاح", de: "Murtaax Wallet"),
-              subtitle: state.translate("Instant payment from wallet", "Bixin degdeg ah", ar: "دفع فوري من المحفظة", de: "Sofortige Zahlung aus der Wallet"),
+              title: "${l10n.appTitle} Wallet",
+              subtitle: l10n.instantPaymentFromWallet,
               imagePath: "assets/images/walletlogo.png",
               methodId: "wallet",
               isSelected: _selectedPaymentMethod == "wallet",
@@ -169,7 +169,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             const SizedBox(height: 12),
             _buildPaymentMethodCard(
               title: "EVC Plus",
-              subtitle: state.translate("Pay via Hormuud EVC Plus", "Hormuud EVC Plus", ar: "الدفع عبر Hormuud EVC Plus", de: "Zahlen per Hormuud EVC Plus"),
+              subtitle: l10n.payViaHormuud,
               imagePath: "assets/images/evc.png",
               methodId: "evc",
               isSelected: _selectedPaymentMethod == "evc",
@@ -178,7 +178,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             const SizedBox(height: 12),
             _buildPaymentMethodCard(
               title: "ZAAD Service",
-              subtitle: state.translate("Pay via Telesom ZAAD", "Telesom ZAAD", ar: "الدفع عبر Telesom ZAAD", de: "Zahlen per Telesom ZAAD"),
+              subtitle: l10n.payViaTelesom,
               imagePath: "assets/images/zaad.png",
               methodId: "zaad",
               isSelected: _selectedPaymentMethod == "zaad",
@@ -187,7 +187,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             const SizedBox(height: 12),
             _buildPaymentMethodCard(
               title: "e-Dahab",
-              subtitle: state.translate("Pay via Somtel e-Dahab", "Somtel e-Dahab", ar: "الدفع عبر Somtel e-Dahab", de: "Zahlen per Somtel e-Dahab"),
+              subtitle: l10n.payViaSomtel,
               imagePath: "assets/images/edahab.png",
               methodId: "edahab",
               isSelected: _selectedPaymentMethod == "edahab",
@@ -195,8 +195,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             ),
             const SizedBox(height: 12),
             _buildPaymentMethodCard(
-              title: state.translate("Bank Transfer", "Wareejin Bangi", ar: "تحويل بنكي", de: "Banküberweisung"),
-              subtitle: state.translate("Local Somali Bank transfer", "Bangi gudaha ah", ar: "تحويل بنكي صومالي محلي", de: "Lokale somalische Banküberweisung"),
+              title: l10n.bankTransfer,
+              subtitle: l10n.localBankTransfer,
               imagePath: "assets/images/bank.png",
               methodId: "bank",
               isSelected: _selectedPaymentMethod == "bank",
@@ -207,12 +207,12 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             const Divider(),
             const SizedBox(height: 24),
             
-            Text(state.translate("International Methods", "Hababka Caalamiga ah", ar: "الأساليب الدولية", de: "Internationale Methoden"), style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(l10n.internationalMethods, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14)),
             const SizedBox(height: 12),
             
             _buildPaymentMethodCard(
               title: "Visa / Mastercard",
-              subtitle: state.translate("Pay with international card", "Kaadhka caalamiga ah", ar: "الدفع ببطاقة دولية", de: "Mit internationaler Karte bezahlen"),
+              subtitle: l10n.payWithInternationalCard,
               icon: FontAwesomeIcons.creditCard,
               methodId: "visa",
               isSelected: _selectedPaymentMethod == "visa" || _selectedPaymentMethod == "mastercard",
@@ -232,7 +232,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 ),
                 child: _isProcessing 
                   ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : Text(state.translate("Pay Now", "Bixi Hadda", ar: "ادفع الآن", de: "Jetzt bezahlen"), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                  : Text(l10n.payNow, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
             ),
             const SizedBox(height: 40),

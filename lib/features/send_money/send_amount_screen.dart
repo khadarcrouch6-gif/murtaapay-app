@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/api_service.dart';
 import '../../l10n/app_localizations.dart';
-import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
-import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'receiver_screen.dart';
 import 'wallet_receiver_screen.dart';
@@ -52,20 +50,6 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     {"code": "ZAR", "name": "South African Rand", "flag": "za"},
   ];
 
-  double get _fee {
-    double amount = double.tryParse(_sendController.text) ?? 0;
-    if (amount <= 0) return 0.00;
-    return (amount / 100).ceil() * 0.99;
-  }
-
-  double get _totalToPay {
-    double amount = double.tryParse(_sendController.text) ?? 0;
-    return amount + _fee;
-  }
-
-  bool get _hasSufficientBalance => _totalToPay <= _userBalance;
-  bool get _isAmountValid => (double.tryParse(_sendController.text) ?? 0) >= 10;
-
   final Map<String, double> rates = {
     "USD": 1.0,
     "EUR": 0.93,
@@ -91,6 +75,20 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     "ZAR": 18.50,
   };
 
+  double get _fee {
+    double amount = double.tryParse(_sendController.text) ?? 0;
+    if (amount <= 0) return 0.00;
+    return (amount / 100).ceil() * 0.99;
+  }
+
+  double get _totalToPay {
+    double amount = double.tryParse(_sendController.text) ?? 0;
+    return amount + _fee;
+  }
+
+  bool get _hasSufficientBalance => _totalToPay <= _userBalance;
+  bool get _isAmountValid => (double.tryParse(_sendController.text) ?? 0) >= 10;
+
   @override
   void initState() {
     super.initState();
@@ -98,12 +96,16 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   }
 
   Future<void> _loadRates() async {
-    final newRates = await ApiService.fetchAllRates();
-    if (mounted) {
-      setState(() {
-        rates.addAll(newRates);
-        _updateReceiveAmount(_sendController.text);
-      });
+    try {
+      final newRates = await ApiService.fetchAllRates();
+      if (mounted) {
+        setState(() {
+          rates.addAll(newRates);
+          _updateReceiveAmount(_sendController.text);
+        });
+      }
+    } catch (e) {
+      debugPrint("Error loading rates: $e");
     }
   }
 
@@ -121,7 +123,6 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     double fromRate = rates[_sendCurrency] ?? 1.0;
     double toRate = rates[_receiveCurrency] ?? 1.0;
     setState(() {
-      // Convert to USD then to target currency
       double inUsd = amount / fromRate;
       _receiveController.text = (inUsd * toRate).toStringAsFixed(2);
     });
@@ -132,7 +133,6 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     double fromRate = rates[_sendCurrency] ?? 1.0;
     double toRate = rates[_receiveCurrency] ?? 1.0;
     setState(() {
-      // Convert back from target to source
       double inUsd = amount / toRate;
       _sendController.text = (inUsd * fromRate).toStringAsFixed(2);
     });
@@ -476,68 +476,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     );
   }
 
-<<<<<<< HEAD
   Widget _buildPaymentMethodsGrid(AppState state) {
-=======
-  String _getFlagUrl(String code) {
-    switch (code) {
-      case "EUR": return "https://flagcdn.com/w40/eu.png";
-      case "USD": return "https://flagcdn.com/w40/us.png";
-      case "GBP": return "https://flagcdn.com/w40/gb.png";
-      case "CAD": return "https://flagcdn.com/w40/ca.png";
-      case "SOS": return "https://flagcdn.com/w40/so.png";
-      default: return "https://flagcdn.com/w40/un.png";
-    }
-  }
-
-  Widget _buildCurrencyPicker(String selected, Function(String) onSelected, List<String> options, ThemeData theme) {
-    return PopupMenuButton<String>(
-      onSelected: onSelected,
-      itemBuilder: (context) => options.map((c) => PopupMenuItem(
-        value: c, 
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Image.network(
-                _getFlagUrl(c), 
-                width: 24, 
-                height: 18, 
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded, size: 18, color: Colors.grey),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(c, style: const TextStyle(fontWeight: FontWeight.w600)),
-          ],
-        ),
-      )).toList(),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(color: AppColors.primaryDark.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(2),
-              child: Image.network(
-                _getFlagUrl(selected), 
-                width: 20, 
-                height: 14, 
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded, size: 14, color: Colors.grey),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(selected, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-            const Icon(Icons.arrow_drop_down, size: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPaymentMethods(AppState state, ThemeData theme) {
->>>>>>> f9e78c0a62a9be440c1d9f12f8d8f1fcf6b7996c
     final List<Map<String, dynamic>> methods = [
       {"name": "Murtaax Wallet", "image": "assets/images/walletlogo.png"},
       {"name": "EVC Plus", "image": "assets/images/evc.png"},

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/detail_row.dart';
 import 'payment_screen.dart';
@@ -22,12 +22,12 @@ class ReviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     
     // Calculation (Mock)
     double amountVal = double.tryParse(amount) ?? 0;
-    double fee = amountVal * 0.01; // 1% fee
+    double fee = (amountVal / 100).ceil() * 0.99;
     double total = amountVal + fee;
 
     return Scaffold(
@@ -36,7 +36,7 @@ class ReviewScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          state.translate("Review Transfer", "Dib-u-eegis", ar: "مراجعة التحويل", de: "Überprüfung"),
+          l10n.reviewTransfer,
           style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color, fontSize: 20 * context.fontSizeFactor),
         ),
         centerTitle: true,
@@ -67,16 +67,16 @@ class ReviewScreen extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      DetailRow(label: state.translate("You send", "Adiga ayaa diraya", ar: "أنت ترسل", de: "Du sendest"), value: "\$$amount"),
+                      DetailRow(label: l10n.youSend, value: "\$$amount"),
                       const SizedBox(height: 12),
-                      DetailRow(label: state.translate("Payment Method", "Habka Bixinta", ar: "طريقة الدفع", de: "Zahlungsmethode"), value: method ?? "Murtaax Wallet"),
+                      DetailRow(label: l10n.paymentMethod, value: method ?? "Murtaax Wallet"),
                       const SizedBox(height: 12),
-                      DetailRow(label: state.translate("Fee", "Khidmad", ar: "رسوم", de: "Gebühr"), value: "\$${fee.toStringAsFixed(2)}"),
+                      DetailRow(label: l10n.fee, value: "\$${fee.toStringAsFixed(2)}"),
                       const SizedBox(height: 12),
-                      DetailRow(label: state.translate("Exchange rate", "Sarrifka", ar: "سعر الصرف", de: "Wechselkurs"), value: "1 USD = 1 USD"),
+                      DetailRow(label: l10n.exchangeRate, value: "1 USD = 1 USD"),
                       const Divider(height: 32),
                       DetailRow(
-                        label: state.translate("Receiver gets", "Qaataha wuxuu helayaa", ar: "المستلم يستلم", de: "Empfänger erhält"), 
+                        label: l10n.receiverGets, 
                         value: "\$$amount",
                         isBold: true,
                         valueColor: AppColors.accentTeal,
@@ -90,12 +90,7 @@ class ReviewScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      state.translate(
-                        "Money will be delivered instantly.", 
-                        "Lacagtu waxay gaadhaysaa isla markiiba.", 
-                        ar: "سيتم تسليم الأموال فوراً.", 
-                        de: "Das Geld wird sofort zugestellt."
-                      ),
+                      l10n.deliveryNotice,
                       style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor),
                     ),
                     const SizedBox(height: 24),
@@ -122,7 +117,7 @@ class ReviewScreen extends StatelessWidget {
                           elevation: 0,
                         ),
                         child: Text(
-                          state.translate("Confirm & Pay", "Xaqiiji & Bixi", ar: "تأكيد والدفع", de: "Bestätigen & Bezahlen"),
+                          l10n.confirmAndPay,
                           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                       ),

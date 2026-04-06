@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
+import '../../core/api_service.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -17,13 +18,33 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
   final TextEditingController _amountController = TextEditingController(text: "100");
   String _fromCurrency = "USD";
   String _toCurrency = "EUR";
+  bool _isLoading = true;
 
   final Map<String, double> _rates = {
     "USD": 1.0,
     "EUR": 0.93,
     "GBP": 0.79,
     "CAD": 1.35,
+    "KES": 128.50,
+    "SOS": 570.00,
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRates();
+  }
+
+  Future<void> _loadRates() async {
+    setState(() => _isLoading = true);
+    final newRates = await ApiService.fetchAllRates();
+    if (mounted) {
+      setState(() {
+        _rates.addAll(newRates);
+        _isLoading = false;
+      });
+    }
+  }
 
   final Map<String, String> _flagCodes = {
     "USD": "us",
@@ -33,7 +54,13 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
   };
 
   Widget _buildFlag(String currency, {double width = 28, double height = 20}) {
-    final code = _flagCodes[currency] ?? "un";
+    final Map<String, String> flagMap = {
+      "USD": "us", "EUR": "eu", "GBP": "gb", "CAD": "ca", "KES": "ke", "SOS": "so",
+      "AED": "ae", "SAR": "sa", "TRY": "tr", "ETB": "et", "DJF": "dj", "UGX": "ug",
+      "TZS": "tz", "RWF": "rw", "SDG": "sd", "EGP": "eg", "INR": "in", "CNY": "cn",
+      "JPY": "jp", "AUD": "au", "CHF": "ch", "ZAR": "za",
+    };
+    final code = flagMap[currency] ?? "un";
     return ClipRRect(
       borderRadius: BorderRadius.circular(3),
       child: Image.network(
@@ -96,9 +123,12 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
                         style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary))),
                     const SizedBox(height: 16),
                     
-                    _buildRateItem(context, state.translate("Euro", "Yuuro", ar: "يورو", de: "Euro"), "EUR", "0.93", Icons.euro_rounded, Colors.blue, true),
-                    _buildRateItem(context, state.translate("British Pound", "Bawndka Ingiriiska", ar: "جنيه إسترليني", de: "Britisches Pfund"), "GBP", "0.79", Icons.currency_pound_rounded, Colors.purple, false),
-                    _buildRateItem(context, state.translate("Canadian Dollar", "Doolarka Kanada", ar: "دولار كندي", de: "Kanadischer Dollar"), "CAD", "1.35", Icons.monetization_on_rounded, Colors.orange, true),
+                    if (_isLoading)
+                      const Center(child: CircularProgressIndicator(color: AppColors.accentTeal))
+                    else
+                      ..._rates.entries.where((e) => e.key != "USD").take(8).map((e) => 
+                        _buildRateItem(context, e.key, e.key, e.value.toStringAsFixed(2), Icons.monetization_on_rounded, Colors.blue, true)
+                      ).toList(),
                     
                     const SizedBox(height: 24),
                     

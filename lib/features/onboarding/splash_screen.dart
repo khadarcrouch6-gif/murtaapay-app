@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
+import '../../l10n/app_localizations.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
@@ -96,7 +96,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 FadeInUp(
                   duration: const Duration(milliseconds: 1200),
                   child: Text(
-                    state.translate("MURTAAX PAY", "MURTAAX PAY", ar: "مورتاكس باي", de: "MURTAAX PAY"),
+                    l10n.splashTitle,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,
@@ -110,7 +110,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   delay: const Duration(milliseconds: 400),
                   duration: const Duration(milliseconds: 1200),
                   child: Text(
-                    state.translate("Trusted Somali Partner", "Saaxiibka Soomaaliyeed", ar: "شريك صومالي موثوق", de: "Vertrauenswürdiger Partner"),
+                    l10n.splashSubtitle,
                     style: TextStyle(
                       color: AppColors.accentTeal.withValues(alpha: 0.8),
                       fontSize: 14,

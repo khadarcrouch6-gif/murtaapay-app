@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../l10n/app_localizations.dart';
 import 'review_screen.dart';
 
 class ReceiverScreen extends StatefulWidget {
@@ -41,11 +41,11 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          state.translate("Receiver Details", "Faahfaahinta Qaataha", ar: "تفاصيل المستلم", de: "Empfängerdetails"), 
+          l10n.receiverDetails, 
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
       ),
@@ -59,7 +59,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    state.translate("Enter Receiver's Phone Number", "Geli Lambarka Qaataha", ar: "أدخل رقم هاتف المستلم", de: "Telefonnummer des Empfängers eingeben"),
+                    l10n.enterReceiverPhone,
                     style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: AppColors.grey),
                   ),
                   const SizedBox(height: 32),
@@ -69,7 +69,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                     keyboardType: TextInputType.phone,
                     style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.w600),
                     decoration: InputDecoration(
-                      hintText: state.translate("Phone Number", "Lambarka Taleefanka", ar: "رقم الهاتف", de: "Telefonnummer"),
+                      hintText: l10n.phoneNumber,
                       prefixIcon: const Icon(Icons.phone_android_rounded),
                       suffixIcon: const Icon(Icons.search_rounded),
                       filled: true,
@@ -92,7 +92,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                "${state.translate("Receiver", "Qaataha", ar: "المستلم", de: "Empfänger")}: $_verifiedName", 
+                                "${l10n.receiver}: $_verifiedName", 
                                 style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -104,7 +104,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                     ),
                   const SizedBox(height: 32),
                   Text(
-                    state.translate("Recent", "Dhawaan", ar: "الأخيرة", de: "Kürzlich"), 
+                    l10n.recent, 
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                   const SizedBox(height: 16),
                   _buildRecentItem(context, "Mohamed Ali", "615 123 456"),
@@ -131,12 +131,12 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.translate("Please enter details", "Fadlan geli faahfaahinta", ar: "يرجى إدخال التفاصيل", de: "Bitte Details eingeben"))),
+                            SnackBar(content: Text(l10n.pleaseEnterDetails)),
                           );
                         }
                       },
                       child: Text(
-                        state.translate("Continue to Review", "Sii soco Dib-u-eegis", ar: "متابعة المراجعة", de: "Weiter zur Überprüfung"),
+                        l10n.continueToReview,
                         style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                     ),
                   ),

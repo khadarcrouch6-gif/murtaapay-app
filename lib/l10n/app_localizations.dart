@@ -8,6 +8,7 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_ar.dart';
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_et.dart';
 import 'app_localizations_so.dart';
 
 // ignore_for_file: type=lint
@@ -99,6 +100,7 @@ abstract class AppLocalizations {
     Locale('ar'),
     Locale('de'),
     Locale('en'),
+    Locale('et'),
     Locale('so'),
   ];
 
@@ -107,6 +109,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'MurtaaxPay'**
   String get appTitle;
+
+  /// No description provided for @splashTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'MURTAAX PAY'**
+  String get splashTitle;
+
+  /// No description provided for @splashSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trusted Somali Partner'**
+  String get splashSubtitle;
 
   /// No description provided for @welcome.
   ///
@@ -227,6 +241,330 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get your secure virtual card and shop globally.'**
   String get virtualCardDesc;
+
+  /// No description provided for @enterAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Amount'**
+  String get enterAmount;
+
+  /// No description provided for @transferLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit: \$5,000.00'**
+  String get transferLimit;
+
+  /// No description provided for @feeRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee: \$0.99 per \$100'**
+  String get feeRate;
+
+  /// No description provided for @youSend.
+  ///
+  /// In en, this message translates to:
+  /// **'You Send'**
+  String get youSend;
+
+  /// No description provided for @searchCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Search currency'**
+  String get searchCurrency;
+
+  /// No description provided for @receiverGets.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiver Gets'**
+  String get receiverGets;
+
+  /// No description provided for @selectPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Payment Method'**
+  String get selectPaymentMethod;
+
+  /// No description provided for @transactionFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Fee'**
+  String get transactionFee;
+
+  /// No description provided for @totalToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Total to Pay'**
+  String get totalToPay;
+
+  /// No description provided for @insufficientBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient Balance'**
+  String get insufficientBalance;
+
+  /// No description provided for @receiverDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiver Details'**
+  String get receiverDetails;
+
+  /// No description provided for @enterReceiverPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Receiver Phone Number'**
+  String get enterReceiverPhone;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @receiver.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiver'**
+  String get receiver;
+
+  /// No description provided for @recent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get recent;
+
+  /// No description provided for @pleaseEnterDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter receiver details'**
+  String get pleaseEnterDetails;
+
+  /// No description provided for @continueToReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Review'**
+  String get continueToReview;
+
+  /// No description provided for @reviewTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Transfer'**
+  String get reviewTransfer;
+
+  /// No description provided for @paymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method'**
+  String get paymentMethod;
+
+  /// No description provided for @fee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get fee;
+
+  /// No description provided for @exchangeRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange Rate'**
+  String get exchangeRate;
+
+  /// No description provided for @deliveryNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Funds will be delivered within minutes'**
+  String get deliveryNotice;
+
+  /// No description provided for @confirmAndPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm and Pay'**
+  String get confirmAndPay;
+
+  /// No description provided for @choosePaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Payment Method'**
+  String get choosePaymentMethod;
+
+  /// No description provided for @finalSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Final Summary'**
+  String get finalSummary;
+
+  /// No description provided for @amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amount;
+
+  /// No description provided for @instantPaymentFromWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Instant payment from your Murtaax wallet'**
+  String get instantPaymentFromWallet;
+
+  /// No description provided for @payViaHormuud.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay via Hormuud EVC Plus'**
+  String get payViaHormuud;
+
+  /// No description provided for @payViaTelesom.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay via Telesom ZAAD'**
+  String get payViaTelesom;
+
+  /// No description provided for @payViaSomtel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay via Somtel e-Dahab'**
+  String get payViaSomtel;
+
+  /// No description provided for @bankTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank Transfer'**
+  String get bankTransfer;
+
+  /// No description provided for @localBankTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Somali Bank Transfer'**
+  String get localBankTransfer;
+
+  /// No description provided for @internationalMethods.
+  ///
+  /// In en, this message translates to:
+  /// **'International Methods'**
+  String get internationalMethods;
+
+  /// No description provided for @payWithInternationalCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with International Card'**
+  String get payWithInternationalCard;
+
+  /// No description provided for @payNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay Now'**
+  String get payNow;
+
+  /// No description provided for @transferSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer Successful!'**
+  String get transferSuccessful;
+
+  /// No description provided for @transferSentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} has been securely sent to {receiver}.'**
+  String transferSentMessage(Object amount, Object receiver);
+
+  /// No description provided for @method.
+  ///
+  /// In en, this message translates to:
+  /// **'Method'**
+  String get method;
+
+  /// No description provided for @reference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference'**
+  String get reference;
+
+  /// No description provided for @backToHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Home'**
+  String get backToHome;
+
+  /// No description provided for @murtaaxTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Murtaax Transfer'**
+  String get murtaaxTransfer;
+
+  /// No description provided for @enterReceiverWalletId.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Receiver Wallet ID'**
+  String get enterReceiverWalletId;
+
+  /// No description provided for @walletIdTransferNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Funds will be transferred instantly to the specified Murtaax ID.'**
+  String get walletIdTransferNotice;
+
+  /// No description provided for @enterWalletIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Wallet ID (e.g. 102234)'**
+  String get enterWalletIdHint;
+
+  /// No description provided for @verifiedReceiverLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'VERIFIED RECEIVER'**
+  String get verifiedReceiverLabel;
+
+  /// No description provided for @recentContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Contacts'**
+  String get recentContacts;
+
+  /// No description provided for @securityVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Verification'**
+  String get securityVerification;
+
+  /// No description provided for @enterTransactionPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your 4-digit PIN to authorize this payment.'**
+  String get enterTransactionPin;
+
+  /// No description provided for @authorizing.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorizing...'**
+  String get authorizing;
+
+  /// No description provided for @confirmPaymentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Payment ({amount})'**
+  String confirmPaymentAmount(Object amount);
+
+  /// No description provided for @verifyingTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Securely verifying transaction with Murtaax servers...'**
+  String get verifyingTransaction;
+
+  /// No description provided for @cancelAndChangeMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel and Change Method'**
+  String get cancelAndChangeMethod;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @availableBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'AVAILABLE BALANCE'**
+  String get availableBalance;
 }
 
 class _AppLocalizationsDelegate
@@ -240,7 +578,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['ar', 'de', 'en', 'so'].contains(locale.languageCode);
+      <String>['ar', 'de', 'en', 'et', 'so'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -255,6 +593,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'et':
+      return AppLocalizationsEt();
     case 'so':
       return AppLocalizationsSo();
   }

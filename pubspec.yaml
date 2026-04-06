@@ -28,6 +28,7 @@ dependencies:
   animations: ^2.0.11
   fl_chart: ^0.70.2 # Charting library lagu daray
   shared_preferences: ^2.3.2
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
