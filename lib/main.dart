@@ -3,10 +3,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'core/app_theme.dart';
 import 'core/app_state.dart';
+import 'core/somali_localizations.dart';
 import 'features/onboarding/splash_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final state = AppState();
+  await state.init();
   runApp(const MurtaaxPayApp());
 }
 
@@ -27,8 +30,9 @@ class MurtaaxPayApp extends StatelessWidget {
           darkTheme: AppTheme.darkTheme,
           themeMode: state.themeMode,
           locale: state.locale,
-          // Correct delegates are vital for Somali support
           localizationsDelegates: const [
+            SomaliLocalizationsDelegate(), // Fallback for Somali Material
+            SomaliCupertinoLocalizationsDelegate(), // Fallback for Somali Cupertino
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,

@@ -167,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   crossAxisAlignment: CrossAxisAlignment.start, 
                   children: [
                     Text(
-                      state.translate("Welcome back,", "Ku soo dhawaaw,"), 
+                      state.translate("Welcome back,", "Ku soo dhawaaw,", ar: "أهلاً بك،", de: "Willkommen zurück,"), 
                       style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor)
                     ),
                     Text(
@@ -266,21 +266,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   padding: const EdgeInsets.all(24),
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text(state.translate("Wallet Balance", "Hadhaaga Wallet-ka"), style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14 * context.fontSizeFactor)),
+                      Text(state.translate("Wallet Balance", "Hadhaaga Wallet-ka", ar: "رصيد المحفظة", de: "Kontostand"), style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14 * context.fontSizeFactor)),
                       IconButton(onPressed: () => setState(() => _isBalanceVisible = !_isBalanceVisible), icon: Icon(_isBalanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.white70, size: 20 * context.fontSizeFactor)),
                     ]),
                     FittedBox(
                       fit: BoxFit.scaleDown,
-                      child: Text(_isBalanceVisible ? "\$12,450.80" : "******", style: theme.textTheme.displayMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 32 * context.fontSizeFactor)),
+                      child: Text(_isBalanceVisible ? r"$12,450.80" : "******", style: theme.textTheme.displayMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 32 * context.fontSizeFactor)),
                     ),
                   ]),
                 ),
               ),
               const SizedBox(height: 32),
               Row(children: [
-                Expanded(child: _buildActionButton(context, state.translate("Send", "Dir"), FontAwesomeIcons.paperPlane, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SendAmountScreen())))),
+                Expanded(child: _buildActionButton(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden"), FontAwesomeIcons.paperPlane, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SendAmountScreen())))),
                 const SizedBox(width: 16),
-                Expanded(child: _buildActionButton(context, state.translate("Add", "Ku dar"), FontAwesomeIcons.plus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen())))),
+                Expanded(child: _buildActionButton(context, state.translate("Add", "Ku dar", ar: "إضافة", de: "Hinzufügen"), FontAwesomeIcons.plus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen())))),
               ]),
             ],
           );
@@ -300,14 +300,30 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(child: Text(state.translate("Spending Analysis", "Falanqaynta Isticmaalka"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)),
-                _buildChartTypeToggle(),
+                Expanded(child: Text(state.translate("Spending Analysis", "Isticmaalka", ar: "تحليل الإنفاق", de: "Ausgabenanalyse"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor), overflow: TextOverflow.ellipsis)),
+                const SizedBox(width: 8),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildChartTypeToggle(ChartType.bar, Icons.bar_chart_rounded),
+                    _buildChartTypeToggle(ChartType.line, Icons.show_chart_rounded),
+                    _buildChartTypeToggle(ChartType.pie, Icons.pie_chart_rounded),
+                  ],
+                ),
               ],
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             SizedBox(
               height: 200,
               child: _buildSelectedChart(theme),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(child: _buildStatItem(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden"), r"$4,250", Colors.blue)),
+                Expanded(child: _buildStatItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen"), r"$1,120", Colors.orange)),
+                Expanded(child: _buildStatItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah"), r"$450", AppColors.accentTeal)),
+              ],
             ),
           ],
         ),
@@ -315,38 +331,146 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildChartTypeToggle() {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(color: AppColors.grey.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+  Widget _buildQuickActions(BuildContext context, AppState state, ThemeData theme) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildToggleItem(ChartType.bar, Icons.bar_chart_rounded),
-          _buildToggleItem(ChartType.pie, Icons.pie_chart_rounded),
-          _buildToggleItem(ChartType.line, Icons.show_chart_rounded),
+          Text(state.translate("Get Started", "Bilow Hadda", ar: "ابدأ الآن", de: "Loslegen"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+          const SizedBox(height: 16),
+          GridView.count(
+            crossAxisCount: 4, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), mainAxisSpacing: 16, crossAxisSpacing: 16,
+            children: [
+              _buildFeatureItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen"), Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
+              _buildFeatureItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah"), Icons.volunteer_activism_rounded, AppColors.accentTeal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
+              _buildFeatureItem(context, state.translate("Exchange", "Sarifka", ar: "الصرف", de: "Wechselkurs"), Icons.currency_exchange_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
+              _buildFeatureItem(context, state.translate("Vouchers", "Waatsharrada", ar: "القسائم", de: "Gutscheine"), Icons.confirmation_number_rounded, Colors.purple, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildToggleItem(ChartType type, IconData icon) {
-    bool isSelected = _selectedChartType == type;
+  Widget _buildVirtualCardPromo(BuildContext context, AppState state, ThemeData theme) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+      child: ZoomIn(
+        child: GestureDetector(
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CardsScreen())),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(colors: [Color(0xFF1E293B), Color(0xFF0F172A)]),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
+                        child: Text("PREMIUM", style: TextStyle(color: Colors.white70, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(state.translate("Virtual Card", "Kaadhka Online-ka ah", ar: "بطاقة افتراضية", de: "Virtuelle Karte"), style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+                      const SizedBox(height: 4),
+                      Text(state.translate("Get your secure virtual card and shop globally.", "Hadda qaado kaadhkaaga online-ka ah si aad wax u iibsato.", ar: "احصل على بطاقتك الافتراضية الآمنة وتسوق عالميًا.", de: "Holen Sie sich Ihre sichere virtuelle Karte und kaufen Sie weltweit ein."), style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white30, size: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentTransactions(BuildContext context, AppState state, ThemeData theme) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  state.translate("Recent Transactions", "Dhaqdhaqaaqadii u dambeeyay", ar: "المعاملات الأخيرة", de: "Letzte Transaktionen"), 
+                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HistoryScreen())), child: Text(state.translate("See All", "Dhammaan", ar: "عرض الكل", de: "Alle anzeigen"), style: TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+            ],
+          ),
+          const TransactionItem(title: "Amazon.com", subtitle: "Shopping", amount: r"-$124.50", date: "Today, 2:45 PM", status: "Success", icon: FontAwesomeIcons.amazon),
+          const TransactionItem(title: "Ahmed Warsame", subtitle: "Transfer", amount: r"+$2,500.00", date: "Yesterday, 10:20 AM", status: "Success", icon: FontAwesomeIcons.userLarge),
+          const TransactionItem(title: "Somnet Bill", subtitle: "Utilities", amount: r"-$35.00", date: "24 Oct, 4:15 PM", status: "Pending", icon: Icons.wifi_rounded),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(BuildContext context, String label, IconData icon, Gradient gradient, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 56 * context.fontSizeFactor,
+        decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))]),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Icon(icon, color: Colors.white, size: 18 * context.fontSizeFactor),
+          const SizedBox(width: 10),
+          Text(label, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor)),
+        ]),
+      ),
+    );
+  }
+
+  Widget _buildFeatureItem(BuildContext context, String label, IconData icon, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+            child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
+          ),
+          const SizedBox(height: 8),
+          Flexible(
+            child: Text(label, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w500), textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChartTypeToggle(ChartType type, IconData icon) {
+    final isSelected = _selectedChartType == type;
     return GestureDetector(
       onTap: () => setState(() => _selectedChartType = type),
       child: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color: isSelected ? AppColors.primaryDark : Colors.transparent, borderRadius: BorderRadius.circular(8)),
-        child: Icon(icon, size: 18, color: isSelected ? Colors.white : AppColors.grey),
+        margin: const EdgeInsets.only(left: 4),
+        decoration: BoxDecoration(color: isSelected ? AppColors.primaryDark.withValues(alpha: 0.1) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
+        child: Icon(icon, size: 18, color: isSelected ? AppColors.primaryDark : Colors.grey),
       ),
     );
   }
 
   Widget _buildSelectedChart(ThemeData theme) {
     switch (_selectedChartType) {
-      case ChartType.pie: return _buildPieChart(theme);
+      case ChartType.bar: return _buildBarChart(theme);
       case ChartType.line: return _buildLineChart(theme);
-      default: return _buildBarChart(theme);
+      case ChartType.pie: return _buildPieChart(theme);
     }
   }
 
@@ -355,36 +479,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
         maxY: 100,
-        barTouchData: BarTouchData(
-          touchTooltipData: BarTouchTooltipData(
-            getTooltipColor: (_) => AppColors.primaryDark,
-            getTooltipItem: (group, groupIndex, rod, rodIndex) => BarTooltipItem("\$${rod.toY.toInt()}", const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          ),
-        ),
+        barTouchData: BarTouchData(enabled: true),
         titlesData: FlTitlesData(
           show: true,
-          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (v, meta) => Padding(padding: const EdgeInsets.only(top: 8), child: Text(_days[v.toInt()], style: TextStyle(color: AppColors.grey, fontSize: 10))))),
+          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, meta) => Text(_days[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 10)))),
           leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         gridData: const FlGridData(show: false),
         borderData: FlBorderData(show: false),
-        barGroups: _spendingData.asMap().entries.map((e) => BarChartGroupData(x: e.key, barRods: [BarChartRodData(toY: e.value, gradient: AppColors.accentGradient, width: 16, borderRadius: BorderRadius.circular(4))])).toList(),
-      ),
-    );
-  }
-
-  Widget _buildPieChart(ThemeData theme) {
-    return PieChart(
-      PieChartData(
-        sectionsSpace: 4, centerSpaceRadius: 40,
-        sections: [
-          PieChartSectionData(value: 40, title: 'Bills', color: AppColors.primaryDark, radius: 50, titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-          PieChartSectionData(value: 30, title: 'Food', color: AppColors.accentTeal, radius: 50, titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-          PieChartSectionData(value: 20, title: 'Shop', color: Colors.orange, radius: 50, titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-          PieChartSectionData(value: 10, title: 'Other', color: AppColors.grey, radius: 50, titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-        ],
+        barGroups: List.generate(_spendingData.length, (i) => BarChartGroupData(x: i, barRods: [BarChartRodData(toY: _spendingData[i], gradient: AppColors.primaryGradient, width: 12, borderRadius: BorderRadius.circular(4))])),
       ),
     );
   }
@@ -394,7 +499,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       LineChartData(
         gridData: const FlGridData(show: false),
         titlesData: FlTitlesData(
-          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (v, meta) => Text(_days[v.toInt()], style: const TextStyle(color: AppColors.grey, fontSize: 10)))),
+          show: true,
+          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, meta) => value.toInt() < _days.length ? Text(_days[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 10)) : const SizedBox())),
           leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -402,282 +508,47 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         borderData: FlBorderData(show: false),
         lineBarsData: [
           LineChartBarData(
-            spots: _spendingData.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
-            isCurved: true, gradient: AppColors.accentGradient, barWidth: 4, isStrokeCapRound: true, dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(show: true, gradient: LinearGradient(colors: [AppColors.accentTeal.withValues(alpha: 0.3), AppColors.accentTeal.withValues(alpha: 0.0)])),
+            spots: List.generate(_spendingData.length, (i) => FlSpot(i.toDouble(), _spendingData[i])),
+            isCurved: true,
+            gradient: AppColors.primaryGradient,
+            barWidth: 4,
+            isStrokeCapRound: true,
+            dotData: const FlDotData(show: false),
+            belowBarData: BarAreaData(show: true, gradient: LinearGradient(colors: [AppColors.primaryDark.withValues(alpha: 0.2), AppColors.primaryDark.withValues(alpha: 0)])),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildActionButton(BuildContext context, String title, IconData icon, Gradient gradient, VoidCallback onTap) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 56 * context.fontSizeFactor, 
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center, 
-            children: [
-              FaIcon(icon, color: Colors.white, size: 16 * context.fontSizeFactor), 
-              const SizedBox(width: 8), 
-              Flexible(
-                child: Text(
-                  title, 
-                  style: TextStyle(
-                    color: Colors.white, 
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14 * context.fontSizeFactor
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              )
-            ],
-          ),
-        ),
+  Widget _buildPieChart(ThemeData theme) {
+    return PieChart(
+      PieChartData(
+        sectionsSpace: 0,
+        centerSpaceRadius: 40,
+        sections: [
+          PieChartSectionData(color: Colors.blue, value: 45, title: '45%', radius: 50, titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+          PieChartSectionData(color: Colors.orange, value: 30, title: '30%', radius: 50, titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+          PieChartSectionData(color: AppColors.accentTeal, value: 25, title: '25%', radius: 50, titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+        ],
       ),
     );
   }
 
-  Widget _buildQuickActions(BuildContext context, AppState state, ThemeData theme) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final double spacing = 16.0;
-          final int crossAxisCount = constraints.maxWidth > 600 ? 5 : 4;
-          // Ensure width is never negative
-          final double availableWidth = constraints.maxWidth - (spacing * (crossAxisCount - 1));
-          final double itemWidth = (availableWidth / crossAxisCount).clamp(60.0, 120.0);
-
-          return Wrap(
-            spacing: spacing,
-            runSpacing: 20,
-            alignment: WrapAlignment.center,
-            children: [
-              _buildQuickActionItem(
-                  context,
-                  state.translate("Bills", "Biilasha"),
-                  FontAwesomeIcons.receipt,
-                  itemWidth,
-                  () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
-              _buildQuickActionItem(
-                  context,
-                  state.translate("Sadaqah", "Sadaqada"),
-                  FontAwesomeIcons.heart,
-                  itemWidth,
-                  () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
-              _buildQuickActionItem(
-                  context,
-                  state.translate("Exchange", "Sarifka"),
-                  FontAwesomeIcons.moneyBillTransfer,
-                  itemWidth,
-                  () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
-              _buildQuickActionItem(
-                  context,
-                  state.translate("Vouchers", "Waatsharrada"),
-                  FontAwesomeIcons.ticket,
-                  itemWidth,
-                  () => Navigator.push(context, MaterialPageRoute(builder: (context) => VouchersScreen()))),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildQuickActionItem(BuildContext context, String title, IconData icon, double width, VoidCallback onTap) {
-    final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: SizedBox(
-        width: width,
-        child: Column(
+  Widget _buildStatItem(BuildContext context, String label, String amount, Color color) {
+    return Column(
+      children: [
+        Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 52,
-              width: 52,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ],
-              ),
-              child: Center(
-                child: FaIcon(
-                  icon,
-                  color: theme.colorScheme.primary,
-                  size: 18,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 10,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+            const SizedBox(width: 4),
+            Flexible(child: Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12), overflow: TextOverflow.ellipsis)),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildVirtualCardPromo(BuildContext context, AppState state, ThemeData theme) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-      child: GlassmorphicContainer(
-        width: double.infinity,
-        height: 200 * context.fontSizeFactor,
-        borderRadius: 24,
-        blur: 15,
-        alignment: Alignment.center,
-        border: 1.5,
-        linearGradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF0F2027).withValues(alpha: 0.9),
-            const Color(0xFF203A43).withValues(alpha: 0.8),
-          ],
-        ),
-        borderGradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: 0.3),
-            Colors.white.withValues(alpha: 0.1),
-          ],
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              right: -20,
-              top: -20,
-              child: Opacity(
-                opacity: 0.1,
-                child: Icon(Icons.credit_card_rounded, size: 150, color: Colors.white),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppColors.accentTeal.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(Icons.stars_rounded, color: AppColors.accentTeal, size: 20),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        state.translate("Virtual Card", "Kaadhka Online-ka ah"),
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    state.translate("Get your secure virtual card and shop globally.", "Hadda qaado kaadhkaaga oo meel kasta ka adeegso."),
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: context.isTablet || context.isDesktop ? 180 : double.infinity,
-                    height: 44 * context.fontSizeFactor,
-                    child: ElevatedButton(
-                      onPressed: () => state.setNavIndex(3),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentTeal,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 0,
-                        padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor),
-                      ),
-                      child: Text(
-                        state.translate("Get Started", "Bilow Hadda"), 
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14 * context.fontSizeFactor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRecentTransactions(BuildContext context, AppState state, ThemeData theme) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding), 
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  state.translate("Recent Transactions", "Dhaqdhaqaaqii Ugu Dambeeyay"), 
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold), 
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis
-                )
-              ),
-              const SizedBox(width: 8),
-              TextButton(
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HistoryScreen())), 
-                style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(50, 30), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                child: Text(
-                  state.translate("See All", "Dhammaan"), 
-                  style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold),
-                )
-              ),
-            ]
-          ),
-          TransactionItem(
-            name: "Mohamed Ali",
-            type: "EVC Plus",
-            amount: "-\$250.00",
-            status: "Success",
-          ),
-          TransactionItem(
-            name: "Ahmed Hersi",
-            type: "ZAAD",
-            amount: "-\$100.00",
-            status: "Pending",
-          ),
-        ]
-      )
+        const SizedBox(height: 4),
+        Text(amount, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+      ],
     );
   }
 }
-

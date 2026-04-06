@@ -45,7 +45,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          state.translate("Receiver Details", "Faahfaahinta Qaataha"), 
+          state.translate("Receiver Details", "Faahfaahinta Qaataha", ar: "تفاصيل المستلم", de: "Empfängerdetails"), 
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
       ),
@@ -59,7 +59,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    state.translate("Enter Receiver's Phone Number", "Geli Lambarka Qaataha"),
+                    state.translate("Enter Receiver's Phone Number", "Geli Lambarka Qaataha", ar: "أدخل رقم هاتف المستلم", de: "Telefonnummer des Empfängers eingeben"),
                     style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: AppColors.grey),
                   ),
                   const SizedBox(height: 32),
@@ -69,7 +69,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                     keyboardType: TextInputType.phone,
                     style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.w600),
                     decoration: InputDecoration(
-                      hintText: state.translate("Phone Number", "Lambarka Taleefanka"),
+                      hintText: state.translate("Phone Number", "Lambarka Taleefanka", ar: "رقم الهاتف", de: "Telefonnummer"),
                       prefixIcon: const Icon(Icons.phone_android_rounded),
                       suffixIcon: const Icon(Icons.search_rounded),
                       filled: true,
@@ -92,7 +92,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                "${state.translate("Receiver", "Qaataha")}: $_verifiedName", 
+                                "${state.translate("Receiver", "Qaataha", ar: "المستلم", de: "Empfänger")}: $_verifiedName", 
                                 style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -104,7 +104,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                     ),
                   const SizedBox(height: 32),
                   Text(
-                    state.translate("Recent", "Dhawaan"), 
+                    state.translate("Recent", "Dhawaan", ar: "الأخيرة", de: "Kürzlich"), 
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                   const SizedBox(height: 16),
                   _buildRecentItem(context, "Mohamed Ali", "615 123 456"),
@@ -131,12 +131,12 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.translate("Please enter details", "Fadlan geli faahfaahinta"))),
+                            SnackBar(content: Text(state.translate("Please enter details", "Fadlan geli faahfaahinta", ar: "يرجى إدخال التفاصيل", de: "Bitte Details eingeben"))),
                           );
                         }
                       },
                       child: Text(
-                        state.translate("Continue to Review", "Sii soco Dib-u-eegis"),
+                        state.translate("Continue to Review", "Sii soco Dib-u-eegis", ar: "متابعة المراجعة", de: "Weiter zur Überprüfung"),
                         style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                     ),
                   ),
@@ -168,4 +168,3 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
     );
   }
 }
-

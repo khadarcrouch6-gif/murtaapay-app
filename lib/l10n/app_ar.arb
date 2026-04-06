@@ -1,0 +1,12 @@
+{
+  "@@locale": "ar",
+  "appTitle": "مرتاح باي",
+  "welcome": "أهلاً بك",
+  "sendMoney": "إرسال الأموال",
+  "receiveMoney": "استلام",
+  "balance": "الرصيد",
+  "recentTransactions": "المعاملات الأخيرة",
+  "settings": "الإعدادات",
+  "language": "اللغة",
+  "theme": "المظهر"
+}

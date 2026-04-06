@@ -139,7 +139,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(32),
             boxShadow: [
-              BoxShadow(color: theme.brightness == Brightness.dark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.06), blurRadius: 25, offset: const Offset(0, 10)),
+              BoxShadow(color: theme.brightness == Brightness.dark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.06), blurRadius: 25, offset: const Offset(0, 10)),
             ],
           ),
           clipBehavior: Clip.antiAlias,
@@ -149,7 +149,6 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image Header for Tablet/Wide
                     Expanded(
                       flex: 2,
                       child: Stack(
@@ -161,8 +160,8 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) => Container(
                               height: 280 * context.fontSizeFactor, width: double.infinity,
-                              color: theme.colorScheme.primary.withValues(alpha: 0.05),
-                              child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                              color: theme.colorScheme.primary.withOpacity(0.05),
+                              child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withOpacity(0.2)),
                             ),
                           ),
                           _buildVerifiedBadge(context, state),
@@ -183,7 +182,6 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Image Header for Mobile
                   Stack(
                     children: [
                       Image.network(
@@ -193,8 +191,8 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
                           height: 180 * context.fontSizeFactor, width: double.infinity,
-                          color: theme.colorScheme.primary.withValues(alpha: 0.05),
-                          child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                          color: theme.colorScheme.primary.withOpacity(0.05),
+                          child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withOpacity(0.2)),
                         ),
                       ),
                       _buildVerifiedBadge(context, state),
@@ -220,7 +218,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
       left: 16,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 14 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
-        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10)]),
+        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)]),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -259,7 +257,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
               children: [
                 Text("\$${campaign.raisedAmount.toInt()}", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 22 * context.fontSizeFactor)),
                 const SizedBox(height: 2),
-                Text(state.translate("Raised", "La Ururiyay", ar: "تم جمعه", de: "Gisammelt"), style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                Text(state.translate("Raised", "La Ururiyay", ar: "تم جمعه", de: "Gesammelt"), style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
               ],
             ),
             Column(
@@ -299,7 +297,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.05), blurRadius: 20, offset: const Offset(0, -5))],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(theme.brightness == Brightness.dark ? 0.2 : 0.05), blurRadius: 20, offset: const Offset(0, -5))],
       ),
       child: Center(
         child: MaxWidthBox(
@@ -318,7 +316,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                 backgroundColor: theme.colorScheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 elevation: 8,
-                shadowColor: theme.colorScheme.primary.withValues(alpha: 0.3),
+                shadowColor: theme.colorScheme.primary.withOpacity(0.3),
               ),
               child: Text(state.translate("Start a Fundraiser", "Bilow Ururinta Sadaqo", ar: "ابدأ حملة تبرع", de: "Fundraiser starten"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
             ),
@@ -328,4 +326,3 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     );
   }
 }
-

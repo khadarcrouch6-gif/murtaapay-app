@@ -1,0 +1,12 @@
+{
+  "@@locale": "de",
+  "appTitle": "MurtaaxPay",
+  "welcome": "Willkommen zurück",
+  "sendMoney": "Geld senden",
+  "receiveMoney": "Erhalten",
+  "balance": "Kontostand",
+  "recentTransactions": "Letzte Transaktionen",
+  "settings": "Einstellungen",
+  "language": "Sprache",
+  "theme": "Thema"
+}

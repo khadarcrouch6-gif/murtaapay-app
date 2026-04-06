@@ -4,22 +4,24 @@ import '../app_colors.dart';
 import '../app_state.dart';
 
 class TransactionItem extends StatelessWidget {
-  final String name;
-  final String type;
+  final String title;
+  final String subtitle;
   final String amount;
   final String status;
   final String? date;
   final bool? isSent;
+  final IconData? icon;
   final VoidCallback? onTap;
 
   const TransactionItem({
     super.key,
-    required this.name,
-    required this.type,
+    required this.title,
+    required this.subtitle,
     required this.amount,
     required this.status,
     this.date,
     this.isSent,
+    this.icon,
     this.onTap,
   });
 
@@ -50,25 +52,29 @@ class TransactionItem extends StatelessWidget {
               height: 48,
               width: 48,
               decoration: BoxDecoration(
-                color: isSent == null 
-                  ? theme.colorScheme.primary.withValues(alpha: 0.05)
-                  : (isSent! ? Colors.red : AppColors.accentTeal).withValues(alpha: 0.1),
+                color: (icon != null)
+                  ? Colors.grey.withValues(alpha: 0.1)
+                  : (isSent == null 
+                    ? theme.colorScheme.primary.withValues(alpha: 0.05)
+                    : (isSent! ? Colors.red : AppColors.accentTeal).withValues(alpha: 0.1)),
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: isSent == null 
-                  ? Text(
-                      name.isNotEmpty ? name[0] : "?",
-                      style: TextStyle(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  : Icon(
-                      isSent! ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown,
-                      color: isSent! ? Colors.red : AppColors.accentTeal,
-                      size: 16,
-                    ),
+                child: icon != null 
+                  ? Icon(icon, color: AppColors.primaryDark, size: 20)
+                  : (isSent == null 
+                    ? Text(
+                        title.isNotEmpty ? title[0] : "?",
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : Icon(
+                        isSent! ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown,
+                        color: isSent! ? Colors.red : AppColors.accentTeal,
+                        size: 16,
+                      )),
               ),
             ),
             const SizedBox(width: 16),
@@ -78,13 +84,13 @@ class TransactionItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    title,
                     style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    date != null ? "$type • $date" : type,
+                    date != null ? "$subtitle • $date" : subtitle,
                     style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

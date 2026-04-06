@@ -49,7 +49,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          state.translate("Review Transfer", "Dib-u-eegista Wareejinta"), 
+          state.translate("Review Transfer", "Dib-u-eegis", ar: "مراجعة التحويل", de: "Überprüfung"), 
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
       ),
@@ -69,19 +69,19 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     ),
                     child: Column(
                       children: [
-                        DetailRow(label: state.translate("You send", "Adiga ayaa diraya"), value: "${widget.amount} EUR"),
+                        DetailRow(label: state.translate("You send", "Adiga ayaa diraya", ar: "أنت ترسل", de: "Sie senden"), value: "${widget.amount} EUR"),
                         const SizedBox(height: 16),
-                        DetailRow(label: state.translate("Payment Method", "Habka Lacag-bixinta"), value: widget.method, valueColor: AppColors.primaryDark),
+                        DetailRow(label: state.translate("Payment Method", "Habka Bixinta", ar: "طريقة الدفع", de: "Zahlungsmethode"), value: widget.method, valueColor: AppColors.primaryDark),
                         const SizedBox(height: 16),
-                        DetailRow(label: state.translate("Fee", "Khidmad"), value: "0.00 EUR", valueColor: AppColors.accentTeal),
+                        DetailRow(label: state.translate("Fee", "Khidmad", ar: "رسوم", de: "Gebühr"), value: "0.00 EUR", valueColor: AppColors.accentTeal),
                         const SizedBox(height: 16),
-                        DetailRow(label: state.translate("Exchange rate", "Qiimaha sarrifka"), value: "1 EUR = 1.08 USD"),
+                        DetailRow(label: state.translate("Exchange rate", "Sarrifka", ar: "سعر الصرف", de: "Wechselkurs"), value: "1 EUR = 1.08 USD"),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 20 * context.fontSizeFactor),
                           child: const Divider(),
                         ),
                         DetailRow(
-                          label: state.translate("Receiver gets", "Qaataha wuxuu helayaa"),
+                          label: state.translate("Receiver gets", "Qaataha wuxuu helayaa", ar: "المستلم يستلم", de: "Empfänger erhält"),
                           value: "\$${receivedAmount.toStringAsFixed(2)} USD",
                           valueColor: AppColors.primaryDark,
                         ),
@@ -129,7 +129,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
                     child: Text(
-                      state.translate("Confirm & Pay", "Xaqiiji & Bixi"), 
+                      state.translate("Confirm & Pay", "Xaqiiji & Bixi", ar: "تأكيد والدفع", de: "Bestätigen & Zahlen"), 
                       style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: Colors.white)),
                   ),
                 ),
@@ -140,5 +140,3 @@ class _ReviewScreenState extends State<ReviewScreen> {
     );
   }
 }
-
-

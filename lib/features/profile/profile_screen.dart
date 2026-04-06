@@ -25,14 +25,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _userEmail = "khadar@murtaaxpay.com";
   String _userPhone = "+252 615 123 456";
   String _userAddress = "Mogadishu, Somalia";
-  String _userDob = "01 Jan, 1990";
   String _profileImageUrl = 'https://i.pravatar.cc/300';
   String _coverImageUrl = 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800';
-
-  final List<Map<String, String>> _bankAccounts = [
-    {"name": "Premier Bank", "acc": r"**** 8829"},
-    {"name": "IBS Bank", "acc": r"**** 1120"},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -62,45 +56,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _buildProfileHeader(context, theme),
                       const SizedBox(height: 32),
                       
-                      _buildSectionTitle(state.translate("Account Settings", "Habaynta Koontada")),
+                      _buildSectionTitle(state.translate("Account Settings", "Habaynta Koontada", ar: "إعدادات الحساب", de: "Kontoeinstellungen")),
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Personal Information", "Xogta Shakhsiga"), 
+                        state.translate("Personal Information", "Xogta Shakhsiga", ar: "معلومات شخصية", de: "Persönliche Angaben"), 
                         FontAwesomeIcons.user, 
                         () => _showPersonalInfoEditor(context, state)
                       ),
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Identity Verification (KYC)", "Xaqiijinta Aqoonsiga"), 
+                        state.translate("Identity Verification (KYC)", "Xaqiijinta Aqoonsiga", ar: "التحقق من الهوية", de: "Identitätsprüfung"), 
                         Icons.verified_user_rounded, 
                         () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen()))
                       ),
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Security & PIN", "Amniga & PIN"), 
+                        state.translate("Security & PIN", "Amniga & PIN", ar: "الأمن ورمز PIN", de: "Sicherheit & PIN"), 
                         FontAwesomeIcons.shieldHalved, 
                         () => _showSecuritySettings(context, state)
                       ),
 
                       const SizedBox(height: 24),
-                      _buildSectionTitle(state.translate("Financial", "Maaliyadda")),
+                      _buildSectionTitle(state.translate("Financial", "Maaliyadda", ar: "المالية", de: "Finanzen")),
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Linked Bank Accounts", "Bangiyada ku Xidhan"), 
+                        state.translate("Linked Bank Accounts", "Bangiyada ku Xidhan", ar: "الحسابات البنكية المرتبطة", de: "Verknüpfte Bankkonten"), 
                         FontAwesomeIcons.buildingColumns, 
-                        () => _showLinkedBanks(context)
+                        () => _showLinkedBanks(context, state)
                       ),
 
                       const SizedBox(height: 24),
-                      _buildSectionTitle(state.translate("Preferences", "Dookhyada")),
+                      _buildSectionTitle(state.translate("Preferences", "Dookhyada", ar: "التفضيلات", de: "Präferenzen")),
                       
                       _buildSettingSwitch(
                         context,
-                        state.translate("Dark Mode", "Habka Habeenkii"), 
+                        state.translate("Dark Mode", "Habka Habeenkii", ar: "الوضع الليلي", de: "Dunkler Modus"), 
                         state.themeMode == ThemeMode.dark, 
                         Icons.dark_mode_rounded, 
                         (v) => state.toggleTheme(v)
@@ -108,31 +102,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       
                       _buildProfileOption(
                         context, 
-                        "${state.translate("Language", "Luqadda")}: ${_getLanguageName(state.locale.languageCode)}", 
+                        "${state.translate("Language", "Luqadda", ar: "اللغة", de: "Sprache")}: ${_getLanguageName(state.locale.languageCode)}", 
                         Icons.language_rounded, 
                         () => _showLanguagePicker(context, state)
                       ),
 
                       const SizedBox(height: 24),
-                      _buildSectionTitle(state.translate("Others", "Kuwa kale")),
+                      _buildSectionTitle(state.translate("Others", "Kuwa kale", ar: "أخرى", de: "Andere")),
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Refer & Earn", "Tixraac & Guulayso"), 
+                        state.translate("Refer & Earn", "Tixraac & Guulayso", ar: "أحل واربح", de: "Empfehlen & Verdienen"), 
                         FontAwesomeIcons.userPlus, 
-                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => ReferEarnScreen()))
+                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ReferEarnScreen()))
                       ),
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Help & Support", "Caawinaad & Taageero"), 
+                        state.translate("Help & Support", "Caawinaad & Taageero", ar: "المساعدة والدعم", de: "Hilfe & Support"), 
                         FontAwesomeIcons.headset, 
                         () => _showSupportOptions(context, state)
                       ),
                       
                       _buildProfileOption(
                         context, 
-                        state.translate("Terms & Privacy", "Shuruudaha & Qawaaniinta"), 
+                        state.translate("Terms & Privacy", "Shuruudaha & Qawaaniinta", ar: "الشروط والخصوصية", de: "Bedingungen & Datenschutz"), 
                         Icons.policy_rounded, 
                         () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TermsScreen()))
                       ),
@@ -140,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 32),
                       _buildProfileOption(
                         context, 
-                        state.translate("Logout", "Ka Bax"), 
+                        state.translate("Logout", "Ka Bax", ar: "تسجيل الخروج", de: "Abmelden"), 
                         FontAwesomeIcons.rightFromBracket, 
                         () => _showLogoutDialog(context, state), 
                         isLogout: true
@@ -195,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.black.withOpacity(0.4), Colors.transparent],
+                    colors: [Colors.black.withValues(alpha: 0.4), Colors.transparent],
                   ),
                 ),
               ),
@@ -208,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(color: theme.scaffoldBackgroundColor, width: 4),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10)],
                   image: DecorationImage(image: NetworkImage(_profileImageUrl), fit: BoxFit.cover),
                 ),
               ),
@@ -244,12 +238,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Center(child: Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)))),
               const SizedBox(height: 24),
-              Text(state.translate("Edit Personal Information", "Wax ka beddel Xogta"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(state.translate("Edit Personal Information", "Wax ka beddel Xogta", ar: "تعديل المعلومات الشخصية", de: "Persönliche Daten bearbeiten"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 24),
-              _buildEditorField(nameCtrl, state.translate("Full Name", "Magaca oo dhammaystiran"), Icons.person_outline),
-              _buildEditorField(emailCtrl, state.translate("Email Address", "Boostada qoraalka"), Icons.email_outlined),
-              _buildEditorField(phoneCtrl, state.translate("Phone Number", "Lambarka taleefanka"), Icons.phone_outlined),
-              _buildEditorField(addressCtrl, state.translate("Current Address", "Meesha uu degan yahay"), Icons.location_on_outlined),
+              _buildEditorField(nameCtrl, state.translate("Full Name", "Magaca oo dhammaystiran", ar: "الاسم الكامل", de: "Vollständiger Name"), Icons.person_outline),
+              _buildEditorField(emailCtrl, state.translate("Email Address", "Boostada qoraalka", ar: "البريد الإلكتروني", de: "E-Mail-Adresse"), Icons.email_outlined),
+              _buildEditorField(phoneCtrl, state.translate("Phone Number", "Lambarka taleefanka", ar: "رقم الهاتف", de: "Telefonnummer"), Icons.phone_outlined),
+              _buildEditorField(addressCtrl, state.translate("Current Address", "Meesha uu degan yahay", ar: "العنوان الحالي", de: "Aktuelle Adresse"), Icons.location_on_outlined),
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
@@ -265,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
-                  child: Text(state.translate("Save Changes", "Keydi Isbeddelka"), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text(state.translate("Save Changes", "Keydi Isbeddelka", ar: "حفظ التغييرات", de: "Änderungen speichern"), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
@@ -299,7 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10)],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10)],
         ),
         child: Row(
           children: [
@@ -342,10 +336,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showLanguagePicker(BuildContext context, AppState state) {
     final languages = [
-      {"code": "en", "name": "English", "native": "English", "flag": "gb"},
-      {"code": "so", "name": "Somali", "native": "Af-Soomaali", "flag": "so"},
-      {"code": "ar", "name": "Arabic", "native": "العربية", "flag": "sa"},
-      {"code": "de", "name": "German", "native": "Deutsch", "flag": "de"},
+      {"code": "en", "name": "English", "native": "English", "country": "gb"},
+      {"code": "so", "name": "Somali", "native": "Af-Soomaali", "country": "so"},
+      {"code": "ar", "name": "Arabic", "native": "العربية", "country": "sa"},
+      {"code": "de", "name": "German", "native": "Deutsch", "country": "de"},
     ];
 
     showModalBottomSheet(
@@ -357,16 +351,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(state.translate("Select Language", "Dooro Luqadda"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            ...languages.map((lang) => ListTile(
-              leading: Text(lang["flag"] == "gb" ? "🇬🇧" : lang["flag"] == "so" ? "🇸🇴" : lang["flag"] == "sa" ? "🇸🇦" : "🇩🇪", style: const TextStyle(fontSize: 24)),
-              title: Text(lang["native"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
-              trailing: state.locale.languageCode == lang["code"] ? const Icon(Icons.check_circle, color: AppColors.accentTeal) : null,
-              onTap: () {
-                state.setLanguage(lang["code"]!);
-                Navigator.pop(context);
-              },
+            Text(state.translate("Select Language", "Dooro Luqadda", ar: "اختر اللغة", de: "Sprache auswählen"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+            ...languages.map((lang) => Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                color: state.locale.languageCode == lang["code"] ? AppColors.accentTeal.withValues(alpha: 0.1) : null,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ListTile(
+                leading: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.network(
+                    "https://flagcdn.com/w80/${lang["country"]}.png",
+                    width: 32,
+                    height: 24,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded),
+                  ),
+                ),
+                title: Text(lang["native"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
+                trailing: state.locale.languageCode == lang["code"] ? const Icon(Icons.check_circle, color: AppColors.accentTeal) : null,
+                onTap: () {
+                  state.setLanguage(lang["code"]!);
+                  Navigator.pop(context);
+                },
+              ),
             )),
           ],
         ),
@@ -380,24 +390,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         ListTile(
           leading: const Icon(Icons.password, color: AppColors.accentTeal),
-          title: Text(state.translate("Change PIN", "Beddel PIN-ka")),
+          title: Text(state.translate("Change PIN", "Beddel PIN-ka", ar: "تغيير رمز PIN", de: "PIN ändern")),
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePinScreen())),
         ),
       ]),
     ));
   }
 
-  void _showLinkedBanks(BuildContext context) {
+  void _showLinkedBanks(BuildContext context, AppState state) {
     showModalBottomSheet(context: context, useRootNavigator: true, builder: (context) => Container(
       padding: const EdgeInsets.all(32),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Text("Bank Accounts", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(state.translate("Bank Accounts", "Akoonada Bangiga", ar: "حسابات بنكية", de: "Bankkonten"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
-        ..._bankAccounts.map((bank) => ListTile(
+        ListTile(
           leading: const Icon(Icons.account_balance, color: AppColors.accentTeal),
-          title: Text(bank["name"]!),
-          subtitle: Text(bank["acc"]!),
-        )),
+          title: const Text("Premier Bank"),
+          subtitle: const Text("**** 8829"),
+        ),
+        ListTile(
+          leading: const Icon(Icons.account_balance, color: AppColors.accentTeal),
+          title: const Text("IBS Bank"),
+          subtitle: const Text("**** 1120"),
+        ),
       ]),
     ));
   }
@@ -408,7 +423,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         ListTile(
           leading: const Icon(Icons.chat, color: AppColors.accentTeal),
-          title: const Text("Live Chat"),
+          title: Text(state.translate("Live Chat", "Wada hadalka tooska ah", ar: "دردشة مباشرة", de: "Live-Chat")),
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatListScreen())),
         ),
       ]),
@@ -417,13 +432,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showLogoutDialog(BuildContext context, AppState state) {
     showDialog(context: context, builder: (context) => AlertDialog(
-      title: Text(state.translate("Logout", "Ka Bax")),
-      content: Text(state.translate("Are you sure you want to logout?", "Ma hubtaa inaad ka baxayso?")),
+      title: Text(state.translate("Logout", "Ka Bax", ar: "تسجيل الخروج", de: "Abmelden")),
+      content: Text(state.translate("Are you sure you want to logout?", "Ma hubtaa inaad ka baxayso?", ar: "هل أنت متأكد أنك تريد تسجيل الخروج؟", de: "Sind Sie sicher, dass Sie sich abmelden möchten?")),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: Text(state.translate("Cancel", "Iska Daay"))),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(state.translate("Cancel", "Iska Daay", ar: "إلغاء", de: "Abbrechen"))),
         TextButton(
           onPressed: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const SplashScreen()), (route) => false),
-          child: Text(state.translate("Logout", "Ka Bax"), style: const TextStyle(color: Colors.red)),
+          child: Text(state.translate("Logout", "Ka Bax", ar: "تسجيل الخروج", de: "Abmelden"), style: const TextStyle(color: Colors.red)),
         ),
       ],
     ));

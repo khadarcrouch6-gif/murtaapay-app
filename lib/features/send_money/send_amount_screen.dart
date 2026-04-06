@@ -62,7 +62,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          state.translate("Send Money", "Lacag Dir"),
+          state.translate("Send Money", "Lacag Dir", ar: "إرسال الأموال", de: "Geld senden"),
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             fontSize: 20 * context.fontSizeFactor,
@@ -82,7 +82,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    state.translate("Enter Amount", "Geli Cadadka"),
+                    state.translate("Enter Amount", "Geli Cadadka", ar: "أدخل المبلغ", de: "Betrag eingeben"),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.grey,
                       fontSize: 14 * context.fontSizeFactor,
@@ -94,7 +94,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                     context,
                     state,
                     theme,
-                    state.translate("You Send", "Adiga ayaa Diraya"), 
+                    state.translate("You Send", "Adiga ayaa Diraya", ar: "أنت ترسل", de: "Sie senden"), 
                     _sendController, 
                     _sendCurrency, 
                     (val) => _updateReceiveAmount(val), 
@@ -121,7 +121,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                     context,
                     state,
                     theme,
-                    state.translate("Receiver Gets", "Qaataha wuxuu Helayaa"), 
+                    state.translate("Receiver Gets", "Qaataha wuxuu Helayaa", ar: "المستلم يستلم", de: "Empfänger erhält"), 
                     _receiveController, 
                     _receiveCurrency, 
                     (val) => _updateSendAmount(val), 
@@ -137,7 +137,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                   
                   const SizedBox(height: 32),
                   Text(
-                    state.translate("Select Payment Method", "Dooro Habka Lacagta"),
+                    state.translate("Select Payment Method", "Dooro Habka Lacagta", ar: "اختر طريقة الدفع", de: "Zahlungsmethode wählen"),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 18 * context.fontSizeFactor,
@@ -155,6 +155,16 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                       height: 56 * context.fontSizeFactor,
                       child: ElevatedButton(
                         onPressed: () {
+                          double amount = double.tryParse(_sendController.text) ?? 0;
+                          if (!state.hasSufficientBalance(amount)) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(state.translate("Insufficient Balance", "Haraagu kuguma filna", ar: "رصيد غير كاف", de: "Unzureichendes Guthaben")),
+                                backgroundColor: Colors.red,
+                              )
+                            );
+                            return;
+                          }
                           if (_selectedMethod == "Murtaax Wallet") {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => WalletReceiverScreen(amount: _sendController.text, method: _selectedMethod)));
                           } else {
@@ -162,7 +172,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                           }
                         },
                         child: Text(
-                          state.translate("Continue", "Sii soco"),
+                          state.translate("Continue", "Sii soco", ar: "استمرار", de: "Weiter"),
                           style: TextStyle(fontSize: 16 * context.fontSizeFactor),
                         ),
                       ),
@@ -178,130 +188,66 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   }
 
   Widget _buildAmountBox(BuildContext context, AppState state, ThemeData theme, String label, TextEditingController controller, String selectedCurrency, Function(String) onChanged, Function(String) onCurrencyChanged, List<String> availableCurrencies, {bool isReceiver = false}) {
-    final isDark = theme.brightness == Brightness.dark;
-    
-    return GlassmorphicContainer(
+    return Container(
       width: double.infinity,
-      height: 120 * context.fontSizeFactor,
-      borderRadius: 24,
-      blur: 15,
-      alignment: Alignment.center,
-      border: 1.5,
-      linearGradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: isDark 
-          ? [Colors.white.withValues(alpha: 0.08), Colors.white.withValues(alpha: 0.03)]
-          : [Colors.white.withValues(alpha: 0.9), Colors.white.withValues(alpha: 0.7)],
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
       ),
-      borderGradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          isReceiver ? AppColors.accentTeal.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.5),
-          Colors.white.withValues(alpha: 0.1),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(color: AppColors.grey, fontSize: 12)),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  onChanged: onChanged,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  decoration: const InputDecoration(border: InputBorder.none, hintText: "0.00"),
+                ),
+              ),
+              _buildCurrencyPicker(selectedCurrency, onCurrencyChanged, availableCurrencies, theme),
+            ],
+          ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+    );
+  }
+
+  Widget _buildCurrencyPicker(String selected, Function(String) onSelected, List<String> options, ThemeData theme) {
+    return PopupMenuButton<String>(
+      onSelected: onSelected,
+      itemBuilder: (context) => options.map((c) => PopupMenuItem(value: c, child: Text(c))).toList(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(color: AppColors.primaryDark.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
+        child: Row(
           children: [
-            Flexible(
-              child: Text(
-                label,
-                style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    onChanged: onChanged,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold, 
-                      fontSize: 24, 
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none, 
-                      contentPadding: EdgeInsets.zero,
-                      hintText: "0.00",
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                _buildCurrencyPicker(selectedCurrency, onCurrencyChanged, availableCurrencies, theme),
-              ],
-            ),
+            Text(selected, style: const TextStyle(fontWeight: FontWeight.bold)),
+            const Icon(Icons.arrow_drop_down),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCurrencyPicker(String selected, Function(String) onSelected, List<String> options, ThemeData theme) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: PopupMenuButton<String>(
-        onSelected: onSelected,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        itemBuilder: (context) => options.map((c) => PopupMenuItem(
-          value: c,
-          child: Row(
-            children: [
-              _buildCurrencyFlag(c),
-              const SizedBox(width: 12),
-              Text(c, style: const TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-        )).toList(),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(color: theme.colorScheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildCurrencyFlag(selected),
-              const SizedBox(width: 8),
-              Text(selected, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCurrencyFlag(String currency) {
-    final Map<String, String> countryCodes = {"USD": "us", "EUR": "eu", "GBP": "gb", "CAD": "ca"};
-    final code = countryCodes[currency] ?? "un";
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(4),
-      child: Image.network(
-        "https://flagcdn.com/w40/$code.png",
-        width: 24, height: 16, fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded, size: 16),
-      ),
-    );
-  }
-
   Widget _buildPaymentMethods(AppState state, ThemeData theme) {
     final List<Map<String, dynamic>> methods = [
-      {"name": state.translate("Murtaax Wallet", "Murtaax Wallet"), "image": "assets/images/walletlogo.png"},
+      {"name": state.translate("Murtaax Wallet", "Murtaax Wallet", ar: "محفظة مرتاح", de: "Murtaax Wallet"), "image": "assets/images/walletlogo.png"},
       {"name": "EVC Plus", "image": "assets/images/evc.png"},
       {"name": "ZAAD", "image": "assets/images/zaad.png"},
       {"name": "eDahab", "image": "assets/images/edahab.png"},
-      {"name": state.translate("Bank Transfer", "Xawaalad Bangi"), "image": "assets/images/bank.png"},
+      {"name": state.translate("Bank Transfer", "Xawaalad Bangi", ar: "تحويل بنكي", de: "Banküberweisung"), "image": "assets/images/bank.png"},
     ];
 
     return SizedBox(
-      height: 120 * (state.locale.languageCode == 'so' ? 1.1 : 1.0),
+      height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: methods.length,
@@ -310,48 +256,20 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           bool isSelected = _selectedMethod == m["name"];
           return GestureDetector(
             onTap: () => setState(() => _selectedMethod = m["name"]),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 120,
-              margin: const EdgeInsets.only(right: 12, top: 4, bottom: 4),
+            child: Container(
+              width: 100,
+              margin: const EdgeInsets.only(right: 12),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: isSelected ? AppColors.accentTeal : Colors.transparent,
-                  width: 2,
-                ),
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isSelected ? 0.08 : 0.03), blurRadius: 10, offset: const Offset(0, 4))],
+                border: Border.all(color: isSelected ? AppColors.accentTeal : Colors.transparent),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 5)],
-                    ),
-                    child: Image.asset(m["image"], fit: BoxFit.contain),
-                  ),
+                  Image.asset(m["image"], width: 40, height: 40, fit: BoxFit.contain, errorBuilder: (c, e, s) => const Icon(Icons.payment)),
                   const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(
-                      m["name"],
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.bold, 
-                        color: isSelected ? AppColors.accentTeal : null, 
-                        fontSize: 11,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
+                  Text(m["name"], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                 ],
               ),
             ),
