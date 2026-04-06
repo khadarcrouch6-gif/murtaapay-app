@@ -9,7 +9,8 @@ import 'receiver_screen.dart';
 import 'wallet_receiver_screen.dart';
 
 class SendAmountScreen extends StatefulWidget {
-  const SendAmountScreen({super.key});
+  final bool showBackButton;
+  const SendAmountScreen({super.key, this.showBackButton = true});
 
   @override
   State<SendAmountScreen> createState() => _SendAmountScreenState();
@@ -177,16 +178,20 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     final state = AppState();
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    bool canProceed = _hasSufficientBalance && _isAmountValid;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.primaryDark),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: widget.showBackButton 
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.primaryDark),
+              onPressed: () => Navigator.pop(context),
+            )
+          : null,
+        automaticallyImplyLeading: false,
         title: Text(
           l10n.sendMoney,
           style: theme.textTheme.titleLarge?.copyWith(
@@ -345,6 +350,37 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                               style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
                             ),
                           ),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (canProceed) {
+                                if (_selectedMethod == "Murtaax Wallet") {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletReceiverScreen(amount: _sendController.text, method: _selectedMethod)));
+                                } else {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ReceiverScreen(amount: _sendController.text, method: _selectedMethod)));
+                                }
+                              } else {
+                                String message = !_isAmountValid ? l10n.pleaseEnterDetails : l10n.insufficientBalance;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(message)),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.accentTeal,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              l10n.continueLabel,
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -478,43 +514,73 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
 
   Widget _buildPaymentMethodsGrid(AppState state) {
     final List<Map<String, dynamic>> methods = [
-      {"name": "Murtaax Wallet", "image": "assets/images/walletlogo.png"},
-      {"name": "EVC Plus", "image": "assets/images/evc.png"},
-      {"name": "ZAAD", "image": "assets/images/zaad.png"},
+      {"name": "MurtaaxPay Wallet", "icon": Icons.wallet_rounded, "image": "assets/images/walletlogo.png"},
+      {"name": "EVC Plus", "icon": Icons.phone_android_rounded, "image": "assets/images/evc.png"},
+      {"name": "ZAAD Service", "icon": Icons.account_balance_wallet_rounded, "image": "assets/images/zaad.png"},
+      {"name": "e-Dahab", "icon": Icons.send_to_mobile_rounded, "image": "assets/images/edahab.png"},
+      {"name": "Bank Transfer", "icon": Icons.account_balance_rounded, "image": "assets/images/bank.png"},
+      {"name": "Visa/MasterCard", "icon": Icons.credit_card_rounded, "image": "assets/images/visa.png"},
     ];
 
     return SizedBox(
-      height: 100,
+      height: 110,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         itemCount: methods.length,
         itemBuilder: (context, index) {
           final m = methods[index];
           bool isSelected = _selectedMethod == m["name"];
           return GestureDetector(
             onTap: () => setState(() => _selectedMethod = m["name"]),
-            child: Container(
-              width: 110,
-              margin: const EdgeInsets.only(right: 12),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: 120,
+              margin: const EdgeInsets.only(right: 12, top: 4, bottom: 4),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.accentTeal.withOpacity(0.1) : Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: isSelected ? AppColors.accentTeal : Colors.transparent, width: 2),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10)],
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: isSelected ? AppColors.accentTeal : Colors.transparent, 
+                  width: 2.5
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: isSelected ? AppColors.accentTeal.withOpacity(0.1) : Colors.black.withOpacity(0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4)
+                  )
+                ],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      color: isSelected ? Colors.white : const Color(0xFFF8FAFC),
+                      shape: BoxShape.circle,
                     ),
-                    child: Image.asset(m["image"], width: 32, height: 32, fit: BoxFit.contain, errorBuilder: (c, e, s) => const Icon(Icons.wallet)),
+                    child: Image.asset(
+                      m["image"], 
+                      width: 28, 
+                      height: 28, 
+                      fit: BoxFit.contain, 
+                      errorBuilder: (c, e, s) => Icon(m["icon"] as IconData, color: isSelected ? AppColors.accentTeal : AppColors.grey, size: 24),
+                    ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(m["name"], style: TextStyle(fontSize: 11, fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600, color: AppColors.primaryDark), textAlign: TextAlign.center),
+                  const SizedBox(height: 10),
+                  Text(
+                    m["name"], 
+                    style: TextStyle(
+                      fontSize: 11, 
+                      fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600, 
+                      color: isSelected ? AppColors.primaryDark : AppColors.grey
+                    ), 
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),
@@ -536,47 +602,50 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
 
   Widget _buildCustomBottomNav() {
     bool canProceed = _hasSufficientBalance && _isAmountValid;
-    return Opacity(
-      opacity: canProceed ? 1.0 : 0.5,
-      child: IgnorePointer(
-        ignoring: !canProceed,
-        child: Container(
-          height: 90,
-          margin: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
-            borderRadius: BorderRadius.circular(40),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(icon: const Icon(Icons.home_outlined, color: Colors.white70), onPressed: () {}),
-              IconButton(icon: const Icon(Icons.history, color: Colors.white70), onPressed: () {}),
-              GestureDetector(
-                onTap: () {
-                  if (_hasSufficientBalance && _isAmountValid) {
-                    if (_selectedMethod == "Murtaax Wallet") {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => WalletReceiverScreen(amount: _sendController.text, method: _selectedMethod)));
-                    } else {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ReceiverScreen(amount: _sendController.text, method: _selectedMethod)));
-                    }
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      height: 90,
+      margin: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(40),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          IconButton(icon: const Icon(Icons.home_outlined, color: Colors.white70), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.history, color: Colors.white70), onPressed: () {}),
+          Opacity(
+            opacity: 1.0,
+            child: GestureDetector(
+              onTap: () {
+                if (canProceed) {
+                  if (_selectedMethod == "Murtaax Wallet") {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => WalletReceiverScreen(amount: _sendController.text, method: _selectedMethod)));
+                  } else {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ReceiverScreen(amount: _sendController.text, method: _selectedMethod)));
                   }
-                },
-                child: Container(
-                  width: 56,
-                  height: 56,
-                  decoration: const BoxDecoration(
-                    color: AppColors.accentTeal,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.send_rounded, color: Colors.white, size: 28),
+                } else {
+                  String message = !_isAmountValid ? l10n.pleaseEnterDetails : l10n.insufficientBalance;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(message)),
+                  );
+                }
+              },
+              child: Container(
+                width: 56,
+                height: 56,
+                decoration: const BoxDecoration(
+                  color: AppColors.accentTeal,
+                  shape: BoxShape.circle,
                 ),
+                child: const Icon(Icons.send_rounded, color: Colors.white, size: 28),
               ),
-              IconButton(icon: const Icon(Icons.credit_card, color: Colors.white70), onPressed: () {}),
-              IconButton(icon: const Icon(Icons.person_outline, color: Colors.white70), onPressed: () {}),
-            ],
+            ),
           ),
-        ),
+          IconButton(icon: const Icon(Icons.credit_card, color: Colors.white70), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.person_outline, color: Colors.white70), onPressed: () {}),
+        ],
       ),
     );
   }

@@ -32,5 +32,6 @@
   "selectPaymentMethod": "Select Payment Method",
   "transactionFee": "Transaction Fee",
   "totalToPay": "Total to Pay",
-  "insufficientBalance": "Insufficient Balance"
+  "insufficientBalance": "Insufficient Balance",
+  "continueLabel": "Sii Soco"
 }

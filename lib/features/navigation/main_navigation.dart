@@ -42,7 +42,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
   List<Widget> _getScreens() => [
     const HomeScreen(key: ValueKey('home')),
     const HistoryScreen(key: ValueKey('history')),
-    const SendAmountScreen(key: ValueKey('send')),
+    const SendAmountScreen(key: ValueKey('send'), showBackButton: false),
     const CardsScreen(key: ValueKey('cards')),
     const ProfileScreen(key: ValueKey('profile')),
   ];
@@ -275,7 +275,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const SendAmountScreen()),
+          MaterialPageRoute(builder: (context) => const SendAmountScreen(showBackButton: true)),
         );
       },
       child: Container(

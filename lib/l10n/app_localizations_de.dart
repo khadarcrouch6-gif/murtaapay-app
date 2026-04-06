@@ -145,102 +145,108 @@ class AppLocalizationsDe extends AppLocalizations {
   String get deliveryNotice => 'Funds will be delivered within minutes';
 
   @override
-  String get confirmAndPay => 'Bestätigen und Bezahlen';
+  String get confirmAndPay => 'Confirm and Pay';
 
   @override
-  String get choosePaymentMethod => 'Zahlungsmethode wählen';
+  String get choosePaymentMethod => 'Choose Payment Method';
 
   @override
-  String get finalSummary => 'Zusammenfassung';
+  String get finalSummary => 'Final Summary';
 
   @override
-  String get amount => 'Betrag';
+  String get amount => 'Amount';
 
   @override
-  String get instantPaymentFromWallet => 'Sofortzahlung aus Ihrem Murtaax-Wallet';
+  String get instantPaymentFromWallet => 'Instant payment from wallet';
 
   @override
-  String get payViaHormuud => 'Bezahlen über Hormuud EVC Plus';
+  String get payViaHormuud => 'Pay via Hormuud EVC Plus';
 
   @override
-  String get payViaTelesom => 'Bezahlen über Telesom ZAAD';
+  String get payViaTelesom => 'Pay via Telesom ZAAD';
 
   @override
-  String get payViaSomtel => 'Bezahlen über Somtel e-Dahab';
+  String get payViaSomtel => 'Pay via Somtel e-Dahab';
 
   @override
-  String get bankTransfer => 'Banküberweisung';
+  String get bankTransfer => 'Bank Transfer';
 
   @override
-  String get localBankTransfer => 'Lokale somalische Banküberweisung';
+  String get localBankTransfer => 'Local Somali bank transfer';
 
   @override
-  String get internationalMethods => 'Internationale Methoden';
+  String get internationalMethods => 'International Methods';
 
   @override
-  String get payWithInternationalCard => 'Mit internationaler Karte bezahlen';
+  String get payWithInternationalCard => 'Pay with international card';
 
   @override
-  String get payNow => 'Jetzt bezahlen';
+  String get payNow => 'Pay Now';
 
   @override
-  String get transferSuccessful => 'Überweisung erfolgreich!';
+  String get transferSuccessful => 'Transfer Successful!';
 
   @override
   String transferSentMessage(Object amount, Object receiver) {
-    return '$amount wurde sicher an $receiver gesendet.';
+    return '$amount has been safely sent to $receiver.';
   }
 
   @override
-  String get method => 'Methode';
+  String get method => 'Method';
 
   @override
-  String get reference => 'Referenz';
+  String get reference => 'Reference';
 
   @override
-  String get backToHome => 'Zurück zur Startseite';
+  String get backToHome => 'Back to Home';
 
   @override
-  String get murtaaxTransfer => 'Murtaax-Überweisung';
+  String get continueLabel => 'Continue';
 
   @override
-  String get enterReceiverWalletId => 'Wallet-ID des Empfängers eingeben';
+  String get murtaaxTransfer => 'Murtaax Transfer';
 
   @override
-  String get walletIdTransferNotice => 'Das Guthaben wird sofort auf die angegebene Murtaax-ID übertragen.';
+  String get enterReceiverWalletId => 'Enter Receiver Wallet ID';
 
   @override
-  String get enterWalletIdHint => 'Wallet-ID eingeben (z. B. 102234)';
+  String get walletIdTransferNotice =>
+      'Funds will be transferred instantly to the specified Murtaax ID.';
 
   @override
-  String get verifiedReceiverLabel => 'VERIFIZIERTER EMPFÄNGER';
+  String get enterWalletIdHint => 'Enter Wallet ID (e.g. 102234)';
 
   @override
-  String get recentContacts => 'Letzte Kontakte';
+  String get verifiedReceiverLabel => 'VERIFIED RECEIVER';
 
   @override
-  String get securityVerification => 'Sicherheitsüberprüfung';
+  String get recentContacts => 'Recent Contacts';
 
   @override
-  String get enterTransactionPin => 'Bitte geben Sie Ihre 4-stellige PIN ein, um diese Zahlung zu autorisieren.';
+  String get securityVerification => 'Security Verification';
 
   @override
-  String get authorizing => 'Autorisierung...';
+  String get enterTransactionPin =>
+      'Please enter your 4-digit PIN to authorize this payment.';
+
+  @override
+  String get authorizing => 'Authorizing...';
 
   @override
   String confirmPaymentAmount(Object amount) {
-    return 'Zahlung bestätigen ($amount)';
+    return 'Confirm Payment ($amount)';
   }
 
   @override
-  String get verifyingTransaction => 'Transaktion wird sicher mit Murtaax-Servern überprüft...';
+  String get verifyingTransaction =>
+      'Securing confirming transaction with Murtaax servers...';
 
   @override
-  String get cancelAndChangeMethod => 'Abbrechen und Methode ändern';
+  String get cancelAndChangeMethod => 'Cancel and Change Method';
 
   @override
-  String get active => 'Aktiv';
+  String get active => 'Active';
 
   @override
-  String get availableBalance => 'VERFÜGBARES GUTHABEN';
+  String get availableBalance => 'AVAILABLE BALANCE';
 }

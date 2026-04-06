@@ -8,7 +8,6 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_ar.dart';
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
-import 'app_localizations_et.dart';
 import 'app_localizations_so.dart';
 
 // ignore_for_file: type=lint
@@ -100,7 +99,6 @@ abstract class AppLocalizations {
     Locale('ar'),
     Locale('de'),
     Locale('en'),
-    Locale('et'),
     Locale('so'),
   ];
 
@@ -401,7 +399,7 @@ abstract class AppLocalizations {
   /// No description provided for @instantPaymentFromWallet.
   ///
   /// In en, this message translates to:
-  /// **'Instant payment from your Murtaax wallet'**
+  /// **'Instant payment from wallet'**
   String get instantPaymentFromWallet;
 
   /// No description provided for @payViaHormuud.
@@ -431,7 +429,7 @@ abstract class AppLocalizations {
   /// No description provided for @localBankTransfer.
   ///
   /// In en, this message translates to:
-  /// **'Local Somali Bank Transfer'**
+  /// **'Local Somali bank transfer'**
   String get localBankTransfer;
 
   /// No description provided for @internationalMethods.
@@ -443,7 +441,7 @@ abstract class AppLocalizations {
   /// No description provided for @payWithInternationalCard.
   ///
   /// In en, this message translates to:
-  /// **'Pay with International Card'**
+  /// **'Pay with international card'**
   String get payWithInternationalCard;
 
   /// No description provided for @payNow.
@@ -461,7 +459,7 @@ abstract class AppLocalizations {
   /// No description provided for @transferSentMessage.
   ///
   /// In en, this message translates to:
-  /// **'{amount} has been securely sent to {receiver}.'**
+  /// **'{amount} has been safely sent to {receiver}.'**
   String transferSentMessage(Object amount, Object receiver);
 
   /// No description provided for @method.
@@ -481,6 +479,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Home'**
   String get backToHome;
+
+  /// No description provided for @continueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueLabel;
 
   /// No description provided for @murtaaxTransfer.
   ///
@@ -545,7 +549,7 @@ abstract class AppLocalizations {
   /// No description provided for @verifyingTransaction.
   ///
   /// In en, this message translates to:
-  /// **'Securely verifying transaction with Murtaax servers...'**
+  /// **'Securing confirming transaction with Murtaax servers...'**
   String get verifyingTransaction;
 
   /// No description provided for @cancelAndChangeMethod.
@@ -578,7 +582,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['ar', 'de', 'en', 'et', 'so'].contains(locale.languageCode);
+      <String>['ar', 'de', 'en', 'so'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -593,8 +597,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
-    case 'et':
-      return AppLocalizationsEt();
     case 'so':
       return AppLocalizationsSo();
   }

@@ -145,102 +145,108 @@ class AppLocalizationsSo extends AppLocalizations {
   String get deliveryNotice => 'Funds will be delivered within minutes';
 
   @override
-  String get confirmAndPay => 'Xaqiiji oo Bixi';
+  String get confirmAndPay => 'Confirm and Pay';
 
   @override
-  String get choosePaymentMethod => 'Dooro habka lacag bixinta';
+  String get choosePaymentMethod => 'Choose Payment Method';
 
   @override
-  String get finalSummary => 'Soo koobid';
+  String get finalSummary => 'Final Summary';
 
   @override
-  String get amount => 'Lacagta';
+  String get amount => 'Amount';
 
   @override
-  String get instantPaymentFromWallet => 'Lacag bixin degdeg ah oo ka timid booshkaaga Murtaax';
+  String get instantPaymentFromWallet => 'Instant payment from wallet';
 
   @override
-  String get payViaHormuud => 'Ku bixi Hormuud EVC Plus';
+  String get payViaHormuud => 'Pay via Hormuud EVC Plus';
 
   @override
-  String get payViaTelesom => 'Ku bixi Telesom ZAAD';
+  String get payViaTelesom => 'Pay via Telesom ZAAD';
 
   @override
-  String get payViaSomtel => 'Ku bixi Somtel e-Dahab';
+  String get payViaSomtel => 'Pay via Somtel e-Dahab';
 
   @override
-  String get bankTransfer => 'Xawaalad Bangi';
+  String get bankTransfer => 'Bank Transfer';
 
   @override
-  String get localBankTransfer => 'Xawaalad Bangi Soomaaliyeed oo maxalli ah';
+  String get localBankTransfer => 'Local Somali bank transfer';
 
   @override
-  String get internationalMethods => 'Hababka caalamiga ah';
+  String get internationalMethods => 'International Methods';
 
   @override
-  String get payWithInternationalCard => 'Ku bixi Kaarka Caalamiga ah';
+  String get payWithInternationalCard => 'Pay with international card';
 
   @override
-  String get payNow => 'Bixi hadda';
+  String get payNow => 'Pay Now';
 
   @override
-  String get transferSuccessful => 'Xawaaladda waa lagu guuleystay!';
+  String get transferSuccessful => 'Transfer Successful!';
 
   @override
   String transferSentMessage(Object amount, Object receiver) {
-    return '$amount ayaa si ammaan ah loogu diray $receiver.';
+    return '$amount has been safely sent to $receiver.';
   }
 
   @override
-  String get method => 'Habka';
+  String get method => 'Method';
 
   @override
-  String get reference => 'Tixraac';
+  String get reference => 'Reference';
 
   @override
-  String get backToHome => 'Ku laabo bogga hore';
+  String get backToHome => 'Back to Home';
 
   @override
-  String get murtaaxTransfer => 'Xawaaladda Murtaax';
+  String get continueLabel => 'Sii Soco';
 
   @override
-  String get enterReceiverWalletId => 'Geli aqoonsiga booshka qaataha';
+  String get murtaaxTransfer => 'Murtaax Transfer';
 
   @override
-  String get walletIdTransferNotice => 'Lacagta waxaa isla markiiba loo wareejin doonaa aqoonsiga Murtaax ee la cayimay.';
+  String get enterReceiverWalletId => 'Enter Receiver Wallet ID';
 
   @override
-  String get enterWalletIdHint => 'Geli aqoonsiga booshka (tusaale 102234)';
+  String get walletIdTransferNotice =>
+      'Funds will be transferred instantly to the specified Murtaax ID.';
 
   @override
-  String get verifiedReceiverLabel => 'QAATAHA LA XAQIIJIYAY';
+  String get enterWalletIdHint => 'Enter Wallet ID (e.g. 102234)';
 
   @override
-  String get recentContacts => 'Xiriirradii u dambeeyay';
+  String get verifiedReceiverLabel => 'VERIFIED RECEIVER';
 
   @override
-  String get securityVerification => 'Xaqiijinta Amniga';
+  String get recentContacts => 'Recent Contacts';
 
   @override
-  String get enterTransactionPin => 'Fadlan geli 4-god ee PIN-kaaga si aad u oggolaato lacag bixintan.';
+  String get securityVerification => 'Security Verification';
 
   @override
-  String get authorizing => 'Oggolaanshaha...';
+  String get enterTransactionPin =>
+      'Please enter your 4-digit PIN to authorize this payment.';
+
+  @override
+  String get authorizing => 'Authorizing...';
 
   @override
   String confirmPaymentAmount(Object amount) {
-    return 'Xaqiiji Lacag Bixinta ($amount)';
+    return 'Confirm Payment ($amount)';
   }
 
   @override
-  String get verifyingTransaction => 'Si ammaan ah loogu xaqiijinayo wax kala iibsiga adeegayaasha Murtaax...';
+  String get verifyingTransaction =>
+      'Securing confirming transaction with Murtaax servers...';
 
   @override
-  String get cancelAndChangeMethod => 'Jooji oo beddel habka';
+  String get cancelAndChangeMethod => 'Cancel and Change Method';
 
   @override
-  String get active => 'Shaqeynaya';
+  String get active => 'Active';
 
   @override
-  String get availableBalance => 'HARAA GA LA HELI KARO';
+  String get availableBalance => 'AVAILABLE BALANCE';
 }

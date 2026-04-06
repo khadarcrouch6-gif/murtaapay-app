@@ -148,99 +148,105 @@ class AppLocalizationsAr extends AppLocalizations {
   String get confirmAndPay => 'Confirm and Pay';
 
   @override
-  String get choosePaymentMethod => 'اختر طريقة الدفع';
+  String get choosePaymentMethod => 'Choose Payment Method';
 
   @override
-  String get finalSummary => 'الملخص النهائي';
+  String get finalSummary => 'Final Summary';
 
   @override
-  String get amount => 'المبلغ';
+  String get amount => 'Amount';
 
   @override
-  String get instantPaymentFromWallet => 'دفع فوري من محفظة مرتاح الخاصة بك';
+  String get instantPaymentFromWallet => 'Instant payment from wallet';
 
   @override
-  String get payViaHormuud => 'الدفع عبر Hormuud EVC Plus';
+  String get payViaHormuud => 'Pay via Hormuud EVC Plus';
 
   @override
-  String get payViaTelesom => 'الدفع عبر Telesom ZAAD';
+  String get payViaTelesom => 'Pay via Telesom ZAAD';
 
   @override
-  String get payViaSomtel => 'الدفع عبر Somtel e-Dahab';
+  String get payViaSomtel => 'Pay via Somtel e-Dahab';
 
   @override
-  String get bankTransfer => 'تحويل بنكي';
+  String get bankTransfer => 'Bank Transfer';
 
   @override
-  String get localBankTransfer => 'تحويل بنكي صومالي محلي';
+  String get localBankTransfer => 'Local Somali bank transfer';
 
   @override
-  String get internationalMethods => 'الطرق الدولية';
+  String get internationalMethods => 'International Methods';
 
   @override
-  String get payWithInternationalCard => 'الدفع ببطاقة دولية';
+  String get payWithInternationalCard => 'Pay with international card';
 
   @override
-  String get payNow => 'ادفع الآن';
+  String get payNow => 'Pay Now';
 
   @override
-  String get transferSuccessful => 'تم التحويل بنجاح!';
+  String get transferSuccessful => 'Transfer Successful!';
 
   @override
   String transferSentMessage(Object amount, Object receiver) {
-    return 'تم إرسال $amount بشكل آمن إلى $receiver.';
+    return '$amount has been safely sent to $receiver.';
   }
 
   @override
-  String get method => 'الطريقة';
+  String get method => 'Method';
 
   @override
-  String get reference => 'المرجع';
+  String get reference => 'Reference';
 
   @override
-  String get backToHome => 'العودة إلى الرئيسية';
+  String get backToHome => 'Back to Home';
 
   @override
-  String get murtaaxTransfer => 'تحويل مرتاح';
+  String get continueLabel => 'Continue';
 
   @override
-  String get enterReceiverWalletId => 'أدخل معرف محفظة المستلم';
+  String get murtaaxTransfer => 'Murtaax Transfer';
 
   @override
-  String get walletIdTransferNotice => 'سيتم تحويل الأموال فوراً إلى معرف مرتاح المحدد.';
+  String get enterReceiverWalletId => 'Enter Receiver Wallet ID';
 
   @override
-  String get enterWalletIdHint => 'أدخل معرف المحفظة (مثلاً 102234)';
+  String get walletIdTransferNotice =>
+      'Funds will be transferred instantly to the specified Murtaax ID.';
 
   @override
-  String get verifiedReceiverLabel => 'مستلم موثق';
+  String get enterWalletIdHint => 'Enter Wallet ID (e.g. 102234)';
 
   @override
-  String get recentContacts => 'جهات الاتصال الأخيرة';
+  String get verifiedReceiverLabel => 'VERIFIED RECEIVER';
 
   @override
-  String get securityVerification => 'التحقق الأمني';
+  String get recentContacts => 'Recent Contacts';
 
   @override
-  String get enterTransactionPin => 'يرجى إدخال رمز PIN المكون من 4 أرقام للمصادقة على هذا الدفع.';
+  String get securityVerification => 'Security Verification';
 
   @override
-  String get authorizing => 'جاري المصادقة...';
+  String get enterTransactionPin =>
+      'Please enter your 4-digit PIN to authorize this payment.';
+
+  @override
+  String get authorizing => 'Authorizing...';
 
   @override
   String confirmPaymentAmount(Object amount) {
-    return 'تأكيد الدفع ($amount)';
+    return 'Confirm Payment ($amount)';
   }
 
   @override
-  String get verifyingTransaction => 'جاري التحقق من المعاملة بأمان مع خوادم مرتاح...';
+  String get verifyingTransaction =>
+      'Securing confirming transaction with Murtaax servers...';
 
   @override
-  String get cancelAndChangeMethod => 'إلغاء وتغيير الطريقة';
+  String get cancelAndChangeMethod => 'Cancel and Change Method';
 
   @override
-  String get active => 'نشط';
+  String get active => 'Active';
 
   @override
-  String get availableBalance => 'الرصيد المتاح';
+  String get availableBalance => 'AVAILABLE BALANCE';
 }

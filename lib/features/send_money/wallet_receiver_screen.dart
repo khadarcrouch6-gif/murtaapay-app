@@ -168,21 +168,30 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
               SizedBox(
                 width: double.infinity,
                 height: 56 * context.fontSizeFactor,
-                child: ElevatedButton(
-                  onPressed: _verifiedReceiverName.isEmpty ? null : () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ReviewScreen(
-                          amount: widget.amount,
-                          receiverName: _verifiedReceiverName,
-                          receiverPhone: _walletIdController.text,
-                          method: widget.method,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Text(l10n.continueToReview),
+                child: Opacity(
+                  opacity: _verifiedReceiverName.isNotEmpty ? 1.0 : 0.5,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_verifiedReceiverName.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReviewScreen(
+                              amount: widget.amount,
+                              receiverName: _verifiedReceiverName,
+                              receiverPhone: _walletIdController.text,
+                              method: widget.method,
+                            ),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.pleaseEnterDetails)),
+                        );
+                      }
+                    },
+                    child: Text(l10n.continueToReview),
+                  ),
                 ),
               ),
             ],

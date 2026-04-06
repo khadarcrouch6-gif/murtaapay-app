@@ -157,7 +157,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get amount => 'Amount';
 
   @override
-  String get instantPaymentFromWallet => 'Instant payment from your Murtaax wallet';
+  String get instantPaymentFromWallet => 'Instant payment from wallet';
 
   @override
   String get payViaHormuud => 'Pay via Hormuud EVC Plus';
@@ -172,13 +172,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bankTransfer => 'Bank Transfer';
 
   @override
-  String get localBankTransfer => 'Local Somali Bank Transfer';
+  String get localBankTransfer => 'Local Somali bank transfer';
 
   @override
   String get internationalMethods => 'International Methods';
 
   @override
-  String get payWithInternationalCard => 'Pay with International Card';
+  String get payWithInternationalCard => 'Pay with international card';
 
   @override
   String get payNow => 'Pay Now';
@@ -188,7 +188,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String transferSentMessage(Object amount, Object receiver) {
-    return '$amount has been securely sent to $receiver.';
+    return '$amount has been safely sent to $receiver.';
   }
 
   @override
@@ -201,13 +201,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backToHome => 'Back to Home';
 
   @override
+  String get continueLabel => 'Continue';
+
+  @override
   String get murtaaxTransfer => 'Murtaax Transfer';
 
   @override
   String get enterReceiverWalletId => 'Enter Receiver Wallet ID';
 
   @override
-  String get walletIdTransferNotice => 'Funds will be transferred instantly to the specified Murtaax ID.';
+  String get walletIdTransferNotice =>
+      'Funds will be transferred instantly to the specified Murtaax ID.';
 
   @override
   String get enterWalletIdHint => 'Enter Wallet ID (e.g. 102234)';
@@ -222,7 +226,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securityVerification => 'Security Verification';
 
   @override
-  String get enterTransactionPin => 'Please enter your 4-digit PIN to authorize this payment.';
+  String get enterTransactionPin =>
+      'Please enter your 4-digit PIN to authorize this payment.';
 
   @override
   String get authorizing => 'Authorizing...';
@@ -233,7 +238,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get verifyingTransaction => 'Securely verifying transaction with Murtaax servers...';
+  String get verifyingTransaction =>
+      'Securing confirming transaction with Murtaax servers...';
 
   @override
   String get cancelAndChangeMethod => 'Cancel and Change Method';

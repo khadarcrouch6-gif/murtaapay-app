@@ -45,5 +45,54 @@
   "fee": "Fee",
   "exchangeRate": "Exchange Rate",
   "deliveryNotice": "Funds will be delivered within minutes",
-  "confirmAndPay": "Confirm and Pay"
+  "confirmAndPay": "Confirm and Pay",
+  "choosePaymentMethod": "Choose Payment Method",
+  "finalSummary": "Final Summary",
+  "amount": "Amount",
+  "instantPaymentFromWallet": "Instant payment from wallet",
+  "payViaHormuud": "Pay via Hormuud EVC Plus",
+  "payViaTelesom": "Pay via Telesom ZAAD",
+  "payViaSomtel": "Pay via Somtel e-Dahab",
+  "bankTransfer": "Bank Transfer",
+  "localBankTransfer": "Local Somali bank transfer",
+  "internationalMethods": "International Methods",
+  "payWithInternationalCard": "Pay with international card",
+  "payNow": "Pay Now",
+  "transferSuccessful": "Transfer Successful!",
+  "transferSentMessage": "{amount} has been safely sent to {receiver}.",
+  "@transferSentMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      },
+      "receiver": {
+        "type": "Object"
+      }
+    }
+  },
+  "method": "Method",
+  "reference": "Reference",
+  "backToHome": "Back to Home",
+  "continueLabel": "Continue",
+  "murtaaxTransfer": "Murtaax Transfer",
+  "enterReceiverWalletId": "Enter Receiver Wallet ID",
+  "walletIdTransferNotice": "Funds will be transferred instantly to the specified Murtaax ID.",
+  "enterWalletIdHint": "Enter Wallet ID (e.g. 102234)",
+  "verifiedReceiverLabel": "VERIFIED RECEIVER",
+  "recentContacts": "Recent Contacts",
+  "securityVerification": "Security Verification",
+  "enterTransactionPin": "Please enter your 4-digit PIN to authorize this payment.",
+  "authorizing": "Authorizing...",
+  "confirmPaymentAmount": "Confirm Payment ({amount})",
+  "@confirmPaymentAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "verifyingTransaction": "Securing confirming transaction with Murtaax servers...",
+  "cancelAndChangeMethod": "Cancel and Change Method",
+  "active": "Active",
+  "availableBalance": "AVAILABLE BALANCE"
 }

@@ -114,30 +114,32 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                   SizedBox(
                     width: double.infinity,
                     height: 56 * context.fontSizeFactor,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_idController.text.isNotEmpty) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ReviewScreen(
-                                amount: widget.amount,
-                                receiverName: _verifiedName.isNotEmpty ? _verifiedName : "Receiver",
-                                receiverPhone: _idController.text,
-                                method: widget.method,
+                    child: Opacity(
+                      opacity: _idController.text.isNotEmpty ? 1.0 : 0.5,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_idController.text.isNotEmpty) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ReviewScreen(
+                                  amount: widget.amount,
+                                  receiverName: _verifiedName.isNotEmpty ? _verifiedName : "Receiver",
+                                  receiverPhone: _idController.text,
+                                  method: widget.method,
+                                ),
                               ),
-
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(l10n.pleaseEnterDetails)),
-                          );
-                        }
-                      },
-                      child: Text(
-                        l10n.continueToReview,
-                        style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(l10n.pleaseEnterDetails)),
+                            );
+                          }
+                        },
+                        child: Text(
+                          l10n.continueToReview,
+                          style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                      ),
                     ),
                   ),
                 ],
