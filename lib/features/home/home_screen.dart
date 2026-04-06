@@ -21,6 +21,7 @@ import '../more/exchange_rates_screen.dart';
 import '../more/vouchers_screen.dart';
 import '../deposit/deposit_screen.dart';
 import '../auth/kyc_screen.dart';
+import '../notifications/notifications_screen.dart';
 
 enum ChartType { bar, pie, line }
 
@@ -227,8 +228,33 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 FadeInRight(
                   delay: const Duration(milliseconds: 500),
                   child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.notifications_none_rounded, color: Colors.white),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+                      );
+                    },
+                    icon: Stack(
+                      children: [
+                        const Icon(Icons.notifications_none_rounded, color: Colors.white),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Pulse(
+                            infinite: true,
+                            duration: const Duration(seconds: 2),
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: Colors.redAccent,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

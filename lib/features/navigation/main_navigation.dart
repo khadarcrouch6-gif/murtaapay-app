@@ -83,37 +83,50 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
 
     return ListenableBuilder(
       listenable: state,
-      builder: (context, child) => Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        body: Row(
-          children: [
-            if (isDesktop || (isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
-              _buildSidebar(context, state, theme),
-              
-            Expanded(
-              child: NotificationListener<ScrollNotification>(
-                onNotification: _handleScrollNotification,
-                child: Stack(
-                  children: [
-                    PageTransitionSwitcher(
-                      duration: const Duration(milliseconds: 400),
-                      transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
-                        return FadeThroughTransition(
-                          animation: primaryAnimation,
-                          secondaryAnimation: secondaryAnimation,
-                          child: child,
-                        );
-                      },
-                      child: screens[state.selectedNavIndex],
-                    ),
-                    
-                    if (!isDesktop && !(isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
-                      _buildMobileBottomNav(context, state),
-                  ],
+      builder: (context, child) => PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          if (state.selectedNavIndex != 0) {
+            // Haddii uu meel kale joogo, Home ku soo celi halkii uu app-ka ka bixi lahaa
+            state.setNavIndex(0);
+          } else {
+            // Haddii uu Home joogo, hadda u oggolow inuu ka baxo haddii loo baahdo
+            // Xaqiiqdii halkan waxaad dhigi kartaa logic kale oo lagu xidho app-ka
+          }
+        },
+        child: Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          body: Row(
+            children: [
+              if (isDesktop || (isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
+                _buildSidebar(context, state, theme),
+                
+              Expanded(
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: _handleScrollNotification,
+                  child: Stack(
+                    children: [
+                      PageTransitionSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
+                          return FadeThroughTransition(
+                            animation: primaryAnimation,
+                            secondaryAnimation: secondaryAnimation,
+                            child: child,
+                          );
+                        },
+                        child: screens[state.selectedNavIndex],
+                      ),
+                      
+                      if (!isDesktop && !(isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
+                        _buildMobileBottomNav(context, state),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -259,7 +272,12 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
 
   Widget _buildCenterButton(AppState state) {
     return GestureDetector(
-      onTap: () => _onItemTapped(2, state),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SendAmountScreen()),
+        );
+      },
       child: Container(
         height: 50, width: 50,
         decoration: const BoxDecoration(gradient: AppColors.accentGradient, shape: BoxShape.circle),
