@@ -7,6 +7,7 @@ import 'package:fl_chart/fl_chart.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/widgets/transaction_item.dart';
 import '../send_money/send_amount_screen.dart';
@@ -445,14 +446,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildActionButton(BuildContext context, String label, IconData icon, Gradient gradient, VoidCallback onTap) {
+  Widget _buildActionButton(BuildContext context, String label, dynamic icon, Gradient gradient, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 56 * context.fontSizeFactor,
         decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))]),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Icon(icon, color: Colors.white, size: 18 * context.fontSizeFactor),
+          AdaptiveIcon(icon, color: Colors.white, size: 18 * context.fontSizeFactor),
           const SizedBox(width: 10),
           Text(label, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor)),
         ]),
@@ -460,7 +461,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildFeatureItem(BuildContext context, String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildFeatureItem(BuildContext context, String label, dynamic icon, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -468,7 +469,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
+            child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor),
           ),
           const SizedBox(height: 8),
           Flexible(
@@ -479,7 +480,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildChartTypeToggle(ChartType type, IconData icon) {
+  Widget _buildChartTypeToggle(ChartType type, dynamic icon) {
     final isSelected = _selectedChartType == type;
     return GestureDetector(
       onTap: () => setState(() => _selectedChartType = type),
@@ -487,7 +488,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         padding: const EdgeInsets.all(8),
         margin: const EdgeInsets.only(left: 4),
         decoration: BoxDecoration(color: isSelected ? AppColors.primaryDark.withValues(alpha: 0.1) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
-        child: Icon(icon, size: 18, color: isSelected ? AppColors.primaryDark : Colors.grey),
+        child: AdaptiveIcon(icon, size: 18, color: isSelected ? AppColors.primaryDark : Colors.grey),
       ),
     );
   }

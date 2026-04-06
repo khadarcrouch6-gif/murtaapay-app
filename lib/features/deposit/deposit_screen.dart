@@ -6,6 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class DepositScreen extends StatefulWidget {
@@ -236,9 +237,11 @@ class _DepositScreenState extends State<DepositScreen> {
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Center(
-                                child: method["faIcon"] != null
-                                    ? FaIcon(method["faIcon"] as IconData, color: Colors.white, size: 22 * context.fontSizeFactor)
-                                    : Icon(method["icon"] as IconData, color: Colors.white, size: 24 * context.fontSizeFactor),
+                                child: AdaptiveIcon(
+                                  method["faIcon"] ?? method["icon"],
+                                  color: Colors.white,
+                                  size: 24 * context.fontSizeFactor,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 16),

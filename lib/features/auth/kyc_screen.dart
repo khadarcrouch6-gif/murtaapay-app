@@ -162,11 +162,14 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final state = AppState();
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: _currentStep == 2 || _currentStep == 3 ? null : AppBar(
-        title: Text(state.translate("Identity Verification", "Xaqiijinta Aqoonsiga", ar: "التحقق من الهوية", de: "Identitätsprüfung"), style: const TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.bold, fontSize: 16)),
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(state.translate("Identity Verification", "Xaqiijinta Aqoonsiga", ar: "التحقق من الهوية", de: "Identitätsprüfung"), style: TextStyle(color: theme.textTheme.titleLarge?.color, fontWeight: FontWeight.bold, fontSize: 16)),
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded, color: theme.iconTheme.color, size: 20), onPressed: () => Navigator.pop(context)),
         actions: [TextButton(onPressed: () {}, child: Text(state.translate("Help", "Caawinaad", ar: "مساعدة", de: "Hilfe"), style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)))],
       ),
       body: _isVerifying ? _buildLoading() : _buildContent(state),
@@ -191,11 +194,11 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
       child: Column(
         children: [
           const Spacer(),
-          FadeInDown(child: const Icon(Icons.shield_rounded, size: 80, color: AppColors.primaryDark)),
+          FadeInDown(child: Icon(Icons.shield_rounded, size: 80, color: Theme.of(context).primaryColor)),
           const SizedBox(height: 40),
           Text(state.translate("Verify Your Identity", "Xaqiiji Aqoonsigaaga", ar: "تحقق من هويتك", de: "Identität verifizieren"), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
           const SizedBox(height: 16),
-          Text(state.translate("We need to verify your identity to keep your account secure. This only takes 2 minutes.", "Waxaan u baahanahay inaan xaqiijino aqoonsigaaga si aan koontadaada u ilaalino.", ar: "نحتاج إلى التحقق من هويتك للحفاظ على أمان حسابك. يستغرق هذا دقيقتين فقط.", de: "Wir müssen Ihre Identität verifizieren, um Ihr Konto sicher zu halten. Dies dauert nur 2 Minuten."), textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600], height: 1.5)),
+          Text(state.translate("We need to verify your identity to keep your account secure. This only takes 2 minutes.", "Waxaan u baahanahay inaan xaqiijino aqoonsigaaga si aan koontadaada u ilaalino.", ar: "نحتاج إلى التحقق من هويتك للحفاظ على أمان حسابك. يستغرق هذا دقيقتين فقط.", de: "Wir müssen Ihre Identität verifizieren, um Ihr Konto sicher zu halten. Dies dauert nur 2 Minuten."), textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color?.withValues(alpha: 0.7), height: 1.5)),
           const SizedBox(height: 40),
           _buildIntroStep(Icons.badge_outlined, state.translate("Prepare your ID document", "Diyaari dukumiintigaaga", ar: "قم بإعداد وثيقة الهوية الخاصة بك", de: "Bereiten Sie Ihr Ausweisdokument vor")),
           _buildIntroStep(Icons.light_mode_outlined, state.translate("Make sure you're in a well-lit area", "Hubi inaad joogto meel iftiimaysa", ar: "تأكد من أنك في منطقة مضاءة جيداً", de: "Stellen Sie sicher, dass Sie sich in einem gut beleuchteten Bereich befinden")),
@@ -231,7 +234,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
               Row(children: [Expanded(child: _buildField(_phoneController, state.translate("Phone", "Taleefanka", ar: "الهاتف", de: "Telefon"), state)), const SizedBox(width: 16), Expanded(child: _buildField(_streetController, state.translate("City", "Magaalada", ar: "المدينة", de: "Stadt"), state))]),
               _buildField(_addressController, state.translate("Residential Address", "Cinwaanka Hoyga", ar: "عنوان السكن", de: "Wohnadresse"), state),
               const SizedBox(height: 40),
-              SizedBox(width: double.infinity, height: 56, child: ElevatedButton(onPressed: () { if(_formKey.currentState!.validate()) setState(() => _currentStep = 1); }, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: Text(state.translate("Continue", "Sii wad", ar: "متابعة", de: "Weiter"), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
+              SizedBox(width: double.infinity, height: 56, child: ElevatedButton(onPressed: () { if(_formKey.currentState!.validate()) setState(() => _currentStep = 1); }, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: Text(state.translate("Continue", "Sii wad", ar: "متابعة", de: "Weiter"), style: const TextStyle(fontWeight: FontWeight.bold)))),
             ],
           ),
         ),
@@ -257,7 +260,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
           _docCard(state.translate("National ID Card", "Kaadhka Aqoonsiga", ar: "بطاقة الهوية الوطنية", de: "Personalausweis"), Icons.badge, state),
           _docCard(state.translate("Driver's License", "Liisanka Wadista", ar: "رخصة القيادة", de: "Führerschein"), Icons.drive_eta, state),
           const Spacer(),
-          Center(child: Column(children: [const Icon(Icons.lock_outline, color: AppColors.accentTeal), const SizedBox(height: 8), Text(state.translate("Bank-grade encryption", "Amniga heerka bangiga", ar: "تشفير بمستوى البنك", de: "Verschlüsselung auf Bankenniveau"), style: const TextStyle(fontWeight: FontWeight.bold)), Text(state.translate("Your data is deleted after verification", "Xogtaada waa la tirtiraa ka dib xaqiijinta", ar: "يتم حذف بياناتك بعد التحقق", de: "Ihre Daten werden nach der Verifizierung gelöscht"), style: TextStyle(color: Colors.grey[500], fontSize: 12))])),
+          Center(child: Column(children: [const Icon(Icons.lock_outline, color: AppColors.accentTeal), const SizedBox(height: 8), Text(state.translate("Bank-grade encryption", "Amniga heerka bangiga", ar: "تشفير بمستوى البنك", de: "Verschlüsselung auf Bankenniveau"), style: const TextStyle(fontWeight: FontWeight.bold)), Text(state.translate("Your data is deleted after verification", "Xogtaada waa la tirtiraa ka dib xaqiijinta", ar: "يتم حذف بياناتك بعد التحقق", de: "Ihre Daten werden nach der Verifizierung gelöscht"), style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 12))])),
           const SizedBox(height: 24),
         ],
       ),
@@ -265,9 +268,19 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
   }
 
   Widget _docCard(String title, IconData icon, AppState state) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: () { setState(() { _selectedDocType = title; _currentStep = 2; }); _startCamera(CameraLensDirection.back); },
-      child: Container(margin: const EdgeInsets.only(bottom: 16), padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.grey[50], borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey[200]!)), child: Row(children: [Icon(icon, color: AppColors.primaryDark), const SizedBox(width: 16), Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)), const Spacer(), const Icon(Icons.chevron_right, color: Colors.grey)]))
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16), 
+        padding: const EdgeInsets.all(20), 
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface, 
+          borderRadius: BorderRadius.circular(16), 
+          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1))
+        ), 
+        child: Row(children: [Icon(icon, color: theme.primaryColor), const SizedBox(width: 16), Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)), const Spacer(), const Icon(Icons.chevron_right, color: Colors.grey)])
+      )
     );
   }
 
@@ -314,7 +327,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
           const SizedBox(height: 40),
           Text(state.translate("Verification Pending", "Xaqiijinta wali way dhimantahay", ar: "التحقق قيد الانتظار", de: "Verifizierung steht noch aus"), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
           const SizedBox(height: 16),
-          Text(state.translate("Your documents are being reviewed. This usually takes 10-15 minutes. We'll notify you once it's complete.", "Dukumiintigaaga waa la baarayaa. Waxay qaadanaysaa 10-15 daqiiqo.", ar: "تتم مراجعة وثائقك. يستغرق هذا عادة من 10 إلى 15 دقيقة. سنخطرك بمجرد اكتماله.", de: "Ihre Dokumente werden überprüft. Dies dauert normalerweise 10-15 Minuten. Wir benachrichten Sie, sobald dies abgeschlossen ist."), textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600], height: 1.5)),
+          Text(state.translate("Your documents are being reviewed. This usually takes 10-15 minutes. We'll notify you once it's complete.", "Dukumiintigaaga waa la baarayaa. Waxay qaadanaysaa 10-15 daqiiqo.", ar: "تتم مراجعة وثائقك. يستغرق هذا عادة من 10 إلى 15 دقيقة. سنخطرك بمجرد اكتماله.", de: "Ihre Dokumente werden überprüft. Dies dauert normalerweise 10-15 Minuten. Wir benachrichten Sie, sobald dies abgeschlossen ist."), textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color?.withValues(alpha: 0.7), height: 1.5)),
           const SizedBox(height: 40),
           _buildResultStatus(Icons.fact_check_outlined, state.translate("Document Check", "Baaritaanka Dukumiintiga", ar: "فحص الوثائق", de: "Dokumentenprüfung"), state.translate("Scanning for clarity", "Baadhista caddaynta", ar: "المسح الضوئي للوضوح", de: "Scan auf Deutlichkeit")),
           _buildResultStatus(Icons.face_unlock_outlined, state.translate("Biometric Match", "Match-ka Biometric-ga", ar: "تطابق القياسات الحيوية", de: "Biometrischer Abgleich"), state.translate("Comparing selfie with ID", "Isbarbardhigga selfie iyo ID", ar: "مقارنة الصورة الشخصية مع الهوية", de: "Selfie mit Ausweis vergleichen")),
@@ -328,7 +341,25 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
   }
 
   Widget _buildResultStatus(IconData icon, String title, String sub) {
-    return Container(margin: const EdgeInsets.only(bottom: 16), padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: Colors.grey[50], borderRadius: BorderRadius.circular(12)), child: Row(children: [Icon(icon, color: Colors.grey), const SizedBox(width: 16), Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: const TextStyle(fontWeight: FontWeight.bold)), Text(sub, style: const TextStyle(fontSize: 12, color: Colors.grey))]), const Spacer(), const Icon(Icons.sync, color: AppColors.accentTeal, size: 18)]));
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16), 
+      padding: const EdgeInsets.all(16), 
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface, 
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1))
+      ), 
+      child: Row(
+        children: [
+          Icon(icon, color: theme.iconTheme.color?.withValues(alpha: 0.5)), 
+          const SizedBox(width: 16), 
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: const TextStyle(fontWeight: FontWeight.bold)), Text(sub, style: TextStyle(fontSize: 12, color: theme.textTheme.bodySmall?.color))]), 
+          const Spacer(), 
+          const Icon(Icons.sync, color: AppColors.accentTeal, size: 18)
+        ]
+      )
+    );
   }
 
   Widget _buildStepIndicator(int current, int total, String percent) {

@@ -13,10 +13,6 @@ class AppAuthHelper {
 
       return await _auth.authenticate(
         localizedReason: 'Please authenticate to open MurtaaxPay',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
       );
     } on PlatformException {
       return false;

@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../auth/login_screen.dart';
 
@@ -230,7 +231,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 class OnboardingData {
   final String title;
   final String subtitle;
-  final IconData icon;
+  final dynamic icon;
   final Color color;
 
   OnboardingData({
@@ -327,7 +328,7 @@ class OnboardingPage extends StatelessWidget {
               end: Alignment.bottomRight,
             ).createShader(bounds);
           },
-          child: Icon(
+          child: AdaptiveIcon(
             data.icon,
             size: 84 * context.fontSizeFactor,
             color: Colors.white,

@@ -5,6 +5,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'chat_message_widget.dart';
 import 'message_input_widget.dart';
@@ -149,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: CircleAvatar(
                 radius: 18 * context.fontSizeFactor,
                 backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
-                child: Icon(
+                child: AdaptiveIcon(
                   FontAwesomeIcons.user,
                   size: 16 * context.fontSizeFactor,
                   color: AppColors.accentTeal,
@@ -197,21 +198,21 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         leading: FadeInLeft(
           child: IconButton(
-            icon: Icon(FontAwesomeIcons.chevronLeft, size: 20 * context.fontSizeFactor),
+            icon: AdaptiveIcon(FontAwesomeIcons.chevronLeft, size: 20 * context.fontSizeFactor),
             color: theme.iconTheme.color,
             onPressed: () => Navigator.pop(context),
           ),
         ),
         actions: [
           IconButton(
-            icon: Icon(FontAwesomeIcons.phone, size: 16 * context.fontSizeFactor, color: AppColors.accentTeal),
+            icon: AdaptiveIcon(FontAwesomeIcons.phone, size: 16 * context.fontSizeFactor, color: AppColors.accentTeal),
             onPressed: () {},
           ),
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: FadeInRight(
               child: PopupMenuButton<String>(
-                icon: Icon(FontAwesomeIcons.ellipsisVertical, size: 18 * context.fontSizeFactor),
+                icon: AdaptiveIcon(FontAwesomeIcons.ellipsisVertical, size: 18 * context.fontSizeFactor),
                 color: theme.colorScheme.surface,
                 position: PopupMenuPosition.under,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -229,7 +230,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     value: 'info',
                     child: Row(
                       children: [
-                        const Icon(FontAwesomeIcons.circleInfo, color: AppColors.accentTeal, size: 16),
+                        const AdaptiveIcon(FontAwesomeIcons.circleInfo, color: AppColors.accentTeal, size: 16),
                         const SizedBox(width: 12),
                         Text(AppState().translate("View Info", "Fiiri Macluumaadka", ar: "عرض المعلومات", de: "Info anzeigen"), style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
                       ],
@@ -239,7 +240,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     value: 'help',
                     child: Row(
                       children: [
-                        const Icon(FontAwesomeIcons.circleQuestion, color: Colors.blue, size: 16),
+                        const AdaptiveIcon(FontAwesomeIcons.circleQuestion, color: Colors.blue, size: 16),
                         const SizedBox(width: 12),
                         Text(AppState().translate("Help & Support", "Caawinaad & Taageero", ar: "المساعدة والدعم", de: "Hilfe & Support"), style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
                       ],
@@ -250,7 +251,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     value: 'clear',
                     child: Row(
                       children: [
-                        const Icon(FontAwesomeIcons.trash, color: Colors.red, size: 16),
+                        const AdaptiveIcon(FontAwesomeIcons.trash, color: Colors.red, size: 16),
                         const SizedBox(width: 12),
                         Text(AppState().translate("Clear Chat", "Tirtir Wada Sheekaysiga", ar: "مسح الدردشة", de: "Chat löschen"), style: const TextStyle(color: Colors.red)),
                       ],
@@ -373,14 +374,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildInfoRow({
     required BuildContext context,
-    required IconData icon,
+    required dynamic icon,
     required String label,
     required String value,
   }) {
     final theme = Theme.of(context);
     return Row(
       children: [
-        Icon(icon, color: AppColors.accentTeal, size: 18 * context.fontSizeFactor),
+        AdaptiveIcon(icon, color: AppColors.accentTeal, size: 18 * context.fontSizeFactor),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -484,7 +485,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildHelpItem({
     required BuildContext context,
-    required IconData icon,
+    required dynamic icon,
     required String title,
     required String description,
   }) {
@@ -498,7 +499,7 @@ class _ChatScreenState extends State<ChatScreen> {
             color: AppColors.accentTeal.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
+          child: AdaptiveIcon(
             icon,
             color: AppColors.accentTeal,
             size: 20 * context.fontSizeFactor,

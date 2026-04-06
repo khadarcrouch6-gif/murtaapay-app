@@ -4,6 +4,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 
 class ChatMessageWidget extends StatelessWidget {
   final Message message;
@@ -29,7 +30,7 @@ class ChatMessageWidget extends StatelessWidget {
               child: CircleAvatar(
                 radius: 16 * context.fontSizeFactor,
                 backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
-                child: Icon(
+                child: AdaptiveIcon(
                   FontAwesomeIcons.user,
                   size: 12 * context.fontSizeFactor,
                   color: AppColors.accentTeal,
@@ -97,7 +98,7 @@ class ChatMessageWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              AdaptiveIcon(
                 FontAwesomeIcons.locationDot,
                 color: isCurrentUser ? Colors.white : AppColors.accentTeal,
                 size: 16 * context.fontSizeFactor,
@@ -125,7 +126,7 @@ class ChatMessageWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
-              child: Icon(
+              child: AdaptiveIcon(
                 FontAwesomeIcons.map,
                 color: isCurrentUser ? Colors.white : AppColors.accentTeal,
                 size: 32 * context.fontSizeFactor,
@@ -172,7 +173,7 @@ class ChatMessageWidget extends StatelessWidget {
               color: isCurrentUser ? Colors.white.withValues(alpha: 0.2) : AppColors.accentTeal.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: AdaptiveIcon(
               FontAwesomeIcons.moneyBillTransfer,
               color: isCurrentUser ? Colors.white : AppColors.accentTeal,
               size: 24 * context.fontSizeFactor,
@@ -260,7 +261,7 @@ class ChatMessageWidget extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              AdaptiveIcon(
                 FontAwesomeIcons.commentSms,
                 color: isCurrentUser ? Colors.white : (isDark ? Colors.blue[300] : AppColors.primaryDark),
                 size: 16 * context.fontSizeFactor,
@@ -312,7 +313,7 @@ class ChatMessageWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              AdaptiveIcon(
                 FontAwesomeIcons.play,
                 color: isCurrentUser ? Colors.white : AppColors.accentTeal,
                 size: 16 * context.fontSizeFactor,
@@ -344,7 +345,7 @@ class ChatMessageWidget extends StatelessWidget {
                       : AppColors.accentTeal.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Icon(
+                child: AdaptiveIcon(
                   FontAwesomeIcons.play,
                   color:
                       isCurrentUser ? Colors.white : AppColors.accentTeal,
@@ -405,7 +406,7 @@ class ChatMessageWidget extends StatelessWidget {
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(16)),
             ),
-            child: Icon(
+            child: AdaptiveIcon(
               FontAwesomeIcons.image,
               color: AppColors.accentTeal,
               size: 40 * context.fontSizeFactor,
@@ -463,7 +464,7 @@ class ChatMessageWidget extends StatelessWidget {
               color: AppColors.primaryDark.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
+            child: AdaptiveIcon(
               _getDocumentIcon(message.documentType),
               color: isDark ? Colors.blue[300] : AppColors.primaryDark,
               size: 20 * context.fontSizeFactor,
@@ -496,7 +497,7 @@ class ChatMessageWidget extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: Icon(
+            icon: AdaptiveIcon(
               FontAwesomeIcons.download,
               color: isDark ? Colors.blue[300] : AppColors.primaryDark,
               size: 14 * context.fontSizeFactor,
@@ -538,7 +539,7 @@ class ChatMessageWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              AdaptiveIcon(
                 FontAwesomeIcons.idCard,
                 color: AppColors.accentTeal,
                 size: 18 * context.fontSizeFactor,
@@ -621,7 +622,7 @@ class ChatMessageWidget extends StatelessWidget {
     );
   }
 
-  IconData _getDocumentIcon(DocumentType? type) {
+  dynamic _getDocumentIcon(DocumentType? type) {
     switch (type) {
       case DocumentType.pdf:
         return FontAwesomeIcons.filePdf;

@@ -3,6 +3,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import '../../l10n/app_localizations.dart';
 import 'credit_card_screen.dart';
 import 'stripe_screen.dart';
@@ -243,13 +244,14 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   }
 
   Widget _buildSummaryRow(String label, String value, {bool isTeal = false, bool isBold = false}) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(color: AppColors.grey, fontSize: 14)),
-          Text(value, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.w600, color: isTeal ? AppColors.accentTeal : AppColors.textPrimary)),
+          Text(value, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.w600, color: isTeal ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color)),
         ],
       ),
     );
@@ -258,20 +260,21 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   Widget _buildPaymentMethodCard({
     required String title, 
     required String subtitle, 
-    IconData? icon, 
+    dynamic icon, 
     String? imagePath,
     required String methodId, 
     required bool isSelected, 
     required VoidCallback onTap
   }) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.05) : Colors.white,
-          border: Border.all(color: isSelected ? AppColors.accentTeal : AppColors.grey.withValues(alpha: 0.2), width: isSelected ? 2 : 1),
+          color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.05) : theme.colorScheme.surface,
+          border: Border.all(color: isSelected ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.1), width: isSelected ? 2 : 1),
           borderRadius: BorderRadius.circular(16),
           boxShadow: isSelected ? [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))] : [],
         ),
@@ -282,12 +285,12 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               height: 54,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.grey[100], 
+                color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : theme.dividerColor.withValues(alpha: 0.05), 
                 borderRadius: BorderRadius.circular(14)
               ),
               child: imagePath != null 
                 ? Image.asset(imagePath, fit: BoxFit.contain)
-                : Icon(icon ?? Icons.payment_rounded, color: isSelected ? AppColors.accentTeal : AppColors.primaryDark, size: 24),
+                : AdaptiveIcon(icon ?? Icons.payment_rounded, color: isSelected ? AppColors.accentTeal : AppColors.primaryDark, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(

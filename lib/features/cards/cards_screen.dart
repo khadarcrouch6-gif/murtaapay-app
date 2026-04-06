@@ -228,16 +228,10 @@ class _CardsScreenState extends State<CardsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Top Row: Chip and Murtaax Pay Logo
+                // Top Row: Murtaax Pay Logo (Right Aligned)
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    SizedBox(
-                      width: 45,
-                      height: 35,
-                      child: CustomPaint(painter: RealisticCardChipPainter()),
-                    ),
                     Row(
                       children: [
                         Image.asset(
@@ -260,6 +254,12 @@ class _CardsScreenState extends State<CardsScreen> {
                       ],
                     ),
                   ],
+                ),
+                // Security Chip Row
+                SizedBox(
+                  width: 45,
+                  height: 35,
+                  child: CustomPaint(painter: RealisticCardChipPainter()),
                 ),
                 // Middle Row: Card Number
                 Row(
@@ -627,43 +627,43 @@ class _CardsScreenState extends State<CardsScreen> {
   Widget _buildWalletButtons(BuildContext context, AppState state) {
     final isIOS = Platform.isIOS;
     return Center(
-      child: MaxWidthBox(
-        maxWidth: 300,
-        child: isIOS 
-          ? _walletButton(
-              "Apple Wallet",
-              Icons.apple,
-              Colors.black,
-              () => _showWalletConfirm(context, state, "Apple Wallet"),
-            )
-          : _walletButton(
-              "Google Pay",
-              Icons.g_mobiledata_rounded,
-              Colors.blue.shade900,
-              () => _showWalletConfirm(context, state, "Google Pay"),
-            ),
-      ),
+      child: isIOS 
+        ? _walletButton(
+            "Apple Wallet",
+            Icons.apple,
+            Colors.black,
+            () => _showWalletConfirm(context, state, "Apple Wallet"),
+          )
+        : _walletButton(
+            "Google Pay",
+            Icons.g_mobiledata_rounded,
+            Colors.blue.shade900,
+            () => _showWalletConfirm(context, state, "Google Pay"),
+          ),
     );
   }
 
   Widget _walletButton(String label, IconData icon, Color color, VoidCallback onTap) {
+    final theme = Theme.of(context);
+    
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))],
+          color: AppColors.accentTeal.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.accentTeal, width: 1.5),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 20),
+            Icon(icon, color: AppColors.accentTeal, size: 20),
             const SizedBox(width: 8),
             Text(
               label == "Apple Wallet" ? "Add to Apple Wallet" : "Add to Google Pay",
-              style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: AppColors.accentTeal, fontSize: 13, fontWeight: FontWeight.bold),
             ),
           ],
         ),

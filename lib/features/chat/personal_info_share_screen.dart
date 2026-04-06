@@ -4,6 +4,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 
 class PersonalInfoShareScreen extends StatefulWidget {
   final Function(PersonalInfoShare) onInfoShared;
@@ -173,7 +174,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
     required ThemeData theme,
     required TextEditingController controller,
     required String label,
-    IconData? icon,
+    dynamic icon,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,7 +193,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
           style: TextStyle(color: theme.textTheme.bodyLarge?.color),
           decoration: InputDecoration(
             prefixIcon: icon != null
-                ? Icon(icon, size: 18 * context.fontSizeFactor, color: AppColors.accentTeal)
+                ? AdaptiveIcon(icon, size: 18 * context.fontSizeFactor, color: AppColors.accentTeal)
                 : null,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             filled: true,

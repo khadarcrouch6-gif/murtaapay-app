@@ -5,6 +5,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'chat_screen.dart';
 
@@ -145,7 +146,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
             child: FadeInRight(
               child: Center(
                 child: IconButton(
-                  icon: const Icon(FontAwesomeIcons.circlePlus),
+                  icon: const AdaptiveIcon(FontAwesomeIcons.circlePlus),
                   color: AppColors.accentTeal,
                   iconSize: 28 * context.fontSizeFactor,
                   onPressed: () {
@@ -181,7 +182,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           color: AppColors.grey,
                           fontSize: 14 * context.fontSizeFactor,
                         ),
-                        prefixIcon: Icon(
+                        prefixIcon: AdaptiveIcon(
                           FontAwesomeIcons.magnifyingGlass,
                           color: AppColors.grey,
                           size: 16 * context.fontSizeFactor,
@@ -265,7 +266,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
             CircleAvatar(
               radius: 28 * context.fontSizeFactor,
               backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
-              child: Icon(
+              child: AdaptiveIcon(
                 FontAwesomeIcons.user,
                 size: 20 * context.fontSizeFactor,
                 color: AppColors.accentTeal,

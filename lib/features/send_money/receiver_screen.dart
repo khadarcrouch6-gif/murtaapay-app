@@ -73,7 +73,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                       prefixIcon: const Icon(Icons.phone_android_rounded),
                       suffixIcon: const Icon(Icons.search_rounded),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).colorScheme.surface,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                     ),
                   ),
@@ -152,14 +152,15 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
   }
 
   Widget _buildRecentItem(BuildContext context, String name, String detail) {
+    final theme = Theme.of(context);
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: CircleAvatar(
-        backgroundColor: AppColors.primaryDark.withValues(alpha: 0.1),
-        child: Text(name[0], style: TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+        backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
+        child: Text(name[0], style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
       ),
       title: Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
-      subtitle: Text(detail, style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
+      subtitle: Text(detail, style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: theme.textTheme.bodySmall?.color)),
       trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14 * context.fontSizeFactor, color: AppColors.grey),
       onTap: () {
         setState(() {

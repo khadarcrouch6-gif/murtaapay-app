@@ -92,7 +92,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                       ? const Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.search_rounded),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).colorScheme.surface,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                     focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.accentTeal, width: 2)),
                   ),
@@ -202,6 +202,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
   }
 
   Widget _buildRecentUser(String initials, String name, String id) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
         _walletIdController.text = id;
@@ -214,8 +215,8 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
           children: [
             CircleAvatar(
               radius: 28,
-              backgroundColor: AppColors.primaryDark.withValues(alpha: 0.1),
-              child: Text(initials, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryDark)),
+              backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
+              child: Text(initials, style: TextStyle(fontWeight: FontWeight.bold, color: theme.primaryColor)),
             ),
             const SizedBox(height: 8),
             Text(name, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),

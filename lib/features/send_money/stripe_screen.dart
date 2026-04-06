@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'payment_success_screen.dart';
 import 'credit_card_screen.dart';
 
@@ -63,7 +64,7 @@ class _StripeScreenState extends State<StripeScreen> {
         title: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(FontAwesomeIcons.stripe, color: stripeColor, size: 48),
+            AdaptiveIcon(FontAwesomeIcons.stripe, color: stripeColor, size: 48),
           ],
         ),
         centerTitle: true,

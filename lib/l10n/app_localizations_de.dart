@@ -42,211 +42,211 @@ class AppLocalizationsDe extends AppLocalizations {
   String get theme => 'Thema';
 
   @override
-  String get send => 'Send';
+  String get send => 'Senden';
 
   @override
-  String get add => 'Add';
+  String get add => 'Hinzufügen';
 
   @override
-  String get bills => 'Bills';
+  String get bills => 'Rechnungen';
 
   @override
   String get sadaqah => 'Sadaqah';
 
   @override
-  String get exchange => 'Exchange';
+  String get exchange => 'Umtausch';
 
   @override
-  String get vouchers => 'Vouchers';
+  String get vouchers => 'Gutscheine';
 
   @override
-  String get seeAll => 'See All';
+  String get seeAll => 'Alle ansehen';
 
   @override
-  String get spendingAnalysis => 'Spending Analysis';
+  String get spendingAnalysis => 'Ausgabenanalyse';
 
   @override
-  String get walletBalance => 'Wallet Balance';
+  String get walletBalance => 'Guthaben';
 
   @override
-  String get getStarted => 'Get Started';
+  String get getStarted => 'Jetzt loslegen';
 
   @override
-  String get virtualCard => 'Virtual Card';
+  String get virtualCard => 'Virtuelle Karte';
 
   @override
   String get virtualCardDesc =>
-      'Get your secure virtual card and shop globally.';
+      'Holst du sich deine sichere virtuelle Karte und shoppe weltweit.';
 
   @override
-  String get enterAmount => 'Enter Amount';
+  String get enterAmount => 'Betrag eingeben';
 
   @override
-  String get transferLimit => 'Limit: \$5,000.00';
+  String get transferLimit => 'Limit: 5.000,00 \$';
 
   @override
-  String get feeRate => 'Fee: \$0.99 per \$100';
+  String get feeRate => 'Gebühr: 0,99 \$ pro 100 \$';
 
   @override
-  String get youSend => 'You Send';
+  String get youSend => 'Sie senden';
 
   @override
-  String get searchCurrency => 'Search currency';
+  String get searchCurrency => 'Währung suchen';
 
   @override
-  String get receiverGets => 'Receiver Gets';
+  String get receiverGets => 'Empfänger erhält';
 
   @override
-  String get selectPaymentMethod => 'Select Payment Method';
+  String get selectPaymentMethod => 'Zahlungsmethode wählen';
 
   @override
-  String get transactionFee => 'Transaction Fee';
+  String get transactionFee => 'Transaktionsgebühr';
 
   @override
-  String get totalToPay => 'Total to Pay';
+  String get totalToPay => 'Gesamtbetrag';
 
   @override
-  String get insufficientBalance => 'Insufficient Balance';
+  String get insufficientBalance => 'Unzureichendes Guthaben';
 
   @override
-  String get receiverDetails => 'Receiver Details';
+  String get receiverDetails => 'Empfängerdetails';
 
   @override
-  String get enterReceiverPhone => 'Enter Receiver Phone Number';
+  String get enterReceiverPhone => 'Telefonnummer des Empfängers eingeben';
 
   @override
-  String get phoneNumber => 'Phone Number';
+  String get phoneNumber => 'Telefonnummer';
 
   @override
-  String get receiver => 'Receiver';
+  String get receiver => 'Empfänger';
 
   @override
-  String get recent => 'Recent';
+  String get recent => 'Zuletzt';
 
   @override
-  String get pleaseEnterDetails => 'Please enter receiver details';
+  String get pleaseEnterDetails => 'Bitte Empfängerdetails eingeben';
 
   @override
-  String get continueToReview => 'Continue to Review';
+  String get continueToReview => 'Weiter zur Überprüfung';
 
   @override
-  String get reviewTransfer => 'Review Transfer';
+  String get reviewTransfer => 'Überweisung prüfen';
 
   @override
-  String get paymentMethod => 'Payment Method';
+  String get paymentMethod => 'Zahlungsmethode';
 
   @override
-  String get fee => 'Fee';
+  String get fee => 'Gebühr';
 
   @override
-  String get exchangeRate => 'Exchange Rate';
+  String get exchangeRate => 'Wechselkurs';
 
   @override
-  String get deliveryNotice => 'Funds will be delivered within minutes';
+  String get deliveryNotice => 'Das Geld wird innerhalb von Minuten zugestellt';
 
   @override
-  String get confirmAndPay => 'Confirm and Pay';
+  String get confirmAndPay => 'Bestätigen und Bezahlen';
 
   @override
-  String get choosePaymentMethod => 'Choose Payment Method';
+  String get choosePaymentMethod => 'Zahlungsmethode wählen';
 
   @override
-  String get finalSummary => 'Final Summary';
+  String get finalSummary => 'Zusammenfassung';
 
   @override
-  String get amount => 'Amount';
+  String get amount => 'Betrag';
 
   @override
-  String get instantPaymentFromWallet => 'Instant payment from wallet';
+  String get instantPaymentFromWallet => 'Sofortzahlung aus der Wallet';
 
   @override
-  String get payViaHormuud => 'Pay via Hormuud EVC Plus';
+  String get payViaHormuud => 'Mit Hormuud EVC Plus bezahlen';
 
   @override
-  String get payViaTelesom => 'Pay via Telesom ZAAD';
+  String get payViaTelesom => 'Mit Telesom ZAAD bezahlen';
 
   @override
-  String get payViaSomtel => 'Pay via Somtel e-Dahab';
+  String get payViaSomtel => 'Mit Somtel e-Dahab bezahlen';
 
   @override
-  String get bankTransfer => 'Bank Transfer';
+  String get bankTransfer => 'Banküberweisung';
 
   @override
-  String get localBankTransfer => 'Local Somali bank transfer';
+  String get localBankTransfer => 'Lokale somalische Banküberweisung';
 
   @override
-  String get internationalMethods => 'International Methods';
+  String get internationalMethods => 'Internationale Methoden';
 
   @override
-  String get payWithInternationalCard => 'Pay with international card';
+  String get payWithInternationalCard => 'Mit internationaler Karte bezahlen';
 
   @override
-  String get payNow => 'Pay Now';
+  String get payNow => 'Jetzt bezahlen';
 
   @override
-  String get transferSuccessful => 'Transfer Successful!';
+  String get transferSuccessful => 'Überweisung erfolgreich!';
 
   @override
   String transferSentMessage(Object amount, Object receiver) {
-    return '$amount has been safely sent to $receiver.';
+    return '$amount wurde sicher an $receiver gesendet.';
   }
 
   @override
-  String get method => 'Method';
+  String get method => 'Methode';
 
   @override
-  String get reference => 'Reference';
+  String get reference => 'Referenz';
 
   @override
-  String get backToHome => 'Back to Home';
+  String get backToHome => 'Zurück zum Start';
 
   @override
-  String get continueLabel => 'Continue';
+  String get continueLabel => 'Weiter';
 
   @override
-  String get murtaaxTransfer => 'Murtaax Transfer';
+  String get murtaaxTransfer => 'Murtaax Überweisung';
 
   @override
-  String get enterReceiverWalletId => 'Enter Receiver Wallet ID';
+  String get enterReceiverWalletId => 'Empfänger-Wallet-ID eingeben';
 
   @override
   String get walletIdTransferNotice =>
-      'Funds will be transferred instantly to the specified Murtaax ID.';
+      'Das Geld wird sofort an die angegebene Murtaax-ID überwiesen.';
 
   @override
-  String get enterWalletIdHint => 'Enter Wallet ID (e.g. 102234)';
+  String get enterWalletIdHint => 'Wallet-ID eingeben (z. B. 102234)';
 
   @override
-  String get verifiedReceiverLabel => 'VERIFIED RECEIVER';
+  String get verifiedReceiverLabel => 'VERIFIZIERTER EMPFÄNGER';
 
   @override
-  String get recentContacts => 'Recent Contacts';
+  String get recentContacts => 'Letzte Kontakte';
 
   @override
-  String get securityVerification => 'Security Verification';
+  String get securityVerification => 'Sicherheitsüberprüfung';
 
   @override
   String get enterTransactionPin =>
-      'Please enter your 4-digit PIN to authorize this payment.';
+      'Bitte geben Sie Ihre 4-stellige PIN ein, um diese Zahlung zu autorisieren.';
 
   @override
-  String get authorizing => 'Authorizing...';
+  String get authorizing => 'Autorisiere...';
 
   @override
   String confirmPaymentAmount(Object amount) {
-    return 'Confirm Payment ($amount)';
+    return 'Zahlung bestätigen ($amount)';
   }
 
   @override
   String get verifyingTransaction =>
-      'Securing confirming transaction with Murtaax servers...';
+      'Sichere Bestätigung der Transaktion mit Murtaax-Servern...';
 
   @override
-  String get cancelAndChangeMethod => 'Cancel and Change Method';
+  String get cancelAndChangeMethod => 'Abbrechen und Methode ändern';
 
   @override
-  String get active => 'Active';
+  String get active => 'Aktiv';
 
   @override
-  String get availableBalance => 'AVAILABLE BALANCE';
+  String get availableBalance => 'VERFÜGBARES GUTHABEN';
 }

@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class InvestmentsScreen extends StatelessWidget {
@@ -93,7 +94,7 @@ class InvestmentsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAssetCard(BuildContext context, AppState state, String name, String symbol, String amount, String value, double delta, IconData icon, Color color, int delay, ThemeData theme, bool isDark) {
+  Widget _buildAssetCard(BuildContext context, AppState state, String name, String symbol, String amount, String value, double delta, dynamic icon, Color color, int delay, ThemeData theme, bool isDark) {
     bool isUp = delta >= 0;
     return FadeInUp(
       delay: Duration(milliseconds: delay),
@@ -111,7 +112,7 @@ class InvestmentsScreen extends StatelessWidget {
             Container(
               width: 52 * context.fontSizeFactor, height: 52 * context.fontSizeFactor,
               decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(16)),
-              child: Center(child: FaIcon(icon, color: color, size: 24 * context.fontSizeFactor)),
+              child: Center(child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor)),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -170,7 +171,7 @@ class InvestmentsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOpportunityCard(BuildContext context, AppState state, String title, String roi, String desc, IconData icon, Color color, int delay, ThemeData theme, bool isDark) {
+  Widget _buildOpportunityCard(BuildContext context, AppState state, String title, String roi, String desc, dynamic icon, Color color, int delay, ThemeData theme, bool isDark) {
     return FadeInUp(
       delay: Duration(milliseconds: delay),
       child: Container(
@@ -187,7 +188,7 @@ class InvestmentsScreen extends StatelessWidget {
             Container(
               width: 60 * context.fontSizeFactor, height: 60 * context.fontSizeFactor,
               decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(18)),
-              child: Icon(icon, color: color, size: 28 * context.fontSizeFactor),
+              child: AdaptiveIcon(icon, color: color, size: 28 * context.fontSizeFactor),
             ),
             const SizedBox(width: 16),
             Expanded(

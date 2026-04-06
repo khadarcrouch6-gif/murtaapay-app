@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'payment_success_screen.dart';
 
 class CreditCardScreen extends StatefulWidget {
@@ -68,13 +69,13 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
   Widget _getCardIcon() {
     switch (_cardType) {
       case "visa":
-        return const Icon(FontAwesomeIcons.ccVisa, color: AppColors.primaryDark, size: 28);
+        return const AdaptiveIcon(FontAwesomeIcons.ccVisa, color: AppColors.primaryDark, size: 28);
       case "mastercard":
-        return const Icon(FontAwesomeIcons.ccMastercard, color: AppColors.primaryDark, size: 28);
+        return const AdaptiveIcon(FontAwesomeIcons.ccMastercard, color: AppColors.primaryDark, size: 28);
       case "amex":
-        return const Icon(FontAwesomeIcons.ccAmex, color: AppColors.primaryDark, size: 28);
+        return const AdaptiveIcon(FontAwesomeIcons.ccAmex, color: AppColors.primaryDark, size: 28);
       case "discover":
-        return const Icon(FontAwesomeIcons.ccDiscover, color: AppColors.primaryDark, size: 28);
+        return const AdaptiveIcon(FontAwesomeIcons.ccDiscover, color: AppColors.primaryDark, size: 28);
       default:
         return const Icon(Icons.credit_card_rounded, color: AppColors.grey, size: 28);
     }
@@ -135,11 +136,11 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
             children: [
               const Icon(Icons.contactless_rounded, color: Colors.white70, size: 32),
               if (isVisa) 
-                   const Icon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 40)
+                   const AdaptiveIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 40)
               else if (isMastercard)
-                   const Icon(FontAwesomeIcons.ccMastercard, color: Colors.amber, size: 40)
+                   const AdaptiveIcon(FontAwesomeIcons.ccMastercard, color: Colors.amber, size: 40)
               else
-                   const Icon(FontAwesomeIcons.creditCard, color: Colors.white, size: 32)
+                   const AdaptiveIcon(FontAwesomeIcons.creditCard, color: Colors.white, size: 32)
             ],
           ),
           const SizedBox(height: 16),

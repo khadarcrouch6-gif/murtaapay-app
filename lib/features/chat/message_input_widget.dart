@@ -5,6 +5,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'personal_info_share_screen.dart';
 
 class MessageInputWidget extends StatefulWidget {
@@ -229,7 +230,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                       color: _showMediaOptions ? AppColors.accentTeal : AppColors.accentTeal.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(21),
                     ),
-                    child: Icon(
+                    child: AdaptiveIcon(
                       _showMediaOptions ? FontAwesomeIcons.xmark : FontAwesomeIcons.plus,
                       color: _showMediaOptions ? Colors.white : AppColors.accentTeal,
                       size: 18 * context.fontSizeFactor,
@@ -284,7 +285,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                               color: AppColors.accentTeal,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
+                            child: AdaptiveIcon(
                               FontAwesomeIcons.microphone,
                               color: Colors.white,
                               size: 16 * context.fontSizeFactor,
@@ -301,7 +302,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                               color: AppColors.accentTeal,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
+                            child: AdaptiveIcon(
                               FontAwesomeIcons.paperPlane,
                               color: Colors.white,
                               size: 16 * context.fontSizeFactor,
@@ -396,7 +397,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
   Widget _buildMediaButton({
     required BuildContext context,
     required ThemeData theme,
-    required IconData icon,
+    required dynamic icon,
     required String label,
     required VoidCallback onTap,
     required Color color,
@@ -412,7 +413,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(
+            child: AdaptiveIcon(
               icon,
               color: color,
               size: 22 * context.fontSizeFactor,

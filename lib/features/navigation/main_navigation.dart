@@ -4,6 +4,7 @@ import 'package:animations/animations.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../home/home_screen.dart';
 import '../cards/cards_screen.dart';
@@ -186,7 +187,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
     );
   }
 
-  Widget _buildSidebarItem(int index, String title, IconData icon, AppState state) {
+  Widget _buildSidebarItem(int index, String title, dynamic icon, AppState state) {
     bool isSelected = state.selectedNavIndex == index;
     final theme = Theme.of(context);
     return Padding(
@@ -199,7 +200,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
           decoration: BoxDecoration(color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent, borderRadius: BorderRadius.circular(12)),
           child: Row(
             children: [
-              FaIcon(icon, size: 18, color: isSelected ? AppColors.accentTeal : AppColors.grey),
+              AdaptiveIcon(icon, size: 18, color: isSelected ? AppColors.accentTeal : AppColors.grey),
               const SizedBox(width: 16),
               Text(title, style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.w500, color: isSelected ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.7))),
             ],
@@ -219,41 +220,48 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
     }
 
     return Positioned(
-      left: 0, right: 0, bottom: (isLandscape ? 8 : 24) + bottomPadding,
+      left: 0, 
+      right: 0, 
+      bottom: (isLandscape ? 8 : 20) + bottomPadding,
       child: SlideTransition(
         position: Tween<Offset>(
-          begin: const Offset(0, 2), // Hide further down
+          begin: const Offset(0, 2),
           end: Offset.zero,
         ).animate(CurvedAnimation(
           parent: _hideNavAnimation,
-          curve: Curves.easeInOut,
+          curve: Curves.easeInOutBack,
         )),
         child: Center(
           child: MaxWidthBox(
-            maxWidth: 600,
+            maxWidth: 500,
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-              height: 70,
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              height: 76,
               decoration: BoxDecoration(
-                color: AppColors.primaryDark, 
-                borderRadius: BorderRadius.circular(35), 
+                color: AppColors.primaryDark.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(38),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primaryDark.withValues(alpha: 0.3), 
-                    blurRadius: 20, 
-                    offset: const Offset(0, 10)
+                    color: Colors.black.withValues(alpha: 0.4),
+                    blurRadius: 25,
+                    offset: const Offset(0, 10),
+                    spreadRadius: -5,
                   )
                 ]
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildNavItem(0, FontAwesomeIcons.house, state),
-                  _buildNavItem(1, FontAwesomeIcons.clockRotateLeft, state),
-                  _buildCenterButton(state),
-                  _buildNavItem(3, FontAwesomeIcons.creditCard, state),
-                  _buildNavItem(4, FontAwesomeIcons.user, state),
-                ],
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(38),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildNavItem(0, FontAwesomeIcons.house, state),
+                    _buildNavItem(1, FontAwesomeIcons.clockRotateLeft, state),
+                    _buildCenterButton(state),
+                    _buildNavItem(3, FontAwesomeIcons.creditCard, state),
+                    _buildNavItem(4, FontAwesomeIcons.user, state),
+                  ],
+                ),
               ),
             ),
           ),
@@ -262,26 +270,60 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, AppState state) {
+  Widget _buildNavItem(int index, dynamic icon, AppState state) {
     bool isSelected = state.selectedNavIndex == index;
-    return IconButton(
-      onPressed: () => _onItemTapped(index, state),
-      icon: FaIcon(icon, color: isSelected ? AppColors.accentTeal : Colors.white.withValues(alpha: 0.5), size: 20),
+    return Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _onItemTapped(index, state),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent,
+                  shape: BoxShape.circle,
+                ),
+                child: AdaptiveIcon(
+                  icon, 
+                  color: isSelected ? AppColors.accentTeal : Colors.white.withValues(alpha: 0.5), 
+                  size: 22,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildCenterButton(AppState state) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SendAmountScreen(showBackButton: true)),
-        );
+        // Halkan waxaan ka dhigaynaa mid switch gareeya tab-ka dhexda halkii uu push samayn lahaa
+        // si uu UI-gu u ahaado mid joogto ah (consistent)
+        state.setNavIndex(2);
       },
       child: Container(
-        height: 50, width: 50,
-        decoration: const BoxDecoration(gradient: AppColors.accentGradient, shape: BoxShape.circle),
-        child: const Icon(FontAwesomeIcons.paperPlane, color: Colors.white, size: 20),
+        height: 56, 
+        width: 56,
+        decoration: BoxDecoration(
+          gradient: AppColors.accentGradient, 
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.accentTeal.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            )
+          ]
+        ),
+        child: const Center(
+          child: AdaptiveIcon(FontAwesomeIcons.paperPlane, color: Colors.white, size: 24),
+        ),
       ),
     );
   }

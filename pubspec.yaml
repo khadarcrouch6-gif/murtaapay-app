@@ -13,20 +13,20 @@ dependencies:
     sdk: flutter
   intl: ^0.20.2
   cupertino_icons: ^1.0.8
-  google_fonts: ^6.2.1
-  font_awesome_flutter: ^10.7.0
-  smooth_page_indicator: ^1.1.0
-  animate_do: ^3.3.4
+  google_fonts: ^8.0.2
+  font_awesome_flutter: ^11.0.0
+  smooth_page_indicator: ^2.0.1
+  animate_do: ^4.2.0
   glassmorphism: ^3.0.0
   flutter_svg: ^2.0.10+1
-  audioplayers: ^5.2.1
-  camera: ^0.11.0+2
+  audioplayers: ^6.6.0
+  camera: ^0.12.0
   url_launcher: ^6.3.1
-  local_auth: ^2.2.0
+  local_auth: ^3.0.1
   lottie: ^3.1.0
   responsive_framework: ^1.5.1
   animations: ^2.0.11
-  fl_chart: ^0.70.2 # Charting library lagu daray
+  fl_chart: ^1.2.0 # Charting library lagu daray
   shared_preferences: ^2.3.2
   http: ^1.6.0
 
@@ -34,7 +34,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.4
 
 flutter_launcher_icons:
   android: "launcher_icon"

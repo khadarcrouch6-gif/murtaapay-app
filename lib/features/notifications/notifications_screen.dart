@@ -5,6 +5,7 @@ import 'package:glassmorphism/glassmorphism.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import '../history/history_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -187,7 +188,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           color: notification.iconColor.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(notification.icon, color: notification.iconColor, size: 20),
+                        child: AdaptiveIcon(notification.icon, color: notification.iconColor, size: 20),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -281,7 +282,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   color: notification.iconColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(notification.icon, color: notification.iconColor, size: 40),
+                child: AdaptiveIcon(notification.icon, color: notification.iconColor, size: 40),
               ),
               const SizedBox(height: 24),
               Text(
@@ -356,7 +357,7 @@ class NotificationData {
   final String title;
   final String subtitle;
   final String time;
-  final IconData icon;
+  final dynamic icon;
   final Color iconColor;
   final int type; // 0: System/Safety, 1: Transactions, 2: Promos
 

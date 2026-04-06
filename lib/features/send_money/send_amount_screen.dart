@@ -181,13 +181,13 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     bool canProceed = _hasSufficientBalance && _isAmountValid;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: widget.showBackButton 
           ? IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.primaryDark),
+              icon: Icon(Icons.arrow_back_ios_new_rounded, color: theme.iconTheme.color),
               onPressed: () => Navigator.pop(context),
             )
           : null,
@@ -196,7 +196,6 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           l10n.sendMoney,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppColors.primaryDark,
           ),
         ),
         centerTitle: true,
@@ -216,7 +215,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                     children: [
                       Text(
                         l10n.enterAmount,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.primaryDark),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: theme.textTheme.titleMedium?.color),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -256,10 +255,11 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE2E8F0),
+                              color: theme.colorScheme.surface,
                               borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                             ),
-                            child: Text("+\$$amt", style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryDark)),
+                            child: Text("+\$$amt", style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
                           ),
                         ),
                       )).toList(),
@@ -282,7 +282,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                           },
                           child: Container(
                             padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(color: AppColors.primaryDark, shape: BoxShape.circle),
+                            decoration: BoxDecoration(color: theme.colorScheme.primary, shape: BoxShape.circle),
                             child: const Icon(Icons.swap_vert_rounded, color: Colors.white, size: 20),
                           ),
                         ),
@@ -290,12 +290,13 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE2E8F0),
+                            color: theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                           ),
                           child: Text(
                             "1 $_sendCurrency = ${((1 / (rates[_sendCurrency] ?? 1.0)) * (rates[_receiveCurrency] ?? 1.0)).toStringAsFixed(4)} $_receiveCurrency", 
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primaryDark)
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.textTheme.bodyMedium?.color)
                           ),
                         ),
                       ],
@@ -317,7 +318,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                   const SizedBox(height: 30),
                   Text(
                     l10n.selectPaymentMethod,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.primaryDark),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: theme.textTheme.titleMedium?.color),
                   ),
                   const SizedBox(height: 16),
                   _buildPaymentMethodsGrid(state),
@@ -327,10 +328,10 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.colorScheme.surface,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10)],
-                      border: !_hasSufficientBalance ? Border.all(color: Colors.red.withOpacity(0.5), width: 1.5) : null,
+                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
+                      border: !_hasSufficientBalance ? Border.all(color: Colors.red.withValues(alpha: 0.5), width: 1.5) : Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
                     ),
                     child: Column(
                       children: [
@@ -384,14 +385,13 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 140),
                 ],
               ),
             ),
           ),
         ),
       ),
-      bottomNavigationBar: _buildCustomBottomNav(),
     );
   }
 
@@ -414,7 +414,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: isError
@@ -467,7 +467,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
-                        color: isError ? Colors.red : AppColors.primaryDark,
+                        color: isError ? Colors.red : Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
@@ -481,7 +481,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
+                        color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -497,7 +497,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Text(currency, style: const TextStyle(fontWeight: FontWeight.w900, color: AppColors.primaryDark)),
+                          Text(currency, style: TextStyle(fontWeight: FontWeight.w900, color: Theme.of(context).textTheme.bodyLarge?.color)),
                           const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey),
                         ],
                       ),
@@ -513,7 +513,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   }
 
   Widget _buildPaymentMethodsGrid(AppState state) {
-    final List<Map<String, dynamic>> methods = [
+    final methods = [
       {"name": "MurtaaxPay Wallet", "icon": Icons.wallet_rounded, "image": "assets/images/walletlogo.png"},
       {"name": "EVC Plus", "icon": Icons.phone_android_rounded, "image": "assets/images/evc.png"},
       {"name": "ZAAD Service", "icon": Icons.account_balance_wallet_rounded, "image": "assets/images/zaad.png"},
@@ -529,63 +529,71 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 4),
         itemCount: methods.length,
         itemBuilder: (context, index) {
-          final m = methods[index];
-          bool isSelected = _selectedMethod == m["name"];
-          return GestureDetector(
-            onTap: () => setState(() => _selectedMethod = m["name"]),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              width: 120,
-              margin: const EdgeInsets.only(right: 12, top: 4, bottom: 4),
+          return _buildPaymentMethodItem(state, methods[index]);
+        },
+      ),
+    );
+  }
+
+  Widget _buildPaymentMethodItem(AppState state, Map<String, dynamic> method) {
+    final theme = Theme.of(context);
+    final String label = method["name"];
+    final String imagePath = method["image"];
+    final IconData fallbackIcon = method["icon"];
+    bool isSelected = _selectedMethod == label;
+    
+    return GestureDetector(
+      onTap: () => setState(() => _selectedMethod = label),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        width: 120,
+        margin: const EdgeInsets.only(right: 12, top: 4, bottom: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isSelected ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.1), 
+            width: 2.5
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected ? AppColors.accentTeal.withOpacity(0.1) : Colors.black.withOpacity(0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4)
+            )
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.accentTeal.withOpacity(0.1) : Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: isSelected ? AppColors.accentTeal : Colors.transparent, 
-                  width: 2.5
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: isSelected ? AppColors.accentTeal.withOpacity(0.1) : Colors.black.withOpacity(0.03),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4)
-                  )
-                ],
+                color: isSelected ? theme.cardColor : theme.dividerColor.withValues(alpha: 0.05),
+                shape: BoxShape.circle,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.white : const Color(0xFFF8FAFC),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Image.asset(
-                      m["image"], 
-                      width: 28, 
-                      height: 28, 
-                      fit: BoxFit.contain, 
-                      errorBuilder: (c, e, s) => Icon(m["icon"] as IconData, color: isSelected ? AppColors.accentTeal : AppColors.grey, size: 24),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    m["name"], 
-                    style: TextStyle(
-                      fontSize: 11, 
-                      fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600, 
-                      color: isSelected ? AppColors.primaryDark : AppColors.grey
-                    ), 
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              child: Image.asset(
+                imagePath, 
+                width: 28, 
+                height: 28, 
+                fit: BoxFit.contain, 
+                errorBuilder: (c, e, s) => Icon(fallbackIcon, color: isSelected ? AppColors.accentTeal : AppColors.grey, size: 24),
               ),
             ),
-          );
-        },
+            const SizedBox(height: 10),
+            Text(
+              label, 
+              style: TextStyle(
+                fontSize: 11, 
+                fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600, 
+                color: isSelected ? theme.textTheme.bodyLarge?.color : AppColors.grey
+              ), 
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -595,60 +603,12 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: TextStyle(color: isError ? Colors.red : AppColors.grey, fontSize: 15, fontWeight: isTotal ? FontWeight.bold : FontWeight.w500)),
-        Text(value, style: TextStyle(color: isError ? Colors.red : AppColors.primaryDark, fontSize: 18, fontWeight: FontWeight.w900)),
+        Text(value, style: TextStyle(color: isError ? Colors.red : Theme.of(context).textTheme.bodyLarge?.color, fontSize: 18, fontWeight: FontWeight.w900)),
       ],
     );
   }
 
-  Widget _buildCustomBottomNav() {
-    bool canProceed = _hasSufficientBalance && _isAmountValid;
-    final l10n = AppLocalizations.of(context)!;
-    return Container(
-      height: 90,
-      margin: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(40),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          IconButton(icon: const Icon(Icons.home_outlined, color: Colors.white70), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.history, color: Colors.white70), onPressed: () {}),
-          Opacity(
-            opacity: 1.0,
-            child: GestureDetector(
-              onTap: () {
-                if (canProceed) {
-                  if (_selectedMethod == "Murtaax Wallet") {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => WalletReceiverScreen(amount: _sendController.text, method: _selectedMethod)));
-                  } else {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ReceiverScreen(amount: _sendController.text, method: _selectedMethod)));
-                  }
-                } else {
-                  String message = !_isAmountValid ? l10n.pleaseEnterDetails : l10n.insufficientBalance;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(message)),
-                  );
-                }
-              },
-              child: Container(
-                width: 56,
-                height: 56,
-                decoration: const BoxDecoration(
-                  color: AppColors.accentTeal,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.send_rounded, color: Colors.white, size: 28),
-              ),
-            ),
-          ),
-          IconButton(icon: const Icon(Icons.credit_card, color: Colors.white70), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.person_outline, color: Colors.white70), onPressed: () {}),
-        ],
-      ),
-    );
-  }
+
 }
 
 class _CurrencyPickerSheet extends StatefulWidget {

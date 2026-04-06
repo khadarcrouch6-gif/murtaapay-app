@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -89,6 +91,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get youSend => 'Sina saadad';
 
   @override
+  String get searchCurrency => 'Otsi valuutat...';
+
+  @override
   String get receiverGets => 'Saaja saab';
 
   @override
@@ -102,9 +107,6 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get insufficientBalance => 'Ebapiisav jääk';
-
-  @override
-  String get searchCurrency => 'Otsi valuutat...';
 
   @override
   String get receiverDetails => 'Saaja andmed';
@@ -199,13 +201,17 @@ class AppLocalizationsEt extends AppLocalizations {
   String get backToHome => 'Tagasi avalehele';
 
   @override
+  String get continueLabel => 'Jätka';
+
+  @override
   String get murtaaxTransfer => 'Murtaax ülekanne';
 
   @override
   String get enterReceiverWalletId => 'Sisesta saaja rahakoti ID';
 
   @override
-  String get walletIdTransferNotice => 'Raha kantakse kohe üle määratud Murtaaxi ID-le.';
+  String get walletIdTransferNotice =>
+      'Raha kantakse kohe üle määratud Murtaaxi ID-le.';
 
   @override
   String get enterWalletIdHint => 'Sisesta rahakoti ID (nt 102234)';
@@ -220,7 +226,8 @@ class AppLocalizationsEt extends AppLocalizations {
   String get securityVerification => 'Turvakontroll';
 
   @override
-  String get enterTransactionPin => 'Makse autoriseerimiseks sisesta oma 4-kohaline PIN-kood.';
+  String get enterTransactionPin =>
+      'Makse autoriseerimiseks sisesta oma 4-kohaline PIN-kood.';
 
   @override
   String get authorizing => 'Autoriseerimine...';
@@ -231,7 +238,8 @@ class AppLocalizationsEt extends AppLocalizations {
   }
 
   @override
-  String get verifyingTransaction => 'Tehingu turvaline kinnitamine Murtaaxi serveriga...';
+  String get verifyingTransaction =>
+      'Tehingu turvaline kinnitamine Murtaaxi serveriga...';
 
   @override
   String get cancelAndChangeMethod => 'Tühista ja muuda meetodit';

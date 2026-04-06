@@ -20,12 +20,13 @@ class PaymentSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -65,7 +66,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 26 * context.fontSizeFactor,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primaryDark,
+                        color: theme.textTheme.bodyLarge?.color,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -93,7 +94,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
@@ -128,7 +129,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                           child: Text(
                             l10n.backToHome,
                             style: TextStyle(
-                              color: AppColors.primaryDark,
+                              color: theme.primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 16 * context.fontSizeFactor,
                             ),

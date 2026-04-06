@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../app_colors.dart';
 import '../app_state.dart';
+import '../widgets/adaptive_icon.dart';
 
 class TransactionItem extends StatelessWidget {
   final String title;
@@ -10,7 +11,7 @@ class TransactionItem extends StatelessWidget {
   final String status;
   final String? date;
   final bool? isSent;
-  final IconData? icon;
+  final dynamic icon;
   final VoidCallback? onTap;
 
   const TransactionItem({
@@ -61,7 +62,7 @@ class TransactionItem extends StatelessWidget {
               ),
               child: Center(
                 child: icon != null 
-                  ? Icon(icon, color: AppColors.primaryDark, size: 20)
+                  ? AdaptiveIcon(icon, color: AppColors.primaryDark, size: 20)
                   : (isSent == null 
                     ? Text(
                         title.isNotEmpty ? title[0] : "?",
@@ -70,7 +71,7 @@ class TransactionItem extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       )
-                    : Icon(
+                    : AdaptiveIcon(
                         isSent! ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown,
                         color: isSent! ? Colors.red : AppColors.accentTeal,
                         size: 16,
