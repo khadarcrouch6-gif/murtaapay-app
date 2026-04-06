@@ -3,6 +3,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -29,20 +30,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _pages = [
       OnboardingData(
         title: state.translate("Send Money Home, Instantly", "Lacag u Dir Guriga, Degdeg", ar: "أرسل الأموال إلى المنزل فوراً", de: "Geld sofort nach Hause senden"),
-        subtitle: state.translate("Support your family in Somalia with the fastest transfer service.", "Ku taageer qoyskaaga Soomaaliya adeegga ugu xawaaraha badan.", ar: "ادعم عائلتك في الصومال بأسرع خدمة تحويل.", de: "Unterstützen Sie Ihre Familie in Somalia mit dem schnellsten Transferservice."),
-        icon: FontAwesomeIcons.moneyBillTransfer,
+        subtitle: state.translate("Support your family in Somalia with the fastest transfer service.", "Ku taageer qoyskaaga Soomaaliya adeegga ugu xawaaraha badan.", ar: "ادعم عائلtek في الصومال بأسرع خدمة تحويل.", de: "Unterstützen Sie Ihre Familie in Somalia mit dem schnellsten Transferservice."),
+        lottieUrl: 'https://lottie.host/8526543b-178b-497d-9477-ed21c97f4c54/9I3K59R7m3.json',
         color: Colors.cyanAccent,
       ),
       OnboardingData(
         title: state.translate("Fast & Secure Transfers", "Xawaalad Degdeg ah & Ammaan ah", ar: "تحويلات سريعة وآمنة", de: "Schnelle & sichere Überweisungen"),
         subtitle: state.translate("Bank-level security ensures your money reaches its destination safely.", "Amniga heerka bangiga ayaa hubinaya in lacagtaadu si nabad ah ku gaadho meeshii loogu talagalay.", ar: "أمان بمستوى البنك يضمن وصول أموالك إلى وجهتها بأمان.", de: "Sicherheit auf Bankenniveau sorgt dafür, dass Ihr Geld sicher ans Ziel kommt."),
-        icon: FontAwesomeIcons.boltLightning,
+        lottieUrl: 'https://lottie.host/8427f71b-a5d4-4f24-9189-94b63e9f5466/t8T2H7v1oI.json',
         color: Colors.amberAccent,
       ),
       OnboardingData(
         title: state.translate("Send to ZAAD, EVC, eDahab", "U dir ZAAD, EVC, eDahab", ar: "أرسل إلى ZAAD ، EVC ، eDahab", de: "Senden an ZAAD, EVC, eDahab"),
         subtitle: state.translate("Direct transfers to all major Somali mobile money platforms.", "Xawilaad toos ah dhammaan barmaamijyada lacagaha gacanta ee Soomaaliya.", ar: "تحويلات مباشرة إلى جميع منصات الأموال المحمولة الصومالية الرئيسية.", de: "Direkte Überweisungen an alle wichtigen somalischen Mobile-Money-Plattformen."),
-        icon: FontAwesomeIcons.wallet,
+        lottieUrl: 'https://lottie.host/c953a713-3351-409e-87fe-ef710892257d/0sWbC98B2c.json',
         color: AppColors.accentTeal,
       ),
     ];
@@ -231,13 +232,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 class OnboardingData {
   final String title;
   final String subtitle;
-  final dynamic icon;
+  final String lottieUrl;
   final Color color;
 
   OnboardingData({
     required this.title,
     required this.subtitle,
-    required this.icon,
+    required this.lottieUrl,
     required this.color,
   });
 }
@@ -258,7 +259,13 @@ class OnboardingPage extends StatelessWidget {
           const Spacer(flex: 2),
           FadeInDown(
             child: Center(
-              child: isSpecial ? _buildSpecialGraphic(context, data) : _buildStandardIcon(context, data),
+              child: SizedBox(
+                height: 280 * context.fontSizeFactor,
+                child: Lottie.network(
+                  data.lottieUrl,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
           ),
           const Spacer(flex: 1),

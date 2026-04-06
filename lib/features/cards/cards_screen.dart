@@ -200,61 +200,63 @@ class _CardsScreenState extends State<CardsScreen> {
   }
 
   Widget _buildCardFront(BuildContext context, AppState state) {
-    return Container(
-      width: double.infinity,
-      height: 200 * context.fontSizeFactor,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.accentTeal.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+    return Hero(
+      tag: 'virtual_card',
+      child: Container(
+        width: double.infinity,
+        height: 200 * context.fontSizeFactor,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.accentTeal.withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.primaryDark, AppColors.primaryDark.withValues(alpha: 0.8), AppColors.accentTeal.withValues(alpha: 0.6)],
+            stops: const [0.0, 0.6, 1.0],
           ),
-        ],
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primaryDark, AppColors.primaryDark.withValues(alpha: 0.8), AppColors.accentTeal.withValues(alpha: 0.6)],
-          stops: const [0.0, 0.6, 1.0],
         ),
-      ),
-      child: Stack(
-        children: [
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Top Row: Murtaax Pay Logo (Right Aligned)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Row(
-                      children: [
-                        Image.asset(
-                          "assets/images/walletlogo.png", 
-                          width: 18, 
-                          height: 18, 
-                          color: Colors.white,
-                          errorBuilder: (c, e, s) => const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 18),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          "Murtaax Pay", 
-                          style: TextStyle(
-                            color: Colors.white, 
-                            fontWeight: FontWeight.bold, 
-                            fontSize: 14, 
-                            letterSpacing: -0.5
-                          )
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+        child: Stack(
+          children: [
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Top Row: Murtaax Pay Logo (Right Aligned)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset(
+                            "assets/images/walletlogo.png", 
+                            width: 18, 
+                            height: 18, 
+                            color: Colors.white,
+                            errorBuilder: (c, e, s) => const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 18),
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            "Murtaax Pay", 
+                            style: TextStyle(
+                              color: Colors.white, 
+                              fontWeight: FontWeight.bold, 
+                              fontSize: 14, 
+                              letterSpacing: -0.5
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 // Security Chip Row
                 SizedBox(
                   width: 45,
@@ -364,7 +366,8 @@ class _CardsScreenState extends State<CardsScreen> {
             ),
         ],
       ),
-    );
+    ),
+   );
   }
 
   Widget _buildCardBack(BuildContext context, AppState state) {

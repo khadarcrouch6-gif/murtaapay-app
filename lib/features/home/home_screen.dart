@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
@@ -8,6 +9,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
+import '../../core/widgets/shimmer_loading.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/widgets/transaction_item.dart';
 import '../send_money/send_amount_screen.dart';
@@ -23,6 +25,8 @@ import '../more/vouchers_screen.dart';
 import '../deposit/deposit_screen.dart';
 import '../auth/kyc_screen.dart';
 import '../notifications/notifications_screen.dart';
+import '../analytics/analytics_screen.dart';
+import '../../core/widgets/receipt_view.dart';
 
 enum ChartType { bar, pie, line }
 
@@ -35,6 +39,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   bool _isBalanceVisible = false;
+  bool _isLoading = true;
   int _nameIndex = 0;
   int _charIndex = 0;
   String _displayedName = "";
@@ -55,6 +60,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       vsync: this,
     )..repeat(reverse: true);
     _startNameAnimation();
+    
+    // Simulate initial data loading
+    Timer(const Duration(milliseconds: 2500), () {
+      if (mounted) setState(() => _isLoading = false);
+    });
   }
 
   void _startNameAnimation() {
@@ -298,7 +308,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     ]),
                     FittedBox(
                       fit: BoxFit.scaleDown,
-                      child: Text(_isBalanceVisible ? r"$12,450.80" : "******", style: theme.textTheme.displayMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 32 * context.fontSizeFactor)),
+                      child: ShimmerLoading(
+                        isLoading: _isLoading,
+                        child: Text(_isBalanceVisible ? r"$12,450.80" : "******", style: theme.textTheme.displayMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 32 * context.fontSizeFactor)),
+                      ),
                     ),
                   ]),
                 ),
@@ -319,11 +332,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget _buildSpendingAnalysis(BuildContext context, AppState state, ThemeData theme) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(24), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 8))]),
-        child: Column(
-          children: [
+      child: GestureDetector(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AnalyticsScreen())),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(24), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 8))]),
+          child: Column(
+            children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -384,6 +399,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
       child: ZoomIn(
+      child: Hero(
+        tag: 'virtual_card',
         child: GestureDetector(
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CardsScreen())),
           child: Container(
@@ -416,6 +433,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
         ),
       ),
+      ),
     );
   }
 
@@ -438,9 +456,54 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HistoryScreen())), child: Text(state.translate("See All", "Dhammaan", ar: "عرض الكل", de: "Alle anzeigen"), style: TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
             ],
           ),
-          const TransactionItem(title: "Amazon.com", subtitle: "Shopping", amount: r"-$124.50", date: "Today, 2:45 PM", status: "Success", icon: FontAwesomeIcons.amazon),
-          const TransactionItem(title: "Ahmed Warsame", subtitle: "Transfer", amount: r"+$2,500.00", date: "Yesterday, 10:20 AM", status: "Success", icon: FontAwesomeIcons.userLarge),
-          const TransactionItem(title: "Somnet Bill", subtitle: "Utilities", amount: r"-$35.00", date: "24 Oct, 4:15 PM", status: "Pending", icon: Icons.wifi_rounded),
+          if (_isLoading) ...[
+            TransactionItem.skeleton(context),
+            TransactionItem.skeleton(context),
+            TransactionItem.skeleton(context),
+          ] else ...[
+            TransactionItem(
+              title: "Amazon.com", 
+              subtitle: "Shopping", 
+              amount: r"-$124.50", 
+              date: "Today, 2:45 PM", 
+              status: "Success", 
+              icon: FontAwesomeIcons.amazon,
+              onTap: () => ReceiptView.show(context, {
+                'title': 'Amazon.com',
+                'amount': r'-$124.50',
+                'date': 'Today, 2:45 PM',
+                'status': 'Success'
+              }),
+            ),
+            TransactionItem(
+              title: "Ahmed Warsame", 
+              subtitle: "Transfer", 
+              amount: r"+$2,500.00", 
+              date: "Yesterday, 10:20 AM", 
+              status: "Success", 
+              icon: FontAwesomeIcons.userLarge,
+              onTap: () => ReceiptView.show(context, {
+                'title': 'Ahmed Warsame',
+                'amount': r'+$2,500.00',
+                'date': 'Yesterday, 10:20 AM',
+                'status': 'Success'
+              }),
+            ),
+            TransactionItem(
+              title: "Somnet Bill", 
+              subtitle: "Utilities", 
+              amount: r"-$35.00", 
+              date: "24 Oct, 4:15 PM", 
+              status: "Pending", 
+              icon: Icons.wifi_rounded,
+              onTap: () => ReceiptView.show(context, {
+                'title': 'Somnet Bill',
+                'amount': r'-$35.00',
+                'date': '24 Oct, 4:15 PM',
+                'status': 'Pending'
+              }),
+            ),
+          ],
         ],
       ),
     );
@@ -448,7 +511,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   Widget _buildActionButton(BuildContext context, String label, dynamic icon, Gradient gradient, VoidCallback onTap) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
       child: Container(
         height: 56 * context.fontSizeFactor,
         decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))]),
@@ -506,7 +572,25 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
         maxY: 100,
-        barTouchData: BarTouchData(enabled: true),
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipColor: (_) => AppColors.primaryDark,
+            tooltipRoundedRadius: 8,
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              return BarTooltipItem(
+                '${_days[group.x.toInt()]}\n',
+                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                children: [
+                  TextSpan(
+                    text: '\$${rod.toY.toStringAsFixed(2)}',
+                    style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
         titlesData: FlTitlesData(
           show: true,
           bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, meta) => Text(_days[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 10)))),
@@ -524,6 +608,20 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget _buildLineChart(ThemeData theme) {
     return LineChart(
       LineChartData(
+        lineTouchData: LineTouchData(
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            getTooltipColor: (_) => AppColors.primaryDark,
+            getTooltipItems: (touchedSpots) {
+              return touchedSpots.map((spot) {
+                return LineTooltipItem(
+                  '\$${spot.y.toStringAsFixed(2)}',
+                  const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold),
+                );
+              }).toList();
+            },
+          ),
+        ),
         gridData: const FlGridData(show: false),
         titlesData: FlTitlesData(
           show: true,

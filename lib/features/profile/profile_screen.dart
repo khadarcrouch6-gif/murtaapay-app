@@ -11,6 +11,7 @@ import '../more/refer_earn_screen.dart';
 import 'change_pin_screen.dart';
 import '../chat/chat_list_screen.dart';
 import 'terms_screen.dart';
+import 'security_center_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -76,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         context, 
                         state.translate("Security & PIN", "Amniga & PIN", ar: "الأمان وكلمة السر", de: "Sicherheit & PIN"), 
                         FontAwesomeIcons.shieldHalved, 
-                        () => _showSecuritySettings(context, state)
+                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SecurityCenterScreen()))
                       ),
 
                       const SizedBox(height: 24),
