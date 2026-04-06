@@ -4,6 +4,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
+import 'dart:ui';
+import 'dart:io' show Platform;
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -126,19 +128,25 @@ class _CardsScreenState extends State<CardsScreen> {
             Center(
               child: MaxWidthBox(
                 maxWidth: 400,
-                child: GestureDetector(
-                  onTap: _flipCard,
-                  child: TweenAnimationBuilder(
-                    duration: const Duration(milliseconds: 600),
-                    tween: Tween<double>(begin: 0, end: _showBack ? 180 : 0),
-                    builder: (context, double value, child) {
-                      return Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()..setEntry(3, 2, 0.001)..rotateY(value * pi / 180),
-                        child: value <= 90 ? _buildCardFront(context, state) : Transform(alignment: Alignment.center, transform: Matrix4.identity()..rotateY(pi), child: _buildCardBack(context, state)),
-                      );
-                    },
-                  ),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: _flipCard,
+                      child: TweenAnimationBuilder(
+                        duration: const Duration(milliseconds: 600),
+                        tween: Tween<double>(begin: 0, end: _showBack ? 180 : 0),
+                        builder: (context, double value, child) {
+                          return Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.identity()..setEntry(3, 2, 0.001)..rotateY(value * pi / 180),
+                            child: value <= 90 ? _buildCardFront(context, state) : Transform(alignment: Alignment.center, transform: Matrix4.identity()..rotateY(pi), child: _buildCardBack(context, state)),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildWalletButtons(context, state),
+                  ],
                 ),
               ),
             ),
@@ -192,38 +200,225 @@ class _CardsScreenState extends State<CardsScreen> {
   }
 
   Widget _buildCardFront(BuildContext context, AppState state) {
-    return GlassmorphicContainer(
-      width: double.infinity, height: 200 * context.fontSizeFactor, borderRadius: 24, blur: 20, alignment: Alignment.bottomCenter, border: 2,
-      linearGradient: LinearGradient(colors: [_isFrozen ? Colors.grey.shade800 : AppColors.primaryDark.withValues(alpha: 0.9), _isFrozen ? Colors.grey.shade600 : AppColors.accentTeal.withValues(alpha: 0.6)]),
-      borderGradient: LinearGradient(colors: [Colors.white.withValues(alpha: 0.5), Colors.white.withValues(alpha: 0.2)]),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 32), Text("VISA", style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, fontSize: 20))]),
-            Row(
+    return Container(
+      width: double.infinity,
+      height: 200 * context.fontSizeFactor,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accentTeal.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.primaryDark, AppColors.primaryDark.withValues(alpha: 0.8), AppColors.accentTeal.withValues(alpha: 0.6)],
+          stops: const [0.0, 0.6, 1.0],
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(_showNumber ? "4580 1234 5678 9012" : "**** **** **** 4580", style: const TextStyle(color: Colors.white, letterSpacing: 2, fontWeight: FontWeight.bold, fontSize: 18)),
-                Row(children: [IconButton(onPressed: () => _copyCardNumber(context, state), icon: const Icon(Icons.copy_rounded, color: Colors.white70, size: 20)), IconButton(onPressed: _toggleShowNumber, icon: Icon(_showNumber ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: Colors.white70, size: 20))]),
+                // Top Row: Chip and Murtaax Pay Logo
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 45,
+                      height: 35,
+                      child: CustomPaint(painter: RealisticCardChipPainter()),
+                    ),
+                    Row(
+                      children: [
+                        Image.asset(
+                          "assets/images/walletlogo.png", 
+                          width: 18, 
+                          height: 18, 
+                          color: Colors.white,
+                          errorBuilder: (c, e, s) => const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 18),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "Murtaax Pay", 
+                          style: TextStyle(
+                            color: Colors.white, 
+                            fontWeight: FontWeight.bold, 
+                            fontSize: 14, 
+                            letterSpacing: -0.5
+                          )
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                // Middle Row: Card Number
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: FittedBox(
+                        alignment: Alignment.centerLeft,
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          _showNumber ? "4580 1234 5678 9012" : "**** **** **** 4580",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            letterSpacing: 2.5,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            fontFamily: 'monospace', // Card-like font
+                            shadows: [Shadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 4)],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Row(
+                      children: [
+                        IconButton(onPressed: () => _copyCardNumber(context, state), icon: const Icon(Icons.copy_rounded, color: Colors.white70, size: 18)),
+                        IconButton(onPressed: _toggleShowNumber, icon: Icon(_showNumber ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: Colors.white70, size: 18)),
+                      ],
+                    ),
+                  ],
+                ),
+                // Bottom Row: Name and Expiry
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(state.translate("Card Holder", "Milkiilaha", ar: "صاحب البطاقة", de: "Karteninhaber").toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 9, letterSpacing: 1)),
+                        const Text("KHADAR RAYAALE", style: TextStyle(color: Colors.white, letterSpacing: 1.5, fontWeight: FontWeight.w600, fontSize: 13)),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(state.translate("Expires", "Dhicitaanka", ar: "تنتهي في", de: "Ablauf").toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 9, letterSpacing: 1)),
+                        const Text("12/26", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
-            const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text("KHADAR RAYAALE", style: TextStyle(color: Colors.white, letterSpacing: 1)), Text("12/26", style: TextStyle(color: Colors.white))]),
-          ],
-        ),
+          ),
+          
+          // Frosted Ice Overlay (Frozen State)
+          if (_isFrozen)
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.05),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4)),
+                              ],
+                            ),
+                            child: const Icon(Icons.lock_rounded, color: Colors.white, size: 36),
+                          ),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              state.translate("FROZEN", "XANIBAN", ar: "مجمدة", de: "GESPERRT"),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 3, fontSize: 10),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
 
   Widget _buildCardBack(BuildContext context, AppState state) {
-    return GlassmorphicContainer(
-      width: double.infinity, height: 200 * context.fontSizeFactor, borderRadius: 24, blur: 20, alignment: Alignment.center, border: 2,
-      linearGradient: LinearGradient(colors: [_isFrozen ? Colors.grey.shade800 : AppColors.primaryDark.withValues(alpha: 0.9), _isFrozen ? Colors.grey.shade600 : AppColors.accentTeal.withValues(alpha: 0.6)]),
-      borderGradient: LinearGradient(colors: [Colors.white.withValues(alpha: 0.5), Colors.white.withValues(alpha: 0.2)]),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Container(height: 44, width: double.infinity, color: Colors.black87), const SizedBox(height: 24), Container(height: 34, width: 80, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)), alignment: Alignment.center, child: const Text("455", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))]),
+    return Container(
+      width: double.infinity,
+      height: 200 * context.fontSizeFactor,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: LinearGradient(
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
+          colors: _isFrozen ? [Colors.grey.shade800, Colors.grey.shade900] : [AppColors.primaryDark, AppColors.primaryDark.withValues(alpha: 0.9)],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 30),
+          Container(height: 45, width: double.infinity, color: Colors.black),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              children: [
+                Container(
+                  width: 140,
+                  height: 35,
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.8), borderRadius: BorderRadius.circular(4)),
+                  child: const Center(child: Text("•••• •••• •••• ••••", style: TextStyle(color: Colors.grey, letterSpacing: 2))),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  width: 50,
+                  height: 35,
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
+                  alignment: Alignment.center,
+                  child: const Text("455", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+          const Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              "Customer Service: +123 456 789\nMurtaaxPay Virtual Card is issued by MurtaaxPay Bank.",
+              style: TextStyle(color: Colors.white24, fontSize: 8),
+            ),
+          ),
+        ],
+      ),
     );
   }
+
 
   Widget _buildFinancialInsights(BuildContext context, AppState state, ThemeData theme) {
     return Container(
@@ -281,10 +476,417 @@ class _CardsScreenState extends State<CardsScreen> {
   Widget _buildFilterChip(String label, bool sel) => Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: (_) {}, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
 
   void _showCardSettings(BuildContext context, AppState state) {
-    showModalBottomSheet(context: context, builder: (_) => Container(padding: const EdgeInsets.all(32), child: Column(mainAxisSize: MainAxisSize.min, children: [ListTile(leading: const Icon(Icons.lock_outline), title: Text(state.translate("Change PIN", "Beddel PIN-ka", ar: "تغيير رمز PIN", de: "PIN ändern"))), ListTile(leading: const Icon(Icons.ac_unit), title: Text(_isFrozen ? state.translate("Unfreeze", "Ka qaad xanibaadda", ar: "إلغاء التجميد", de: "Entsperren") : state.translate("Freeze", "Xanib", ar: "تجميد", de: "Einfrieren")), onTap: () { setState(() => _isFrozen = !_isFrozen); Navigator.pop(context); })])));
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => GlassmorphicContainer(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.7,
+          borderRadius: 24,
+          blur: 30,
+          alignment: Alignment.topCenter,
+          border: 2,
+          linearGradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)],
+          ),
+          borderGradient: LinearGradient(
+            colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)],
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(10))),
+              const SizedBox(height: 24),
+              // Header & Status
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      state.translate("Card Settings", "Meelaha Kaadhka", ar: "إعدادات البطاقة", de: "Karteneinstellungen"),
+                      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: (_isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: (_isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.4)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            _isFrozen ? Icons.lock_clock_rounded : Icons.check_circle_rounded,
+                            size: 14,
+                            color: _isFrozen ? Colors.orange : AppColors.accentTeal,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            _isFrozen 
+                              ? state.translate("Frozen", "Xaniban", ar: "مجمدة", de: "Eingefroren")
+                              : state.translate("Active", "Shaqaynaya", ar: "نشطة", de: "Aktiv"),
+                            style: TextStyle(
+                              color: _isFrozen ? Colors.orange : AppColors.accentTeal,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionTitle(state.translate("Security", "Ammaanka", ar: "الأمان", de: "Sicherheit")),
+                      _buildSettingsTile(
+                        icon: Icons.ac_unit_rounded,
+                        color: Colors.blue,
+                        title: _isFrozen 
+                          ? state.translate("Unfreeze Card", "Ka qaad Xanibaadda", ar: "إلغاء تجميد البطاقة", de: "Karte entsperren")
+                          : state.translate("Freeze Card", "Xanib Kaadhka", ar: "تجمid البطاقة", de: "Karte sperren"),
+                        subtitle: state.translate("Temporarily disable payments", "Hadda si kumeelgaar ah u xir", ar: "تعطيل المدفوعات مؤقتاً", de: "Zahlungen vorübergehend deaktivieren"),
+                        onTap: () {
+                          setState(() => _isFrozen = !_isFrozen);
+                          setModalState(() {});
+                          Navigator.pop(context);
+                        },
+                      ),
+                      _buildSettingsTile(
+                        icon: Icons.lock_outline_rounded,
+                        color: Colors.orange,
+                        title: state.translate("Change PIN", "Beddel PIN-ka", ar: "تغيير رمز PIN", de: "PIN ändern"),
+                        subtitle: state.translate("Update your card security code", "Beddel lambarka qarsoodiga ah", ar: "تحديث رمز الأمان الخاص بك", de: "Aktualisieren Sie Ihren Sicherheitscode"),
+                        onTap: () {},
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle(state.translate("Card Management", "Maamulka Kaadhka", ar: "إدارة البطاقة", de: "Kartenverwaltung")),
+                      _buildSettingsTile(
+                        icon: Icons.speed_rounded,
+                        color: Colors.teal,
+                        title: state.translate("Spending Limits", "Xadka Kharashka", ar: "حدود الإنفاق", de: "Ausgabenlimits"),
+                        subtitle: state.translate("Set daily or monthly limits", "Hubi inta aad bixin karto", ar: "تعيين الحدود اليومية أو الشهرية", de: "Tägliche oder monatliche Limits festlegen"),
+                        onTap: () {
+                          Navigator.pop(context); // Close settings
+                          _showSpendingLimitsDialog(context, state);
+                        },
+                      ),
+                      _buildSettingsTile(
+                        icon: Icons.contactless_rounded,
+                        color: Colors.purple,
+                        title: state.translate("Contactless Payments", "Lacag-bixinta Taabashada", ar: "مدفوعات بدون تلامس", de: "Kontaktloses Bezahlen"),
+                        subtitle: state.translate("Enable/Disable tap to pay", "Oggolow bixinta bilaa taabashada", ar: "تمكين/تعطيل النقر للدفع", de: "Kontaktloses Bezahlen aktivieren/deaktivieren"),
+                        trailing: Switch(
+                          value: true,
+                          onChanged: (v) {},
+                          activeColor: AppColors.accentTeal,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle(state.translate("Danger Zone", "Qaybta Khatarta", ar: "منطقة الخطر", de: "Gefahrenzone")),
+                      _buildSettingsTile(
+                        icon: Icons.delete_forever_rounded,
+                        color: Colors.redAccent,
+                        title: state.translate("Terminate Card", "Tirtir Kaadhka", ar: "إلغاء البطاقة", de: "Karte kündigen"),
+                        subtitle: state.translate("Permanently delete this virtual card", "Si rasmi ah u tirtir kaadhkan", ar: "حذف هذه البطاقة الافتراضية بشكل دائم", de: "Diese virtuelle Karte dauerhaft löschen"),
+                        onTap: () {},
+                        isLast: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 12, bottom: 12),
+      child: Text(
+        title.toUpperCase(),
+        style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildWalletButtons(BuildContext context, AppState state) {
+    final isIOS = Platform.isIOS;
+    return Center(
+      child: MaxWidthBox(
+        maxWidth: 300,
+        child: isIOS 
+          ? _walletButton(
+              "Apple Wallet",
+              Icons.apple,
+              Colors.black,
+              () => _showWalletConfirm(context, state, "Apple Wallet"),
+            )
+          : _walletButton(
+              "Google Pay",
+              Icons.g_mobiledata_rounded,
+              Colors.blue.shade900,
+              () => _showWalletConfirm(context, state, "Google Pay"),
+            ),
+      ),
+    );
+  }
+
+  Widget _walletButton(String label, IconData icon, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              label == "Apple Wallet" ? "Add to Apple Wallet" : "Add to Google Pay",
+              style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showWalletConfirm(BuildContext context, AppState state, String platform) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(state.translate("Connecting to $platform...", "Hadda waxaan ku xireynaa $platform...", ar: "جاري الاتصال بـ $platform...", de: "Verbindung zu $platform wird hergestellt...")),
+        backgroundColor: AppColors.accentTeal,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  Widget _buildSettingsTile({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String subtitle,
+    VoidCallback? onTap,
+    Widget? trailing,
+    bool isLast = false,
+  }) {
+    return Column(
+      children: [
+        ListTile(
+          onTap: onTap,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          leading: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+          subtitle: Text(subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 11)),
+          trailing: trailing ?? Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.2)),
+        ),
+        if (!isLast) Divider(color: Colors.white.withValues(alpha: 0.05), indent: 64, endIndent: 12),
+      ],
+    );
   }
 
   void _showAddCardDialog(BuildContext context, AppState state) {
-    showModalBottomSheet(context: context, builder: (_) => Container(padding: const EdgeInsets.all(32), child: Column(mainAxisSize: MainAxisSize.min, children: [ListTile(leading: const Icon(Icons.add_card), title: Text(state.translate("Order Virtual Card", "Dalbo Kaadh Virtual ah", ar: "طلب بطاقة افتراضية", de: "Virtuelle Karte bestellen"))), ListTile(leading: const Icon(Icons.link), title: Text(state.translate("Link Physical Card", "Ku xidh Kaadh Jirka ah", ar: "ربط بطاقة فعلية", de: "Physische Karte verknüpfen")))])));
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => GlassmorphicContainer(
+        width: double.infinity,
+        height: 320 * context.fontSizeFactor,
+        borderRadius: 24,
+        blur: 30,
+        alignment: Alignment.topCenter,
+        border: 2,
+        linearGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)],
+        ),
+        borderGradient: LinearGradient(
+          colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)],
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(10))),
+            const SizedBox(height: 24),
+            Text(
+              state.translate("Add New Card", "Ku dar Kaadh Cusub", ar: "إضافة بطاقة جديدة", de: "Neue Karte hinzufügen"),
+              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  _buildSettingsTile(
+                    icon: Icons.add_card_rounded,
+                    color: AppColors.accentTeal,
+                    title: state.translate("Order Virtual Card", "Dalbo Kaadh Virtual ah", ar: "طلب بطاقة افتراضية", de: "Virtuelle Karte bestellen"),
+                    subtitle: state.translate("Instantly issue a new digital card", "Hadda hel kaadhkaaga online-ka ah", ar: "إصدار بطاقة رقمية جديدة على الفور", de: "Sofort eine neue digitale Karte ausstellen"),
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  _buildSettingsTile(
+                    icon: Icons.link_rounded,
+                    color: Colors.blue,
+                    title: state.translate("Link Physical Card", "Ku xidh Kaadh Jirka ah", ar: "ربط بطاقة فعلية", de: "Physische Karte verknüpfen"),
+                    subtitle: state.translate("Connect your plastic MurtaaxPay card", "Ku xidho kaadhkaaga caadiga ah", ar: "ربط بطاقتك البلاستيكية من MurtaaxPay", de: "Verknüpfen Sie Ihre physische MurtaaxPay-Karte"),
+                    onTap: () => Navigator.pop(context),
+                    isLast: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
+
+  void _showSpendingLimitsDialog(BuildContext context, AppState state) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => GlassmorphicContainer(
+        width: double.infinity,
+        height: 480 * context.fontSizeFactor,
+        borderRadius: 24,
+        blur: 30,
+        alignment: Alignment.topCenter,
+        border: 2,
+        linearGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)],
+        ),
+        borderGradient: LinearGradient(
+          colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)],
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(10))),
+            const SizedBox(height: 24),
+            Text(
+              state.translate("Spending Limits", "Xadka Kharashka", ar: "حدود الإنفاق", de: "Ausgabenlimits"),
+              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 32),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  children: [
+                    _limitItem(context, state, "Daily Limit", r"$500 / $1000", 0.5, Colors.teal),
+                    const SizedBox(height: 32),
+                    _limitItem(context, state, "Monthly Limit", r"$3,200 / $5,000", 0.64, Colors.blue),
+                    const SizedBox(height: 32),
+                    _limitItem(context, state, "Online Shopping", r"$1,200 / $2,000", 0.6, Colors.orange),
+                    const SizedBox(height: 40),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accentTeal,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 54),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        state.translate("Save Changes", "Keydi Isbedellada", ar: "حفظ التغييرات", de: "Änderungen speichern"),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _limitItem(BuildContext context, AppState state, String title, String value, double progress, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(value, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12)),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: LinearProgressIndicator(
+            value: progress,
+            minHeight: 8,
+            backgroundColor: Colors.white.withValues(alpha: 0.05),
+            valueColor: AlwaysStoppedAnimation(color),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class RealisticCardChipPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Colors.yellow.shade200, Colors.yellow.shade700, Colors.yellow.shade900],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..style = PaintingStyle.fill;
+
+    final RRect rrect = RRect.fromLTRBR(0, 0, size.width, size.height, const Radius.circular(6));
+    canvas.drawRRect(rrect, paint);
+
+    final linePaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.5;
+
+    // Draw chip lines for realism
+    canvas.drawLine(Offset(size.width * 0.3, 0), Offset(size.width * 0.3, size.height), linePaint);
+    canvas.drawLine(Offset(size.width * 0.65, 0), Offset(size.width * 0.65, size.height), linePaint);
+    canvas.drawLine(Offset(0, size.height * 0.33), Offset(size.width * 0.3, size.height * 0.33), linePaint);
+    canvas.drawLine(Offset(0, size.height * 0.66), Offset(size.width * 0.3, size.height * 0.66), linePaint);
+    canvas.drawLine(Offset(size.width * 0.65, size.height * 0.5), Offset(size.width, size.height * 0.5), linePaint);
+    
+    // Middle vertical cut
+    canvas.drawRRect(RRect.fromLTRBR(size.width * 0.35, size.height * 0.2, size.width * 0.6, size.height * 0.8, const Radius.circular(2)), linePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
