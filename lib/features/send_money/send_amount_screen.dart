@@ -220,17 +220,57 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     );
   }
 
+  String _getFlagUrl(String code) {
+    switch (code) {
+      case "EUR": return "https://flagcdn.com/w40/eu.png";
+      case "USD": return "https://flagcdn.com/w40/us.png";
+      case "GBP": return "https://flagcdn.com/w40/gb.png";
+      case "CAD": return "https://flagcdn.com/w40/ca.png";
+      case "SOS": return "https://flagcdn.com/w40/so.png";
+      default: return "https://flagcdn.com/w40/un.png";
+    }
+  }
+
   Widget _buildCurrencyPicker(String selected, Function(String) onSelected, List<String> options, ThemeData theme) {
     return PopupMenuButton<String>(
       onSelected: onSelected,
-      itemBuilder: (context) => options.map((c) => PopupMenuItem(value: c, child: Text(c))).toList(),
+      itemBuilder: (context) => options.map((c) => PopupMenuItem(
+        value: c, 
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Image.network(
+                _getFlagUrl(c), 
+                width: 24, 
+                height: 18, 
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded, size: 18, color: Colors.grey),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(c, style: const TextStyle(fontWeight: FontWeight.w600)),
+          ],
+        ),
+      )).toList(),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(color: AppColors.primaryDark.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
         child: Row(
           children: [
-            Text(selected, style: const TextStyle(fontWeight: FontWeight.bold)),
-            const Icon(Icons.arrow_drop_down),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: Image.network(
+                _getFlagUrl(selected), 
+                width: 20, 
+                height: 14, 
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded, size: 14, color: Colors.grey),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(selected, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+            const Icon(Icons.arrow_drop_down, size: 20),
           ],
         ),
       ),

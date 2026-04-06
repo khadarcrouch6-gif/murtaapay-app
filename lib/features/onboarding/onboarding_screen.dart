@@ -130,7 +130,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     },
                     itemCount: _pages.length,
                     itemBuilder: (context, index) {
-                      return OnboardingPage(data: _pages[index]);
+                      return OnboardingPage(
+                        data: _pages[index],
+                        isSpecial: index == 2,
+                      );
                     },
                   ),
                 ),
@@ -240,8 +243,9 @@ class OnboardingData {
 
 class OnboardingPage extends StatelessWidget {
   final OnboardingData data;
+  final bool isSpecial;
 
-  const OnboardingPage({super.key, required this.data});
+  const OnboardingPage({super.key, required this.data, this.isSpecial = false});
 
   @override
   Widget build(BuildContext context) {
@@ -253,40 +257,7 @@ class OnboardingPage extends StatelessWidget {
           const Spacer(flex: 2),
           FadeInDown(
             child: Center(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Subtle Glow behind the icon
-                  Container(
-                    width: 140 * context.fontSizeFactor,
-                    height: 140 * context.fontSizeFactor,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: data.color.withValues(alpha: 0.2),
-                          blurRadius: 60,
-                          spreadRadius: 5,
-                        ),
-                      ],
-                    ),
-                  ),
-                  ShaderMask(
-                    shaderCallback: (Rect bounds) {
-                      return LinearGradient(
-                        colors: [data.color, data.color.withValues(alpha: 0.6)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ).createShader(bounds);
-                    },
-                    child: Icon(
-                      data.icon,
-                      size: 84 * context.fontSizeFactor,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
+              child: isSpecial ? _buildSpecialGraphic(context, data) : _buildStandardIcon(context, data),
             ),
           ),
           const Spacer(flex: 1),
@@ -327,6 +298,73 @@ class OnboardingPage extends StatelessWidget {
           const Spacer(flex: 3),
         ],
       ),
+    );
+  }
+
+  Widget _buildStandardIcon(BuildContext context, OnboardingData data) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: 140 * context.fontSizeFactor,
+          height: 140 * context.fontSizeFactor,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: data.color.withValues(alpha: 0.2),
+                blurRadius: 60,
+                spreadRadius: 5,
+              ),
+            ],
+          ),
+        ),
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [data.color, data.color.withValues(alpha: 0.6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          child: Icon(
+            data.icon,
+            size: 84 * context.fontSizeFactor,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSpecialGraphic(BuildContext context, OnboardingData data) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Wallet Icon
+        _buildStandardIcon(context, data),
+        const SizedBox(width: 20),
+        // Animated Arrow
+        Pulse(
+          infinite: true,
+          child: Icon(
+            Icons.fast_forward_rounded,
+            color: Colors.white.withValues(alpha: 0.3),
+            size: 24,
+          ),
+        ),
+        const SizedBox(width: 20),
+        // Mobile Icon (Representing Mobile Money)
+        _buildStandardIcon(
+          context, 
+          OnboardingData(
+            title: "",
+            subtitle: "",
+            icon: FontAwesomeIcons.mobileScreenButton,
+            color: AppColors.accentTeal,
+          ),
+        ),
+      ],
     );
   }
 }
