@@ -27,12 +27,12 @@
   "transferLimit": "Min: $10 • Max: $5,000",
   "feeRate": "$0.99 tasu iga $100 kohta",
   "youSend": "Sina saadad",
+  "searchCurrency": "Otsi valuutat...",
   "receiverGets": "Saaja saab",
   "selectPaymentMethod": "Vali makseviis",
   "transactionFee": "Tehingutasu",
   "totalToPay": "Kokku maksta",
   "insufficientBalance": "Ebapiisav jääk",
-  "searchCurrency": "Otsi valuutat...",
   "receiverDetails": "Saaja andmed",
   "enterReceiverPhone": "Sisesta saaja telefoninumber",
   "phoneNumber": "Telefoninumber",
@@ -62,12 +62,8 @@
   "transferSentMessage": "{amount} on turvaliselt saadetud adressaadile {receiver}.",
   "@transferSentMessage": {
     "placeholders": {
-      "amount": {
-        "type": "Object"
-      },
-      "receiver": {
-        "type": "Object"
-      }
+      "amount": {},
+      "receiver": {}
     }
   },
   "method": "Meetod",
@@ -86,9 +82,7 @@
   "confirmPaymentAmount": "Kinnita makse ({amount})",
   "@confirmPaymentAmount": {
     "placeholders": {
-      "amount": {
-        "type": "Object"
-      }
+      "amount": {}
     }
   },
   "verifyingTransaction": "Tehingu turvaline kinnitamine Murtaaxi serveriga...",

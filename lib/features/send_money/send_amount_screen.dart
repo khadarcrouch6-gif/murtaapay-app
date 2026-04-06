@@ -602,8 +602,26 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(color: isError ? Colors.red : AppColors.grey, fontSize: 15, fontWeight: isTotal ? FontWeight.bold : FontWeight.w500)),
-        Text(value, style: TextStyle(color: isError ? Colors.red : Theme.of(context).textTheme.bodyLarge?.color, fontSize: 18, fontWeight: FontWeight.w900)),
+        Expanded(
+          child: Text(
+            label, 
+            style: TextStyle(
+              color: isError ? Colors.red : AppColors.grey, 
+              fontSize: 15, 
+              fontWeight: isTotal ? FontWeight.bold : FontWeight.w500
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          value, 
+          style: TextStyle(
+            color: isError ? Colors.red : AppColors.primaryDark, 
+            fontSize: 18, 
+            fontWeight: FontWeight.w900
+          )
+        ),
       ],
     );
   }
