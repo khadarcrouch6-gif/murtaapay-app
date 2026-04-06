@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:glassmorphism/glassmorphism.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -27,17 +29,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       OnboardingData(
         title: state.translate("Send Money Home, Instantly", "Lacag u Dir Guriga, Degdeg", ar: "أرسل الأموال إلى المنزل فوراً", de: "Geld sofort nach Hause senden"),
         subtitle: state.translate("Support your family in Somalia with the fastest transfer service.", "Ku taageer qoyskaaga Soomaaliya adeegga ugu xawaaraha badan.", ar: "ادعم عائلتك في الصومال بأسرع خدمة تحويل.", de: "Unterstützen Sie Ihre Familie in Somalia mit dem schnellsten Transferservice."),
-        image: "assets/images/logo.png",
+        icon: FontAwesomeIcons.moneyBillTransfer,
+        color: Colors.cyanAccent,
       ),
       OnboardingData(
         title: state.translate("Fast & Secure Transfers", "Xawaalad Degdeg ah & Ammaan ah", ar: "تحويلات سريعة وآمنة", de: "Schnelle & sichere Überweisungen"),
         subtitle: state.translate("Bank-level security ensures your money reaches its destination safely.", "Amniga heerka bangiga ayaa hubinaya in lacagtaadu si nabad ah ku gaadho meeshii loogu talagalay.", ar: "أمان بمستوى البنك يضمن وصول أموالك إلى وجهتها بأمان.", de: "Sicherheit auf Bankenniveau sorgt dafür, dass Ihr Geld sicher ans Ziel kommt."),
-        image: "assets/images/logo.png",
+        icon: FontAwesomeIcons.boltLightning,
+        color: Colors.amberAccent,
       ),
       OnboardingData(
         title: state.translate("Send to ZAAD, EVC, eDahab", "U dir ZAAD, EVC, eDahab", ar: "أرسل إلى ZAAD ، EVC ، eDahab", de: "Senden an ZAAD, EVC, eDahab"),
         subtitle: state.translate("Direct transfers to all major Somali mobile money platforms.", "Xawilaad toos ah dhammaan barmaamijyada lacagaha gacanta ee Soomaaliya.", ar: "تحويلات مباشرة إلى جميع منصات الأموال المحمولة الصومالية الرئيسية.", de: "Direkte Überweisungen an alle wichtigen somalischen Mobile-Money-Plattformen."),
-        image: "assets/images/logo.png",
+        icon: FontAwesomeIcons.wallet,
+        color: AppColors.accentTeal,
       ),
     ];
   }
@@ -50,73 +55,170 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final state = AppState();
+
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: MaxWidthBox(
-            maxWidth: 1000,
-            child: Stack(
+      backgroundColor: AppColors.primaryDark,
+      body: Stack(
+        children: [
+          // Background Gradient
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.primaryDark,
+                  Color(0xFF0F172A),
+                  AppColors.primaryDark,
+                ],
+              ),
+            ),
+          ),
+          
+          // Floating Glow Effects
+          Positioned(
+            top: -100,
+            right: -50,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.accentTeal.withValues(alpha: 0.1),
+              ),
+            ),
+          ),
+
+          SafeArea(
+            child: Column(
               children: [
-                PageView.builder(
-                  controller: _controller,
-                  onPageChanged: (index) {
-                    setState(() => isLastPage = index == _pages.length - 1);
-                  },
-                  itemCount: _pages.length,
-                  itemBuilder: (context, index) {
-                    return OnboardingPage(data: _pages[index]);
-                  },
-                ),
-                Positioned(
-                  bottom: 24 + MediaQuery.of(context).padding.bottom,
-                  left: context.horizontalPadding,
-                  right: context.horizontalPadding,
+                // Top Bar with Skip
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 8),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      SmoothPageIndicator(
-                        controller: _controller,
-                        count: _pages.length,
-                        effect: ExpandingDotsEffect(
-                          activeDotColor: AppColors.primaryDark,
-                          dotColor: AppColors.grey,
-                          dotHeight: 8 * context.fontSizeFactor,
-                          dotWidth: 8 * context.fontSizeFactor,
-                          expansionFactor: 4,
-                        ),
-                      ),
                       FadeInRight(
-                        child: ElevatedButton(
+                        child: TextButton(
                           onPressed: () {
-                            if (isLastPage) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                              );
-                            } else {
-                              _controller.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.easeInOut,
-                              );
-                            }
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            );
                           },
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(120 * context.fontSizeFactor, 56 * context.fontSizeFactor),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          ),
                           child: Text(
-                            isLastPage ? AppState().translate("Get Started", "Bilow Hadda", ar: "ابدأ الآن", de: "Loslegen") : AppState().translate("Next", "Xiga", ar: "التالي", de: "Nächste"), 
-                            style: TextStyle(fontSize: 14 * context.fontSizeFactor)
+                            state.translate("Skip", "Sii dhaaf", ar: "تخطى", de: "Überspringen"),
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.6),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14 * context.fontSizeFactor,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
+
+                Expanded(
+                  child: PageView.builder(
+                    controller: _controller,
+                    onPageChanged: (index) {
+                      setState(() => isLastPage = index == _pages.length - 1);
+                    },
+                    itemCount: _pages.length,
+                    itemBuilder: (context, index) {
+                      return OnboardingPage(data: _pages[index]);
+                    },
+                  ),
+                ),
+
+                // Bottom Navigation Card
+                Padding(
+                  padding: EdgeInsets.all(context.horizontalPadding),
+                  child: GlassmorphicContainer(
+                    width: double.infinity,
+                    height: 120 * context.fontSizeFactor,
+                    borderRadius: 24,
+                    blur: 20,
+                    alignment: Alignment.center,
+                    border: 1,
+                    linearGradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.1),
+                        Colors.white.withValues(alpha: 0.05),
+                      ],
+                    ),
+                    borderGradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.2),
+                        Colors.white.withValues(alpha: 0.05),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SmoothPageIndicator(
+                            controller: _controller,
+                            count: _pages.length,
+                            effect: ExpandingDotsEffect(
+                              activeDotColor: AppColors.accentTeal,
+                              dotColor: Colors.white.withValues(alpha: 0.2),
+                              dotHeight: 8 * context.fontSizeFactor,
+                              dotWidth: 8 * context.fontSizeFactor,
+                              expansionFactor: 4,
+                            ),
+                          ),
+                          FadeInRight(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (isLastPage) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                  );
+                                } else {
+                                  _controller.nextPage(
+                                    duration: const Duration(milliseconds: 600),
+                                    curve: Curves.easeOutQuart,
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.accentTeal,
+                                foregroundColor: Colors.white,
+                                minimumSize: Size(130 * context.fontSizeFactor, 56 * context.fontSizeFactor),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                isLastPage ? state.translate("Get Started", "Bilow Hadda", ar: "ابدأ الآن", de: "Loslegen") : state.translate("Next", "Xiga", ar: "التالي", de: "Nächste"),
+                                style: TextStyle(
+                                  fontSize: 16 * context.fontSizeFactor,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -125,9 +227,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 class OnboardingData {
   final String title;
   final String subtitle;
-  final String image;
+  final IconData icon;
+  final Color color;
 
-  OnboardingData({required this.title, required this.subtitle, required this.image});
+  OnboardingData({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+  });
 }
 
 class OnboardingPage extends StatelessWidget {
@@ -137,63 +245,87 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Center(
-        child: MaxWidthBox(
-          maxWidth: 600,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 60),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FadeInDown(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.35,
-                    ),
-                    child: Image.asset(
-                      data.image,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        height: 200 * context.fontSizeFactor,
-                        width: 200 * context.fontSizeFactor,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryDark.withValues(alpha: 0.05),
-                          shape: BoxShape.circle,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Spacer(flex: 2),
+          FadeInDown(
+            child: Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Subtle Glow behind the icon
+                  Container(
+                    width: 140 * context.fontSizeFactor,
+                    height: 140 * context.fontSizeFactor,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: data.color.withValues(alpha: 0.2),
+                          blurRadius: 60,
+                          spreadRadius: 5,
                         ),
-                        child: Icon(Icons.image_not_supported_rounded, size: 100 * context.fontSizeFactor, color: AppColors.primaryDark),
-                      ),
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 48),
-                FadeInUp(
-                  child: Text(
-                    data.title,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      fontSize: (MediaQuery.of(context).size.width > 600 ? 36 : 28) * context.fontSizeFactor,
-                      fontWeight: FontWeight.w800,
+                  ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return LinearGradient(
+                        colors: [data.color, data.color.withValues(alpha: 0.6)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ).createShader(bounds);
+                    },
+                    child: Icon(
+                      data.icon,
+                      size: 84 * context.fontSizeFactor,
+                      color: Colors.white,
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 200),
-                  child: Text(
-                    data.subtitle,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.grey,
-                      fontSize: (MediaQuery.of(context).size.width > 600 ? 20 : 16) * context.fontSizeFactor,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 100), // Boos loogu talagalay badhamada hoose
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+          const Spacer(flex: 1),
+          Column(
+            children: [
+              FadeInUp(
+                duration: const Duration(milliseconds: 800),
+                child: Text(
+                  data.title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28 * context.fontSizeFactor,
+                    fontWeight: FontWeight.w800,
+                    height: 1.2,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+              FadeInUp(
+                delay: const Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 800),
+                child: Text(
+                  data.subtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.5),
+                    fontSize: 15 * context.fontSizeFactor,
+                    height: 1.6,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Spacer(flex: 3),
+        ],
       ),
     );
   }
