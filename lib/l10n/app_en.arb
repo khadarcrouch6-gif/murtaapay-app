@@ -94,5 +94,8 @@
   "verifyingTransaction": "Securing confirming transaction with Murtaax servers...",
   "cancelAndChangeMethod": "Cancel and Change Method",
   "active": "Active",
-  "availableBalance": "AVAILABLE BALANCE"
+  "availableBalance": "AVAILABLE BALANCE",
+  "deductFeeFromAmount": "Deduct fee from amount",
+  "receiverWillReceiveLess": "Receiver will receive less",
+  "payFeeSeparately": "Pay fee separately"
 }

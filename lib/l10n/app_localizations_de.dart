@@ -249,4 +249,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get availableBalance => 'VERFÜGBARES GUTHABEN';
+
+  @override
+  String get deductFeeFromAmount => 'Gebühr vom Betrag abziehen';
+
+  @override
+  String get receiverWillReceiveLess => 'Empfänger erhält weniger';
+
+  @override
+  String get payFeeSeparately => 'Gebühr separat bezahlen';
 }

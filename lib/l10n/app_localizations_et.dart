@@ -249,4 +249,13 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get availableBalance => 'SAADAVAL JÄÄK';
+
+  @override
+  String get deductFeeFromAmount => 'Arva tasu summast maha';
+
+  @override
+  String get receiverWillReceiveLess => 'Saaja saab vähem raha';
+
+  @override
+  String get payFeeSeparately => 'Maksa tasu eraldi';
 }

@@ -94,5 +94,8 @@
   "verifyingTransaction": "Sichere Bestätigung der Transaktion mit Murtaax-Servern...",
   "cancelAndChangeMethod": "Abbrechen und Methode ändern",
   "active": "Aktiv",
-  "availableBalance": "VERFÜGBARES GUTHABEN"
+  "availableBalance": "VERFÜGBARES GUTHABEN",
+  "deductFeeFromAmount": "Gebühr vom Betrag abziehen",
+  "receiverWillReceiveLess": "Empfänger erhält weniger",
+  "payFeeSeparately": "Gebühr separat bezahlen"
 }

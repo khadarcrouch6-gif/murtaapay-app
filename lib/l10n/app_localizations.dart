@@ -571,6 +571,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'AVAILABLE BALANCE'**
   String get availableBalance;
+
+  /// No description provided for @deductFeeFromAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Deduct fee from amount'**
+  String get deductFeeFromAmount;
+
+  /// No description provided for @receiverWillReceiveLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiver will receive less'**
+  String get receiverWillReceiveLess;
+
+  /// No description provided for @payFeeSeparately.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay fee separately'**
+  String get payFeeSeparately;
 }
 
 class _AppLocalizationsDelegate

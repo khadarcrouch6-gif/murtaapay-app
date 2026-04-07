@@ -249,4 +249,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get availableBalance => 'AVAILABLE BALANCE';
+
+  @override
+  String get deductFeeFromAmount => 'Deduct fee from amount';
+
+  @override
+  String get receiverWillReceiveLess => 'Receiver will receive less';
+
+  @override
+  String get payFeeSeparately => 'Pay fee separately';
 }

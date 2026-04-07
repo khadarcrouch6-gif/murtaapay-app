@@ -94,5 +94,8 @@
   "verifyingTransaction": "Xaqiijinta amniga xawaaladda iyo xiriirka server-yada Murtaax...",
   "cancelAndChangeMethod": "Jooji oo beddel habka",
   "active": "Firfircoon",
-  "availableBalance": "HARAAGA LA HELI KARO"
+  "availableBalance": "HARAAGA LA HELI KARO",
+  "deductFeeFromAmount": "Khidmadda ka jar lacagta",
+  "receiverWillReceiveLess": "Qaataha ayaa wax yar heli doona",
+  "payFeeSeparately": "Khidmadda gooni u bixi"
 }

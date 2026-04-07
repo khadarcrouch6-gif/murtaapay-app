@@ -88,5 +88,8 @@
   "verifyingTransaction": "Tehingu turvaline kinnitamine Murtaaxi serveriga...",
   "cancelAndChangeMethod": "Tühista ja muuda meetodit",
   "active": "Aktiivne",
-  "availableBalance": "SAADAVAL JÄÄK"
+  "availableBalance": "SAADAVAL JÄÄK",
+  "deductFeeFromAmount": "Arva tasu summast maha",
+  "receiverWillReceiveLess": "Saaja saab vähem raha",
+  "payFeeSeparately": "Maksa tasu eraldi"
 }

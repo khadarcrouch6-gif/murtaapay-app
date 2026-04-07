@@ -250,4 +250,13 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get availableBalance => 'HARAAGA LA HELI KARO';
+
+  @override
+  String get deductFeeFromAmount => 'Khidmadda ka jar lacagta';
+
+  @override
+  String get receiverWillReceiveLess => 'Qaataha ayaa wax yar heli doona';
+
+  @override
+  String get payFeeSeparately => 'Khidmadda gooni u bixi';
 }

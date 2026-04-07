@@ -248,4 +248,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get availableBalance => 'الرصيد المتاح';
+
+  @override
+  String get deductFeeFromAmount => 'خصم الرسوم من المبلغ';
+
+  @override
+  String get receiverWillReceiveLess => 'المستلم سيحصل على مبلغ أقل';
+
+  @override
+  String get payFeeSeparately => 'دفع الرسوم بشكل منفصل';
 }

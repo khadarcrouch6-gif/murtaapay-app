@@ -94,5 +94,8 @@
   "verifyingTransaction": "تأمين تأكيد المعاملة مع خوادم مرتاح...",
   "cancelAndChangeMethod": "إلغاء وتغيير الطريقة",
   "active": "نشط",
-  "availableBalance": "الرصيد المتاح"
+  "availableBalance": "الرصيد المتاح",
+  "deductFeeFromAmount": "خصم الرسوم من المبلغ",
+  "receiverWillReceiveLess": "المستلم سيحصل على مبلغ أقل",
+  "payFeeSeparately": "دفع الرسوم بشكل منفصل"
 }
