@@ -11,6 +11,7 @@ import '../more/refer_earn_screen.dart';
 import 'change_pin_screen.dart';
 import '../chat/chat_list_screen.dart';
 import 'terms_screen.dart';
+import 'security_center_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -25,8 +26,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _userEmail = "khadar@murtaaxpay.com";
   String _userPhone = "+252 615 123 456";
   String _userAddress = "Mogadishu, Somalia";
-  String _profileImageUrl = 'https://i.pravatar.cc/300';
-  String _coverImageUrl = 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800';
+  final String _profileImageUrl = 'https://i.pravatar.cc/300';
+  final String _coverImageUrl = 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800';
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         context, 
                         state.translate("Security & PIN", "Amniga & PIN", ar: "الأمان وكلمة السر", de: "Sicherheit & PIN"), 
                         FontAwesomeIcons.shieldHalved, 
-                        () => _showSecuritySettings(context, state)
+                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SecurityCenterScreen()))
                       ),
 
                       const SizedBox(height: 24),
@@ -319,7 +320,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
         value: value,
         onChanged: onChanged,
-        activeColor: AppColors.accentTeal,
+        activeThumbColor: AppColors.accentTeal,
       ),
     );
   }

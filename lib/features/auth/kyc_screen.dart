@@ -40,7 +40,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
   double _captureProgress = 0.0;
   Timer? _captureTimer;
   int _livenessStep = 0; 
-  bool _showWarning = false;
+  final bool _showWarning = false;
 
   @override
   void initState() {
@@ -77,7 +77,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
     if (_isCameraInitializing) return;
     setState(() => _isCameraInitializing = true);
     try {
-      if (_cameras == null) _cameras = await availableCameras();
+      _cameras ??= await availableCameras();
       CameraDescription selectedCamera = _cameras!.firstWhere((c) => c.lensDirection == direction, orElse: () => _cameras![0]);
       if (_controller != null) await _controller!.dispose();
       _controller = CameraController(selectedCamera, ResolutionPreset.high, enableAudio: false);

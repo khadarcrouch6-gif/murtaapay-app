@@ -128,7 +128,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
                     else
                       ..._rates.entries.where((e) => e.key != "USD").take(8).map((e) => 
                         _buildRateItem(context, e.key, e.key, e.value.toStringAsFixed(2), Icons.monetization_on_rounded, Colors.blue, true)
-                      ).toList(),
+                      ),
                     
                     const SizedBox(height: 24),
                     

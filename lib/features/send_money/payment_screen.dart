@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../l10n/app_localizations.dart';
 import 'credit_card_screen.dart';

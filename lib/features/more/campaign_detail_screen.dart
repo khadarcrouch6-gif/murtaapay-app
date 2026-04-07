@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'success_donation_screen.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';

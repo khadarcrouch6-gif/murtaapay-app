@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
-import '../../core/widgets/adaptive_icon.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 import '../auth/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -29,21 +26,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _pages = [
       OnboardingData(
         title: state.translate("Send Money Home, Instantly", "Lacag u Dir Guriga, Degdeg", ar: "أرسل الأموال إلى المنزل فوراً", de: "Geld sofort nach Hause senden"),
-        subtitle: state.translate("Support your family in Somalia with the fastest transfer service.", "Ku taageer qoyskaaga Soomaaliya adeegga ugu xawaaraha badan.", ar: "ادعم عائلتك في الصومال بأسرع خدمة تحويل.", de: "Unterstützen Sie Ihre Familie in Somalia mit dem schnellsten Transferservice."),
-        icon: FontAwesomeIcons.moneyBillTransfer,
-        color: Colors.cyanAccent,
+        subtitle: state.translate("Support your family in Somali with the fastest transfer service.", "Ku taageer qoyskaaga Soomaaliya adeegga ugu xawaaraha badan.", ar: "ادعم عائلtek في الصومال بأرسع خدمة تحويل.", de: "Unterstützen Sie Ihre Familie in Somalia mit dem schnellsten Transferservice."),
+        imagePath: 'assets/images/sending.png',
+        color: AppColors.accentTeal,
       ),
       OnboardingData(
         title: state.translate("Fast & Secure Transfers", "Xawaalad Degdeg ah & Ammaan ah", ar: "تحويلات سريعة وآمنة", de: "Schnelle & sichere Überweisungen"),
         subtitle: state.translate("Bank-level security ensures your money reaches its destination safely.", "Amniga heerka bangiga ayaa hubinaya in lacagtaadu si nabad ah ku gaadho meeshii loogu talagalay.", ar: "أمان بمستوى البنك يضمن وصول أموالك إلى وجهتها بأمان.", de: "Sicherheit auf Bankenniveau sorgt dafür, dass Ihr Geld sicher ans Ziel kommt."),
-        icon: FontAwesomeIcons.boltLightning,
+        imagePath: 'assets/images/security.png',
         color: Colors.amberAccent,
       ),
       OnboardingData(
         title: state.translate("Send to ZAAD, EVC, eDahab", "U dir ZAAD, EVC, eDahab", ar: "أرسل إلى ZAAD ، EVC ، eDahab", de: "Senden an ZAAD, EVC, eDahab"),
-        subtitle: state.translate("Direct transfers to all major Somali mobile money platforms.", "Xawilaad toos ah dhammaan barmaamijyada lacagaha gacanta ee Soomaaliya.", ar: "تحويلات مباشرة إلى جميع منصات الأموال المحمولة الصومالية الرئيسية.", de: "Direkte Überweisungen an alle wichtigen somalischen Mobile-Money-Plattformen."),
-        icon: FontAwesomeIcons.wallet,
-        color: AppColors.accentTeal,
+        subtitle: state.translate("Direct transfers to all major Somali mobile money platforms.", "Xawilaad toos ah dhammaan barmaamijyada lacagaha gacanta ee Soomaaliya.", ar: "تحويلات مباشرة إلى جميع منصات الأموال المحmولة الصومالية الرئيسية.", de: "Direkte Überweisungen an alle wichtigen somalischen Mobile-Money-Plattformen."),
+        imagePath: 'assets/images/dire.png', 
+        color: Colors.cyanAccent,
       ),
     ];
   }
@@ -56,7 +53,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final state = AppState();
 
     return Scaffold(
@@ -78,24 +74,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
           
-          // Floating Glow Effects
-          Positioned(
-            top: -100,
-            right: -50,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.accentTeal.withValues(alpha: 0.1),
-              ),
-            ),
-          ),
-
           SafeArea(
             child: Column(
               children: [
-                // Top Bar with Skip
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 8),
                   child: Row(
@@ -139,7 +120,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
 
-                // Bottom Navigation Card
                 Padding(
                   padding: EdgeInsets.all(context.horizontalPadding),
                   child: GlassmorphicContainer(
@@ -231,13 +211,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 class OnboardingData {
   final String title;
   final String subtitle;
-  final dynamic icon;
+  final String imagePath;
   final Color color;
 
   OnboardingData({
     required this.title,
     required this.subtitle,
-    required this.icon,
+    required this.imagePath,
     required this.color,
   });
 }
@@ -255,13 +235,56 @@ class OnboardingPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Spacer(flex: 2),
+          const Spacer(flex: 1),
           FadeInDown(
             child: Center(
-              child: isSpecial ? _buildSpecialGraphic(context, data) : _buildStandardIcon(context, data),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: GlassmorphicContainer(
+                  width: double.infinity,
+                  height: 320 * context.fontSizeFactor,
+                  borderRadius: 32,
+                  blur: 10,
+                  alignment: Alignment.center,
+                  border: 2,
+                  linearGradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.1),
+                      Colors.white.withValues(alpha: 0.05),
+                    ],
+                  ),
+                  borderGradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      data.color.withValues(alpha: 0.5),
+                      Colors.white.withValues(alpha: 0.2),
+                    ],
+                  ),
+                  child: data.imagePath.startsWith('http')
+                      ? Image.network(
+                          data.imagePath,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
+                          width: double.infinity,
+                          height: double.infinity,
+                          errorBuilder: (c, e, s) => Icon(Icons.broken_image_rounded, size: 100, color: data.color),
+                        )
+                      : Image.asset(
+                          data.imagePath,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
+                          width: double.infinity,
+                          height: double.infinity,
+                          errorBuilder: (c, e, s) => Icon(Icons.image_not_supported_rounded, size: 100, color: data.color),
+                        ),
+                ),
+              ),
             ),
           ),
-          const Spacer(flex: 1),
+          const SizedBox(height: 40),
           Column(
             children: [
               FadeInUp(
@@ -286,7 +309,7 @@ class OnboardingPage extends StatelessWidget {
                   data.subtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: Colors.white.withValues(alpha: 0.6),
                     fontSize: 15 * context.fontSizeFactor,
                     height: 1.6,
                     fontWeight: FontWeight.w400,
@@ -296,77 +319,9 @@ class OnboardingPage extends StatelessWidget {
               ),
             ],
           ),
-          const Spacer(flex: 3),
+          const Spacer(flex: 2),
         ],
       ),
     );
   }
-
-  Widget _buildStandardIcon(BuildContext context, OnboardingData data) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: 140 * context.fontSizeFactor,
-          height: 140 * context.fontSizeFactor,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: data.color.withValues(alpha: 0.2),
-                blurRadius: 60,
-                spreadRadius: 5,
-              ),
-            ],
-          ),
-        ),
-        ShaderMask(
-          shaderCallback: (Rect bounds) {
-            return LinearGradient(
-              colors: [data.color, data.color.withValues(alpha: 0.6)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ).createShader(bounds);
-          },
-          child: AdaptiveIcon(
-            data.icon,
-            size: 84 * context.fontSizeFactor,
-            color: Colors.white,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSpecialGraphic(BuildContext context, OnboardingData data) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Wallet Icon
-        _buildStandardIcon(context, data),
-        const SizedBox(width: 20),
-        // Animated Arrow
-        Pulse(
-          infinite: true,
-          child: Icon(
-            Icons.fast_forward_rounded,
-            color: Colors.white.withValues(alpha: 0.3),
-            size: 24,
-          ),
-        ),
-        const SizedBox(width: 20),
-        // Mobile Icon (Representing Mobile Money)
-        _buildStandardIcon(
-          context, 
-          OnboardingData(
-            title: "",
-            subtitle: "",
-            icon: FontAwesomeIcons.mobileScreenButton,
-            color: AppColors.accentTeal,
-          ),
-        ),
-      ],
-    );
-  }
 }
-

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:audioplayers/audioplayers.dart';
-import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 
 class SuccessDonationScreen extends StatefulWidget {

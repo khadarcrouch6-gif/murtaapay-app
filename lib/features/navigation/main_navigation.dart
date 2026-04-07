@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animations/animations.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
-import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../home/home_screen.dart';

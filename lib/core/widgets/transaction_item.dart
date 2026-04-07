@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../app_colors.dart';
 import '../app_state.dart';
 import '../widgets/adaptive_icon.dart';
+import 'shimmer_loading.dart';
 
 class TransactionItem extends StatelessWidget {
   final String title;
@@ -123,6 +124,49 @@ class TransactionItem extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget skeleton(BuildContext context) {
+    final theme = Theme.of(context);
+    return ShimmerLoading(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            const ShimmerPlaceholder.circular(size: 48),
+            const SizedBox(width: 16),
+            const Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ShimmerPlaceholder(width: 120, height: 16),
+                  SizedBox(height: 8),
+                  ShimmerPlaceholder(width: 80, height: 12),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  ShimmerPlaceholder(width: 60, height: 16),
+                  SizedBox(height: 8),
+                  ShimmerPlaceholder(width: 40, height: 12),
                 ],
               ),
             ),
