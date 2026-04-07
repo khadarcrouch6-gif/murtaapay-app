@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
 import 'dart:ui';
@@ -228,7 +229,6 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
       ),
     );
   }
-
   Widget _buildBranding() {
     return Row(
       children: [
@@ -243,15 +243,18 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             ),
           ],
         ),
-        const SizedBox(width: 8),
-        Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)])),
-          child: const Icon(Icons.shield_rounded, color: Colors.white, size: 16),
+        const SizedBox(width: 12),
+        Image.asset(
+          'assets/images/app_logo.png',
+          color: Colors.white,
+          height: 24,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, color: Colors.white, size: 24),
         ),
       ],
     );
   }
+
 
   Widget _buildCardNumberArea() {
     return Row(

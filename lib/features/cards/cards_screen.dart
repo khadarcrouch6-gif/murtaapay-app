@@ -40,6 +40,7 @@ class _CardsScreenState extends State<CardsScreen> {
       expiryDate: "12/28",
       cvv: "455",
       theme: CardThemeType.obsidian,
+      network: CardNetwork.visa,
     ),
     VirtualCard(
       id: "2",
@@ -48,6 +49,7 @@ class _CardsScreenState extends State<CardsScreen> {
       expiryDate: "05/30",
       cvv: "822",
       theme: CardThemeType.gold,
+      network: CardNetwork.mastercard,
     ),
     VirtualCard(
       id: "3",
@@ -56,6 +58,7 @@ class _CardsScreenState extends State<CardsScreen> {
       expiryDate: "08/29",
       cvv: "109",
       theme: CardThemeType.emerald,
+      network: CardNetwork.visa,
     ),
      VirtualCard(
       id: "4",
@@ -64,6 +67,7 @@ class _CardsScreenState extends State<CardsScreen> {
       expiryDate: "03/31",
       cvv: "331",
       theme: CardThemeType.midnight,
+      network: CardNetwork.amex,
     ),
   ];
 
