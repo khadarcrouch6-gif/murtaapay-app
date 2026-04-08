@@ -9,46 +9,51 @@ import 'l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Create the single instance and initialize it
   final state = AppState();
   await state.init();
-  runApp(const MurtaaxPayApp());
+  
+  runApp(MurtaaxPayApp(appState: state));
 }
 
 class MurtaaxPayApp extends StatelessWidget {
-  const MurtaaxPayApp({super.key});
+  final AppState appState;
+  const MurtaaxPayApp({super.key, required this.appState});
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
-    
     return ListenableBuilder(
-      listenable: state,
+      listenable: appState,
       builder: (context, child) {
         return MaterialApp(
           onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: state.themeMode,
-          locale: state.locale,
+          themeMode: appState.themeMode,
+          locale: appState.locale,
           localizationsDelegates: const [
             AppLocalizations.delegate,
-            SomaliLocalizationsDelegate(), // Fallback for Somali Material
-            SomaliCupertinoLocalizationsDelegate(), // Fallback for Somali Cupertino
+            SomaliLocalizationsDelegate(), 
+            SomaliCupertinoLocalizationsDelegate(),
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) {
-            return ResponsiveBreakpoints.builder(
-              child: child!,
-              breakpoints: [
-                const Breakpoint(start: 0, end: 450, name: MOBILE),
-                const Breakpoint(start: 451, end: 800, name: TABLET),
-                const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-                const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
-              ],
+            return GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: ResponsiveBreakpoints.builder(
+                child: child!,
+                breakpoints: [
+                  const Breakpoint(start: 0, end: 450, name: MOBILE),
+                  const Breakpoint(start: 451, end: 800, name: TABLET),
+                  const Breakpoint(start: 801, end: 1920, name: DESKTOP),
+                  const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
+                ],
+              ),
             );
           },
           home: const SplashScreen(),

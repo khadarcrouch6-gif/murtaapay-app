@@ -56,21 +56,22 @@ class _StripeScreenState extends State<StripeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     const Color stripeColor = Color(0xFF635BFF);
     
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Row(
+        title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             AdaptiveIcon(FontAwesomeIcons.stripe, color: stripeColor, size: 48),
           ],
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: theme.textTheme.bodyLarge?.color),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -83,7 +84,7 @@ class _StripeScreenState extends State<StripeScreen> {
                   children: [
                     const Text("Total Due", style: TextStyle(color: AppColors.grey, fontSize: 14)),
                     const SizedBox(height: 8),
-                    Text("${widget.amount} EUR", style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black)),
+                    Text("${widget.amount} EUR", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
                     const SizedBox(height: 4),
                     Text("To ${widget.receiverName}", style: const TextStyle(color: AppColors.grey, fontSize: 14)),
                   ],
@@ -92,7 +93,7 @@ class _StripeScreenState extends State<StripeScreen> {
             ),
             const SizedBox(height: 32),
             FadeInUp(
-              child: const Text("Contact", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              child: Text("Contact", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: theme.textTheme.titleMedium?.color)),
             ),
             const SizedBox(height: 12),
             FadeInUp(
@@ -100,27 +101,29 @@ class _StripeScreenState extends State<StripeScreen> {
               child: TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
+                style: TextStyle(color: theme.textTheme.bodyLarge?.color),
                 decoration: InputDecoration(
                   hintText: "Email",
+                  hintStyle: TextStyle(color: theme.hintColor),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.3)),
+                    borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: stripeColor, width: 2),
                   ),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: theme.colorScheme.surface,
                 ),
               ),
             ),
             const SizedBox(height: 24),
             FadeInUp(
                delay: const Duration(milliseconds: 150),
-               child: const Text("Payment Method", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+               child: Text("Payment Method", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: theme.textTheme.titleMedium?.color)),
             ),
             const SizedBox(height: 12),
             FadeInUp(
@@ -128,8 +131,8 @@ class _StripeScreenState extends State<StripeScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.grey.withValues(alpha: 0.3)),
-                  color: Colors.white,
+                  border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                  color: theme.colorScheme.surface,
                 ),
                 child: Column(
                   children: [
@@ -139,14 +142,16 @@ class _StripeScreenState extends State<StripeScreen> {
                       inputFormatters: [
                         CardNumberFormatter(),
                       ],
-                      decoration: const InputDecoration(
+                      style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+                      decoration: InputDecoration(
                         hintText: "Card information",
-                        prefixIcon: Icon(Icons.credit_card_rounded, color: AppColors.grey),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        hintStyle: TextStyle(color: theme.hintColor),
+                        prefixIcon: const Icon(Icons.credit_card_rounded, color: AppColors.grey),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         border: InputBorder.none,
                       ),
                     ),
-                    Divider(height: 1, color: AppColors.grey.withValues(alpha: 0.3)),
+                    Divider(height: 1, color: theme.dividerColor.withValues(alpha: 0.1)),
                     Row(
                       children: [
                         Expanded(
@@ -156,14 +161,16 @@ class _StripeScreenState extends State<StripeScreen> {
                             inputFormatters: [
                               ExpiryDateFormatter(),
                             ],
-                            decoration: const InputDecoration(
+                            style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+                            decoration: InputDecoration(
                               hintText: "MM / YY",
-                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                              hintStyle: TextStyle(color: theme.hintColor),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                               border: InputBorder.none,
                             ),
                           ),
                         ),
-                        Container(width: 1, height: 48, color: AppColors.grey.withValues(alpha: 0.3)),
+                        Container(width: 1, height: 48, color: theme.dividerColor.withValues(alpha: 0.1)),
                         Expanded(
                           child: TextField(
                             controller: _cvcController,
@@ -172,9 +179,11 @@ class _StripeScreenState extends State<StripeScreen> {
                               FilteringTextInputFormatter.digitsOnly,
                               LengthLimitingTextInputFormatter(3),
                             ],
-                            decoration: const InputDecoration(
+                            style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+                            decoration: InputDecoration(
                               hintText: "CVC",
-                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                              hintStyle: TextStyle(color: theme.hintColor),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                               border: InputBorder.none,
                             ),
                             obscureText: true,
@@ -186,23 +195,28 @@ class _StripeScreenState extends State<StripeScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 48),
+            const SizedBox(height: 32),
+            
+            // Pay Button
             FadeInUp(
-              delay: const Duration(milliseconds: 250),
+              delay: const Duration(milliseconds: 300),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _isProcessing ? null : _processPayment,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: stripeColor,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: Colors.grey[300],
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 0,
                   ),
                   child: _isProcessing
-                      ? Row(
+                      ? const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
@@ -210,31 +224,29 @@ class _StripeScreenState extends State<StripeScreen> {
                                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            const Text("Processing...", style: TextStyle(color: Colors.white, fontSize: 16)),
+                            SizedBox(width: 12),
+                            Text("Processing...", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                           ],
                         )
                       : Text(
                           "Pay ${widget.amount} EUR",
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                 ),
               ),
             ),
+            
+            const SizedBox(height: 24),
             if (_isProcessing)
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Center(
-                  child: FadeIn(
-                    child: const Text(
-                      "Processing via Stripe secure 3D secure...",
-                      style: TextStyle(color: AppColors.grey, fontSize: 13, fontStyle: FontStyle.italic),
-                    ),
+              Center(
+                child: FadeIn(
+                  child: const Text(
+                    "Processing via Stripe secure 3D secure...",
+                    style: TextStyle(color: AppColors.grey, fontSize: 13, fontStyle: FontStyle.italic),
                   ),
                 ),
               ),
             const SizedBox(height: 20),
-
           ],
         ),
       ),
@@ -250,4 +262,3 @@ class _StripeScreenState extends State<StripeScreen> {
     super.dispose();
   }
 }
-
