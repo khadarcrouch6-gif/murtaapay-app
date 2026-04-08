@@ -100,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           ),
                           padding: const EdgeInsets.all(24),
                           child: Image.asset(
-                            "assets/images/logo.png",
+                            "assets/images/app_logo.png",
                             fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) => const Icon(
                               Icons.account_balance_wallet_rounded,

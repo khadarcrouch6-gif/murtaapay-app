@@ -8,7 +8,7 @@ class AppState extends ChangeNotifier {
   factory AppState() => _instance;
   AppState._internal();
 
-  final analytics = AppAnalytics();
+  late final analytics = AppAnalytics();
   late SharedPreferences _prefs;
   bool _isInitialized = false;
 
