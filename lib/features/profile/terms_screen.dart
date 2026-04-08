@@ -70,7 +70,7 @@ class TermsScreen extends StatelessWidget {
             const SizedBox(height: 40),
             Center(
               child: Text(
-                "© 2023 MurtaaxPay. ${AppState().translate("All rights reserved.", "Xuquuqda oo dhan waa la dhowray.", ar: "جميع الحقوق محفوظة.", de: "Alle Rechte vorbehalten.")}",
+                "© 2026 MurtaaxPay. ${AppState().translate("All rights reserved.", "Xuquuqda oo dhan waa la dhowray.", ar: "جميع الحقوق محفوظة.", de: "Alle Rechte vorbehalten.")}",
                 style: const TextStyle(color: AppColors.grey, fontSize: 12),
               ),
             ),

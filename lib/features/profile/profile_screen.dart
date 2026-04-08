@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
@@ -13,6 +14,8 @@ import '../chat/chat_list_screen.dart';
 import 'terms_screen.dart';
 import 'security_center_screen.dart';
 
+import '../../core/widgets/adaptive_icon.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -25,9 +28,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _userName = "Khadar Rayaale";
   String _userEmail = "khadar@murtaaxpay.com";
   String _userPhone = "+252 615 123 456";
+  String _userDob = "1994-05-12";
+  String _userNationality = "Somali";
+  String _userIdNumber = "MS-8829102";
+  String _userOccupation = "Software Entrepreneur";
+  
+  // Structured Address
+  String _userStreet = "123 Wadada Makka Al-Mukarama";
+  String _userCity = "Mogadishu";
+  String _userPostalCode = "10001";
+  String _userCountry = "Somalia";
+
   String _userAddress = "Mogadishu, Somalia";
   final String _profileImageUrl = 'https://i.pravatar.cc/300';
   final String _coverImageUrl = 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800';
+
+  // Stats Mock Data
+  final int _loyaltyPoints = 1250;
+  final String _accountLevel = "Elite Silver";
+  final double _totalSavings = 450.00;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: SafeArea(
                 bottom: false,
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.fromLTRB(
                     context.horizontalPadding,
                     20 * context.fontSizeFactor,
@@ -53,8 +73,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: Column(
                     children: [
+                      const SizedBox(height: 10),
+                      _buildProfileHeader(context, theme, state),
                       const SizedBox(height: 20),
-                      _buildProfileHeader(context, theme),
+                      
+                      _buildProfileCompleteness(context, state, theme),
+                      const SizedBox(height: 24),
+                      
+                      _buildUserStats(context, state, theme),
                       const SizedBox(height: 32),
                       
                       _buildSectionTitle(state.translate("Account Settings", "Habaynta Koontada", ar: "إعدادات الحساب", de: "Kontoeinstellungen")),
@@ -70,7 +96,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         context, 
                         state.translate("Identity Verification (KYC)", "Xaqiijinta Aqoonsiga", ar: "تحقق الهوية (KYC)", de: "Identitätsprüfung"), 
                         Icons.verified_user_rounded, 
-                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen()))
+                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen())),
+                        trailing: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+                          child: Text(
+                            state.translate("Verified", "La Hubiyay", ar: "موثق", de: "Verifiziert"),
+                            style: const TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ),
                       
                       _buildProfileOption(
@@ -89,6 +123,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         FontAwesomeIcons.buildingColumns, 
                         () => _showLinkedBanks(context, state)
                       ),
+
+                      const SizedBox(height: 24),
+                      _buildSectionTitle(state.translate("Account Limits", "Xadka Akoonka", ar: "حدود الحساب", de: "Kontolimits")),
+                      _buildAccountLimits(context, state, theme),
 
                       const SizedBox(height: 24),
                       _buildSectionTitle(state.translate("Preferences", "Dookhyada", ar: "التفضيلات", de: "Präferenzen")),
@@ -140,6 +178,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         () => _showLogoutDialog(context, state), 
                         isLogout: true
                       ),
+
+                      const SizedBox(height: 40),
+                      _buildAppFooter(state),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -167,54 +209,177 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, ThemeData theme) {
+  Widget _buildProfileHeader(BuildContext context, ThemeData theme, AppState state) {
     final coverHeight = 160 * context.fontSizeFactor;
     final profileSize = 100 * context.fontSizeFactor;
     
-    return Column(
-      children: [
-        Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            Container(
-              height: coverHeight,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                image: DecorationImage(image: NetworkImage(_coverImageUrl), fit: BoxFit.cover),
-              ),
-              child: Container(
+    return FadeInDown(
+      duration: const Duration(milliseconds: 600),
+      child: Column(
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              Container(
+                height: coverHeight,
+                width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.black.withValues(alpha: 0.4), Colors.transparent],
+                  borderRadius: BorderRadius.circular(28),
+                  image: DecorationImage(image: NetworkImage(_coverImageUrl), fit: BoxFit.cover),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    )
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(28),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withValues(alpha: 0.3),
+                            Colors.black.withValues(alpha: 0.1),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              top: coverHeight - (profileSize / 2),
-              child: Container(
-                height: profileSize,
-                width: profileSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: theme.scaffoldBackgroundColor, width: 4),
-                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10)],
-                  image: DecorationImage(image: NetworkImage(_profileImageUrl), fit: BoxFit.cover),
+              Positioned(
+                top: coverHeight - (profileSize / 2),
+                child: Hero(
+                  tag: 'profile_pic',
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: profileSize,
+                        width: profileSize,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: theme.scaffoldBackgroundColor, width: 4),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 15,
+                              offset: const Offset(0, 5),
+                            )
+                          ],
+                          image: DecorationImage(image: NetworkImage(_profileImageUrl), fit: BoxFit.cover),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            color: AppColors.accentTeal,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.edit_rounded, color: Colors.white, size: 14),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
+            ],
+          ),
+          SizedBox(height: (profileSize / 2) + 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _userName, 
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, letterSpacing: -0.5)
+              ),
+              const SizedBox(width: 8),
+              const Icon(Icons.verified_rounded, color: AppColors.accentTeal, size: 20),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(_userEmail, style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6), fontSize: 14)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserStats(BuildContext context, AppState state, ThemeData theme) {
+    return FadeInUp(
+      duration: const Duration(milliseconds: 600),
+      delay: const Duration(milliseconds: 200),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            )
           ],
         ),
-        SizedBox(height: (profileSize / 2) + 16),
-        Text(_userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-        const SizedBox(height: 4),
-        Text(_userEmail, style: const TextStyle(color: AppColors.grey)),
-      ],
+        child: IntrinsicHeight(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildStatItem(
+                context,
+                _loyaltyPoints.toString(),
+                state.translate("Points", "Dhibcaha", ar: "نقاط", de: "Punkte"),
+                FontAwesomeIcons.gem,
+              ),
+              const VerticalDivider(thickness: 1, color: AppColors.grey, indent: 10, endIndent: 10),
+              _buildStatItem(
+                context,
+                _accountLevel,
+                state.translate("Level", "Darajo", ar: "المستوى", de: "Level"),
+                FontAwesomeIcons.award,
+              ),
+              const VerticalDivider(thickness: 1, color: AppColors.grey, indent: 10, endIndent: 10),
+              _buildStatItem(
+                context,
+                "\$${_totalSavings.toStringAsFixed(0)}",
+                state.translate("Savings", "Kaydka", ar: "مدخرات", de: "Ersparnisse"),
+                FontAwesomeIcons.piggyBank,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatItem(BuildContext context, String value, String label, dynamic icon) {
+    return Expanded(
+      child: Column(
+        children: [
+          AdaptiveIcon(icon, color: AppColors.accentTeal, size: 16),
+          const SizedBox(height: 8),
+          Text(
+            value, 
+            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.primaryDark),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label, 
+            style: const TextStyle(color: AppColors.grey, fontSize: 11, fontWeight: FontWeight.w600),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 
@@ -222,50 +387,139 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final nameCtrl = TextEditingController(text: _userName);
     final emailCtrl = TextEditingController(text: _userEmail);
     final phoneCtrl = TextEditingController(text: _userPhone);
-    final addressCtrl = TextEditingController(text: _userAddress);
+    final dobCtrl = TextEditingController(text: _userDob);
+    final nationalityCtrl = TextEditingController(text: _userNationality);
+    final idNumberCtrl = TextEditingController(text: _userIdNumber);
+    final occupationCtrl = TextEditingController(text: _userOccupation);
+    
+    final streetCtrl = TextEditingController(text: _userStreet);
+    final cityCtrl = TextEditingController(text: _userCity);
+    final postalCtrl = TextEditingController(text: _userPostalCode);
+    final countryCtrl = TextEditingController(text: _userCountry);
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useRootNavigator: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(32))),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(child: Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)))),
-              const SizedBox(height: 24),
-              Text(state.translate("Edit Personal Information", "Wax ka beddel Xogta", ar: "تعديل المعلومات الشخصية", de: "Persönliche Daten bearbeiten"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 24),
-              _buildEditorField(nameCtrl, state.translate("Full Name", "Magaca oo dhammaystiran", ar: "الاسم الكامل", de: "Vollständiger Name"), Icons.person_outline),
-              _buildEditorField(emailCtrl, state.translate("Email Address", "Boostada qoraalka", ar: "عنوان البريد الإلكتروني", de: "E-Mail-Adresse"), Icons.email_outlined),
-              _buildEditorField(phoneCtrl, state.translate("Phone Number", "Lambarka taleefanka", ar: "رقم الهاتف", de: "Telefonnummer"), Icons.phone_outlined),
-              _buildEditorField(addressCtrl, state.translate("Current Address", "Meesha uu degan yahay", ar: "العنوان الحالي", de: "Aktuelle Adresse"), Icons.location_on_outlined),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _userName = nameCtrl.text;
-                      _userEmail = emailCtrl.text;
-                      _userPhone = phoneCtrl.text;
-                      _userAddress = addressCtrl.text;
-                    });
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
-                  child: Text(state.translate("Save Changes", "Keydi Isbeddelka", ar: "حفظ التغييرات", de: "Änderungen speichern"), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.9,
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+            ),
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        state.translate("Edit Personal Information", "Wax ka beddel Xogta", ar: "تعديل المعلومات الشخصية", de: "Persönliche Daten bearbeiten"), 
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -0.5)
+                      ),
+                      IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close_rounded))
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildFormHeader(state.translate("Identity Information", "Macluumaadka Aqoonsiga", ar: "معلومات الهوية", de: "Identitätsinformationen")),
+                        _buildEditorField(nameCtrl, state.translate("Full Name", "Magaca oo dhammaystiran", ar: "الاسم الكامل", de: "Vollständiger Name"), Icons.person_outline),
+                        Row(
+                          children: [
+                            Expanded(child: _buildEditorField(dobCtrl, state.translate("Date of Birth", "Taariikhda dhalashada", ar: "تاريخ الميلاد", de: "Geburtsdatum"), Icons.calendar_today_outlined)),
+                            const SizedBox(width: 12),
+                            Expanded(child: _buildEditorField(nationalityCtrl, state.translate("Nationality", "Dhalashada", ar: "الجنسية", de: "Nationalität"), Icons.flag_outlined)),
+                          ],
+                        ),
+                        _buildEditorField(idNumberCtrl, state.translate("National ID / Tax Number", "Lambarka Aqoonsiga", ar: "رقم الهوية الوطنية", de: "Personalausweis- / Steuernummer"), Icons.badge_outlined),
+
+                        const SizedBox(height: 24),
+                        _buildFormHeader(state.translate("Contact Details", "Xogta Lagala Xidhiidho", ar: "تفاصيل الاتصال", de: "Kontaktdetails")),
+                        _buildEditorField(emailCtrl, state.translate("Email Address", "Boostada qoraalka", ar: "عنوان البريد الإلكتروني", de: "E-Mail-Adresse"), Icons.email_outlined),
+                        _buildEditorField(phoneCtrl, state.translate("Phone Number", "Lambarka taleefanka", ar: "رقم الهاتف", de: "Telefonnummer"), Icons.phone_outlined),
+
+                        const SizedBox(height: 24),
+                        _buildFormHeader(state.translate("Residential Address", "Cinwaanka Hoyga", ar: "عنوان السكن", de: "Wohnadresse")),
+                        _buildEditorField(streetCtrl, state.translate("Street Address", "Wadada", ar: "عنوان الشارع", de: "Straßenadresse"), Icons.home_outlined),
+                        Row(
+                          children: [
+                            Expanded(child: _buildEditorField(cityCtrl, state.translate("City", "Magaalada", ar: "المدينة", de: "Stadt"), Icons.location_city_outlined)),
+                            const SizedBox(width: 12),
+                            Expanded(child: _buildEditorField(postalCtrl, state.translate("Postal Code", "Boostada", ar: "الرمز البريدي", de: "Postleitzahl"), Icons.mark_as_unread_outlined)),
+                          ],
+                        ),
+                        _buildEditorField(countryCtrl, state.translate("Country", "Wadanka", ar: "البلد", de: "Land"), Icons.public_outlined),
+
+                        const SizedBox(height: 24),
+                        _buildFormHeader(state.translate("Employment", "Shaqada", ar: "العمل", de: "Beschäftigung")),
+                        _buildEditorField(occupationCtrl, state.translate("Occupation / Source of Funds", "Nooca Shaqada", ar: "المهنة / مصدر الأموال", de: "Beruf / Herkunft der Mittel"), Icons.work_outline),
+                        
+                        const SizedBox(height: 40),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _userName = nameCtrl.text;
+                                _userEmail = emailCtrl.text;
+                                _userPhone = phoneCtrl.text;
+                                _userDob = dobCtrl.text;
+                                _userNationality = nationalityCtrl.text;
+                                _userIdNumber = idNumberCtrl.text;
+                                _userOccupation = occupationCtrl.text;
+                                _userStreet = streetCtrl.text;
+                                _userCity = cityCtrl.text;
+                                _userPostalCode = postalCtrl.text;
+                                _userCountry = countryCtrl.text;
+                              });
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryDark, 
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              state.translate("Save Changes", "Keydi Isbeddelka", ar: "حفظ التغييرات", de: "Änderungen speichern"), 
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFormHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16, left: 4),
+      child: Text(
+        title.toUpperCase(),
+        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.accentTeal, letterSpacing: 1.2),
       ),
     );
   }
@@ -277,34 +531,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: AppColors.primaryDark),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          labelStyle: const TextStyle(fontSize: 14, color: AppColors.grey),
+          prefixIcon: Icon(icon, color: AppColors.accentTeal, size: 20),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.2))),
+          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.accentTeal, width: 2)),
+          filled: true,
+          fillColor: Colors.grey.withValues(alpha: 0.05),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         ),
       ),
     );
   }
 
-  Widget _buildProfileOption(BuildContext context, String title, dynamic icon, VoidCallback onTap, {bool isLogout = false}) {
+  Widget _buildProfileOption(BuildContext context, String title, dynamic icon, VoidCallback onTap, {bool isLogout = false, Widget? trailing}) {
     final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10)],
-        ),
-        child: Row(
-          children: [
-            icon is IconData 
-              ? Icon(icon, color: isLogout ? Colors.red : AppColors.accentTeal, size: 20)
-              : FaIcon(icon, color: isLogout ? Colors.red : AppColors.accentTeal, size: 20),
-            const SizedBox(width: 16),
-            Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.w600, color: isLogout ? Colors.red : null))),
-            if (!isLogout) const Icon(Icons.chevron_right_rounded, color: AppColors.grey),
-          ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02), 
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: Material(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(18),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: (isLogout ? Colors.red : AppColors.accentTeal).withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: icon is IconData 
+                    ? Icon(icon, color: isLogout ? Colors.red : AppColors.accentTeal, size: 18)
+                    : FaIcon(icon, color: isLogout ? Colors.red : AppColors.accentTeal, size: 18),
+                ),
+                const SizedBox(width: 16),
+                Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: isLogout ? Colors.red : null))),
+                if (trailing != null) trailing,
+                if (!isLogout) Icon(Icons.chevron_right_rounded, color: Colors.grey.withValues(alpha: 0.4)),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -314,14 +592,178 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16)),
-      child: SwitchListTile(
-        secondary: Icon(icon, color: AppColors.accentTeal),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface, 
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02), 
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          )
+        ],
+      ),
+      child: SwitchListTile.adaptive(
+        secondary: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: AppColors.accentTeal.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: AppColors.accentTeal, size: 18),
+        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
         value: value,
         onChanged: onChanged,
-        activeThumbColor: AppColors.accentTeal,
+        activeColor: AppColors.accentTeal,
       ),
+    );
+  }
+
+  Widget _buildProfileCompleteness(BuildContext context, AppState state, ThemeData theme) {
+    const double completion = 0.85;
+    return FadeIn(
+      duration: const Duration(milliseconds: 800),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.accentTeal.withValues(alpha: 0.1), theme.colorScheme.surface],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.1)),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.bolt_rounded, color: AppColors.accentTeal, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    "${state.translate("Profile", "Profile-kaagu", ar: "الملف الشخصي", de: "Profil")} ${(completion * 100).toInt()}% ${state.translate("Complete", "waa diyaar", ar: "مكتمل", de: "Vollständig")}",
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen())),
+                  child: Text(
+                    state.translate("Complete Now", "Dhameey Hadda", ar: "أكمل الآن", de: "Jetzt ergänzen"),
+                    style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: LinearProgressIndicator(
+                value: completion,
+                backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+                valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+                minHeight: 8,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccountLimits(BuildContext context, AppState state, ThemeData theme) {
+    return Column(
+      children: [
+        _buildLimitItem(
+          context,
+          state.translate("Daily Transfer Limit", "Xadka Dirista Maalinlaha", ar: "حد التحويل اليومي", de: "Tägliches Überweisungslimit"),
+          1250.00,
+          5000.00,
+          Icons.swap_horiz_rounded,
+        ),
+        const SizedBox(height: 12),
+        _buildLimitItem(
+          context,
+          state.translate("Monthly Withdrawal Limit", "Xadka Bangiga ee Bishii", ar: "حد السحب الشهري", de: "Monatliches Auszahlungslimit"),
+          4500.00,
+          25000.00,
+          Icons.account_balance_wallet_rounded,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLimitItem(BuildContext context, String title, double used, double total, IconData icon) {
+    final theme = Theme.of(context);
+    final double percent = used / total;
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+                child: Icon(icon, color: AppColors.accentTeal, size: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 2),
+                    Text(
+                      "\$${used.toStringAsFixed(0)} / \$${total.toStringAsFixed(0)}",
+                      style: const TextStyle(color: AppColors.grey, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                "${(percent * 100).toInt()}%",
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: AppColors.accentTeal),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: percent,
+              backgroundColor: Colors.grey.withValues(alpha: 0.1),
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+              minHeight: 4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppFooter(AppState state) {
+    return Column(
+      children: [
+        const Text(
+          "MurtaaxPay v2.1.0",
+          style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          state.translate("Made with ❤️ in Somalia", "Waxa lagu sameeyay ❤️ Soomaaliya", ar: "صنع بـ ❤️ في الصومال", de: "Hergestellt mit ❤️ in Somalia"),
+          style: const TextStyle(color: AppColors.grey, fontSize: 10),
+        ),
+      ],
     );
   }
 
@@ -346,93 +788,165 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(32))),
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(state.translate("Select Language", "Dooro Luqadda", ar: "اختر اللغة", de: "Sprache auswählen"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 24),
-            ...languages.map((lang) => Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                color: state.locale.languageCode == lang["code"] ? AppColors.accentTeal.withValues(alpha: 0.1) : null,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ListTile(
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Image.network(
-                    "https://flagcdn.com/w80/${lang["country"]}.png",
-                    width: 32,
-                    height: 24,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded),
-                  ),
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+                const SizedBox(height: 24),
+                Text(
+                  state.translate("Select Language", "Dooro Luqadda", ar: "اختر اللغة", de: "Sprache auswählen"), 
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
                 ),
-                title: Text(lang["native"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                trailing: state.locale.languageCode == lang["code"] ? const Icon(Icons.check_circle, color: AppColors.accentTeal) : null,
-                onTap: () {
-                  state.setLanguage(lang["code"]!);
-                  Navigator.pop(context);
-                },
-              ),
-            )),
-          ],
+                const SizedBox(height: 24),
+                ...languages.map((lang) {
+                  final isSelected = state.locale.languageCode == lang["code"];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Material(
+                      color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                      clipBehavior: Clip.antiAlias,
+                      child: ListTile(
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            "https://flagcdn.com/w80/${lang["country"]}.png",
+                            width: 32,
+                            height: 24,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded),
+                          ),
+                        ),
+                        title: Text(lang["native"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        trailing: isSelected ? const Icon(Icons.check_circle, color: AppColors.accentTeal) : null,
+                        onTap: () {
+                          state.setLanguage(lang["code"]!);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  );
+                }),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showLinkedBanks(BuildContext context, AppState state) {
+    showModalBottomSheet(
+      context: context, 
+      useRootNavigator: true, 
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, 
+              children: [
+                Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+                const SizedBox(height: 24),
+                Text(state.translate("Bank Accounts", "Akoonada Bangiga", ar: "حسابات بنكية", de: "Bankkonten"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                _buildBankTile("LHV Pank", "**** 8829"),
+                _buildBankTile("Swedbank", "**** 1120"),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  Widget _buildBankTile(String name, String accountNumber) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.grey.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          onTap: () {}, // Make it interactive
+          leading: const Icon(Icons.account_balance, color: AppColors.accentTeal),
+          title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text(accountNumber),
         ),
       ),
     );
   }
 
-  void _showSecuritySettings(BuildContext context, AppState state) {
-    showModalBottomSheet(context: context, useRootNavigator: true, builder: (context) => Container(
-      padding: const EdgeInsets.all(32),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        ListTile(
-          leading: const Icon(Icons.password, color: AppColors.accentTeal),
-          title: Text(state.translate("Change PIN", "Beddel PIN-ka", ar: "تغيير رقم PIN", de: "PIN ändern")),
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePinScreen())),
-        ),
-      ]),
-    ));
-  }
-
-  void _showLinkedBanks(BuildContext context, AppState state) {
-    showModalBottomSheet(context: context, useRootNavigator: true, builder: (context) => Container(
-      padding: const EdgeInsets.all(32),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(state.translate("Bank Accounts", "Akoonada Bangiga", ar: "حسابات بنكية", de: "Bankkonten"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 20),
-        ListTile(
-          leading: const Icon(Icons.account_balance, color: AppColors.accentTeal),
-          title: const Text("LHV Pank"),
-          subtitle: const Text("**** 8829"),
-        ),
-        ListTile(
-          leading: const Icon(Icons.account_balance, color: AppColors.accentTeal),
-          title: const Text("Swedbank"),
-          subtitle: const Text("**** 1120"),
-        ),
-      ]),
-    ));
-  }
-
   void _showSupportOptions(BuildContext context, AppState state) {
-    showModalBottomSheet(context: context, useRootNavigator: true, builder: (context) => Container(
-      padding: const EdgeInsets.all(32),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        ListTile(
-          leading: const Icon(Icons.chat, color: AppColors.accentTeal),
-          title: Text(state.translate("Live Chat", "Wada hadalka tooska ah", ar: "دردشة مباشرة", de: "Live-Chat")),
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatListScreen())),
-        ),
-      ]),
-    ));
+    showModalBottomSheet(
+      context: context, 
+      useRootNavigator: true, 
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, 
+              children: [
+                Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+                const SizedBox(height: 24),
+                Material(
+                  color: Colors.transparent,
+                  child: ListTile(
+                    leading: const Icon(Icons.chat, color: AppColors.accentTeal),
+                    title: Text(state.translate("Live Chat", "Wada hadalka tooska ah", ar: "دردشة مباشرة", de: "Live-Chat")),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatListScreen()));
+                    },
+                  ),
+                ),
+                Material(
+                  color: Colors.transparent,
+                  child: ListTile(
+                    leading: const Icon(Icons.help_outline, color: AppColors.accentTeal),
+                    title: Text(state.translate("FAQ", "Su'aalaha badanaa la is weydiiyo", ar: "الأسئلة شائعة", de: "FAQ")),
+                    onTap: () => Navigator.pop(context),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    );
   }
 
   void _showLogoutDialog(BuildContext context, AppState state) {
     showDialog(context: context, builder: (context) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       title: Text(state.translate("Logout", "Ka Bax", ar: "تسجيل الخروج", de: "Abmelden")),
       content: Text(state.translate("Are you sure you want to logout?", "Ma hubtaa inaad ka baxayso?", ar: "هل أنت متأكد أنك تريد تسجيل الخروج؟", de: "Sind Sie sicher, dass Sie sich abmelden möchten?")),
       actions: [
@@ -445,3 +959,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ));
   }
 }
+
