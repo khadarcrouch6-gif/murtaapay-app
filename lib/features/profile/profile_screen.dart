@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
@@ -11,9 +12,11 @@ import '../auth/kyc_screen.dart';
 import '../more/refer_earn_screen.dart';
 import 'change_pin_screen.dart';
 import '../chat/chat_list_screen.dart';
+import '../chat/chat_screen.dart';
 import 'terms_screen.dart';
 import 'security_center_screen.dart';
 
+import '../../core/models/bank_account.dart';
 import '../../core/widgets/adaptive_icon.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -758,11 +761,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           "MurtaaxPay v2.1.0",
           style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 4),
-        Text(
-          state.translate("Made with ❤️ in Somalia", "Waxa lagu sameeyay ❤️ Soomaaliya", ar: "صنع بـ ❤️ في الصومال", de: "Hergestellt mit ❤️ in Somalia"),
-          style: const TextStyle(color: AppColors.grey, fontSize: 10),
-        ),
       ],
     );
   }
@@ -788,6 +786,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         final theme = Theme.of(context);
@@ -799,47 +798,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: theme.scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-                const SizedBox(height: 24),
-                Text(
-                  state.translate("Select Language", "Dooro Luqadda", ar: "اختر اللغة", de: "Sprache auswählen"), 
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
-                ),
-                const SizedBox(height: 24),
-                ...languages.map((lang) {
-                  final isSelected = state.locale.languageCode == lang["code"];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Material(
-                      color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent,
-                      borderRadius: BorderRadius.circular(16),
-                      clipBehavior: Clip.antiAlias,
-                      child: ListTile(
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            "https://flagcdn.com/w80/${lang["country"]}.png",
-                            width: 32,
-                            height: 24,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+                  const SizedBox(height: 24),
+                  Text(
+                    state.translate("Select Language", "Dooro Luqadda", ar: "اختر اللغة", de: "Sprache auswählen"), 
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+                  ),
+                  const SizedBox(height: 24),
+                  ...languages.map((lang) {
+                    final isSelected = state.locale.languageCode == lang["code"];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Material(
+                        color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                        clipBehavior: Clip.antiAlias,
+                        child: ListTile(
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              "https://flagcdn.com/w80/${lang["country"]}.png",
+                              width: 32,
+                              height: 24,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded),
+                            ),
                           ),
+                          title: Text(lang["native"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          trailing: isSelected ? const Icon(Icons.check_circle, color: AppColors.accentTeal) : null,
+                          onTap: () {
+                            state.setLanguage(lang["code"]!);
+                            Navigator.pop(context);
+                          },
                         ),
-                        title: Text(lang["native"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        trailing: isSelected ? const Icon(Icons.check_circle, color: AppColors.accentTeal) : null,
-                        onTap: () {
-                          state.setLanguage(lang["code"]!);
-                          Navigator.pop(context);
-                        },
                       ),
-                    ),
-                  );
-                }),
-                const SizedBox(height: 20),
-              ],
+                    );
+                  }),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         );
@@ -851,28 +852,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showModalBottomSheet(
       context: context, 
       useRootNavigator: true, 
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         final theme = Theme.of(context);
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min, 
-              children: [
-                Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-                const SizedBox(height: 24),
-                Text(state.translate("Bank Accounts", "Akoonada Bangiga", ar: "حسابات بنكية", de: "Bankkonten"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 20),
-                _buildBankTile("LHV Pank", "**** 8829"),
-                _buildBankTile("Swedbank", "**** 1120"),
-                const SizedBox(height: 20),
-              ],
+          child: ListenableBuilder(
+            listenable: state,
+            builder: (context, _) => SingleChildScrollView(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min, 
+                children: [
+                  Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(state.translate("Bank Accounts", "Akoonada Bangiga", ar: "حسابات بنكية", de: "Bankkonten"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      IconButton(
+                        onPressed: () => _showAddBankForm(context, state),
+                        icon: const Icon(Icons.add_circle_outline_rounded, color: AppColors.accentTeal),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  if (state.linkedBanks.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      child: Text(state.translate("No linked accounts yet.", "Ma jiraan bangiyo ku xidhan.", ar: "لا توجد حسابات مرتبطة بعد.", de: "Noch keine verknüpften Konten."), style: const TextStyle(color: AppColors.grey)),
+                    )
+                  else
+                    ...state.linkedBanks.map((bank) => _buildBankTile(context, state, bank)),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         );
@@ -880,7 +895,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildBankTile(String name, String accountNumber) {
+  Widget _buildBankTile(BuildContext context, AppState state, BankAccount bank) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
@@ -888,75 +903,227 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(16),
         clipBehavior: Clip.antiAlias,
         child: ListTile(
-          onTap: () {}, // Make it interactive
+          onTap: () {}, 
           leading: const Icon(Icons.account_balance, color: AppColors.accentTeal),
-          title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text(accountNumber),
+          title: Text(bank.bankName, style: const TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text(bank.accountNumber),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete_outline_rounded, color: Colors.red, size: 20),
+            onPressed: () => state.removeBank(bank.id),
+          ),
         ),
       ),
     );
   }
 
-  void _showSupportOptions(BuildContext context, AppState state) {
+  void _showAddBankForm(BuildContext context, AppState state) {
+    final bankCtrl = TextEditingController();
+    final accountCtrl = TextEditingController();
+
     showModalBottomSheet(
-      context: context, 
-      useRootNavigator: true, 
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         final theme = Theme.of(context);
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
-            padding: const EdgeInsets.all(32),
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
             decoration: BoxDecoration(
               color: theme.scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min, 
-              children: [
-                Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-                const SizedBox(height: 24),
-                Material(
-                  color: Colors.transparent,
-                  child: ListTile(
-                    leading: const Icon(Icons.chat, color: AppColors.accentTeal),
-                    title: Text(state.translate("Live Chat", "Wada hadalka tooska ah", ar: "دردشة مباشرة", de: "Live-Chat")),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatListScreen()));
-                    },
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(child: Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)))),
+                  const SizedBox(height: 24),
+                  Text(state.translate("Link New Bank", "Ku xidh Banki Cusub", ar: "ربط بنك جديد", de: "Neues Bankkonto verknüpfen"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 24),
+                  _buildEditorField(bankCtrl, state.translate("Bank Name", "Magaca Bangiga", ar: "اسم البنك", de: "Bankname"), Icons.account_balance_outlined),
+                  _buildEditorField(accountCtrl, state.translate("Account Number", "Lambarka Akoonka", ar: "رقم الحساب", de: "Kontonummer"), Icons.numbers_rounded),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (bankCtrl.text.isNotEmpty && accountCtrl.text.isNotEmpty) {
+                          state.addBank(BankAccount(
+                            id: DateTime.now().millisecondsSinceEpoch.toString(),
+                            bankName: bankCtrl.text,
+                            accountNumber: accountCtrl.text,
+                          ));
+                          Navigator.pop(context);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryDark,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      child: Text(state.translate("Link Account", "Ku xidh Akoonka", ar: "ربط الحساب", de: "Konto verknüpfen"), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
                   ),
-                ),
-                Material(
-                  color: Colors.transparent,
-                  child: ListTile(
-                    leading: const Icon(Icons.help_outline, color: AppColors.accentTeal),
-                    title: Text(state.translate("FAQ", "Su'aalaha badanaa la is weydiiyo", ar: "الأسئلة شائعة", de: "FAQ")),
-                    onTap: () => Navigator.pop(context),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
-      }
+      },
     );
   }
 
-  void _showLogoutDialog(BuildContext context, AppState state) {
-    showDialog(context: context, builder: (context) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-      title: Text(state.translate("Logout", "Ka Bax", ar: "تسجيل الخروج", de: "Abmelden")),
-      content: Text(state.translate("Are you sure you want to logout?", "Ma hubtaa inaad ka baxayso?", ar: "هل أنت متأكد أنك تريد تسجيل الخروج؟", de: "Sind Sie sicher, dass Sie sich abmelden möchten?")),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: Text(state.translate("Cancel", "Iska Daay", ar: "إلغاء", de: "Abbrechen"))),
-        TextButton(
-          onPressed: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const SplashScreen()), (route) => false),
-          child: Text(state.translate("Logout", "Ka Bax", ar: "تسجيل الخروج", de: "Abmelden"), style: const TextStyle(color: Colors.red)),
+  void _showSupportOptions(BuildContext context, AppState state) {
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 5,
+                    decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    state.translate("Help & Support", "Caawinaad & Taageero", ar: "المساعدة والدعم", de: "Hilfe & Support"),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 24),
+                  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 1.1,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      _buildSupportCard(
+                        context,
+                        state.translate("Live Chat", "Wada hadalka", ar: "دردشة مباشرة", de: "Live-Chat"),
+                        "Support Bot",
+                        Icons.chat_bubble_rounded,
+                        Colors.blue,
+                        () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatScreen(
+                                userId: 'support_bot',
+                                userName: 'Murtaax Support',
+                                userAvatar: 'assets/images/logo1.png',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildSupportCard(
+                        context,
+                        state.translate("Phone Call", "Wicitaan", ar: "اتصال هاتفي", de: "Anruf"),
+                        "+252 615 000 000",
+                        Icons.phone_enabled_rounded,
+                        Colors.green,
+                        () => _launchUrl("tel:+252615000000"),
+                      ),
+                      _buildSupportCard(
+                        context,
+                        state.translate("Email", "Email", ar: "البريد الإلكتروني", de: "E-Mail"),
+                        "support@murtaax.com",
+                        Icons.email_rounded,
+                        Colors.orange,
+                        () => _launchUrl("mailto:support@murtaaxpay.com"),
+                      ),
+                      _buildSupportCard(
+                        context,
+                        state.translate("FAQ", "Su'aalaha", ar: "الأسئلة الشائعة", de: "FAQ"),
+                        "Help Center",
+                        Icons.help_center_rounded,
+                        AppColors.accentTeal,
+                        () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSupportCard(BuildContext context, String title, String subtitle, IconData icon, Color color, VoidCallback onTap) {
+    return Material(
+      color: color.withValues(alpha: 0.05),
+      borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const SizedBox(height: 12),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              const SizedBox(height: 4),
+              Text(subtitle, style: TextStyle(color: AppColors.grey, fontSize: 10), textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+            ],
+          ),
         ),
-      ],
-    ));
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
+  void _showLogoutDialog(BuildContext context, AppState state) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        title: Text(state.translate("Logout", "Ka Bax", ar: "تسجيل الخروج", de: "Abmelden")),
+        content: Text(state.translate("Are you sure you want to logout?", "Ma hubtaa inaad ka baxayso?",
+            ar: "هل أنت متأكد أنك تريد تسجيل الخروج؟", de: "Sind Sie sicher, dass Sie sich abmelden möchten?")),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(state.translate("Cancel", "Iska Daay", ar: "إلغاء", de: "Abbrechen"))),
+          TextButton(
+            onPressed: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const SplashScreen()), (route) => false),
+            child: Text(state.translate("Logout", "Ka Bax", ar: "تسجيل الخروج", de: "Abmelden"), style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
   }
 }
 

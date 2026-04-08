@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -49,13 +50,6 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   final List<Map<String, dynamic>> _methods = [
-    {
-      "id": "stripe",
-      "title": "Stripe",
-      "desc": "Deposit via your Stripe account",
-      "gradient": [const Color(0xFF6772E5), const Color(0xFF3E4493)],
-      "faIcon": FontAwesomeIcons.stripe,
-    },
     {
       "id": "card",
       "title": "Debit / Credit Card",
@@ -117,39 +111,49 @@ class _DepositScreenState extends State<DepositScreen> {
                         width: double.infinity,
                         padding: EdgeInsets.all(24 * context.fontSizeFactor),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF11998E), Color(0xFF38EF7D)],
+                          gradient: LinearGradient(
+                            colors: [AppColors.primaryDark, AppColors.primaryDark.withValues(alpha: 0.8)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [BoxShadow(color: const Color(0xFF11998E).withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 10))],
+                          borderRadius: BorderRadius.circular(32),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryDark.withValues(alpha: 0.3),
+                              blurRadius: 30,
+                              offset: const Offset(0, 15),
+                            )
+                          ],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(state.translate("Enter Amount to Deposit", "Gali cadadka aad dhigato", ar: "أدخل المبلغ للإيداع", de: "Einzahlungsbetrag eingeben"), style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 14 * context.fontSizeFactor)),
-                            const SizedBox(height: 8),
+                            Text(
+                              state.translate("Enter Amount to Deposit", "Gali cadadka aad dhigato", ar: "أدخل المبلغ للإيداع", de: "Einzahlungsbetrag eingeben"), 
+                              style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w500)
+                            ),
+                            const SizedBox(height: 12),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(14),
+                                color: Colors.white.withValues(alpha: 0.05),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
                               ),
                               child: Row(
                                 children: [
-                                  Text("\$", style: TextStyle(color: Colors.white, fontSize: 28 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                                  const SizedBox(width: 8),
+                                  Text("\$", style: TextStyle(color: AppColors.accentTeal, fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: TextField(
                                       controller: _amountController,
                                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
-                                      style: TextStyle(color: Colors.white, fontSize: 28 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                                      style: TextStyle(color: Colors.white, fontSize: 34 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: -1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: "0.00",
-                                        hintStyle: const TextStyle(color: Colors.white54),
+                                        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
                                       ),
                                       onChanged: (_) => setState(() {}),
                                     ),
@@ -157,21 +161,23 @@ class _DepositScreenState extends State<DepositScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 20),
                             // Quick amounts
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: [50, 100, 200, 500].map((amt) => GestureDetector(
                                   onTap: () => setState(() => _amountController.text = amt.toString()),
-                                  child: Container(
-                                    margin: const EdgeInsets.only(right: 8),
-                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    margin: const EdgeInsets.only(right: 10),
+                                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.22),
-                                      borderRadius: BorderRadius.circular(20),
+                                      color: _amountController.text == amt.toString() ? AppColors.accentTeal : Colors.white.withValues(alpha: 0.08),
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(color: _amountController.text == amt.toString() ? AppColors.accentTeal : Colors.white.withValues(alpha: 0.05)),
                                     ),
-                                    child: Text("\$$amt", style: TextStyle(color: Colors.white, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w600)),
+                                    child: Text("\$$amt", style: TextStyle(color: Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                                   ),
                                 )).toList(),
                               ),
@@ -205,71 +211,80 @@ class _DepositScreenState extends State<DepositScreen> {
                         });
                       },
                       child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
-                        margin: const EdgeInsets.only(bottom: 14),
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
+                        margin: const EdgeInsets.only(bottom: 16),
                         width: double.infinity,
-                        padding: EdgeInsets.all(18 * context.fontSizeFactor),
+                        padding: EdgeInsets.all(20 * context.fontSizeFactor),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          borderRadius: BorderRadius.circular(20),
+                          color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.05) : theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(24),
                           border: Border.all(
-                            color: isSelected ? AppColors.accentTeal : Colors.transparent,
+                            color: isSelected ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.05),
                             width: 2,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: theme.brightness == Brightness.dark ? Colors.black.withValues(alpha: 0.2) : (isSelected ? AppColors.accentTeal.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.03)),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
+                              color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.02),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
                             ),
                           ],
                         ),
                         child: Row(
                           children: [
                             Container(
-                              width: 50 * context.fontSizeFactor, height: 50 * context.fontSizeFactor,
+                              width: 56 * context.fontSizeFactor,
+                              height: 56 * context.fontSizeFactor,
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: (method["gradient"] as List<Color>),
+                                  colors: (method["gradient"] as List<Color>).map((c) => c.withValues(alpha: 0.9)).toList(),
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
-                                borderRadius: BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: (method["gradient"] as List<Color>).first.withValues(alpha: 0.3),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  )
+                                ],
                               ),
                               child: Center(
                                 child: AdaptiveIcon(
                                   method["faIcon"] ?? method["icon"],
                                   color: Colors.white,
-                                  size: 24 * context.fontSizeFactor,
+                                  size: 26 * context.fontSizeFactor,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 16),
+                            const SizedBox(width: 20),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     state.translate(method["title"], _getSomaliMethodTitle(method["id"]), ar: _getArabicMethodTitle(method["id"]), de: _getGermanMethodTitle(method["id"])),
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color)
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
                                   ),
+                                  const SizedBox(height: 2),
                                   Text(
                                     state.translate(method["desc"], _getSomaliMethodDesc(method["id"]), ar: _getArabicMethodDesc(method["id"]), de: _getGermanMethodDesc(method["id"])),
-                                    style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)
+                                    style: TextStyle(color: AppColors.grey.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
                                   ),
                                 ],
                               ),
                             ),
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 250),
-                              width: 22 * context.fontSizeFactor, height: 22 * context.fontSizeFactor,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isSelected ? AppColors.accentTeal : Colors.transparent,
-                                border: Border.all(color: isSelected ? AppColors.accentTeal : AppColors.grey.withValues(alpha: 0.4), width: 2),
+                            if (isSelected)
+                              FadeInRight(
+                                duration: const Duration(milliseconds: 200),
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(color: AppColors.accentTeal, shape: BoxShape.circle),
+                                  child: Icon(Icons.check_rounded, color: Colors.white, size: 16 * context.fontSizeFactor),
+                                ),
                               ),
-                              child: isSelected ? Icon(Icons.check_rounded, color: Colors.white, size: 14 * context.fontSizeFactor) : null,
-                            ),
                           ],
                         ),
                       ),
@@ -311,8 +326,6 @@ class _DepositScreenState extends State<DepositScreen> {
 
   Widget _buildDetailsSection(BuildContext context, AppState state) {
     switch (_selectedMethod) {
-      case "stripe":
-        return _inputField(context, state.translate("Stripe Email", "Email-ka Stripe"), Icons.email_rounded, "you@email.com", _field1Controller, isEmail: true);
       case "card":
         return Column(children: [
           _inputField(context, state.translate("Card Number", "Lambarka Kaadhka"), Icons.credit_card_rounded, "0000 0000 0000 0000", _field1Controller, isNumber: true, formatters: [
@@ -397,7 +410,6 @@ class _DepositScreenState extends State<DepositScreen> {
 
   String _getSomaliMethodTitle(String id) {
     switch (id) {
-      case "stripe": return "Stripe";
       case "card": return "Kaadhka Debit / Credit";
       case "mobile": return "Lacagta Mobaylka";
       case "bank": return "Xawaalad Bangi";
@@ -407,7 +419,6 @@ class _DepositScreenState extends State<DepositScreen> {
 
   String _getArabicMethodTitle(String id) {
     switch (id) {
-      case "stripe": return "سترايب";
       case "card": return "بطاقة دفع / ائتمان";
       case "mobile": return "نقد عبر الهاتف";
       case "bank": return "تحويل بنكي";
@@ -417,7 +428,6 @@ class _DepositScreenState extends State<DepositScreen> {
 
   String _getGermanMethodTitle(String id) {
     switch (id) {
-      case "stripe": return "Stripe";
       case "card": return "Debit- / Kreditkarte";
       case "mobile": return "Mobiles Geld";
       case "bank": return "Banküberweisung";
@@ -427,7 +437,6 @@ class _DepositScreenState extends State<DepositScreen> {
 
   String _getSomaliMethodDesc(String id) {
     switch (id) {
-      case "stripe": return "Ku dhigo akoonkaaga Stripe";
       case "card": return "Visa ama Mastercard — degdeg ah";
       case "mobile": return "ZAAD, EVC Plus, eDahab";
       case "bank": return "Xawaaladda SEPA / IBAN";
@@ -437,7 +446,6 @@ class _DepositScreenState extends State<DepositScreen> {
 
   String _getArabicMethodDesc(String id) {
     switch (id) {
-      case "stripe": return "إيداع عبر حساب سترايب الخاص بك";
       case "card": return "فيزا أو ماستركارد — فوري";
       case "mobile": return "ZAAD, EVC Plus, eDahab";
       case "bank": return "تحويل SEPA / IBAN";
@@ -447,7 +455,6 @@ class _DepositScreenState extends State<DepositScreen> {
 
   String _getGermanMethodDesc(String id) {
     switch (id) {
-      case "stripe": return "Einzahlung über Ihr Stripe-Konto";
       case "card": return "Visa oder Mastercard — sofort";
       case "mobile": return "ZAAD, EVC Plus, eDahab";
       case "bank": return "SEPA- / IBAN-Überweisung";
@@ -462,7 +469,13 @@ class _DepositScreenState extends State<DepositScreen> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          )
+        ],
       ),
       child: TextField(
         controller: controller,
@@ -470,20 +483,33 @@ class _DepositScreenState extends State<DepositScreen> {
         onChanged: onChanged,
         keyboardType: isNumber ? TextInputType.number : isEmail ? TextInputType.emailAddress : TextInputType.text,
         inputFormatters: formatters,
-        style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
+        style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w600),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(fontSize: 14 * context.fontSizeFactor, color: AppColors.grey),
+          labelStyle: TextStyle(fontSize: 14 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.6), fontWeight: FontWeight.w500),
           hintText: hint,
-          hintStyle: TextStyle(color: AppColors.grey.withValues(alpha: 0.5)),
-          prefixIcon: Icon(icon, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+          hintStyle: TextStyle(color: AppColors.grey.withValues(alpha: 0.3)),
+          prefixIcon: Container(
+            margin: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.05)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.05)),
+          ),
           filled: true,
           fillColor: theme.colorScheme.surface,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
           ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         ),
       ),
     );
@@ -498,45 +524,66 @@ class _DepositScreenState extends State<DepositScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) {
         final theme = Theme.of(context);
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: Container(
-              padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                color: theme.scaffoldBackgroundColor,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Center(child: Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)))),
-                    const SizedBox(height: 24),
-                    Text(state.translate("Review Deposit", "Eeg Dhigashada horta", ar: "مراجعة الإيداع", de: "Einzahlung prüfen"), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
-                    const SizedBox(height: 24),
-                    _reviewRow(context, state.translate("Amount", "Cadadka"), "\$${_amountController.text}"),
-                    _reviewRow(context, state.translate("Method", "Qaabka"), state.translate(method["title"], _getSomaliMethodTitle(method["id"]), ar: _getArabicMethodTitle(method["id"]), de: _getGermanMethodTitle(method["id"]))),
-                    _reviewRow(context, state.translate("Fee", "Kharashka"), "\$0.00", isFree: true),
-                    _reviewRow(context, state.translate("Total Charged", "Wadarta Guud"), "\$${_amountController.text}"),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          _showSuccess(context, state);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accentTeal,
-                          padding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        ),
-                        child: Text(state.translate("Confirm & Deposit", "Xaqiiji & Dhigo", ar: "تأكيد وإيداع", de: "Bestätigen & Einzahlen"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Colors.white)),
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+                  const SizedBox(height: 24),
+                  Text(
+                    state.translate("Review Deposit", "Eeg Dhigashada horta", ar: "مراجعة الإيداع", de: "Einzahlung prüfen"), 
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
+                  ),
+                  const SizedBox(height: 32),
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentTeal.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.1)),
+                    ),
+                    child: Column(
+                      children: [
+                        _reviewRow(context, state.translate("Amount", "Cadadka"), "\$${_amountController.text}"),
+                        Divider(height: 32, color: theme.dividerColor.withValues(alpha: 0.1)),
+                        _reviewRow(context, state.translate("Method", "Qaabka"), state.translate(method["title"], _getSomaliMethodTitle(method["id"]), ar: _getArabicMethodTitle(method["id"]), de: _getGermanMethodTitle(method["id"]))),
+                        Divider(height: 32, color: theme.dividerColor.withValues(alpha: 0.1)),
+                        _reviewRow(context, state.translate("Fee", "Kharashka"), "\$0.00", isFree: true),
+                        Divider(height: 32, color: theme.dividerColor.withValues(alpha: 0.1)),
+                        _reviewRow(context, state.translate("Total Charged", "Wadarta Guud"), "\$${_amountController.text}", isTotal: true),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 60 * context.fontSizeFactor,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _showSuccess(context, state);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryDark,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        state.translate("Confirm & Deposit", "Xaqiiji & Dhigo", ar: "تأكيد وإيداع", de: "Bestätigen & Einzahlen"), 
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: Colors.white)
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
               ),
             ),
           ),
@@ -545,33 +592,24 @@ class _DepositScreenState extends State<DepositScreen> {
     );
   }
 
-  Widget _reviewRow(BuildContext context, String label, String value, {bool isFree = false}) {
+  Widget _reviewRow(BuildContext context, String label, String value, {bool isFree = false, bool isTotal = false}) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Text(
-              label, 
-              style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)
-            ),
-          ),
-          const SizedBox(width: 16),
-          Flexible(
-            child: Text(
-              value, 
-              textAlign: TextAlign.end,
-              style: TextStyle(
-                fontWeight: FontWeight.bold, 
-                fontSize: 14 * context.fontSizeFactor, 
-                color: isFree ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color
-              )
-            ),
-          ),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label, 
+          style: TextStyle(color: AppColors.grey.withValues(alpha: 0.7), fontSize: 15, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)
+        ),
+        Text(
+          value, 
+          style: TextStyle(
+            fontWeight: FontWeight.bold, 
+            fontSize: isTotal ? 18 : 15, 
+            color: isFree ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color
+          )
+        ),
+      ],
     );
   }
 

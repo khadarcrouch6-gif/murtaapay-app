@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_analytics.dart';
+import 'models/bank_account.dart';
 
 class AppState extends ChangeNotifier {
   static final AppState _instance = AppState._internal();
@@ -13,6 +14,9 @@ class AppState extends ChangeNotifier {
 
   double _balance = 12450.80;
   double get balance => _balance;
+
+  List<BankAccount> _linkedBanks = [];
+  List<BankAccount> get linkedBanks => _linkedBanks;
 
   ThemeMode _themeMode = ThemeMode.light;
   ThemeMode get themeMode => _themeMode;
@@ -45,8 +49,42 @@ class AppState extends ChangeNotifier {
     // Load balance (mock)
     _balance = _prefs.getDouble('balance') ?? 12450.80;
 
+    _loadBanks();
+
     _isInitialized = true;
     notifyListeners();
+  }
+
+  void _loadBanks() {
+    final List<String>? banksJson = _prefs.getStringList('linked_banks');
+    if (banksJson != null) {
+      _linkedBanks = banksJson.map((e) => BankAccount.fromJson(e)).toList();
+    } else {
+      // Mock initial banks
+      _linkedBanks = [
+        BankAccount(id: '1', bankName: 'LHV Pank', accountNumber: '**** 8829'),
+        BankAccount(id: '2', bankName: 'Swedbank', accountNumber: '**** 1120'),
+      ];
+    }
+  }
+
+  void addBank(BankAccount bank) {
+    _linkedBanks.add(bank);
+    _saveBanks();
+    analytics.logEvent('add_bank', parameters: {'bank': bank.bankName});
+    notifyListeners();
+  }
+
+  void removeBank(String id) {
+    _linkedBanks.removeWhere((bank) => bank.id == id);
+    _saveBanks();
+    analytics.logEvent('remove_bank', parameters: {'id': id});
+    notifyListeners();
+  }
+
+  void _saveBanks() {
+    final List<String> banksJson = _linkedBanks.map((e) => e.toJson()).toList();
+    _prefs.setStringList('linked_banks', banksJson);
   }
 
   void setShowHomePromo(bool show) {
