@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import 'payment_success_screen.dart';
@@ -214,154 +215,89 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     String title = "Card Information";
     if (widget.initialCardType == "visa") title = "Visa Details";
     if (widget.initialCardType == "mastercard") title = "Mastercard Details";
 
+    bool isFormValid = _cardNumberController.text.isNotEmpty &&
+                       _cardHolderController.text.isNotEmpty &&
+                       _expiryController.text.isNotEmpty &&
+                       _cvvController.text.isNotEmpty;
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FadeInDown(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.accentTeal.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.info_rounded, color: AppColors.accentTeal),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        "Enter your card details to complete the transfer of ${widget.amount} EUR",
-                        style: const TextStyle(fontSize: 12, color: AppColors.grey),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            FadeInUp(
-               child: _buildLiveCard(),
-            ),
-
-            const SizedBox(height: 32),
-
-            const Text(
-              "Card Information",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-
-            // Card Number
-            FadeInUp(
+      body: Center(
+        child: MaxWidthBox(
+          maxWidth: 500,
+          child: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Card Number", style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _cardNumberController,
-                    inputFormatters: [
-                      CardNumberFormatter(),
-                    ],
-                    decoration: InputDecoration(
-                      hintText: "1234 5678 9012 3456",
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: _getCardIcon(),
+                  FadeInDown(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColors.accentTeal.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.3)),
                       ),
-                      suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                      prefixIcon: const Icon(Icons.payment_rounded, color: AppColors.accentTeal),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.3)),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.info_rounded, color: AppColors.accentTeal),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              "Enter your card details to complete the transfer of ${widget.amount} EUR",
+                              style: const TextStyle(fontSize: 12, color: AppColors.grey),
+                            ),
+                          ),
+                        ],
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
-                      ),
-                      filled: true,
-                      fillColor: Theme.of(context).colorScheme.surface,
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Card Holder Name
-            FadeInUp(
-              delay: const Duration(milliseconds: 100),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Card Holder Name", style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _cardHolderController,
-                    textCapitalization: TextCapitalization.words,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")),
-                    ],
-                    decoration: InputDecoration(
-                      hintText: "John Doe",
-                      prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.accentTeal),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.3)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
-                      ),
-                      filled: true,
-                      fillColor: Theme.of(context).colorScheme.surface,
                     ),
                   ),
-                ],
-              ),
-            ),
 
-            const SizedBox(height: 16),
+                  const SizedBox(height: 24),
 
-            // Expiry and CVV Row
-            FadeInUp(
-              delay: const Duration(milliseconds: 150),
-              child: Row(
-                children: [
-                  Expanded(
+                  FadeInUp(
+                     child: _buildLiveCard(),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  const Text(
+                    "Card Information",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Card Number
+                  FadeInUp(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("Expiry Date", style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Text("Card Number", style: TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
                         TextField(
-                          controller: _expiryController,
+                          controller: _cardNumberController,
                           inputFormatters: [
-                            ExpiryDateFormatter(),
+                            CardNumberFormatter(),
                           ],
                           decoration: InputDecoration(
-                            hintText: "MM/YY",
-                            prefixIcon: const Icon(Icons.calendar_today_rounded, color: AppColors.accentTeal),
+                            hintText: "1234 5678 9012 3456",
+                            suffixIcon: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: _getCardIcon(),
+                            ),
+                            suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                            prefixIcon: const Icon(Icons.payment_rounded, color: AppColors.accentTeal),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
                             enabledBorder: OutlineInputBorder(
@@ -373,29 +309,33 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                               borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
                             ),
                             filled: true,
-                            fillColor: Theme.of(context).colorScheme.surface,
+                            fillColor: theme.colorScheme.surface,
                           ),
                           keyboardType: TextInputType.number,
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
+
+                  const SizedBox(height: 16),
+
+                  // Card Holder Name
+                  FadeInUp(
+                    delay: const Duration(milliseconds: 100),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("CVV", style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Text("Card Holder Name", style: TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
                         TextField(
-                          controller: _cvvController,
+                          controller: _cardHolderController,
+                          textCapitalization: TextCapitalization.words,
                           inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(3),
+                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")),
                           ],
                           decoration: InputDecoration(
-                            hintText: "123",
-                            prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.accentTeal),
+                            hintText: "John Doe",
+                            prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.accentTeal),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
                             enabledBorder: OutlineInputBorder(
@@ -407,70 +347,140 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                               borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
                             ),
                             filled: true,
-                            fillColor: Theme.of(context).colorScheme.surface,
+                            fillColor: theme.colorScheme.surface,
                           ),
-                          keyboardType: TextInputType.number,
-                          obscureText: true,
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
 
-            const SizedBox(height: 40),
+                  const SizedBox(height: 16),
 
-            // Pay Button
-            FadeInUp(
-              delay: const Duration(milliseconds: 200),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isProcessing ? null : _processPayment,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentTeal,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  child: _isProcessing
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  // Expiry and CVV Row
+                  FadeInUp(
+                    delay: const Duration(milliseconds: 150),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Expiry Date", style: TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: _expiryController,
+                                inputFormatters: [
+                                  ExpiryDateFormatter(),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: "MM/YY",
+                                  prefixIcon: const Icon(Icons.calendar_today_rounded, color: AppColors.accentTeal),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.3)),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
+                                  ),
+                                  filled: true,
+                                  fillColor: theme.colorScheme.surface,
+                                ),
+                                keyboardType: TextInputType.number,
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            const Text("Processing payment...", style: TextStyle(color: Colors.white, fontSize: 16)),
-                          ],
-                        )
-                      : Text(
-                          "Pay ${widget.amount} EUR",
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                            ],
+                          ),
                         ),
-                ),
-              ),
-            ),
-            if (_isProcessing)
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Center(
-                  child: FadeIn(
-                    child: const Text(
-                      "Securely processing your payment...",
-                      style: TextStyle(color: AppColors.grey, fontSize: 13, fontStyle: FontStyle.italic),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("CVV", style: TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: _cvvController,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(3),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: "123",
+                                  prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.accentTeal),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.3)),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
+                                  ),
+                                  filled: true,
+                                  fillColor: theme.colorScheme.surface,
+                                ),
+                                keyboardType: TextInputType.number,
+                                obscureText: true,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ),
-            const SizedBox(height: 20),
 
-          ],
+                  const SizedBox(height: 40),
+
+                  // Action Button moved back to body
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: (_isProcessing || !isFormValid) ? null : _processPayment,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accentTeal,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 4,
+                        shadowColor: AppColors.accentTeal.withValues(alpha: 0.3),
+                        disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
+                        disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
+                      ),
+                      child: _isProcessing
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              "Pay ${widget.amount} EUR",
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                            ),
+                    ),
+                  ),
+                  if (_isProcessing)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: FadeIn(
+                        child: const Center(
+                          child: Text(
+                            "Securely processing your payment...",
+                            style: TextStyle(color: AppColors.grey, fontSize: 13, fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -541,4 +551,3 @@ class ExpiryDateFormatter extends TextInputFormatter {
     );
   }
 }
-

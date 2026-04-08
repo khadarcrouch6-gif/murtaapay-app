@@ -9,6 +9,8 @@ import '../../core/app_state.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'receiver_screen.dart';
 import 'wallet_receiver_screen.dart';
+import 'bank_screen.dart';
+import 'card_screen.dart';
 
 class SendAmountScreen extends StatefulWidget {
   final bool showBackButton;
@@ -265,211 +267,238 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : AppColors.accentTeal,
             elevation: 0,
-            leading: widget.showBackButton ? IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded, color: theme.iconTheme.color, size: 24), onPressed: () => Navigator.pop(context)) : null,
-            title: Text(l10n.sendMoney, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 22, letterSpacing: -0.5)),
+            leading: widget.showBackButton ? IconButton(icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24), onPressed: () => Navigator.pop(context)) : null,
+            title: Text(l10n.sendMoney, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white, letterSpacing: -0.5)),
             centerTitle: true,
+            systemOverlayStyle: SystemUiOverlayStyle.light,
           ),
-          body: Center(
-            child: MaxWidthBox(
-              maxWidth: 500,
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    // --- PROGRESS STEPPER (Bolder) ---
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 30),
-                      child: Row(
-                        children: [
-                          _buildStepIndicator(1, "Amount", true, true),
-                          _buildStepLine(false),
-                          _buildStepIndicator(2, "Receiver", false, false),
-                          _buildStepLine(false),
-                          _buildStepIndicator(3, "Review", false, false),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 6),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          body: SafeArea(
+            top: false,
+            child: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Center(
+                child: MaxWidthBox(
+                  maxWidth: 500,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      children: [
+                        // --- HEADER BACKGROUND ---
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: theme.brightness == Brightness.dark ? AppColors.primaryDark : AppColors.accentTeal,
+                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                          ),
+                          padding: const EdgeInsets.only(bottom: 10), // Booska hoose waa la yareeyay
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30),
+                            child: Row(
                               children: [
-                                Text(l10n.enterAmount, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: theme.textTheme.titleMedium?.color)),
-                                GestureDetector(
-                                  onTap: () => _showFeeInfo(l10n),
-                                  child: Row(
-                                    children: [
-                                      Text(l10n.feeRate, style: const TextStyle(fontSize: 13, color: AppColors.accentTeal, fontWeight: FontWeight.w900)),
-                                      const SizedBox(width: 4),
-                                      const Icon(Icons.info_outline_rounded, size: 15, color: AppColors.accentTeal),
-                                    ],
-                                  ),
-                                ),
+                                _buildStepIndicator(1, "Amount", true, true, isHeader: true),
+                                _buildStepLine(false, isHeader: true),
+                                _buildStepIndicator(2, "Receiver", false, false, isHeader: true),
+                                _buildStepLine(false, isHeader: true),
+                                _buildStepIndicator(3, "Review", false, false, isHeader: true),
                               ],
                             ),
-                            const SizedBox(height: 6),
-                            
-                            // Input 1: You Send (High Visibility)
-                            _buildAmountInput(
-                              label: l10n.youSend,
-                              controller: _sendController,
-                              focusNode: _sendFocusNode,
-                              currency: _sendCurrency,
-                              balance: _formatCurrency(state.balance * (rates[_sendCurrency] ?? 1.0), _sendCurrencyDecimals),
-                              onChanged: _updateReceiveAmount,
-                              onCurrencyTap: () => _showCurrencyPicker(true, l10n),
-                              isError: currentAmount > 0 && !_isAmountValid,
-                              onMaxTap: _setMaxAmount,
-                              decimals: _sendCurrencyDecimals,
-                            ),
-
-                            // Quick Actions
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [10, 50, 100, 500].map((amt) => Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: ActionChip(
-                                      label: Text("+\$ $amt", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
-                                      onPressed: () => _addQuickAmount(amt),
-                                      backgroundColor: theme.colorScheme.surface,
-                                      side: BorderSide(color: theme.dividerColor.withOpacity(0.1), width: 1),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8), // Waxaa laga dhigay 8 (hore 16)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(l10n.enterAmount, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: theme.textTheme.titleMedium?.color)),
+                                  GestureDetector(
+                                    onTap: () => _showFeeInfo(l10n),
+                                    child: Row(
+                                      children: [
+                                        Text(l10n.feeRate, style: const TextStyle(fontSize: 13, color: AppColors.accentTeal, fontWeight: FontWeight.w900)),
+                                        const SizedBox(width: 4),
+                                        const Icon(Icons.info_outline_rounded, size: 15, color: AppColors.accentTeal),
+                                      ],
                                     ),
-                                  )).toList(),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8), // Waxaa laga dhigay 8 (hore 12)
+                              
+                              // Input 1: You Send
+                              _buildAmountInput(
+                                label: l10n.youSend,
+                                controller: _sendController,
+                                focusNode: _sendFocusNode,
+                                currency: _sendCurrency,
+                                balance: _formatCurrency(state.balance * (rates[_sendCurrency] ?? 1.0), _sendCurrencyDecimals),
+                                onChanged: _updateReceiveAmount,
+                                onCurrencyTap: () => _showCurrencyPicker(true, l10n),
+                                isError: currentAmount > 0 && !_isAmountValid,
+                                onMaxTap: _setMaxAmount,
+                                decimals: _sendCurrencyDecimals,
+                              ),
+
+                              // Quick Actions
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4), // Waxaa laga dhigay 4 (hore 8)
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [10, 50, 100, 500].map((amt) => Padding(
+                                      padding: const EdgeInsets.only(right: 8),
+                                      child: ActionChip(
+                                        label: Text("+\$ $amt", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
+                                        onPressed: () => _addQuickAmount(amt),
+                                        backgroundColor: theme.colorScheme.surface,
+                                        side: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1), width: 1),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      ),
+                                    )).toList(),
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            // Swap & Rates
-                            Center(
-                              child: Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      HapticFeedback.mediumImpact();
-                                      setState(() {
-                                        final temp = _sendCurrency; _sendCurrency = _receiveCurrency; _receiveCurrency = temp;
-                                        _updateReceiveAmount(_sendController.text);
-                                      });
-                                    },
-                                    child: Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(color: theme.colorScheme.primary, shape: BoxShape.circle, boxShadow: [BoxShadow(color: theme.colorScheme.primary.withOpacity(0.2), blurRadius: 8)]), child: const Icon(Icons.swap_vert_rounded, color: Colors.white, size: 20)),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "1 $_sendCurrency = ${((1 / (rates[_sendCurrency] ?? 1.0)) * (rates[_receiveCurrency] ?? 1.0)).toStringAsFixed(4)} $_receiveCurrency", 
-                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: theme.textTheme.bodyMedium?.color, letterSpacing: -0.5)
-                                  ),
-                                  if (_lastRateUpdate != null)
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text("Refreshed: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 11, color: AppColors.grey.withOpacity(0.7), fontWeight: FontWeight.bold)),
-                                        const SizedBox(width: 4),
-                                        _isRefreshing ? const SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1.5)) : const Icon(Icons.auto_awesome, size: 10, color: AppColors.accentTeal),
-                                      ],
+                              // Swap & Rates
+                              Center(
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        HapticFeedback.mediumImpact();
+                                        setState(() {
+                                          final temp = _sendCurrency; _sendCurrency = _receiveCurrency; _receiveCurrency = temp;
+                                          _updateReceiveAmount(_sendController.text);
+                                        });
+                                      },
+                                      child: Container(padding: const EdgeInsets.all(4), decoration: BoxDecoration(color: theme.colorScheme.primary, shape: BoxShape.circle, boxShadow: [BoxShadow(color: theme.colorScheme.primary.withValues(alpha: 0.2), blurRadius: 8)]), child: const Icon(Icons.swap_vert_rounded, color: Colors.white, size: 20)),
                                     ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 4),
-
-                            // Input 2: Receiver Gets
-                            _buildAmountInput(
-                              label: l10n.receiverGets,
-                              controller: _receiveController,
-                              focusNode: _receiveFocusNode,
-                              currency: _receiveCurrency,
-                              onChanged: _updateSendAmount,
-                              onCurrencyTap: () => _showCurrencyPicker(false, l10n),
-                              isReceiver: true,
-                              isLoading: _isCalculating,
-                              decimals: _receiveCurrencyDecimals,
-                            ),
-
-                            const SizedBox(height: 12),
-                            
-                            // Fee Toggle
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: theme.dividerColor.withOpacity(0.1), width: 1.5)),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.receipt_long_rounded, color: AppColors.accentTeal, size: 22),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(l10n.deductFeeFromAmount, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
-                                        Text(_isFeeIncluded ? l10n.receiverWillReceiveLess : l10n.payFeeSeparately, style: TextStyle(fontSize: 11, color: AppColors.grey, fontWeight: FontWeight.bold)),
-                                      ],
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      "1 $_sendCurrency = ${((1 / (rates[_sendCurrency] ?? 1.0)) * (rates[_receiveCurrency] ?? 1.0)).toStringAsFixed(4)} $_receiveCurrency", 
+                                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: theme.textTheme.bodyMedium?.color, letterSpacing: -0.5)
                                     ),
-                                  ),
-                                  Switch.adaptive(value: _isFeeIncluded, activeColor: AppColors.accentTeal, onChanged: (v) { setState(() { _isFeeIncluded = v; _updateReceiveAmount(_sendController.text); }); }),
-                                ],
-                              ),
-                            ),
-                            
-                            const SizedBox(height: 12),
-                            Text(l10n.selectPaymentMethod, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: theme.textTheme.titleMedium?.color)),
-                            const SizedBox(height: 6),
-                            _buildPaymentMethodsGrid(theme),
-                            
-                            const SizedBox(height: 12),
-                            
-                            // Summary Card (High Visibility)
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.surface,
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(color: !hasSufficient ? Colors.red.withOpacity(0.8) : theme.dividerColor.withOpacity(0.1), width: 2),
-                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 15, offset: const Offset(0, 8))],
-                              ),
-                              child: Column(
-                                children: [
-                                  _buildSummaryRow(l10n.transactionFee, isInputEmpty ? "-" : "${_getCurrencySymbol(_sendCurrency)} ${_formatCurrency(_fee, _sendCurrencyDecimals)}"),
-                                  const Divider(height: 16, thickness: 1),
-                                  _buildSummaryRow(l10n.totalToPay, isInputEmpty ? "-" : "${_getCurrencySymbol(_sendCurrency)} ${_formatCurrency(_totalToPay, _sendCurrencyDecimals)}", isTotal: true, isError: !hasSufficient),
-                                  if (!hasSufficient)
-                                    Padding(padding: const EdgeInsets.only(top: 8), child: Text(l10n.insufficientBalance, style: const TextStyle(color: Colors.red, fontSize: 13, fontWeight: FontWeight.w900))),
-                                  const SizedBox(height: 12),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 56,
-                                    child: ElevatedButton(
-                                      onPressed: canProceed ? () => _handleContinue(l10n) : null,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.accentTeal,
-                                        foregroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                        elevation: 4,
-                                        shadowColor: AppColors.accentTeal.withOpacity(0.3),
-                                        disabledBackgroundColor: Colors.grey[300],
+                                    if (_lastRateUpdate != null)
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text("Refreshed: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 10, color: AppColors.grey.withValues(alpha: 0.7), fontWeight: FontWeight.bold)),
+                                          const SizedBox(width: 4),
+                                          _isRefreshing ? const SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1.5)) : const Icon(Icons.auto_awesome, size: 10, color: AppColors.accentTeal),
+                                        ],
                                       ),
-                                      child: Text(l10n.continueLabel, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                          ],
+
+                              const SizedBox(height: 2),
+
+                              // Input 2: Receiver Gets
+                              _buildAmountInput(
+                                label: l10n.receiverGets,
+                                controller: _receiveController,
+                                focusNode: _receiveFocusNode,
+                                currency: _receiveCurrency,
+                                onChanged: _updateSendAmount,
+                                onCurrencyTap: () => _showCurrencyPicker(false, l10n),
+                                isReceiver: true,
+                                isLoading: _isCalculating,
+                                decimals: _receiveCurrencyDecimals,
+                              ),
+
+                              const SizedBox(height: 8), // Waxaa laga dhigay 8 (hore 12)
+                              
+                              // Fee Toggle
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), // Padding-ka waa la yareeyay
+                                decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5)),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.receipt_long_rounded, color: AppColors.accentTeal, size: 20),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(l10n.deductFeeFromAmount, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
+                                          Text(_isFeeIncluded ? l10n.receiverWillReceiveLess : l10n.payFeeSeparately, style: TextStyle(fontSize: 10, color: AppColors.grey, fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
+                                    ),
+                                    Transform.scale(
+                                      scale: 0.8,
+                                      child: Switch.adaptive(
+                                        value: _isFeeIncluded,
+                                        activeTrackColor: AppColors.accentTeal,
+                                        onChanged: (v) {
+                                          setState(() {
+                                            _isFeeIncluded = v;
+                                            _updateReceiveAmount(_sendController.text);
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              
+                              const SizedBox(height: 8),
+                              Text(l10n.selectPaymentMethod, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: theme.textTheme.titleMedium?.color)),
+                              const SizedBox(height: 4),
+                              _buildPaymentMethodsGrid(theme),
+                              
+                              const SizedBox(height: 8),
+                              
+                              // Summary Card
+                              Container(
+                                padding: const EdgeInsets.all(12), // Padding-ka waa la yareeyay (hore 16)
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.surface,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: !hasSufficient ? Colors.red.withValues(alpha: 0.8) : theme.dividerColor.withValues(alpha: 0.1), width: 2),
+                                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 4))],
+                                ),
+                                child: Column(
+                                  children: [
+                                    _buildSummaryRow(l10n.transactionFee, isInputEmpty ? "-" : "${_getCurrencySymbol(_sendCurrency)} ${_formatCurrency(_fee, _sendCurrencyDecimals)}"),
+                                    const Divider(height: 12, thickness: 1),
+                                    _buildSummaryRow(l10n.totalToPay, isInputEmpty ? "-" : "${_getCurrencySymbol(_sendCurrency)} ${_formatCurrency(_totalToPay, _sendCurrencyDecimals)}", isTotal: true, isError: !hasSufficient),
+                                    if (!hasSufficient)
+                                      Padding(padding: const EdgeInsets.only(top: 4), child: Text(l10n.insufficientBalance, style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w900))),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16), // Booska badhanka kor ayuu u soo kacay (hore 30)
+                              SizedBox(
+                                width: double.infinity,
+                                height: 52, // Wax yar ayaa laga dhimay dhererka
+                                child: ElevatedButton(
+                                  onPressed: canProceed ? () => _handleContinue(l10n) : null,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.accentTeal,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                    elevation: 4,
+                                    shadowColor: AppColors.accentTeal.withValues(alpha: 0.3),
+                                    disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
+                                    disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
+                                  ),
+                                  child: Text(l10n.continueLabel, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -492,28 +521,54 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     FocusScope.of(context).unfocus();
     HapticFeedback.mediumImpact();
     final cleanAmount = _sendController.text.replaceAll(',', '');
+
     if (_selectedMethod == "Murtaax Wallet") {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => WalletReceiverScreen(amount: cleanAmount, method: _selectedMethod)));
-    } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ReceiverScreen(amount: cleanAmount, method: _selectedMethod)));
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => WalletReceiverScreen(amount: cleanAmount, method: _selectedMethod)
+      ));
+    } else if (_selectedMethod == "EVC Plus" || _selectedMethod == "ZAAD Service" || _selectedMethod == "e-Dahab" || _selectedMethod == "Sahal") {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => ReceiverScreen(amount: cleanAmount, method: _selectedMethod)
+      ));
+    } else if (_selectedMethod == "Bank Transfer") {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => BankScreen(amount: cleanAmount, method: _selectedMethod)
+      ));
+    } else if (_selectedMethod == "Visa/MasterCard") {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => CardScreen(amount: cleanAmount, method: _selectedMethod)
+      ));
     }
   }
 
-  Widget _buildStepIndicator(int step, String label, bool isActive, bool isCompleted) {
+  Widget _buildStepIndicator(int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
+    Color activeColor = isHeader ? Colors.white : AppColors.accentTeal;
+    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : Colors.grey[300]!;
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? AppColors.accentTeal : Colors.grey);
+
     return Column(
       children: [
         Container(
           width: 32, height: 32,
-          decoration: BoxDecoration(color: isActive || isCompleted ? AppColors.accentTeal : Colors.grey[300], shape: BoxShape.circle, border: isActive ? Border.all(color: AppColors.accentTeal.withOpacity(0.2), width: 4) : null),
-          child: Center(child: isCompleted && !isActive ? const Icon(Icons.check, color: Colors.white, size: 18) : Text("$step", style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
+          decoration: BoxDecoration(
+            color: isActive || isCompleted ? activeColor : inactiveColor, 
+            shape: BoxShape.circle, 
+            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
+          ),
+          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? AppColors.accentTeal : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? AppColors.accentTeal : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
         ),
         const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: isActive ? AppColors.accentTeal : Colors.grey)),
+        Text(label, style: TextStyle(fontSize: 12, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
       ],
     );
   }
 
-  Widget _buildStepLine(bool isCompleted) { return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: isCompleted ? AppColors.accentTeal : Colors.grey[200], borderRadius: BorderRadius.circular(10)))); }
+  Widget _buildStepLine(bool isCompleted, {bool isHeader = false}) { 
+    Color color = isHeader 
+      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
+      : (isCompleted ? AppColors.accentTeal : Colors.grey[200]!);
+    return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
+  }
 
   Widget _buildAmountInput({
     required String label, required TextEditingController controller, required FocusNode focusNode, required String currency,
@@ -528,10 +583,10 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: isError ? Colors.red.withOpacity(0.05) : Theme.of(context).colorScheme.surface,
+            color: isError ? Colors.red.withValues(alpha: 0.05) : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isError ? Colors.red : (isFocused ? AppColors.accentTeal : Theme.of(context).dividerColor.withOpacity(0.1)), width: isFocused ? 2 : 1.5),
-            boxShadow: isFocused ? [BoxShadow(color: AppColors.accentTeal.withOpacity(0.08), blurRadius: 10, spreadRadius: 1)] : null,
+            border: Border.all(color: isError ? Colors.red : (isFocused ? AppColors.accentTeal : Theme.of(context).dividerColor.withValues(alpha: 0.1)), width: isFocused ? 2 : 1.5),
+            boxShadow: isFocused ? [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.08), blurRadius: 10, spreadRadius: 1)] : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -539,14 +594,62 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(label, style: TextStyle(color: isError ? Colors.red : AppColors.grey, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 0.5)),
-                  if (balance != null) Row(
-                    children: [
-                      Text("${_getCurrencySymbol(currency)} $balance", style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w900, fontSize: 12)),
-                      const SizedBox(width: 6),
-                      GestureDetector(onTap: onMaxTap, child: Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3), decoration: BoxDecoration(color: AppColors.accentTeal, borderRadius: BorderRadius.circular(8), boxShadow: [BoxShadow(color: AppColors.accentTeal.withOpacity(0.2), blurRadius: 4)]), child: const Text("MAX", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900)))),
-                    ],
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        color: isError ? Colors.red : AppColors.grey,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 13,
+                        letterSpacing: 0.5,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
+                  if (balance != null) 
+                    Flexible(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              "${_getCurrencySymbol(currency)} $balance",
+                              style: const TextStyle(
+                                color: AppColors.accentTeal,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 12,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: onMaxTap,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: AppColors.accentTeal,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.accentTeal.withValues(alpha: 0.2),
+                                    blurRadius: 4,
+                                  ),
+                                ],
+                              ),
+                              child: const Text(
+                                "MAX",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
               const SizedBox(height: 2),
@@ -567,7 +670,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(color: Theme.of(context).dividerColor.withOpacity(0.06), borderRadius: BorderRadius.circular(12), border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.08))),
+                      decoration: BoxDecoration(color: Theme.of(context).dividerColor.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(12), border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.08))),
                       child: Row(
                         children: [
                           ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.network("https://flagcdn.com/w40/${_getFlagCode(currency)}.png", width: 22, height: 15, fit: BoxFit.cover, errorBuilder: (c, e, s) => const Icon(Icons.flag, size: 16))),
@@ -620,15 +723,15 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.accentTeal : theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: isSelected ? AppColors.accentTeal : theme.dividerColor.withOpacity(0.15), width: 2),
-                  boxShadow: isSelected ? [BoxShadow(color: AppColors.accentTeal.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 4))] : null,
+                  border: Border.all(color: isSelected ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.15), width: 2),
+                  boxShadow: isSelected ? [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 4))] : null,
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(color: isSelected ? Colors.white.withOpacity(0.2) : theme.dividerColor.withOpacity(0.05), shape: BoxShape.circle),
+                      decoration: BoxDecoration(color: isSelected ? Colors.white.withValues(alpha: 0.2) : theme.dividerColor.withValues(alpha: 0.05), shape: BoxShape.circle),
                       child: Image.asset(method["image"]!, width: 22, height: 22, errorBuilder: (c, e, s) => Icon(Icons.payment, size: 20, color: isSelected ? Colors.white : AppColors.grey)),
                     ),
                     const SizedBox(width: 10),
@@ -647,12 +750,13 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   }
 
   Widget _buildSummaryRow(String label, String value, {bool isTotal = false, bool isError = false}) {
+    final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(child: Text(label, style: TextStyle(color: isError ? Colors.red : AppColors.grey, fontSize: 14, fontWeight: FontWeight.w900))),
         const SizedBox(width: 10),
-        Text(value, style: TextStyle(color: isError ? Colors.red : (isTotal ? AppColors.primaryDark : AppColors.grey), fontSize: isTotal ? 22 : 16, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+        Text(value, style: TextStyle(color: isError ? Colors.red : (isTotal ? (theme.brightness == Brightness.dark ? Colors.white : AppColors.primaryDark) : AppColors.grey), fontSize: isTotal ? 22 : 16, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
       ],
     );
   }

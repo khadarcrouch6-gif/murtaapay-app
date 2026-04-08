@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
-import '../../core/responsive_utils.dart';
 import '../../l10n/app_localizations.dart';
 import 'review_screen.dart';
+import 'payment_screen.dart';
 
 class WalletReceiverScreen extends StatefulWidget {
   final String amount;
   final String method;
-  
-  const WalletReceiverScreen({
-    super.key, 
-    required this.amount, 
-    required this.method
-  });
+  const WalletReceiverScreen({super.key, required this.amount, required this.method});
 
   @override
   State<WalletReceiverScreen> createState() => _WalletReceiverScreenState();
@@ -21,14 +18,14 @@ class WalletReceiverScreen extends StatefulWidget {
 
 class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
   final TextEditingController _walletIdController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   String _verifiedReceiverName = "";
   bool _isSearching = false;
 
   void _lookupWalletId(String value) {
     if (value.length >= 4) {
       setState(() => _isSearching = true);
-      // Simulate ID lookup from Murtaax server
-      Future.delayed(const Duration(milliseconds: 1200), () {
+      Future.delayed(const Duration(milliseconds: 1000), () {
         if (mounted) {
           setState(() {
             _isSearching = false;
@@ -51,175 +48,252 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
     return "Murtaax User #$id";
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.murtaaxTransfer, style: const TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FadeInDown(
-                child: Text(
-                  l10n.enterReceiverWalletId,
-                  style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.walletIdTransferNotice,
-                style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor),
-              ),
-              const SizedBox(height: 32),
-              
-              // Search / ID Entry Box
-              FadeInUp(
-                child: TextField(
-                  controller: _walletIdController,
-                  onChanged: _lookupWalletId,
-                  keyboardType: TextInputType.number,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  decoration: InputDecoration(
-                    hintText: l10n.enterWalletIdHint,
-                    prefixIcon: const Icon(Icons.account_circle_outlined, color: AppColors.accentTeal),
-                    suffixIcon: _isSearching 
-                      ? const Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.search_rounded),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.accentTeal, width: 2)),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Verified Receiver Display
-              if (_verifiedReceiverName.isNotEmpty)
-                FadeInUp(
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentTeal.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.3)),
-                    ),
-                    child: Row(
-                      children: [
-                        const CircleAvatar(
-                          backgroundColor: AppColors.accentTeal,
-                          child: Icon(Icons.check_rounded, color: Colors.white),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.verifiedReceiverLabel, 
-                                style: const TextStyle(color: AppColors.accentTeal, fontSize: 10, fontWeight: FontWeight.bold)),
-                              Text(_verifiedReceiverName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-              const SizedBox(height: 40),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    l10n.recentContacts, 
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  TextButton(
-                    onPressed: () {}, 
-                    child: Text(l10n.seeAll)),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // Horizontal Recents
-              SizedBox(
-                height: 105,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    _buildRecentUser("AR", "Ayaanle", "102234"),
-                    _buildRecentUser("MA", "Mohamed", "204456"),
-                    _buildRecentUser("SH", "Sahra", "309987"),
-                    _buildRecentUser("HM", "Hassan", "401122"),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 48),
-
-              SizedBox(
-                width: double.infinity,
-                height: 56 * context.fontSizeFactor,
-                child: Opacity(
-                  opacity: _verifiedReceiverName.isNotEmpty ? 1.0 : 0.5,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_verifiedReceiverName.isNotEmpty) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ReviewScreen(
-                              amount: widget.amount,
-                              receiverName: _verifiedReceiverName,
-                              receiverPhone: _walletIdController.text,
-                              method: widget.method,
-                            ),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.pleaseEnterDetails)),
-                        );
-                      }
-                    },
-                    child: Text(l10n.continueToReview),
-                  ),
-                ),
-              ),
-            ],
-          ),
+  void _handleContinue() {
+    HapticFeedback.mediumImpact();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentScreen(
+          amount: widget.amount,
+          receiverName: _verifiedReceiverName,
+          receiverPhone: _walletIdController.text,
+          payoutMethod: widget.method,
         ),
       ),
     );
   }
 
-  Widget _buildRecentUser(String initials, String name, String id) {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : AppColors.accentTeal,
+        elevation: 0,
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24), onPressed: () => Navigator.pop(context)),
+        title: Text(l10n.murtaaxTransfer, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white, letterSpacing: -0.5)),
+        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+      ),
+      body: Column(
+        children: [
+          // --- HEADER BACKGROUND ---
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: theme.brightness == Brightness.dark ? AppColors.primaryDark : AppColors.accentTeal,
+              borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+            ),
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Center(
+              child: MaxWidthBox(
+                maxWidth: 500,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: Row(
+                    children: [
+                      _buildStepIndicator(1, "Amount", false, true, isHeader: true),
+                      _buildStepLine(true, isHeader: true),
+                      _buildStepIndicator(2, "Receiver", true, false, isHeader: true),
+                      _buildStepLine(false, isHeader: true),
+                      _buildStepIndicator(3, "Review", false, false, isHeader: true),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: MaxWidthBox(
+                maxWidth: 500,
+                child: SafeArea(
+                  top: false,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 16),
+                        Text(
+                          l10n.enterReceiverWalletId,
+                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          l10n.walletIdTransferNotice,
+                          style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Input Field (High Visibility)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surface,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: _focusNode.hasFocus ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.1), width: 2),
+                            boxShadow: _focusNode.hasFocus ? [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.08), blurRadius: 10)] : null,
+                          ),
+                          child: TextField(
+                            controller: _walletIdController,
+                            focusNode: _focusNode,
+                            onChanged: _lookupWalletId,
+                            keyboardType: TextInputType.number,
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                            decoration: InputDecoration(
+                              hintText: l10n.enterWalletIdHint,
+                              prefixIcon: const Icon(Icons.account_circle_outlined, color: AppColors.accentTeal, size: 24),
+                              suffixIcon: _isSearching 
+                                ? const Padding(padding: EdgeInsets.all(12), child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2.5)))
+                                : const Icon(Icons.search_rounded),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        if (_verifiedReceiverName.isNotEmpty)
+                          FadeIn(
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: AppColors.accentTeal.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 1.5),
+                              ),
+                              child: Row(
+                                children: [
+                                  const CircleAvatar(
+                                    backgroundColor: AppColors.accentTeal,
+                                    radius: 18,
+                                    child: Icon(Icons.check_rounded, color: Colors.white, size: 20),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(l10n.verifiedReceiverLabel, style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w900, fontSize: 11)),
+                                        Text(_verifiedReceiverName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(l10n.recentContacts, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17)),
+                            TextButton(onPressed: () {}, child: Text(l10n.seeAll, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: AppColors.accentTeal))),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Horizontal Recents (Bigger)
+                        SizedBox(
+                          height: 110,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              _buildRecentUser(theme, "AR", "Ayaanle", "102234"),
+                              _buildRecentUser(theme, "MA", "Mohamed", "204456"),
+                              _buildRecentUser(theme, "SH", "Sahra", "309987"),
+                              _buildRecentUser(theme, "HM", "Hassan", "401122"),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 30),
+
+                        // Action Button moved back to body
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: _verifiedReceiverName.isNotEmpty ? () => _handleContinue() : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.accentTeal,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              elevation: 4,
+                              shadowColor: AppColors.accentTeal.withValues(alpha: 0.3),
+                              disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
+                              disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
+                            ),
+                            child: Text(l10n.continueToReview, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepIndicator(int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
+    Color activeColor = isHeader ? Colors.white : AppColors.accentTeal;
+    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : Colors.grey[300]!;
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? AppColors.accentTeal : Colors.grey);
+
+    return Column(
+      children: [
+        Container(
+          width: 32, height: 32,
+          decoration: BoxDecoration(
+            color: isActive || isCompleted ? activeColor : inactiveColor, 
+            shape: BoxShape.circle,
+            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
+          ),
+          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? AppColors.accentTeal : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? AppColors.accentTeal : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
+        ),
+        const SizedBox(height: 4),
+        Text(label, style: TextStyle(fontSize: 12, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
+      ],
+    );
+  }
+
+  Widget _buildStepLine(bool isCompleted, {bool isHeader = false}) { 
+    Color color = isHeader 
+      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
+      : (isCompleted ? AppColors.accentTeal : Colors.grey[200]!);
+    return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
+  }
+
+  Widget _buildRecentUser(ThemeData theme, String initials, String name, String id) {
     return GestureDetector(
       onTap: () {
+        HapticFeedback.lightImpact();
         _walletIdController.text = id;
         _lookupWalletId(id);
       },
       child: Container(
-        width: 80,
+        width: 90,
         margin: const EdgeInsets.only(right: 16),
         child: Column(
           children: [
             CircleAvatar(
-              radius: 28,
+              radius: 32,
               backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
-              child: Text(initials, style: TextStyle(fontWeight: FontWeight.bold, color: theme.primaryColor)),
+              child: Text(initials, style: TextStyle(fontWeight: FontWeight.w900, color: theme.primaryColor, fontSize: 18)),
             ),
-            const SizedBox(height: 8),
-            Text(name, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
+            const SizedBox(height: 10),
+            Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis),
+            Text(id, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey[600])),
           ],
         ),
       ),
@@ -229,7 +303,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
   @override
   void dispose() {
     _walletIdController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 }
-

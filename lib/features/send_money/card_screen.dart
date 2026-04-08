@@ -116,7 +116,7 @@ class _CardScreenState extends State<CardScreen> {
                                     const Icon(Icons.credit_card_rounded, color: Colors.white, size: 40),
                                     Text(
                                       widget.method.contains("Visa") ? "VISA" : "MasterCard",
-                                      style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, italic: true),
+                                      style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic),
                                     ),
                                   ],
                                 ),

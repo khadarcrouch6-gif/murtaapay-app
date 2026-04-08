@@ -4,6 +4,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 import 'review_screen.dart';
+import 'payment_screen.dart';
 
 class BankScreen extends StatefulWidget {
   final String amount;
@@ -37,11 +38,11 @@ class _BankScreenState extends State<BankScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ReviewScreen(
+        builder: (context) => PaymentScreen(
           amount: widget.amount,
           receiverName: _nameController.text,
           receiverPhone: _accountController.text, // Using as account number
-          method: "${widget.method} ($_selectedBank)",
+          payoutMethod: "${widget.method} ($_selectedBank)",
         ),
       ),
     );
