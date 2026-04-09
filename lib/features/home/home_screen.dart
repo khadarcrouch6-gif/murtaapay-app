@@ -144,12 +144,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: AnimatedBuilder(
         animation: _gradientController,
         builder: (context, child) {
+          final topPadding = MediaQuery.of(context).padding.top + 16;
+          // Dynamically adjust padding to avoid overflow on narrow windows with sidebar
+          final horizontalPadding = context.isDesktop ? 24.0 : context.horizontalPadding;
+          
           return Container(
             width: double.infinity,
             padding: EdgeInsets.fromLTRB(
-              context.horizontalPadding, 
-              MediaQuery.of(context).padding.top + 16, 
-              context.horizontalPadding, 
+              horizontalPadding, 
+              topPadding, 
+              horizontalPadding, 
               16
             ),
             decoration: BoxDecoration(
@@ -274,9 +278,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildRemainingHeader(BuildContext context, AppState state, ThemeData theme) {
+    // Use narrower padding on desktop to accommodate the sidebar
+    final horizontalPadding = context.isDesktop ? 24.0 : context.horizontalPadding;
+    
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(context.horizontalPadding, 0, context.horizontalPadding, 40),
+      padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, 40),
       decoration: const BoxDecoration(
         gradient: AppColors.primaryGradient, 
         borderRadius: BorderRadius.only(
@@ -300,7 +307,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   padding: const EdgeInsets.all(24),
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text(state.translate("Wallet Balance", "Hadhaaga Wallet-ka", ar: "رصيد المحفظة", de: "Kontostand"), style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14 * context.fontSizeFactor)),
+                      Flexible(
+                        child: Text(
+                          state.translate("Wallet Balance", "Hadhaaga Wallet-ka", ar: "رصيد المحفظة", de: "Kontostand"), 
+                          style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 13 * context.fontSizeFactor),
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      ),
                       IconButton(onPressed: () => setState(() => _isBalanceVisible = !_isBalanceVisible), icon: Icon(_isBalanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.white70, size: 20 * context.fontSizeFactor)),
                     ]),
                     FittedBox(
@@ -339,15 +352,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: Text(state.translate("Spending Analysis", "Isticmaalka", ar: "تحليل الإنفاق", de: "Ausgabenanalyse"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor), overflow: TextOverflow.ellipsis)),
+                  Expanded(
+                    child: Text(
+                      state.translate("Spending Analysis", "Isticmaalka", ar: "تحليل الإنفاق", de: "Ausgabenanalyse"), 
+                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor), 
+                      overflow: TextOverflow.ellipsis
+                    )
+                  ),
                   const SizedBox(width: 8),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildChartTypeToggle(ChartType.bar, Icons.bar_chart_rounded),
-                      _buildChartTypeToggle(ChartType.line, Icons.show_chart_rounded),
-                      _buildChartTypeToggle(ChartType.pie, Icons.pie_chart_rounded),
-                    ],
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildChartTypeToggle(ChartType.bar, Icons.bar_chart_rounded),
+                        _buildChartTypeToggle(ChartType.line, Icons.show_chart_rounded),
+                        _buildChartTypeToggle(ChartType.pie, Icons.pie_chart_rounded),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -380,7 +402,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           Text(state.translate("Get Started", "Bilow Hadda", ar: "ابدأ الآن", de: "Loslegen"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
           const SizedBox(height: 16),
           GridView.count(
-            crossAxisCount: 4, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), mainAxisSpacing: 16, crossAxisSpacing: 16,
+            crossAxisCount: 4, 
+            shrinkWrap: true, 
+            physics: const NeverScrollableScrollPhysics(), 
+            mainAxisSpacing: 16, 
+            crossAxisSpacing: 16,
+            childAspectRatio: 0.9, // Increase aspect ratio to prevent vertical overflows on small widths
             children: [
               _buildFeatureItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen"), Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
               _buildFeatureItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah"), Icons.volunteer_activism_rounded, AppColors.accentTeal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
@@ -516,11 +543,20 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: Container(
         height: 56 * context.fontSizeFactor,
         decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))]),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          AdaptiveIcon(icon, color: Colors.white, size: 18 * context.fontSizeFactor),
-          const SizedBox(width: 10),
-          Text(label, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor)),
-        ]),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center, 
+          children: [
+            AdaptiveIcon(icon, color: Colors.white, size: 18 * context.fontSizeFactor),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                label, 
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
+                overflow: TextOverflow.ellipsis,
+              )
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -529,15 +565,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return GestureDetector(
       onTap: onTap,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+              child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor),
+            ),
           ),
           const SizedBox(height: 8),
           Flexible(
-            child: Text(label, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w500), textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+            child: Text(
+              label, 
+              style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w500), 
+              textAlign: TextAlign.center, 
+              overflow: TextOverflow.ellipsis
+            ),
           ),
         ],
       ),

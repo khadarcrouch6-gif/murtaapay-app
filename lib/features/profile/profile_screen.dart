@@ -224,12 +224,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             clipBehavior: Clip.none,
             alignment: Alignment.center,
             children: [
+              // Cover Image with Fallback
               Container(
                 height: coverHeight,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(28),
-                  image: DecorationImage(image: NetworkImage(_coverImageUrl), fit: BoxFit.cover),
+                  color: AppColors.primaryDark.withValues(alpha: 0.1),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.15),
@@ -240,23 +241,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(28),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black.withValues(alpha: 0.3),
-                            Colors.black.withValues(alpha: 0.1),
-                          ],
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.network(
+                        _coverImageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [AppColors.primaryDark, AppColors.accentTeal],
+                            ),
+                          ),
+                          child: Icon(Icons.landscape_rounded, color: Colors.white.withValues(alpha: 0.2), size: 64),
                         ),
                       ),
-                    ),
+                      BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black.withValues(alpha: 0.3),
+                                Colors.black.withValues(alpha: 0.1),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
+              
+              // Profile Image with Fallback
               Positioned(
                 top: coverHeight - (profileSize / 2),
                 child: Hero(
@@ -268,6 +290,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         width: profileSize,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
+                          color: theme.colorScheme.surface,
                           border: Border.all(color: theme.scaffoldBackgroundColor, width: 4),
                           boxShadow: [
                             BoxShadow(
@@ -276,7 +299,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               offset: const Offset(0, 5),
                             )
                           ],
-                          image: DecorationImage(image: NetworkImage(_profileImageUrl), fit: BoxFit.cover),
+                        ),
+                        child: ClipOval(
+                          child: Image.network(
+                            _profileImageUrl,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  strokeWidth: 2,
+                                  color: AppColors.accentTeal,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              color: AppColors.accentTeal,
+                              child: Center(
+                                child: Text(
+                                  _userName.isNotEmpty ? _userName[0].toUpperCase() : "?",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: profileSize * 0.4,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       Positioned(
@@ -606,19 +659,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           )
         ],
       ),
-      child: SwitchListTile.adaptive(
-        secondary: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: AppColors.accentTeal.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(12),
+      child: Material(
+        color: Colors.transparent,
+        child: SwitchListTile.adaptive(
+          secondary: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.accentTeal.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: AppColors.accentTeal, size: 18),
           ),
-          child: Icon(icon, color: AppColors.accentTeal, size: 18),
+          title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+          value: value,
+          onChanged: onChanged,
+          activeColor: AppColors.accentTeal,
         ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-        value: value,
-        onChanged: onChanged,
-        activeColor: AppColors.accentTeal,
       ),
     );
   }

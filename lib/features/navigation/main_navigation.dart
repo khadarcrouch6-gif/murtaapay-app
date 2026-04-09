@@ -174,11 +174,14 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
           const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: SwitchListTile.adaptive(
-              title: const Text("Dark Mode", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-              value: state.themeMode == ThemeMode.dark,
-              activeThumbColor: AppColors.accentTeal,
-              onChanged: (v) => state.toggleTheme(v),
+            child: Material(
+              color: Colors.transparent,
+              child: SwitchListTile.adaptive(
+                title: const Text("Dark Mode", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                value: state.themeMode == ThemeMode.dark,
+                activeThumbColor: AppColors.accentTeal,
+                onChanged: (v) => state.toggleTheme(v),
+              ),
             ),
           ),
         ],

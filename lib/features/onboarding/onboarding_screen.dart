@@ -230,98 +230,110 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Spacer(flex: 1),
-          FadeInDown(
-            child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(32),
-                child: GlassmorphicContainer(
-                  width: double.infinity,
-                  height: 320 * context.fontSizeFactor,
-                  borderRadius: 32,
-                  blur: 10,
-                  alignment: Alignment.center,
-                  border: 2,
-                  linearGradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withValues(alpha: 0.1),
-                      Colors.white.withValues(alpha: 0.05),
-                    ],
-                  ),
-                  borderGradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      data.color.withValues(alpha: 0.5),
-                      Colors.white.withValues(alpha: 0.2),
-                    ],
-                  ),
-                  child: data.imagePath.startsWith('http')
-                      ? Image.network(
-                          data.imagePath,
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: IntrinsicHeight(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 1),
+                  FadeInDown(
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(32),
+                        child: GlassmorphicContainer(
                           width: double.infinity,
-                          height: double.infinity,
-                          errorBuilder: (c, e, s) => Icon(Icons.broken_image_rounded, size: 100, color: data.color),
-                        )
-                      : Image.asset(
-                          data.imagePath,
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter,
-                          width: double.infinity,
-                          height: double.infinity,
-                          errorBuilder: (c, e, s) => Icon(Icons.image_not_supported_rounded, size: 100, color: data.color),
+                          height: 320 * context.fontSizeFactor,
+                          borderRadius: 32,
+                          blur: 10,
+                          alignment: Alignment.center,
+                          border: 2,
+                          linearGradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withValues(alpha: 0.1),
+                              Colors.white.withValues(alpha: 0.05),
+                            ],
+                          ),
+                          borderGradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              data.color.withValues(alpha: 0.5),
+                              Colors.white.withValues(alpha: 0.2),
+                            ],
+                          ),
+                          child: data.imagePath.startsWith('http')
+                              ? Image.network(
+                                  data.imagePath,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.topCenter,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  errorBuilder: (c, e, s) => Icon(Icons.broken_image_rounded, size: 100, color: data.color),
+                                )
+                              : Image.asset(
+                                  data.imagePath,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.topCenter,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  errorBuilder: (c, e, s) => Icon(Icons.image_not_supported_rounded, size: 100, color: data.color),
+                                ),
                         ),
-                ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  Column(
+                    children: [
+                      FadeInUp(
+                        duration: const Duration(milliseconds: 800),
+                        child: Text(
+                          data.title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28 * context.fontSizeFactor,
+                            fontWeight: FontWeight.w800,
+                            height: 1.2,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      FadeInUp(
+                        delay: const Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 800),
+                        child: Text(
+                          data.subtitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 15 * context.fontSizeFactor,
+                            height: 1.6,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(flex: 2),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: 40),
-          Column(
-            children: [
-              FadeInUp(
-                duration: const Duration(milliseconds: 800),
-                child: Text(
-                  data.title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28 * context.fontSizeFactor,
-                    fontWeight: FontWeight.w800,
-                    height: 1.2,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 18),
-              FadeInUp(
-                delay: const Duration(milliseconds: 200),
-                duration: const Duration(milliseconds: 800),
-                child: Text(
-                  data.subtitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 15 * context.fontSizeFactor,
-                    height: 1.6,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const Spacer(flex: 2),
-        ],
-      ),
+        );
+      },
     );
   }
 }
