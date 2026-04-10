@@ -179,6 +179,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                 ],
               ),
             ),
+<<<<<<< HEAD
             const SizedBox(height: 24),
             Expanded(
               child: SingleChildScrollView(
@@ -192,6 +193,19 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                     _buildSidebarItem(4, state.translate("Profile", "Profile-ka"), FontAwesomeIcons.user, state, isDrawer),
                   ],
                 ),
+=======
+          ),
+          const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Material(
+              color: Colors.transparent,
+              child: SwitchListTile.adaptive(
+                title: const Text("Dark Mode", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                value: state.themeMode == ThemeMode.dark,
+                activeThumbColor: AppColors.accentTeal,
+                onChanged: (v) => state.toggleTheme(v),
+>>>>>>> 0773f6045af1b6318598ad03434712059d8368a8
               ),
             ),
             const Divider(height: 1),

@@ -231,6 +231,7 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return LayoutBuilder(
@@ -246,13 +247,33 @@ class OnboardingPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+=======
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: IntrinsicHeight(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 1),
+>>>>>>> 0773f6045af1b6318598ad03434712059d8368a8
                   FadeInDown(
                     child: Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(32),
                         child: GlassmorphicContainer(
                           width: double.infinity,
+<<<<<<< HEAD
                           height: imageHeight,
+=======
+                          height: 320 * context.fontSizeFactor,
+>>>>>>> 0773f6045af1b6318598ad03434712059d8368a8
                           borderRadius: 32,
                           blur: 10,
                           alignment: Alignment.center,
@@ -260,16 +281,27 @@ class OnboardingPage extends StatelessWidget {
                           linearGradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
+<<<<<<< HEAD
                             colors: isDark
                               ? [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)]
                               : [AppColors.primaryDark.withValues(alpha: 0.05), AppColors.primaryDark.withValues(alpha: 0.02)],
+=======
+                            colors: [
+                              Colors.white.withValues(alpha: 0.1),
+                              Colors.white.withValues(alpha: 0.05),
+                            ],
+>>>>>>> 0773f6045af1b6318598ad03434712059d8368a8
                           ),
                           borderGradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
                               data.color.withValues(alpha: 0.5),
+<<<<<<< HEAD
                               isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.primaryDark.withValues(alpha: 0.1),
+=======
+                              Colors.white.withValues(alpha: 0.2),
+>>>>>>> 0773f6045af1b6318598ad03434712059d8368a8
                             ],
                           ),
                           child: data.imagePath.startsWith('http')
@@ -293,7 +325,11 @@ class OnboardingPage extends StatelessWidget {
                       ),
                     ),
                   ),
+<<<<<<< HEAD
                   SizedBox(height: context.responsiveValue(mobile: 24, tablet: 40)),
+=======
+                  const SizedBox(height: 40),
+>>>>>>> 0773f6045af1b6318598ad03434712059d8368a8
                   Column(
                     children: [
                       FadeInUp(
@@ -302,15 +338,24 @@ class OnboardingPage extends StatelessWidget {
                           data.title,
                           textAlign: TextAlign.center,
                           style: TextStyle(
+<<<<<<< HEAD
                             color: isDark ? Colors.white : AppColors.textPrimary,
                             fontSize: context.responsiveValue(mobile: 24, tablet: 28) * context.fontSizeFactor,
+=======
+                            color: Colors.white,
+                            fontSize: 28 * context.fontSizeFactor,
+>>>>>>> 0773f6045af1b6318598ad03434712059d8368a8
                             fontWeight: FontWeight.w800,
                             height: 1.2,
                             letterSpacing: -0.5,
                           ),
                         ),
                       ),
+<<<<<<< HEAD
                       SizedBox(height: context.responsiveValue(mobile: 12, tablet: 18)),
+=======
+                      const SizedBox(height: 18),
+>>>>>>> 0773f6045af1b6318598ad03434712059d8368a8
                       FadeInUp(
                         delay: const Duration(milliseconds: 200),
                         duration: const Duration(milliseconds: 800),
@@ -318,8 +363,13 @@ class OnboardingPage extends StatelessWidget {
                           data.subtitle,
                           textAlign: TextAlign.center,
                           style: TextStyle(
+<<<<<<< HEAD
                             color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
                             fontSize: context.responsiveValue(mobile: 14, tablet: 15) * context.fontSizeFactor,
+=======
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 15 * context.fontSizeFactor,
+>>>>>>> 0773f6045af1b6318598ad03434712059d8368a8
                             height: 1.6,
                             fontWeight: FontWeight.w400,
                             letterSpacing: 0.2,
@@ -328,6 +378,10 @@ class OnboardingPage extends StatelessWidget {
                       ),
                     ],
                   ),
+<<<<<<< HEAD
+=======
+                  const Spacer(flex: 2),
+>>>>>>> 0773f6045af1b6318598ad03434712059d8368a8
                 ],
               ),
             ),
