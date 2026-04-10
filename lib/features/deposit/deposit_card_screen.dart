@@ -6,6 +6,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../l10n/app_localizations.dart';
+import 'wallet_card_deposit_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -27,7 +28,7 @@ class DepositCardScreen extends StatefulWidget {
 
 class _DepositCardScreenState extends State<DepositCardScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  late final TextEditingController _amountController;
+  final TextEditingController _amountController = TextEditingController();
   final TextEditingController _pinController = TextEditingController();
   final TextEditingController _accountNumberController = TextEditingController();
   final TextEditingController _accountNameController = TextEditingController();
@@ -36,12 +37,10 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
   final TextEditingController _expiryController = TextEditingController();
   final TextEditingController _cvvController = TextEditingController();
 
-  String? _selectedMethod;
-
   @override
   void initState() {
     super.initState();
-    _amountController = TextEditingController(text: widget.amount == "0" ? "" : widget.amount);
+    _amountController.text = widget.amount == "0" ? "" : widget.amount;
   }
 
   @override
@@ -79,6 +78,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
   ];
 
   void _showSuccess(BuildContext context, AppLocalizations l10n) {
+    HapticFeedback.lightImpact();
     _audioPlayer.play(AssetSource('sounds/success.mp3'));
     final theme = Theme.of(context);
     Navigator.pushReplacement(
@@ -119,7 +119,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                     ),
                     const SizedBox(height: 48),
                     ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.accentTeal,
                         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 40),
@@ -145,11 +145,11 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: const Text("Wallet PIN", style: TextStyle(fontWeight: FontWeight.w900)),
+          title: Text(l10n.walletPin, style: const TextStyle(fontWeight: FontWeight.w900)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text("Enter your 4-digit wallet PIN to authorize top-up.", textAlign: TextAlign.center),
+              Text(l10n.enterWalletPinMessage, textAlign: TextAlign.center),
               const SizedBox(height: 24),
               TextField(
                 controller: _pinController,
@@ -186,7 +186,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text("Confirm", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(l10n.confirm, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -205,14 +205,14 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: const Text("Bank Transfer", style: TextStyle(fontWeight: FontWeight.w900)),
+          title: Text(l10n.bankTransfer, style: const TextStyle(fontWeight: FontWeight.w900)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(
-                    labelText: "Select Bank",
+                    labelText: l10n.selectBank,
                     labelStyle: const TextStyle(color: AppColors.grey),
                     filled: true,
                     fillColor: theme.colorScheme.surface,
@@ -222,9 +222,9 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                   onChanged: (val) => setDialogState(() => selectedBank = val),
                 ),
                 const SizedBox(height: 16),
-                _dialogInputField(context, "Account Number", Icons.numbers, _accountNumberController, isNumber: true, onChanged: (_) => setDialogState(() {})),
+                _dialogInputField(context, l10n.accountNumber, Icons.numbers, _accountNumberController, isNumber: true, onChanged: (_) => setDialogState(() {})),
                 const SizedBox(height: 16),
-                _dialogInputField(context, "Account Name", Icons.person, _accountNameController, onChanged: (_) => setDialogState(() {})),
+                _dialogInputField(context, l10n.accountName, Icons.person, _accountNameController, onChanged: (_) => setDialogState(() {})),
               ],
             ),
           ),
@@ -246,95 +246,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text("Submit", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showCardFormDialog() {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: const Text("Card Details", style: TextStyle(fontWeight: FontWeight.w900)),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _dialogInputField(
-                  context,
-                  l10n.cardNumber,
-                  Icons.credit_card,
-                  _cardNumberController,
-                  isNumber: true,
-                  formatters: [CardNumberFormatter()],
-                  onChanged: (_) => setDialogState(() {}),
-                ),
-                const SizedBox(height: 16),
-                _dialogInputField(
-                  context,
-                  l10n.cardholderName,
-                  Icons.person,
-                  _cardHolderController,
-                  onChanged: (_) => setDialogState(() {}),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _dialogInputField(
-                        context,
-                        "MM/YY",
-                        Icons.calendar_today,
-                        _expiryController,
-                        isNumber: true,
-                        formatters: [ExpiryDateFormatter()],
-                        onChanged: (_) => setDialogState(() {}),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _dialogInputField(
-                        context,
-                        "CVV",
-                        Icons.lock,
-                        _cvvController,
-                        isNumber: true,
-                        isObscure: true,
-                        maxLength: 3,
-                        onChanged: (_) => setDialogState(() {}),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey)),
-            ),
-            ElevatedButton(
-              onPressed: (_cardNumberController.text.length < 19 || _cardHolderController.text.isEmpty || _expiryController.text.length < 5 || _cvvController.text.length < 3)
-                  ? null
-                  : () {
-                      Navigator.pop(context);
-                      _showSuccess(context, l10n);
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1A1F71),
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: const Text("Pay Now", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(l10n.submit, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -379,9 +291,9 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "Virtual Card Top-Up",
-          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.white),
+        title: Text(
+          l10n.virtualCardTopUp,
+          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.white),
         ),
         centerTitle: true,
       ),
@@ -477,7 +389,17 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                       onTap: isAmountValid ? () {
                         if (method["id"] == "wallet") _showWalletPinDialog();
                         if (method["id"] == "bank") _showBankTransferDialog();
-                        if (method["id"] == "card") _showCardFormDialog();
+                        if (method["id"] == "card") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WalletCardDepositScreen(
+                                amount: _amountController.text,
+                                currencyCode: widget.currencyCode,
+                              ),
+                            ),
+                          );
+                        }
                       } : null,
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 20),
@@ -511,7 +433,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    "Top up instantly via ${method["id"]}",
+                                    l10n.topUpInstantlyVia(method["id"]),
                                     style: const TextStyle(color: AppColors.grey, fontSize: 12),
                                   ),
                                 ],

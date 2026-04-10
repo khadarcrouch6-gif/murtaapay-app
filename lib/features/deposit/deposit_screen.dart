@@ -9,7 +9,6 @@ import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'wallet_card_deposit_screen.dart';
 
 class DepositScreen extends StatefulWidget {
   final bool isTab;
@@ -21,9 +20,11 @@ class DepositScreen extends StatefulWidget {
 
 class _DepositScreenState extends State<DepositScreen> {
   String? _selectedMethod;
+  String? _selectedProvider;
+  String? _selectedBank;
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _field1Controller = TextEditingController(); // Number / Email
-  final TextEditingController _field2Controller = TextEditingController(); // Expiry / IBAN
+  final TextEditingController _field1Controller = TextEditingController(); // Number / Email / Account Name
+  final TextEditingController _field2Controller = TextEditingController(); // Expiry / IBAN / Account Number
   final TextEditingController _field3Controller = TextEditingController(); // CVV
   final TextEditingController _field4Controller = TextEditingController(); // Cardholder Name / PIN
 
@@ -51,6 +52,14 @@ class _DepositScreenState extends State<DepositScreen> {
       "gradient": [const Color(0xFF2C3E50), const Color(0xFF4CA1AF)],
       "icon": Icons.account_balance_rounded,
     },
+  ];
+
+  final List<Map<String, dynamic>> _banks = [
+    {"name": "Premier Bank", "color": const Color(0xFF01579B)},
+    {"name": "IBS Bank", "color": const Color(0xFFC62828)},
+    {"name": "Salaam Bank", "color": const Color(0xFF2E7D32)},
+    {"name": "Amal Bank", "color": const Color(0xFFEF6C00)},
+    {"name": "MyBank", "color": const Color(0xFF4527A0)},
   ];
 
   String _getMethodTitle(String key, AppLocalizations l10n) {
@@ -195,94 +204,103 @@ class _DepositScreenState extends State<DepositScreen> {
                 ...List.generate(_methods.length, (index) {
                   final method = _methods[index];
                   final isSelected = _selectedMethod == method["id"];
+                  final amountText = _amountController.text;
+                  final double amount = double.tryParse(amountText) ?? 0;
+                  final bool isEnabled = amount > 0;
+
                   return FadeInUp(
                     delay: Duration(milliseconds: index * 80),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedMethod = method["id"];
-                          _field1Controller.clear();
-                          _field2Controller.clear();
-                          _field3Controller.clear();
-                          _field4Controller.clear();
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOutCubic,
-                        margin: const EdgeInsets.only(bottom: 16),
-                        width: double.infinity,
-                        padding: EdgeInsets.all(20 * context.fontSizeFactor),
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.05) : theme.colorScheme.surface,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: isSelected ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.05),
-                            width: 2,
+                    child: Opacity(
+                      opacity: isEnabled ? 1.0 : 0.5,
+                      child: GestureDetector(
+                        onTap: !isEnabled ? null : () {
+                          setState(() {
+                            _selectedMethod = method["id"];
+                            _field1Controller.clear();
+                            _field2Controller.clear();
+                            _field3Controller.clear();
+                            _field4Controller.clear();
+                            _selectedProvider = null;
+                            _selectedBank = null;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOutCubic,
+                          margin: const EdgeInsets.only(bottom: 16),
+                          width: double.infinity,
+                          padding: EdgeInsets.all(20 * context.fontSizeFactor),
+                          decoration: BoxDecoration(
+                            color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.05) : theme.colorScheme.surface,
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(
+                              color: isSelected ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.05),
+                              width: 2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.02),
+                                blurRadius: 20,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.02),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 56 * context.fontSizeFactor,
-                              height: 56 * context.fontSizeFactor,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: (method["gradient"] as List<Color>).map((c) => c.withValues(alpha: 0.9)).toList(),
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: (method["gradient"] as List<Color>).first.withValues(alpha: 0.3),
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 4),
-                                  )
-                                ],
-                              ),
-                              child: Center(
-                                child: AdaptiveIcon(
-                                  method["faIcon"] ?? method["icon"],
-                                  color: Colors.white,
-                                  size: 26 * context.fontSizeFactor,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 20),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _getMethodTitle(method["titleKey"], l10n),
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 56 * context.fontSizeFactor,
+                                height: 56 * context.fontSizeFactor,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: (method["gradient"] as List<Color>).map((c) => c.withValues(alpha: 0.9)).toList(),
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    _getMethodDesc(method["descKey"], l10n),
-                                    style: TextStyle(color: AppColors.grey.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: (method["gradient"] as List<Color>).first.withValues(alpha: 0.3),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    )
+                                  ],
+                                ),
+                                child: Center(
+                                  child: AdaptiveIcon(
+                                    method["faIcon"] ?? method["icon"],
+                                    color: Colors.white,
+                                    size: 26 * context.fontSizeFactor,
                                   ),
-                                ],
-                              ),
-                            ),
-                            if (isSelected)
-                              FadeInRight(
-                                duration: const Duration(milliseconds: 200),
-                                child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: const BoxDecoration(color: AppColors.accentTeal, shape: BoxShape.circle),
-                                  child: Icon(Icons.check_rounded, color: Colors.white, size: 16 * context.fontSizeFactor),
                                 ),
                               ),
-                          ],
+                              const SizedBox(width: 20),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _getMethodTitle(method["titleKey"], l10n),
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      _getMethodDesc(method["descKey"], l10n),
+                                      style: TextStyle(color: AppColors.grey.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (isSelected)
+                                FadeInRight(
+                                  duration: const Duration(milliseconds: 200),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(color: AppColors.accentTeal, shape: BoxShape.circle),
+                                    child: Icon(Icons.check_rounded, color: Colors.white, size: 16 * context.fontSizeFactor),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -292,29 +310,6 @@ class _DepositScreenState extends State<DepositScreen> {
                 if (_selectedMethod != null) ...[
                   const SizedBox(height: 8),
                   FadeInUp(child: _buildDetailsSection(context, l10n)),
-                  if (_selectedMethod != "mobile") ...[
-                    const SizedBox(height: 32),
-                    FadeInUp(
-                      child: ElevatedButton(
-                        onPressed: _amountController.text.isEmpty ? null : () {
-                          _showReviewSheet(context, l10n);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accentTeal,
-                          disabledBackgroundColor: AppColors.grey.withValues(alpha: 0.3),
-                          minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        ),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            l10n.confirmDeposit, 
-                            style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white)
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
                 ],
                 const SizedBox(height: 40),
               ],
@@ -329,18 +324,40 @@ class _DepositScreenState extends State<DepositScreen> {
     switch (_selectedMethod) {
       case "card":
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _inputField(context, l10n.cardNumber, Icons.credit_card_rounded, "1234 5678 9012 3456", _field1Controller, isNumber: true, formatters: [CardNumberInputFormatter()]),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(child: _inputField(context, l10n.expiry, Icons.calendar_today_rounded, "MM/YY", _field2Controller, isNumber: true, formatters: [ExpiryDateInputFormatter()])),
-                const SizedBox(width: 14),
-                Expanded(child: _inputField(context, "CVV", Icons.lock_outline_rounded, "123", _field3Controller, isNumber: true, isObscure: true, formatters: [LengthLimitingTextInputFormatter(3)])),
-              ],
+            Text(
+              l10n.visaMastercard,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Theme.of(context).textTheme.titleMedium?.color),
             ),
-            const SizedBox(height: 14),
-            _inputField(context, l10n.cardholderName, Icons.person_outline_rounded, l10n.fullNameOnCard, _field4Controller),
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: () => _showCardDepositDialog(l10n),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: [Color(0xFF232526), Color(0xFF414345)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 5))],
+                ),
+                child: Row(
+                  children: [
+                    AdaptiveIcon(FontAwesomeIcons.creditCard, color: Colors.white, size: 28),
+                    const SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(l10n.payWithCard, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text(l10n.securePayment, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12)),
+                      ],
+                    ),
+                    const Spacer(),
+                    const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white54, size: 16),
+                  ],
+                ),
+              ),
+            ),
           ],
         );
       case "mobile":
@@ -369,17 +386,173 @@ class _DepositScreenState extends State<DepositScreen> {
           ],
         );
       case "bank":
-        return Column(children: [
-          _inputField(context, l10n.accountHolderName, Icons.person_rounded, l10n.fullName, _field1Controller),
-          const SizedBox(height: 14),
-          _inputField(context, "IBAN", Icons.account_balance_rounded, l10n.ibanHint, _field2Controller),
-        ]);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.selectBank,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Theme.of(context).textTheme.titleMedium?.color),
+            ),
+            const SizedBox(height: 12),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _banks.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final bank = _banks[index];
+                return _buildBankOption(bank, l10n);
+              },
+            ),
+          ],
+        );
       default:
         return const SizedBox.shrink();
     }
   }
 
-  String? _selectedProvider;
+  Widget _buildBankOption(Map<String, dynamic> bank, AppLocalizations l10n) {
+    bool isSelected = _selectedBank == bank["name"];
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: () {
+        setState(() => _selectedBank = bank["name"]);
+        _showBankTransferDialog(bank, l10n);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: isSelected ? (bank["color"] as Color).withValues(alpha: 0.05) : theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isSelected ? (bank["color"] as Color) : theme.dividerColor.withValues(alpha: 0.1), width: 1.5),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(color: (bank["color"] as Color).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+              child: Icon(Icons.account_balance_rounded, color: bank["color"], size: 20),
+            ),
+            const SizedBox(width: 16),
+            Text(bank["name"], style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
+            const Spacer(),
+            Icon(Icons.arrow_forward_ios_rounded, size: 14, color: theme.dividerColor),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCardDepositDialog(AppLocalizations l10n) {
+    _field1Controller.clear();
+    _field2Controller.clear();
+    _field3Controller.clear();
+    _field4Controller.clear();
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          bool isValid = _field1Controller.text.length >= 16 && _field2Controller.text.length >= 5 && _field3Controller.text.length >= 3 && _field4Controller.text.isNotEmpty;
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            title: Row(
+              children: [
+                AdaptiveIcon(FontAwesomeIcons.creditCard, color: AppColors.accentTeal, size: 20),
+                const SizedBox(width: 12),
+                Text(l10n.cardDetails, style: const TextStyle(fontWeight: FontWeight.w900)),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _inputField(context, l10n.cardNumber, Icons.credit_card_rounded, "1234 5678 9012 3456", _field1Controller, isNumber: true, formatters: [CardNumberInputFormatter()], onChanged: (_) => setDialogState((){})),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Expanded(child: _inputField(context, l10n.expiry, Icons.calendar_today_rounded, "MM/YY", _field2Controller, isNumber: true, formatters: [ExpiryDateInputFormatter()], onChanged: (_) => setDialogState((){}))),
+                      const SizedBox(width: 14),
+                      Expanded(child: _inputField(context, "CVV", Icons.lock_outline_rounded, "123", _field3Controller, isNumber: true, isObscure: true, formatters: [LengthLimitingTextInputFormatter(3)], onChanged: (_) => setDialogState((){}))),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  _inputField(context, l10n.cardholderName, Icons.person_outline_rounded, l10n.fullNameOnCard, _field4Controller, onChanged: (_) => setDialogState((){})),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+              ElevatedButton(
+                onPressed: !isValid ? null : () {
+                  Navigator.pop(context);
+                  _showReviewSheet(this.context, l10n);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.accentTeal,
+                  disabledBackgroundColor: Colors.grey.withValues(alpha: 0.3),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
+                ),
+                child: Text(l10n.continueLabel, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          );
+        }
+      ),
+    );
+  }
+
+  void _showBankTransferDialog(Map<String, dynamic> bank, AppLocalizations l10n) {
+    _field1Controller.clear();
+    _field2Controller.clear();
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          bool isValid = _field1Controller.text.isNotEmpty && _field2Controller.text.length >= 10;
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: (bank["color"] as Color).withValues(alpha: 0.1), shape: BoxShape.circle),
+                  child: Icon(Icons.account_balance_rounded, color: bank["color"], size: 20),
+                ),
+                const SizedBox(width: 12),
+                Text(bank["name"], style: const TextStyle(fontWeight: FontWeight.w900)),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _inputField(context, l10n.accountHolderName, Icons.person_rounded, l10n.fullName, _field1Controller, onChanged: (_) => setDialogState((){})),
+                const SizedBox(height: 16),
+                _inputField(context, "Account Number / IBAN", Icons.numbers_rounded, "001XXXXXXXX", _field2Controller, isNumber: true, onChanged: (_) => setDialogState((){})),
+              ],
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+              ElevatedButton(
+                onPressed: !isValid ? null : () {
+                  Navigator.pop(context);
+                  _showReviewSheet(this.context, l10n);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: bank["color"],
+                  disabledBackgroundColor: Colors.grey.withValues(alpha: 0.3),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
+                ),
+                child: Text(l10n.continueLabel, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          );
+        }
+      ),
+    );
+  }
 
   Widget _buildProviderOption(String id, Color color, AppLocalizations l10n) {
     bool isSelected = _selectedProvider == id;
@@ -410,37 +583,51 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   void _showMobileMoneyDialog(String provider, Color color, AppLocalizations l10n) {
+    _field1Controller.clear();
+    _field4Controller.clear();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-              child: Icon(Icons.phone_android_rounded, color: color, size: 20),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          bool isValid = _field1Controller.text.length >= 7 && _field4Controller.text.length >= 4;
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                  child: Icon(Icons.phone_android_rounded, color: color, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Text(provider, style: const TextStyle(fontWeight: FontWeight.w900)),
+              ],
             ),
-            const SizedBox(width: 12),
-            Text(provider, style: const TextStyle(fontWeight: FontWeight.w900)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _inputField(context, l10n.phoneNumber, Icons.phone_iphone_rounded, "61XXXXXXX", _field1Controller, isNumber: true),
-            const SizedBox(height: 16),
-            _inputField(context, l10n.servicePin, Icons.lock_outline_rounded, "••••", _field4Controller, isNumber: true, isObscure: true),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(backgroundColor: color, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            child: Text(l10n.continueLabel, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
-          ),
-        ],
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _inputField(context, l10n.phoneNumber, Icons.phone_iphone_rounded, "61XXXXXXX", _field1Controller, isNumber: true, onChanged: (_) => setDialogState((){})),
+                const SizedBox(height: 16),
+                _inputField(context, l10n.servicePin, Icons.lock_outline_rounded, "••••", _field4Controller, isNumber: true, isObscure: true, onChanged: (_) => setDialogState((){})),
+              ],
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+              ElevatedButton(
+                onPressed: !isValid ? null : () {
+                  Navigator.pop(context);
+                  _showReviewSheet(this.context, l10n);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color, 
+                  disabledBackgroundColor: Colors.grey.withValues(alpha: 0.3),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
+                ),
+                child: Text(l10n.continueLabel, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+              ),
+            ],
+          );
+        }
       ),
     );
   }
@@ -609,6 +796,7 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   void _showSuccess(BuildContext context, AppLocalizations l10n) {
+    HapticFeedback.lightImpact();
     _audioPlayer.play(AssetSource('sounds/success.mp3'));
     final theme = Theme.of(context);
     Navigator.pushReplacement(
@@ -649,7 +837,7 @@ class _DepositScreenState extends State<DepositScreen> {
                     ),
                     const SizedBox(height: 48),
                     ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.accentTeal,
                         padding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor, horizontal: 40 * context.fontSizeFactor),

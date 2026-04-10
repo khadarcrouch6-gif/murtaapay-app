@@ -374,6 +374,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardNumberCopied => 'Card number copied!';
 
   @override
+  String get payWithCard => 'Pay with Card';
+
+  @override
+  String get securePayment => 'Secure Payment';
+
+  @override
+  String get cardDetails => 'Card Details';
+
+  @override
   String get deposit => 'Deposit';
 
   @override
@@ -620,6 +629,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseFillAllFields => 'Please fill in all fields';
+
+  @override
+  String get virtualCardTopUp => 'Virtual Card Top-Up';
+
+  @override
+  String topUpInstantlyVia(String method) {
+    return 'Top up instantly via $method';
+  }
+
+  @override
+  String get walletPin => 'Wallet PIN';
+
+  @override
+  String get enterWalletPinMessage =>
+      'Enter your 4-digit wallet PIN to authorize top-up.';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get accountName => 'Account Name';
 
   @override
   String cardEndingIn(String lastFour) {

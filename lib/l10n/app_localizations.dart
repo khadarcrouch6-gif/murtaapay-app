@@ -812,6 +812,24 @@ abstract class AppLocalizations {
   /// **'Card number copied!'**
   String get cardNumberCopied;
 
+  /// No description provided for @payWithCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with Card'**
+  String get payWithCard;
+
+  /// No description provided for @securePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Payment'**
+  String get securePayment;
+
+  /// No description provided for @cardDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Details'**
+  String get cardDetails;
+
   /// No description provided for @deposit.
   ///
   /// In en, this message translates to:
@@ -1297,6 +1315,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please fill in all fields'**
   String get pleaseFillAllFields;
+
+  /// No description provided for @virtualCardTopUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtual Card Top-Up'**
+  String get virtualCardTopUp;
+
+  /// No description provided for @topUpInstantlyVia.
+  ///
+  /// In en, this message translates to:
+  /// **'Top up instantly via {method}'**
+  String topUpInstantlyVia(String method);
+
+  /// No description provided for @walletPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet PIN'**
+  String get walletPin;
+
+  /// No description provided for @enterWalletPinMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your 4-digit wallet PIN to authorize top-up.'**
+  String get enterWalletPinMessage;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @accountName.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Name'**
+  String get accountName;
 
   /// No description provided for @cardEndingIn.
   ///

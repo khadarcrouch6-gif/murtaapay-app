@@ -142,6 +142,9 @@
   "myCards": "My Cards",
   "addNewCard": "Add New Card",
   "cardNumberCopied": "Card number copied!",
+  "payWithCard": "Pay with Card",
+  "securePayment": "Secure Payment",
+  "cardDetails": "Card Details",
   "deposit": "Deposit",
   "withdraw": "Withdraw",
   "savings": "Savings",
@@ -233,6 +236,20 @@
   "johnDoe": "John Doe",
   "verifyingIdentity": "Verifying Identity...",
   "pleaseFillAllFields": "Please fill in all fields",
+  "virtualCardTopUp": "Virtual Card Top-Up",
+  "topUpInstantlyVia": "Top up instantly via {method}",
+  "@topUpInstantlyVia": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "walletPin": "Wallet PIN",
+  "enterWalletPinMessage": "Enter your 4-digit wallet PIN to authorize top-up.",
+  "confirm": "Confirm",
+  "submit": "Submit",
+  "accountName": "Account Name",
   "cardEndingIn": "Card ending in {lastFour}",
   "@cardEndingIn": {
     "placeholders": {

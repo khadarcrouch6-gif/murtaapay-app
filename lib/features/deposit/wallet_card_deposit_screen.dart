@@ -61,17 +61,6 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
     }
   }
 
-  Widget _getCardIcon() {
-    switch (_cardType) {
-      case "visa":
-        return const AdaptiveIcon(FontAwesomeIcons.ccVisa, color: AppColors.primaryDark, size: 28);
-      case "mastercard":
-        return const AdaptiveIcon(FontAwesomeIcons.ccMastercard, color: AppColors.primaryDark, size: 28);
-      default:
-        return const Icon(Icons.credit_card_rounded, color: AppColors.grey, size: 28);
-    }
-  }
-
   Widget _buildLiveCard() {
     final l10n = AppLocalizations.of(context)!;
     bool isVisa = _cardType == "visa";
@@ -116,7 +105,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: cardGradient[0].withOpacity(0.4),
+            color: cardGradient[0].withValues(alpha: 0.4),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -202,6 +191,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
   }
 
   void _showSuccess(BuildContext context, AppLocalizations l10n) {
+    HapticFeedback.lightImpact();
     _audioPlayer.play(AssetSource('sounds/success.mp3'));
     final theme = Theme.of(context);
     Navigator.pushReplacement(
@@ -227,7 +217,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
                             end: Alignment.bottomRight,
                           ),
                           shape: BoxShape.circle,
-                          boxShadow: [BoxShadow(color: const Color(0xFF11998E).withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 10))],
+                          boxShadow: [BoxShadow(color: const Color(0xFF11998E).withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 10))],
                         ),
                         child: const Icon(Icons.check_rounded, color: Colors.white, size: 65),
                       ),
@@ -242,7 +232,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
                     ),
                     const SizedBox(height: 48),
                     ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.accentTeal,
                         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 40),
@@ -374,7 +364,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
             filled: true,
             fillColor: theme.colorScheme.surface,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.withOpacity(0.1))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1))),
             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.accentTeal, width: 2)),
           ),
         ),
