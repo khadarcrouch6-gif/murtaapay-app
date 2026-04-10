@@ -97,9 +97,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
         },
         child: Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
-          drawer: (!isDesktop && !(isLandscape && !ResponsiveBreakpoints.of(context).isMobile)) 
-              ? _buildSidebar(context, state, theme, isDrawer: true) 
-              : null,
+          drawer: _buildSidebar(context, state, theme, isDrawer: true),
           body: Row(
             children: [
               if (isDesktop || (isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
