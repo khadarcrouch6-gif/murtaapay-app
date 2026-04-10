@@ -23,7 +23,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          state.translate("Start Fundraiser", "Bilow Ururinta Sadaqo", ar: "بدء حملة تبرع", de: "Fundraiser starten"),
+          state.translate("Start Fundraiser", "Bilow Ururinta Sadaqo", ar: "بدء حملة تبرع", de: "Fundraiser starten", et: "Alusta annetuskampaaniat"),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
@@ -59,7 +59,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            state.translate("Create a Campaign", "Samee Ololaha", ar: "إنشاء حملة", de: "Kampagne erstellen"),
+                            state.translate("Create a Campaign", "Samee Ololaha", ar: "إنشاء حملة", de: "Kampagne erstellen", et: "Loo kampaania"),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -68,7 +68,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            state.translate("Raise funds for a cause you care about. We'll verify your campaign to build trust.", "Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doonaa ololahaaga si loo dhiso kalsoonida.", ar: "اجمع التبرعات لقضية تهمك. سنتحقق من حملتك لبناء الثقة.", de: "Sammeln Sie Spenden für einen Zweck, der Ihnen am Herzen liegt. Wir verifizieren Ihre Kampagne, um Vertrauen aufzubauen."),
+                            state.translate("Raise funds for a cause you care about. We'll verify your campaign to build trust.", "Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doonaa ololahaaga si loo dhiso kalsoonida.", ar: "اجمع التبرعات لقضية تهمك. سنتحقق من حملتك لبناء الثقة.", de: "Sammeln Sie Spenden für einen Zweck, der Ihnen am Herzen liegt. Wir verifizieren Ihre Kampagne, um Vertrauen aufzubauen.", et: "Kogu raha eesmärgi nimel, mis sulle korda läheb. Me kinnitame su kampaania usalduse suurendamiseks."),
                             style: TextStyle(
                               color: theme.textTheme.bodyMedium?.color ?? AppColors.textPrimary,
                               fontSize: 13,
@@ -85,7 +85,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
             FadeInUp(
               delay: const Duration(milliseconds: 100),
               child: Text(
-                state.translate("Campaign Details", "Faahfaahinta Ololaha", ar: "تفاصيل الحملة", de: "Kampagnendetails"),
+                state.translate("Campaign Details", "Faahfaahinta Ololaha", ar: "تفاصيل الحملة", de: "Kampagnendetails", et: "Kampaania üksikasjad"),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -97,8 +97,8 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
             FadeInUp(
               delay: const Duration(milliseconds: 200),
               child: _buildTextField(
-                state.translate("Campaign Title", "Cinwaanka Ololaha", ar: "عنوان الحملة", de: "Kampagnentitel"),
-                state.translate("E.g. Help build a water well in Gedo", "Tusaale: Caawi dhisidda ceel biyood Gedo", ar: "مثلاً: ساعد في بناء بئر ماء في جيدو", de: "Z. B. Hilfe beim Bau eines Wasserbrunnens in Gedo"),
+                state.translate("Campaign Title", "Cinwaanka Ololaha", ar: "عنوان الحملة", de: "Kampagnentitel", et: "Kampaania pealkiri"),
+                state.translate("E.g. Help build a water well in Gedo", "Tusaale: Caawi dhisidda ceel biyood Gedo", ar: "مثلاً: ساعد في بناء بئر ماء في جيدو", de: "Z. B. Hilfe beim Bau eines Wasserbrunnens in Gedo", et: "Nt: Aita ehitada kaev Gedo piirkonnas"),
                 Icons.title_rounded,
                 theme,
                 isDark,
@@ -108,7 +108,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
             FadeInUp(
               delay: const Duration(milliseconds: 300),
               child: _buildTextField(
-                state.translate("Goal Amount (USD)", "Cadadka Hadafka (USD)", ar: "المبلغ المستهدف (بالدولار الأمريكي)", de: "Zielbetrag (USD)"),
+                state.translate("Goal Amount (USD)", "Cadadka Hadafka (USD)", ar: "المبلغ المستهدف (بالدولار الأمريكي)", de: "Zielbetrag (USD)", et: "Eesmärk (USD)"),
                 "E.g. 5000",
                 Icons.attach_money_rounded,
                 theme,
@@ -120,8 +120,8 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
             FadeInUp(
               delay: const Duration(milliseconds: 400),
               child: _buildTextField(
-                state.translate("Description", "Sharaxaadda", ar: "الوصف", de: "Beschreibung"),
-                state.translate("Describe why you need help and how the funds will be used...", "Sharax sababta aad caawimo ugu baahan tahay iyo sida lacagta loo isticmaali doono...", ar: "صف لماذا تحتاج إلى المساعدة وكيف سيتم استخدام الأموال...", de: "Beschreiben Sie, warum Sie Hilfe benötigen und wie die Gelder verwendet werden..."),
+                state.translate("Description", "Sharaxaadda", ar: "الوصف", de: "Beschreibung", et: "Kirjeldus"),
+                state.translate("Describe why you need help and how the funds will be used...", "Sharax sababta aad caawimo ugu baahan tahay iyo sida lacagta loo isticmaali doono...", ar: "صف لماذا تحتاج إلى المساعدة وكيف سيتم استخدام الأموال...", de: "Beschreiben Sie, warum Sie Hilfe benötigen und wie die Gelder verwendet werden...", et: "Kirjelda, miks sa abi vajad ja kuidas vahendeid kasutatakse..."),
                 Icons.description_rounded,
                 theme,
                 isDark,
@@ -132,7 +132,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
             FadeInUp(
               delay: const Duration(milliseconds: 500),
               child: Text(
-                state.translate("Cover Photo", "Sawirka Daboolka", ar: "صورة الغلاف", de: "Titelbild"),
+                state.translate("Cover Photo", "Sawirka Daboolka", ar: "صورة الغلاف", de: "Titelbild", et: "Kaanefoto"),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -161,7 +161,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      state.translate("Tap to upload photo", "Taabo si aad sawir u soo geliso", ar: "اضغط لتحميل الصورة", de: "Tippen, um ein Foto hochzuladen"),
+                      state.translate("Tap to upload photo", "Taabo si aad sawir u soo geliso", ar: "اضغط لتحميل الصورة", de: "Tippen, um ein Foto hochzuladen", et: "Puuduta foto üleslaadimiseks"),
                       style: TextStyle(
                         color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
                         fontWeight: FontWeight.bold,
@@ -169,7 +169,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      state.translate("JPG, PNG up to 5MB", "JPG, PNG ilaa 5MB", ar: "JPG، PNG حتى 5 ميجابايت", de: "JPG, PNG bis zu 5 MB"),
+                      state.translate("JPG, PNG up to 5MB", "JPG, PNG ilaa 5MB", ar: "JPG، PNG حتى 5 ميجابايت", de: "JPG, PNG bis zu 5 MB", et: "JPG, PNG kuni 5MB"),
                       style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 12),
                     ),
                   ],
@@ -184,7 +184,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("Campaign submitted for review!", "Ololaha waa loo gudbiyay dib u eegis!", ar: "تم تقديم الحملة للمراجعة!", de: "Kampagne zur Überprüfung eingereicht!"))));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("Campaign submitted for review!", "Ololaha waa loo gudbiyay dib u eegis!", ar: "تم تقديم الحملة للمراجعة!", de: "Kampagne zur Überprüfung eingereicht!", et: "Kampaania on ülevaatamiseks esitatud!"))));
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
@@ -192,7 +192,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: Text(
-                    state.translate("Submit for Review", "Gudbi si dib loogu eego", ar: "تقديم للمراجعة", de: "Zur Überprüfung einreichen"),
+                    state.translate("Submit for Review", "Gudbi si dib loogu eego", ar: "تقديم للمراجعة", de: "Zur Überprüfung einreichen", et: "Esita ülevaatamiseks"),
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),

@@ -4,6 +4,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:intl/intl.dart';
 
 class SavingsScreen extends StatefulWidget {
   final bool isTab;
@@ -163,7 +164,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            Text("\$6,550.00", style: TextStyle(color: Colors.white, fontSize: 42 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
+            Text(NumberFormat.simpleCurrency(name: 'USD').format(6550.00), style: TextStyle(color: Colors.white, fontSize: 42 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
             const SizedBox(height: 32),
             Row(
               children: [
@@ -239,7 +240,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: theme.colorScheme.primary)),
                       const SizedBox(height: 4),
                       Text(
-                        "${state.translate("Goal:", "Hadafka:", ar: "الهدف:", de: "Ziel:")} \$${targetAmount.toStringAsFixed(0)}",
+                        "${state.translate("Goal:", "Hadafka:", ar: "الهدف:", de: "Ziel:")} ${NumberFormat.simpleCurrency(name: 'USD', decimalDigits: 0).format(targetAmount)}",
                         style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w500),
                       ),
                     ],
@@ -248,7 +249,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text("\$${savedAmount.toStringAsFixed(0)}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: theme.colorScheme.primary)),
+                    Text(NumberFormat.simpleCurrency(name: 'USD', decimalDigits: 0).format(savedAmount), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: theme.colorScheme.primary)),
                     const SizedBox(height: 4),
                     Text("${(progress * 100).toInt()}%", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor, color: color)),
                   ],

@@ -42,9 +42,9 @@ class _SplashScreenState extends State<SplashScreen> {
     final isDark = theme.brightness == Brightness.dark;
     
     return Scaffold(
-      backgroundColor: isDark ? AppColors.primaryDark : AppColors.accentTeal,
+      backgroundColor: isDark ? const Color(0xFF010813) : AppColors.background,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
+        value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         child: Stack(
           children: [
             // Background Decorative Elements
@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: 300,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -68,90 +68,95 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.03),
+                  color: (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.03),
                 ),
               ),
             ),
 
             Center(
-              child: MaxWidthBox(
-                maxWidth: 600,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Pulse(
-                      infinite: true,
-                      duration: const Duration(seconds: 4),
-                      child: ZoomIn(
-                        duration: const Duration(milliseconds: 1500),
-                        child: Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 40,
-                                spreadRadius: 2,
+              child: SingleChildScrollView(
+                child: MaxWidthBox(
+                  maxWidth: 600,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Pulse(
+                          infinite: true,
+                          duration: const Duration(seconds: 4),
+                          child: ZoomIn(
+                            duration: const Duration(milliseconds: 1500),
+                            child: Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isDark ? const Color(0xFF0B121F) : Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.1),
+                                    blurRadius: 40,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          padding: const EdgeInsets.all(24),
-                          child: Image.asset(
-                            "assets/images/app_logo.png",
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) => const Icon(
-                              Icons.account_balance_wallet_rounded,
-                              size: 60,
-                              color: AppColors.accentTeal,
+                              padding: const EdgeInsets.all(24),
+                              child: Image.asset(
+                                "assets/images/app_logo.png",
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) => Icon(
+                                  Icons.account_balance_wallet_rounded,
+                                  size: 60,
+                                  color: isDark ? AppColors.accentTeal : AppColors.primaryDark,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 1000),
-                      child: Text(
-                        l10n.appTitle.toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 4,
+                        const SizedBox(height: 40),
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 1000),
+                          child: Text(
+                            l10n.appTitle.toUpperCase(),
+                            style: TextStyle(
+                              color: isDark ? Colors.white : AppColors.textPrimary,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 4,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    FadeInUp(
-                      delay: const Duration(milliseconds: 300),
-                      duration: const Duration(milliseconds: 1000),
-                      child: Text(
-                        l10n.splashSubtitle,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.5,
+                        const SizedBox(height: 10),
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 300),
+                          duration: const Duration(milliseconds: 1000),
+                          child: Text(
+                            l10n.splashSubtitle,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: (isDark ? Colors.white : AppColors.textSecondary).withValues(alpha: 0.8),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 60),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 1000),
-                      child: const SizedBox(
-                        width: 40,
-                        height: 4,
-                        child: LinearProgressIndicator(
-                          backgroundColor: Colors.white24,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        const SizedBox(height: 60),
+                        FadeIn(
+                          delay: const Duration(milliseconds: 1000),
+                          child: SizedBox(
+                            width: 40,
+                            height: 4,
+                            child: LinearProgressIndicator(
+                              backgroundColor: isDark ? Colors.white24 : AppColors.primaryDark.withValues(alpha: 0.1),
+                              valueColor: AlwaysStoppedAnimation<Color>(isDark ? Colors.white : AppColors.primaryDark),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -167,7 +172,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   "v1.0.0",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: (isDark ? Colors.white : AppColors.textSecondary).withValues(alpha: 0.5),
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),

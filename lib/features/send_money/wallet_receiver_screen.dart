@@ -10,7 +10,8 @@ import 'payment_screen.dart';
 class WalletReceiverScreen extends StatefulWidget {
   final String amount;
   final String method;
-  const WalletReceiverScreen({super.key, required this.amount, required this.method});
+  final String currencyCode;
+  const WalletReceiverScreen({super.key, required this.amount, required this.method, required this.currencyCode});
 
   @override
   State<WalletReceiverScreen> createState() => _WalletReceiverScreenState();
@@ -58,6 +59,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
           receiverName: _verifiedReceiverName,
           receiverPhone: _walletIdController.text,
           payoutMethod: widget.method,
+          currencyCode: widget.currencyCode,
         ),
       ),
     );
@@ -71,7 +73,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : AppColors.accentTeal,
+        backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
         elevation: 0,
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24), onPressed: () => Navigator.pop(context)),
         title: Text(l10n.murtaaxTransfer, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white, letterSpacing: -0.5)),
@@ -84,7 +86,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: theme.brightness == Brightness.dark ? AppColors.primaryDark : AppColors.accentTeal,
+              color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
               borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
             ),
             padding: const EdgeInsets.only(bottom: 20),
@@ -92,14 +94,16 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
               child: MaxWidthBox(
                 maxWidth: 500,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     children: [
-                      _buildStepIndicator(1, "Amount", false, true, isHeader: true),
-                      _buildStepLine(true, isHeader: true),
-                      _buildStepIndicator(2, "Receiver", true, false, isHeader: true),
-                      _buildStepLine(false, isHeader: true),
-                      _buildStepIndicator(3, "Review", false, false, isHeader: true),
+                      _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
+                      _buildStepLine(context, true, isHeader: true),
+                      _buildStepIndicator(context, 2, l10n.stepReceiver, true, false, isHeader: true),
+                      _buildStepLine(context, false, isHeader: true),
+                      _buildStepIndicator(context, 3, l10n.stepPayment, false, false, isHeader: true),
+                      _buildStepLine(context, false, isHeader: true),
+                      _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
                     ],
                   ),
                 ),
@@ -134,8 +138,8 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                           decoration: BoxDecoration(
                             color: theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: _focusNode.hasFocus ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.1), width: 2),
-                            boxShadow: _focusNode.hasFocus ? [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.08), blurRadius: 10)] : null,
+                            border: Border.all(color: _focusNode.hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1), width: 2),
+                            boxShadow: _focusNode.hasFocus ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10)] : null,
                           ),
                           child: TextField(
                             controller: _walletIdController,
@@ -145,9 +149,9 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                             decoration: InputDecoration(
                               hintText: l10n.enterWalletIdHint,
-                              prefixIcon: const Icon(Icons.account_circle_outlined, color: AppColors.accentTeal, size: 24),
+                              prefixIcon: Icon(Icons.account_circle_outlined, color: theme.colorScheme.secondary, size: 24),
                               suffixIcon: _isSearching 
-                                ? const Padding(padding: EdgeInsets.all(12), child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2.5)))
+                                ? Padding(padding: const EdgeInsets.all(12), child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2.5, color: theme.colorScheme.secondary)))
                                 : const Icon(Icons.search_rounded),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(vertical: 14),
@@ -162,23 +166,23 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: AppColors.accentTeal.withValues(alpha: 0.08),
+                                color: theme.colorScheme.secondary.withValues(alpha: 0.08),
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 1.5),
+                                border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.2), width: 1.5),
                               ),
                               child: Row(
                                 children: [
-                                  const CircleAvatar(
-                                    backgroundColor: AppColors.accentTeal,
+                                  CircleAvatar(
+                                    backgroundColor: theme.colorScheme.secondary,
                                     radius: 18,
-                                    child: Icon(Icons.check_rounded, color: Colors.white, size: 20),
+                                    child: const Icon(Icons.check_rounded, color: Colors.white, size: 20),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(l10n.verifiedReceiverLabel, style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w900, fontSize: 11)),
+                                        Text(l10n.verifiedReceiverLabel, style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.w900, fontSize: 11)),
                                         Text(_verifiedReceiverName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
                                       ],
                                     ),
@@ -193,7 +197,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(l10n.recentContacts, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17)),
-                            TextButton(onPressed: () {}, child: Text(l10n.seeAll, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: AppColors.accentTeal))),
+                            TextButton(onPressed: () {}, child: Text(l10n.seeAll, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: theme.colorScheme.secondary))),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -221,11 +225,11 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                           child: ElevatedButton(
                             onPressed: _verifiedReceiverName.isNotEmpty ? () => _handleContinue() : null,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.accentTeal,
+                              backgroundColor: theme.colorScheme.secondary,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                               elevation: 4,
-                              shadowColor: AppColors.accentTeal.withValues(alpha: 0.3),
+                              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
                               disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
                               disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
                             ),
@@ -245,10 +249,11 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
     );
   }
 
-  Widget _buildStepIndicator(int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
-    Color activeColor = isHeader ? Colors.white : AppColors.accentTeal;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : Colors.grey[300]!;
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? AppColors.accentTeal : Colors.grey);
+  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
+    final theme = Theme.of(context);
+    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
+    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
 
     return Column(
       children: [
@@ -259,7 +264,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
             shape: BoxShape.circle,
             border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
           ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? AppColors.accentTeal : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? AppColors.accentTeal : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
+          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
         ),
         const SizedBox(height: 4),
         Text(label, style: TextStyle(fontSize: 12, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
@@ -267,10 +272,11 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
     );
   }
 
-  Widget _buildStepLine(bool isCompleted, {bool isHeader = false}) { 
+  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
+    final theme = Theme.of(context);
     Color color = isHeader 
       ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
-      : (isCompleted ? AppColors.accentTeal : Colors.grey[200]!);
+      : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
     return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
   }
 

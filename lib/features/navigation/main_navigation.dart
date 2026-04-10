@@ -75,7 +75,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    final bool isDesktop = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+    final bool isDesktop = ResponsiveBreakpoints.of(context).largerThan(TABLET);
     final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     final theme = Theme.of(context);
     final state = AppState();
@@ -97,6 +97,9 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
         },
         child: Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
+          drawer: (!isDesktop && !(isLandscape && !ResponsiveBreakpoints.of(context).isMobile)) 
+              ? _buildSidebar(context, state, theme, isDrawer: true) 
+              : null,
           body: Row(
             children: [
               if (isDesktop || (isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
@@ -132,76 +135,115 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
     );
   }
 
-  Widget _buildSidebar(BuildContext context, AppState state, ThemeData theme) {
+  Widget _buildSidebar(BuildContext context, AppState state, ThemeData theme, {bool isDrawer = false}) {
     return Container(
-      width: 280,
+      width: 260,
+      height: isDrawer ? double.infinity : null,
+      margin: isDrawer ? EdgeInsets.zero : const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        border: Border(right: BorderSide(color: theme.dividerColor.withValues(alpha: 0.05))),
+        borderRadius: isDrawer ? BorderRadius.zero : BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          )
+        ],
+        border: isDrawer ? null : Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
       ),
-      child: Column(
-        children: [
-          const SizedBox(height: 40),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(12)),
-                  child: const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 28),
-                ),
-                const SizedBox(width: 12),
-                const Text("MurtaaxPay", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: Column(
+      child: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 32),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
                 children: [
-                  _buildSidebarItem(0, state.translate("Home", "Hoyga"), FontAwesomeIcons.house, state),
-                  _buildSidebarItem(1, state.translate("History", "Taariikhda"), FontAwesomeIcons.clockRotateLeft, state),
-                  _buildSidebarItem(2, state.translate("Send", "Diris"), FontAwesomeIcons.paperPlane, state),
-                  _buildSidebarItem(3, state.translate("Cards", "Kaadhadhka"), FontAwesomeIcons.creditCard, state),
-                  _buildSidebarItem(4, state.translate("Profile", "Profile-ka"), FontAwesomeIcons.user, state),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      "MurtaaxPay",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SwitchListTile.adaptive(
-              title: const Text("Dark Mode", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-              value: state.themeMode == ThemeMode.dark,
-              activeThumbColor: AppColors.accentTeal,
-              onChanged: (v) => state.toggleTheme(v),
+            const SizedBox(height: 24),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  children: [
+                    _buildSidebarItem(0, state.translate("Home", "Hoyga"), FontAwesomeIcons.house, state, isDrawer),
+                    _buildSidebarItem(1, state.translate("History", "Taariikhda"), FontAwesomeIcons.clockRotateLeft, state, isDrawer),
+                    _buildSidebarItem(2, state.translate("Send", "Diris"), FontAwesomeIcons.paperPlane, state, isDrawer),
+                    _buildSidebarItem(3, state.translate("Cards", "Kaadhadhka"), FontAwesomeIcons.creditCard, state, isDrawer),
+                    _buildSidebarItem(4, state.translate("Profile", "Profile-ka"), FontAwesomeIcons.user, state, isDrawer),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: SwitchListTile.adaptive(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                title: const Text("Dark Mode", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                value: state.themeMode == ThemeMode.dark,
+                activeThumbColor: AppColors.accentTeal,
+                onChanged: (v) => state.toggleTheme(v),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSidebarItem(int index, String title, dynamic icon, AppState state) {
+  Widget _buildSidebarItem(int index, String title, dynamic icon, AppState state, bool isDrawer) {
     bool isSelected = state.selectedNavIndex == index;
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: InkWell(
-        onTap: () => _onItemTapped(index, state),
+        onTap: () {
+          _onItemTapped(index, state);
+          if (isDrawer) Navigator.pop(context);
+        },
         borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent, borderRadius: BorderRadius.circular(12)),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Row(
             children: [
-              AdaptiveIcon(icon, size: 18, color: isSelected ? AppColors.accentTeal : AppColors.grey),
-              const SizedBox(width: 16),
-              Text(title, style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.w500, color: isSelected ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.7))),
+              AdaptiveIcon(icon, size: 16, color: isSelected ? AppColors.accentTeal : AppColors.grey),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.7),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),

@@ -284,6 +284,24 @@ abstract class AppLocalizations {
   /// **'Select Payment Method'**
   String get selectPaymentMethod;
 
+  /// No description provided for @murtaaxWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Murtaax Wallet'**
+  String get murtaaxWallet;
+
+  /// No description provided for @visaMastercard.
+  ///
+  /// In en, this message translates to:
+  /// **'Visa / MasterCard'**
+  String get visaMastercard;
+
+  /// No description provided for @mobileMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Money'**
+  String get mobileMoney;
+
   /// No description provided for @transactionFee.
   ///
   /// In en, this message translates to:
@@ -470,6 +488,66 @@ abstract class AppLocalizations {
   /// **'Method'**
   String get method;
 
+  /// No description provided for @accountNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Number'**
+  String get accountNumber;
+
+  /// No description provided for @walletId.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet ID'**
+  String get walletId;
+
+  /// No description provided for @cardNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Number'**
+  String get cardNumber;
+
+  /// No description provided for @payoutVia.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout Via'**
+  String get payoutVia;
+
+  /// No description provided for @paidUsing.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid Using'**
+  String get paidUsing;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @moneyOnWay.
+  ///
+  /// In en, this message translates to:
+  /// **'Your money is on its way.'**
+  String get moneyOnWay;
+
+  /// No description provided for @refId.
+  ///
+  /// In en, this message translates to:
+  /// **'Ref ID'**
+  String get refId;
+
+  /// No description provided for @idCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'ID Copied'**
+  String get idCopied;
+
+  /// No description provided for @shareReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Receipt'**
+  String get shareReceipt;
+
   /// No description provided for @reference.
   ///
   /// In en, this message translates to:
@@ -481,6 +559,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Home'**
   String get backToHome;
+
+  /// No description provided for @stepAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get stepAmount;
+
+  /// No description provided for @stepReceiver.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiver'**
+  String get stepReceiver;
+
+  /// No description provided for @stepPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get stepPayment;
+
+  /// No description provided for @stepReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get stepReview;
+
+  /// No description provided for @feeInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange Fee Info'**
+  String get feeInfoTitle;
+
+  /// No description provided for @feeInfoContent.
+  ///
+  /// In en, this message translates to:
+  /// **'The fee is 0.99%. For example: sending \$100 will cost only \$0.99 in fees.'**
+  String get feeInfoContent;
+
+  /// No description provided for @maxLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MAX'**
+  String get maxLabel;
 
   /// No description provided for @continueLabel.
   ///
@@ -589,6 +709,444 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pay fee separately'**
   String get payFeeSeparately;
+
+  /// No description provided for @myCards.
+  ///
+  /// In en, this message translates to:
+  /// **'My Cards'**
+  String get myCards;
+
+  /// No description provided for @addNewCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Card'**
+  String get addNewCard;
+
+  /// No description provided for @cardNumberCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Card number copied!'**
+  String get cardNumberCopied;
+
+  /// No description provided for @deposit.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit'**
+  String get deposit;
+
+  /// No description provided for @withdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get withdraw;
+
+  /// No description provided for @savings.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get savings;
+
+  /// No description provided for @invest.
+  ///
+  /// In en, this message translates to:
+  /// **'Invest'**
+  String get invest;
+
+  /// No description provided for @transactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get transactions;
+
+  /// No description provided for @food.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get food;
+
+  /// No description provided for @shopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping'**
+  String get shopping;
+
+  /// No description provided for @billsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills'**
+  String get billsLabel;
+
+  /// No description provided for @monthlyBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Budget'**
+  String get monthlyBudget;
+
+  /// No description provided for @cardSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Settings'**
+  String get cardSettings;
+
+  /// No description provided for @frozen.
+  ///
+  /// In en, this message translates to:
+  /// **'Frozen'**
+  String get frozen;
+
+  /// No description provided for @unfreezeCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfreeze Card'**
+  String get unfreezeCard;
+
+  /// No description provided for @freezeCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze Card'**
+  String get freezeCard;
+
+  /// No description provided for @temporarilyDisablePayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporarily disable payments'**
+  String get temporarilyDisablePayments;
+
+  /// No description provided for @security.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get security;
+
+  /// No description provided for @cardControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Controls'**
+  String get cardControls;
+
+  /// No description provided for @onlinePayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Online Payments'**
+  String get onlinePayments;
+
+  /// No description provided for @internationalUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'International Usage'**
+  String get internationalUsage;
+
+  /// No description provided for @contactlessPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Contactless Payments'**
+  String get contactlessPayments;
+
+  /// No description provided for @terminateCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminate Card'**
+  String get terminateCard;
+
+  /// No description provided for @permanentlyDeleteCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete this virtual card'**
+  String get permanentlyDeleteCard;
+
+  /// No description provided for @enterSecurityPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your 4-digit security PIN'**
+  String get enterSecurityPin;
+
+  /// No description provided for @cardInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Information'**
+  String get cardInformation;
+
+  /// No description provided for @visaDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Visa Details'**
+  String get visaDetails;
+
+  /// No description provided for @mastercardDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastercard Details'**
+  String get mastercardDetails;
+
+  /// No description provided for @cardDetailsInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your card details to complete the transfer of {amount}'**
+  String cardDetailsInfo(Object amount);
+
+  /// No description provided for @cardHolderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Holder Name'**
+  String get cardHolderName;
+
+  /// No description provided for @expiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get expiryDate;
+
+  /// No description provided for @cvv.
+  ///
+  /// In en, this message translates to:
+  /// **'CVV'**
+  String get cvv;
+
+  /// No description provided for @secureProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Securely processing your payment...'**
+  String get secureProcessing;
+
+  /// No description provided for @selectBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Bank'**
+  String get selectBank;
+
+  /// No description provided for @murtaaxWalletDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay from your app balance'**
+  String get murtaaxWalletDesc;
+
+  /// No description provided for @visaMastercardDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay using your card'**
+  String get visaMastercardDesc;
+
+  /// No description provided for @bankTransferDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct bank transfer'**
+  String get bankTransferDesc;
+
+  /// No description provided for @mobileMoneyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'EVC Plus, Sahal, ZAAD, e-Dahab'**
+  String get mobileMoneyDesc;
+
+  /// No description provided for @identityVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity Verification'**
+  String get identityVerification;
+
+  /// No description provided for @verifyYourIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Your Identity'**
+  String get verifyYourIdentity;
+
+  /// No description provided for @verifyIdentityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'We need to verify your identity to keep your account secure. This only takes 2 minutes.'**
+  String get verifyIdentityDesc;
+
+  /// No description provided for @prepareIdDoc.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare your ID document'**
+  String get prepareIdDoc;
+
+  /// No description provided for @wellLitArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Make sure you\'re in a well-lit area'**
+  String get wellLitArea;
+
+  /// No description provided for @followInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow the on-screen instructions'**
+  String get followInstructions;
+
+  /// No description provided for @letsGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s Get Started'**
+  String get letsGetStarted;
+
+  /// No description provided for @encryptedConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'ENCRYPTED & SECURE CONNECTION'**
+  String get encryptedConnection;
+
+  /// No description provided for @personalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Details'**
+  String get personalDetails;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddress;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @residentialAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Residential Address'**
+  String get residentialAddress;
+
+  /// No description provided for @required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get required;
+
+  /// No description provided for @chooseDocumentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Document Type'**
+  String get chooseDocumentType;
+
+  /// No description provided for @passport.
+  ///
+  /// In en, this message translates to:
+  /// **'Passport'**
+  String get passport;
+
+  /// No description provided for @nationalIdCard.
+  ///
+  /// In en, this message translates to:
+  /// **'National ID Card'**
+  String get nationalIdCard;
+
+  /// No description provided for @driversLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver\'s License'**
+  String get driversLicense;
+
+  /// No description provided for @bankGradeEncryption.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank-grade encryption'**
+  String get bankGradeEncryption;
+
+  /// No description provided for @dataDeletedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is deleted after verification'**
+  String get dataDeletedNotice;
+
+  /// No description provided for @frontOfIdCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Front of ID Card'**
+  String get frontOfIdCard;
+
+  /// No description provided for @verifyYourFace.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your face'**
+  String get verifyYourFace;
+
+  /// No description provided for @positionFaceNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Position your face well-lit and clearly'**
+  String get positionFaceNotice;
+
+  /// No description provided for @alignId.
+  ///
+  /// In en, this message translates to:
+  /// **'Align your ID'**
+  String get alignId;
+
+  /// No description provided for @capturing.
+  ///
+  /// In en, this message translates to:
+  /// **'Capturing...'**
+  String get capturing;
+
+  /// No description provided for @lookStraight.
+  ///
+  /// In en, this message translates to:
+  /// **'Look Straight'**
+  String get lookStraight;
+
+  /// No description provided for @lookLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Look Left'**
+  String get lookLeft;
+
+  /// No description provided for @lookRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Look Right'**
+  String get lookRight;
+
+  /// No description provided for @verificationPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Pending'**
+  String get verificationPending;
+
+  /// No description provided for @verificationPendingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents are being reviewed. This usually takes 10-15 minutes. We\'ll notify you once it\'s complete.'**
+  String get verificationPendingDesc;
+
+  /// No description provided for @documentCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Check'**
+  String get documentCheck;
+
+  /// No description provided for @scanningForClarity.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning for clarity'**
+  String get scanningForClarity;
+
+  /// No description provided for @biometricMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric Match'**
+  String get biometricMatch;
+
+  /// No description provided for @comparingSelfie.
+  ///
+  /// In en, this message translates to:
+  /// **'Comparing selfie with ID'**
+  String get comparingSelfie;
+
+  /// No description provided for @verifyingIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying Identity...'**
+  String get verifyingIdentity;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
@@ -10,12 +11,14 @@ class PaymentSuccessScreen extends StatelessWidget {
   final String amount;
   final String receiverName;
   final String method;
+  final String currencyCode;
 
   const PaymentSuccessScreen({
     super.key,
     required this.amount,
     required this.receiverName,
     required this.method,
+    required this.currencyCode,
   });
 
   @override
@@ -50,8 +53,8 @@ class PaymentSuccessScreen extends StatelessWidget {
                             return Container(
                               height: 120,
                               width: 120,
-                              decoration: const BoxDecoration(
-                                color: AppColors.accentTeal,
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.secondary,
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(Icons.check_rounded, color: Colors.white, size: 70),
@@ -82,7 +85,10 @@ class PaymentSuccessScreen extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          l10n.transferSentMessage(amount, receiverName),
+                          l10n.transferSentMessage(
+                            NumberFormat.simpleCurrency(name: currencyCode).format(double.tryParse(amount.replaceAll(',', '')) ?? 0),
+                            receiverName,
+                          ),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: AppColors.grey,
@@ -116,7 +122,11 @@ class PaymentSuccessScreen extends StatelessWidget {
                           children: [
                             _buildCompactRow(context, l10n.receiver, receiverName),
                             const Divider(height: 24),
-                            _buildCompactRow(context, l10n.amount, "\$amount"),
+                            _buildCompactRow(
+                              context,
+                              l10n.amount,
+                              NumberFormat.simpleCurrency(name: currencyCode).format(double.tryParse(amount.replaceAll(',', '')) ?? 0),
+                            ),
                             const Divider(height: 24),
                             _buildCompactRow(context, l10n.method, method),
                             const Divider(height: 24),
@@ -139,11 +149,11 @@ class PaymentSuccessScreen extends StatelessWidget {
                             Navigator.popUntil(context, (route) => route.isFirst);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accentTeal,
+                            backgroundColor: theme.colorScheme.secondary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                             elevation: 4,
-                            shadowColor: AppColors.accentTeal.withValues(alpha: 0.3),
+                            shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
                           ),
                           child: Text(
                             l10n.backToHome,

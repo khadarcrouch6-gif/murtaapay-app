@@ -26,42 +26,46 @@ class ReceiptView extends StatelessWidget {
     return ZoomIn(
       duration: const Duration(milliseconds: 400),
       child: Center(
-        child: Container(
-          width: 340,
-          margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom + 40,
-            top: 40,
-          ),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E293B) : Colors.white,
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 30,
-                offset: const Offset(0, 15),
-              )
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Top Section: Icon & Header
-              _buildHeader(theme, state),
-              
-              // Dashed Divider
-              _buildDashedDivider(theme),
-              
-              // Details Section
-              _buildDetails(theme, state),
-              
-              const SizedBox(height: 32),
-              
-              // Bottom Action
-              _buildActions(context, state),
-              
-              const SizedBox(height: 24),
-            ],
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 340),
+            child: Container(
+              margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom + 40,
+                top: 40,
+              ),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 30,
+                    offset: const Offset(0, 15),
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Top Section: Icon & Header
+                  _buildHeader(theme, state),
+                  
+                  // Dashed Divider
+                  _buildDashedDivider(theme),
+                  
+                  // Details Section
+                  _buildDetails(theme, state),
+                  
+                  const SizedBox(height: 32),
+                  
+                  // Bottom Action
+                  _buildActions(context, state),
+                  
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -94,7 +98,7 @@ class ReceiptView extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            transaction['amount'] ?? r"$0.00",
+            transaction['amount'] ?? "0.00",
             style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: AppColors.accentTeal),
           ),
         ],

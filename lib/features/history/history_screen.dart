@@ -96,7 +96,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
                   child: Text(
-                    state.translate("Transaction History", "Taariikhda Lacagaha", ar: "سجل المعاملات", de: "Transaktionsverlauf"),
+                    state.translate("Transaction History", "Taariikhda Lacagaha", ar: "سجل المعاملات", de: "Transaktionsverlauf", et: "Tehingute ajalugu"),
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 24 * context.fontSizeFactor,
@@ -144,7 +144,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             controller: _searchController,
             onChanged: (value) => _runFilter(),
             decoration: InputDecoration(
-              hintText: state.translate("Search transactions...", "Baadh dhaqdhaqaaqyada...", ar: "البحث عن المعاملات...", de: "Transaktionen suchen..."),
+              hintText: state.translate("Search transactions...", "Baadh dhaqdhaqaaqyada...", ar: "البحث عن المعاملات...", de: "Transaktionen suchen...", et: "Otsi tehinguid..."),
               prefixIcon: const Icon(Icons.search, color: AppColors.grey),
               filled: true,
               fillColor: theme.colorScheme.surface,
@@ -157,11 +157,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildFilterChip(context, state, "All", state.translate("All", "Dhammaan", ar: "الكل", de: "Alle")),
+                _buildFilterChip(context, state, "All", state.translate("All", "Dhammaan", ar: "الكل", de: "Alle", et: "Kõik")),
                 const SizedBox(width: 8),
-                _buildFilterChip(context, state, "Sent", state.translate("Sent", "La Diray", ar: "تم الإرسال", de: "Gesendet")),
+                _buildFilterChip(context, state, "Sent", state.translate("Sent", "La Diray", ar: "تم الإرسال", de: "Gesendet", et: "Saadetud")),
                 const SizedBox(width: 8),
-                _buildFilterChip(context, state, "Received", state.translate("Received", "La Helay", ar: "تم الاستلام", de: "Empfangen")),
+                _buildFilterChip(context, state, "Received", state.translate("Received", "La Helay", ar: "تم الاستلام", de: "Empfangen", et: "Vastuvõetud")),
               ],
             ),
           ),
@@ -202,19 +202,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
             children: [
               Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.grey.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2))),
               const SizedBox(height: 24),
-              Text(state.translate("Transaction Details", "Faahfaahinta", ar: "تفاصيل المعاملة", de: "Transaktionsdetails"), style: theme.textTheme.titleLarge),
+              Text(state.translate("Transaction Details", "Faahfaahinta", ar: "تفاصيل المعاملة", de: "Transaktionsdetails", et: "Tehingu andmed"), style: theme.textTheme.titleLarge),
               const SizedBox(height: 32),
-              DetailRow(label: state.translate("Recipient/Sender", "Qofka/Dhinaca", ar: "المستلم/المرسل", de: "Empfänger/Sender"), value: tx.name),
-              DetailRow(label: state.translate("Amount", "Lacagta", ar: "المبلغ", de: "Betrag"), value: tx.amount, valueColor: tx.isSent ? null : AppColors.accentTeal),
-              DetailRow(label: state.translate("Type", "Nooca", ar: "النوع", de: "Typ"), value: tx.type),
-              DetailRow(label: state.translate("Date", "Taariikhda", ar: "التاريخ", de: "Datum"), value: tx.date),
-              DetailRow(label: state.translate("Status", "Heerka", ar: "الحالة", de: "Status"), value: state.translate(tx.status, tx.status == "Success" ? "Guul" : "Sugayn", ar: tx.status == "Success" ? "ناجح" : "قيد الانتظار", de: tx.status == "Success" ? "Erfolgreich" : "Ausstehend"), valueColor: tx.status == "Success" ? AppColors.accentTeal : Colors.orange),
+              DetailRow(label: state.translate("Recipient/Sender", "Qofka/Dhinaca", ar: "المستلم/المرسل", de: "Empfänger/Sender", et: "Saaja/Saatja"), value: tx.name),
+              DetailRow(label: state.translate("Amount", "Lacagta", ar: "المبلغ", de: "Betrag", et: "Summa"), value: tx.amount, valueColor: tx.isSent ? null : AppColors.accentTeal),
+              DetailRow(label: state.translate("Type", "Nooca", ar: "النوع", de: "Typ", et: "Tüüp"), value: tx.type),
+              DetailRow(label: state.translate("Date", "Taariikhda", ar: "التاريخ", de: "Datum", et: "Kuupäev"), value: tx.date),
+              DetailRow(label: state.translate("Status", "Heerka", ar: "الحالة", de: "Status", et: "Olek"), value: state.translate(tx.status, tx.status == "Success" ? "Guul" : "Sugayn", ar: tx.status == "Success" ? "ناجح" : "قيد الانتظار", de: tx.status == "Success" ? "Erfolgreich" : "Ausstehend", et: tx.status == "Success" ? "Edukas" : "Ootel"), valueColor: tx.status == "Success" ? AppColors.accentTeal : Colors.orange),
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context), 
-                  child: Text(state.translate("Close", "Xidh", ar: "إغلاق", de: "Schließen")),
+                  child: Text(state.translate("Close", "Xidh", ar: "إغلاق", de: "Schließen", et: "Sulge")),
                 ),
               ),
             ],
@@ -225,6 +225,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context, AppState state) {
-    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.search_off_rounded, size: 80, color: AppColors.grey.withValues(alpha: 0.5)), const SizedBox(height: 16), Text(state.translate("No transactions found", "Dhaqdhaqaaq lama hayo", ar: "لم يتم العثور على معاملات", de: "Keine Transaktionen gefunden"), style: const TextStyle(color: AppColors.grey))]));
+    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.search_off_rounded, size: 80, color: AppColors.grey.withValues(alpha: 0.5)), const SizedBox(height: 16), Text(state.translate("No transactions found", "Dhaqdhaqaaq lama hayo", ar: "لم يتم العثور على معاملات", de: "Keine Transaktionen gefunden", et: "Tehinguid ei leitud"), style: const TextStyle(color: AppColors.grey))]));
   }
 }

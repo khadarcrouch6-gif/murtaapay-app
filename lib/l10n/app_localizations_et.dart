@@ -100,6 +100,15 @@ class AppLocalizationsEt extends AppLocalizations {
   String get selectPaymentMethod => 'Vali makseviis';
 
   @override
+  String get murtaaxWallet => 'Murtaax rahakott';
+
+  @override
+  String get visaMastercard => 'Visa / MasterCard';
+
+  @override
+  String get mobileMoney => 'Mobiilimakse';
+
+  @override
   String get transactionFee => 'Tehingutasu';
 
   @override
@@ -195,10 +204,62 @@ class AppLocalizationsEt extends AppLocalizations {
   String get method => 'Meetod';
 
   @override
+  String get accountNumber => 'Kontonumber';
+
+  @override
+  String get walletId => 'Rahakoti ID';
+
+  @override
+  String get cardNumber => 'Kaardi number';
+
+  @override
+  String get payoutVia => 'Väljamakse kaudu';
+
+  @override
+  String get paidUsing => 'Makstud kasutades';
+
+  @override
+  String get cancel => 'Tühista';
+
+  @override
+  String get moneyOnWay => 'Teie raha on teel.';
+
+  @override
+  String get refId => 'Viite ID';
+
+  @override
+  String get idCopied => 'ID kopeeritud';
+
+  @override
+  String get shareReceipt => 'Jaga kviitungit';
+
+  @override
   String get reference => 'Viide';
 
   @override
   String get backToHome => 'Tagasi avalehele';
+
+  @override
+  String get stepAmount => 'Summa';
+
+  @override
+  String get stepReceiver => 'Saaja';
+
+  @override
+  String get stepPayment => 'Makse';
+
+  @override
+  String get stepReview => 'Ülevaade';
+
+  @override
+  String get feeInfoTitle => 'Vahetustasu teave';
+
+  @override
+  String get feeInfoContent =>
+      'Tasu on 0,99%. Näiteks: 100 dollari saatmine maksab vaid 0,99 dollarit tasusid.';
+
+  @override
+  String get maxLabel => 'MAX';
 
   @override
   String get continueLabel => 'Jätka';
@@ -258,4 +319,228 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get payFeeSeparately => 'Maksa tasu eraldi';
+
+  @override
+  String get myCards => 'Minu kaardid';
+
+  @override
+  String get addNewCard => 'Lisa uus kaart';
+
+  @override
+  String get cardNumberCopied => 'Kaardi number kopeeritud!';
+
+  @override
+  String get deposit => 'Hoiustamine';
+
+  @override
+  String get withdraw => 'Väljamakse';
+
+  @override
+  String get savings => 'Säästud';
+
+  @override
+  String get invest => 'Investeerimine';
+
+  @override
+  String get transactions => 'Tehingud';
+
+  @override
+  String get food => 'Toit';
+
+  @override
+  String get shopping => 'Ostlemine';
+
+  @override
+  String get billsLabel => 'Arved';
+
+  @override
+  String get monthlyBudget => 'Kuu eelarve';
+
+  @override
+  String get cardSettings => 'Kaardi seaded';
+
+  @override
+  String get frozen => 'Külmutatud';
+
+  @override
+  String get unfreezeCard => 'Sulata kaart';
+
+  @override
+  String get freezeCard => 'Külmuta kaart';
+
+  @override
+  String get temporarilyDisablePayments => 'Peata maksed ajutiselt';
+
+  @override
+  String get security => 'Turvalisus';
+
+  @override
+  String get cardControls => 'Kaardi kontroll';
+
+  @override
+  String get onlinePayments => 'Online-maksed';
+
+  @override
+  String get internationalUsage => 'Rahvusvaheline kasutus';
+
+  @override
+  String get contactlessPayments => 'Viipemaksed';
+
+  @override
+  String get terminateCard => 'Lõpeta kaart';
+
+  @override
+  String get permanentlyDeleteCard => 'Kustuta see virtuaalkaart jäädavalt';
+
+  @override
+  String get enterSecurityPin => 'Palun sisesta oma 4-kohaline turva-PIN';
+
+  @override
+  String get cardInformation => 'Kaardi andmed';
+
+  @override
+  String get visaDetails => 'Visa andmed';
+
+  @override
+  String get mastercardDetails => 'Mastercardi andmed';
+
+  @override
+  String cardDetailsInfo(Object amount) {
+    return 'Sisestage oma kaardi andmed, et viia lõpule $amount ülekanne';
+  }
+
+  @override
+  String get cardHolderName => 'Kaardi valdaja nimi';
+
+  @override
+  String get expiryDate => 'Aegumiskuupäev';
+
+  @override
+  String get cvv => 'CVV';
+
+  @override
+  String get secureProcessing => 'Teie makse turvaline töötlemine...';
+
+  @override
+  String get selectBank => 'Vali pank';
+
+  @override
+  String get murtaaxWalletDesc => 'Maksa oma rakenduse saldost';
+
+  @override
+  String get visaMastercardDesc => 'Maksa oma kaardiga';
+
+  @override
+  String get bankTransferDesc => 'Otsene pangaülekanne';
+
+  @override
+  String get mobileMoneyDesc => 'EVC Plus, Sahal, ZAAD, e-Dahab';
+
+  @override
+  String get identityVerification => 'Isikutuvastus';
+
+  @override
+  String get verifyYourIdentity => 'Kinnitage oma isik';
+
+  @override
+  String get verifyIdentityDesc =>
+      'Peame teie isiku kinnitama, et hoida teie konto turvalisena. See võtab vaid 2 minutit.';
+
+  @override
+  String get prepareIdDoc => 'Valmistage ette oma isikut tõendav dokument';
+
+  @override
+  String get wellLitArea => 'Veenduge, et olete hästi valgustatud kohas';
+
+  @override
+  String get followInstructions => 'Järgige ekraanil olevaid juhiseid';
+
+  @override
+  String get letsGetStarted => 'Alustame';
+
+  @override
+  String get encryptedConnection => 'KRÜPTEERITUD JA TURVALINE ÜHENDUS';
+
+  @override
+  String get personalDetails => 'Isikuandmed';
+
+  @override
+  String get fullName => 'Täisnimi';
+
+  @override
+  String get emailAddress => 'E-posti aadress';
+
+  @override
+  String get city => 'Linn';
+
+  @override
+  String get residentialAddress => 'Elukoha aadress';
+
+  @override
+  String get required => 'Kohustuslik';
+
+  @override
+  String get chooseDocumentType => 'Valige dokumendi tüüp';
+
+  @override
+  String get passport => 'Pass';
+
+  @override
+  String get nationalIdCard => 'ID-kaart';
+
+  @override
+  String get driversLicense => 'Juhiluba';
+
+  @override
+  String get bankGradeEncryption => 'Pangataseme krüpteerimine';
+
+  @override
+  String get dataDeletedNotice => 'Teie andmed kustutatakse pärast kinnitamist';
+
+  @override
+  String get frontOfIdCard => 'ID-kaardi esikülg';
+
+  @override
+  String get verifyYourFace => 'Kinnitage oma nägu';
+
+  @override
+  String get positionFaceNotice =>
+      'Asetage oma nägu hästi valgustatud ja selgelt';
+
+  @override
+  String get alignId => 'Joondage oma ID';
+
+  @override
+  String get capturing => 'Pildistamine...';
+
+  @override
+  String get lookStraight => 'Vaata otse';
+
+  @override
+  String get lookLeft => 'Vaata vasakule';
+
+  @override
+  String get lookRight => 'Vaata paremale';
+
+  @override
+  String get verificationPending => 'Kinnitamine ootel';
+
+  @override
+  String get verificationPendingDesc =>
+      'Teie dokumente vaadatakse üle. See võtab tavaliselt 10-15 minutit. Teavitame teid, kui see on valmis.';
+
+  @override
+  String get documentCheck => 'Dokumendikontroll';
+
+  @override
+  String get scanningForClarity => 'Selguse kontrollimine';
+
+  @override
+  String get biometricMatch => 'Biomeetriline vastavus';
+
+  @override
+  String get comparingSelfie => 'Selfi võrdlemine ID-ga';
+
+  @override
+  String get verifyingIdentity => 'Isiku kinnitamine...';
 }

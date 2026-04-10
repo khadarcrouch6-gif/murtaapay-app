@@ -267,7 +267,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
           appBar: AppBar(
-            backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : AppColors.accentTeal,
+            backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
             elevation: 0,
             leading: widget.showBackButton ? IconButton(icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24), onPressed: () => Navigator.pop(context)) : null,
             title: Text(l10n.sendMoney, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white, letterSpacing: -0.5)),
@@ -289,19 +289,21 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                         Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: theme.brightness == Brightness.dark ? AppColors.primaryDark : AppColors.accentTeal,
+                            color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
                             borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
                           ),
                           padding: const EdgeInsets.only(bottom: 10), // Booska hoose waa la yareeyay
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Row(
                               children: [
-                                _buildStepIndicator(1, "Amount", true, true, isHeader: true),
-                                _buildStepLine(false, isHeader: true),
-                                _buildStepIndicator(2, "Receiver", false, false, isHeader: true),
-                                _buildStepLine(false, isHeader: true),
-                                _buildStepIndicator(3, "Review", false, false, isHeader: true),
+                                _buildStepIndicator(context, 1, l10n.stepAmount, true, false, isHeader: true),
+                                _buildStepLine(context, false, isHeader: true),
+                                _buildStepIndicator(context, 2, l10n.stepReceiver, false, false, isHeader: true),
+                                _buildStepLine(context, false, isHeader: true),
+                                _buildStepIndicator(context, 3, l10n.stepPayment, false, false, isHeader: true),
+                                _buildStepLine(context, false, isHeader: true),
+                                _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
                               ],
                             ),
                           ),
@@ -315,14 +317,16 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(l10n.enterAmount, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: theme.textTheme.titleMedium?.color)),
+                                  Expanded(child: Text(l10n.enterAmount, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: theme.textTheme.titleMedium?.color), overflow: TextOverflow.ellipsis)),
+                                  const SizedBox(width: 8),
                                   GestureDetector(
                                     onTap: () => _showFeeInfo(l10n),
                                     child: Row(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text(l10n.feeRate, style: const TextStyle(fontSize: 13, color: AppColors.accentTeal, fontWeight: FontWeight.w900)),
+                                        Flexible(child: Text(l10n.feeRate, style: TextStyle(fontSize: 13, color: theme.colorScheme.secondary, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis)),
                                         const SizedBox(width: 4),
-                                        const Icon(Icons.info_outline_rounded, size: 15, color: AppColors.accentTeal),
+                                        Icon(Icons.info_outline_rounded, size: 15, color: theme.colorScheme.secondary),
                                       ],
                                     ),
                                   ),
@@ -353,7 +357,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                     children: [10, 50, 100, 500].map((amt) => Padding(
                                       padding: const EdgeInsets.only(right: 8),
                                       child: ActionChip(
-                                        label: Text("+\$ $amt", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
+                                        label: Text("+ ${_getCurrencySymbol(_sendCurrency)} $amt", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
                                         onPressed: () => _addQuickAmount(amt),
                                         backgroundColor: theme.colorScheme.surface,
                                         side: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1), width: 1),
@@ -390,7 +394,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                         children: [
                                           Text("Refreshed: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 10, color: AppColors.grey.withValues(alpha: 0.7), fontWeight: FontWeight.bold)),
                                           const SizedBox(width: 4),
-                                          _isRefreshing ? const SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1.5)) : const Icon(Icons.auto_awesome, size: 10, color: AppColors.accentTeal),
+                                          _isRefreshing ? const SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1.5)) : Icon(Icons.auto_awesome, size: 10, color: theme.colorScheme.secondary),
                                         ],
                                       ),
                                   ],
@@ -420,7 +424,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                 decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5)),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.receipt_long_rounded, color: AppColors.accentTeal, size: 20),
+                                    Icon(Icons.receipt_long_rounded, color: theme.colorScheme.secondary, size: 20),
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Column(
@@ -435,7 +439,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                       scale: 0.8,
                                       child: Switch.adaptive(
                                         value: _isFeeIncluded,
-                                        activeTrackColor: AppColors.accentTeal,
+                                        activeTrackColor: theme.colorScheme.secondary,
                                         onChanged: (v) {
                                           setState(() {
                                             _isFeeIncluded = v;
@@ -470,7 +474,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                     const Divider(height: 12, thickness: 1),
                                     _buildSummaryRow(l10n.totalToPay, isInputEmpty ? "-" : "${_getCurrencySymbol(_sendCurrency)} ${_formatCurrency(_totalToPay, _sendCurrencyDecimals)}", isTotal: true, isError: !hasSufficient),
                                     if (!hasSufficient)
-                                      Padding(padding: const EdgeInsets.only(top: 4), child: Text(l10n.insufficientBalance, style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w900))),
+                                      Padding(padding: const EdgeInsets.only(top: 4), child: Text(l10n.insufficientBalance, style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w900), textAlign: TextAlign.center)),
                                   ],
                                 ),
                               ),
@@ -481,11 +485,11 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                 child: ElevatedButton(
                                   onPressed: canProceed ? () => _handleContinue(l10n) : null,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.accentTeal,
-                                    foregroundColor: Colors.white,
+                                    backgroundColor: theme.colorScheme.secondary,
+                                    foregroundColor: theme.colorScheme.onSecondary,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                     elevation: 4,
-                                    shadowColor: AppColors.accentTeal.withValues(alpha: 0.3),
+                                    shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
                                     disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
                                     disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
                                   ),
@@ -509,11 +513,12 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   }
 
   void _showFeeInfo(AppLocalizations l10n) {
+    final theme = Theme.of(context);
     showDialog(context: context, builder: (context) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      title: const Text("Khidmadda Sarifka", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
-      content: const Text("Khidmaddu waa 0.99%.\n\nTusaale ahaan:\n\$100 waxaad ku diraysaa khidmad ah \$0.99 kaliya.", style: TextStyle(fontSize: 16, height: 1.6, fontWeight: FontWeight.w600)),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w900, fontSize: 18)))]
+      title: Text(l10n.feeInfoTitle, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+      content: Text(l10n.feeInfoContent, style: const TextStyle(fontSize: 16, height: 1.6, fontWeight: FontWeight.w600)),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text("OK", style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.w900, fontSize: 18)))]
     ));
   }
 
@@ -524,27 +529,28 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
 
     if (_selectedMethod == "Murtaax Wallet") {
       Navigator.push(context, MaterialPageRoute(
-        builder: (context) => WalletReceiverScreen(amount: cleanAmount, method: _selectedMethod)
+        builder: (context) => WalletReceiverScreen(amount: cleanAmount, method: _selectedMethod, currencyCode: _sendCurrency)
       ));
     } else if (_selectedMethod == "EVC Plus" || _selectedMethod == "ZAAD Service" || _selectedMethod == "e-Dahab" || _selectedMethod == "Sahal") {
       Navigator.push(context, MaterialPageRoute(
-        builder: (context) => ReceiverScreen(amount: cleanAmount, method: _selectedMethod)
+        builder: (context) => ReceiverScreen(amount: cleanAmount, method: _selectedMethod, currencyCode: _sendCurrency)
       ));
     } else if (_selectedMethod == "Bank Transfer") {
       Navigator.push(context, MaterialPageRoute(
-        builder: (context) => BankScreen(amount: cleanAmount, method: _selectedMethod)
+        builder: (context) => BankScreen(amount: cleanAmount, method: _selectedMethod, currencyCode: _sendCurrency)
       ));
     } else if (_selectedMethod == "Visa/MasterCard") {
       Navigator.push(context, MaterialPageRoute(
-        builder: (context) => CardScreen(amount: cleanAmount, method: _selectedMethod)
+        builder: (context) => CardScreen(amount: cleanAmount, method: _selectedMethod, currencyCode: _sendCurrency)
       ));
     }
   }
 
-  Widget _buildStepIndicator(int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
-    Color activeColor = isHeader ? Colors.white : AppColors.accentTeal;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : Colors.grey[300]!;
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? AppColors.accentTeal : Colors.grey);
+  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
+    final theme = Theme.of(context);
+    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
+    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : theme.dividerColor.withValues(alpha: 0.1);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : theme.textTheme.bodySmall?.color ?? Colors.grey);
 
     return Column(
       children: [
@@ -555,18 +561,22 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
             shape: BoxShape.circle, 
             border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
           ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? AppColors.accentTeal : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? AppColors.accentTeal : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
+          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
         ),
         const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
+        SizedBox(
+          width: 60,
+          child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor), maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
       ],
     );
   }
 
-  Widget _buildStepLine(bool isCompleted, {bool isHeader = false}) { 
+  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
+    final theme = Theme.of(context);
     Color color = isHeader 
       ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
-      : (isCompleted ? AppColors.accentTeal : Colors.grey[200]!);
+      : (isCompleted ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1));
     return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
   }
 
@@ -585,8 +595,8 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           decoration: BoxDecoration(
             color: isError ? Colors.red.withValues(alpha: 0.05) : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isError ? Colors.red : (isFocused ? AppColors.accentTeal : Theme.of(context).dividerColor.withValues(alpha: 0.1)), width: isFocused ? 2 : 1.5),
-            boxShadow: isFocused ? [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.08), blurRadius: 10, spreadRadius: 1)] : null,
+            border: Border.all(color: isError ? Colors.red : (isFocused ? Theme.of(context).colorScheme.secondary : Theme.of(context).dividerColor.withValues(alpha: 0.1)), width: isFocused ? 2 : 1.5),
+            boxShadow: isFocused ? [BoxShadow(color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10, spreadRadius: 1)] : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -614,8 +624,8 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                           Flexible(
                             child: Text(
                               "${_getCurrencySymbol(currency)} $balance",
-                              style: const TextStyle(
-                                color: AppColors.accentTeal,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
                                 fontWeight: FontWeight.w900,
                                 fontSize: 12,
                               ),
@@ -628,11 +638,11 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
-                                color: AppColors.accentTeal,
+                                color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(8),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.accentTeal.withValues(alpha: 0.2),
+                                    color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
                                     blurRadius: 4,
                                   ),
                                 ],
@@ -700,51 +710,65 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
       {"name": "Bank Transfer", "image": "assets/images/bank.png"},
       {"name": "Visa/MasterCard", "image": "assets/images/visa.png"},
     ];
+    
+    final ScrollController scrollController = ScrollController();
+
     return SizedBox(
       height: 56,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: methods.length,
-        padding: EdgeInsets.zero,
-        itemBuilder: (context, index) {
-          final method = methods[index];
-          bool isSelected = _selectedMethod == method["name"];
-          return Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: InkWell(
-              onTap: () {
-                HapticFeedback.selectionClick();
-                setState(() => _selectedMethod = method["name"]!);
-              },
-              borderRadius: BorderRadius.circular(20),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: isSelected ? AppColors.accentTeal : theme.colorScheme.surface,
+      child: MouseRegion(
+        onEnter: (_) {}, // Placeholder for mouse detection if needed
+        child: Scrollbar(
+          controller: scrollController,
+          thumbVisibility: false, // Only show when scrolling
+          trackVisibility: false,
+          thickness: 4,
+          radius: const Radius.circular(10),
+          child: ListView.builder(
+            controller: scrollController,
+            scrollDirection: Axis.horizontal,
+            itemCount: methods.length,
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            itemBuilder: (context, index) {
+              final method = methods[index];
+              bool isSelected = _selectedMethod == method["name"];
+              return Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: InkWell(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() => _selectedMethod = method["name"]!);
+                  },
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: isSelected ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.15), width: 2),
-                  boxShadow: isSelected ? [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 4))] : null,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(color: isSelected ? Colors.white.withValues(alpha: 0.2) : theme.dividerColor.withValues(alpha: 0.05), shape: BoxShape.circle),
-                      child: Image.asset(method["image"]!, width: 22, height: 22, errorBuilder: (c, e, s) => Icon(Icons.payment, size: 20, color: isSelected ? Colors.white : AppColors.grey)),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: isSelected ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.15), width: 2),
+                      boxShadow: isSelected ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 4))] : null,
                     ),
-                    const SizedBox(width: 10),
-                    Text(
-                      method["name"]!, 
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: isSelected ? Colors.white : theme.textTheme.bodyLarge?.color),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(color: isSelected ? Colors.white.withValues(alpha: 0.2) : theme.dividerColor.withValues(alpha: 0.05), shape: BoxShape.circle),
+                          child: Image.asset(method["image"]!, width: 22, height: 22, errorBuilder: (c, e, s) => Icon(Icons.payment, size: 20, color: isSelected ? Colors.white : AppColors.grey)),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          method["name"]!, 
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: isSelected ? Colors.white : theme.textTheme.bodyLarge?.color),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          );
-        },
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -754,9 +778,14 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(child: Text(label, style: TextStyle(color: isError ? Colors.red : AppColors.grey, fontSize: 14, fontWeight: FontWeight.w900))),
-        const SizedBox(width: 10),
-        Text(value, style: TextStyle(color: isError ? Colors.red : (isTotal ? (theme.brightness == Brightness.dark ? Colors.white : AppColors.primaryDark) : AppColors.grey), fontSize: isTotal ? 22 : 16, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+        Expanded(child: Text(label, style: TextStyle(color: isError ? Colors.red : AppColors.grey, fontSize: 13, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis)),
+        const SizedBox(width: 8),
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(value, style: TextStyle(color: isError ? Colors.red : (isTotal ? (theme.brightness == Brightness.dark ? Colors.white : AppColors.primaryDark) : AppColors.grey), fontSize: isTotal ? 20 : 15, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+          ),
+        ),
       ],
     );
   }

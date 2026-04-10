@@ -182,7 +182,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        AppState().translate("Online", "Khadka ayuu ku jiraa", ar: "متصل الآن", de: "Online"),
+                        AppState().translate("Online", "Khadka ayuu ku jiraa", ar: "متصل الآن", de: "Online", et: "Sees"),
                         style: TextStyle(
                           color: AppColors.grey,
                           fontSize: 11 * context.fontSizeFactor,
@@ -232,7 +232,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       children: [
                         const AdaptiveIcon(FontAwesomeIcons.circleInfo, color: AppColors.accentTeal, size: 16),
                         const SizedBox(width: 12),
-                        Text(AppState().translate("View Info", "Fiiri Macluumaadka", ar: "عرض المعلومات", de: "Info anzeigen"), style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+                        Text(AppState().translate("View Info", "Fiiri Macluumaadka", ar: "عرض المعلومات", de: "Info anzeigen", et: "Vaata infot"), style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
                       ],
                     ),
                   ),
@@ -242,7 +242,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       children: [
                         const AdaptiveIcon(FontAwesomeIcons.circleQuestion, color: Colors.blue, size: 16),
                         const SizedBox(width: 12),
-                        Text(AppState().translate("Help & Support", "Caawinaad & Taageero", ar: "المساعدة والدعم", de: "Hilfe & Support"), style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+                        Text(AppState().translate("Help & Support", "Caawinaad & Taageero", ar: "المساعدة والدعم", de: "Hilfe & Support", et: "Abi ja tugi"), style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
                       ],
                     ),
                   ),
@@ -253,7 +253,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       children: [
                         const AdaptiveIcon(FontAwesomeIcons.trash, color: Colors.red, size: 16),
                         const SizedBox(width: 12),
-                        Text(AppState().translate("Clear Chat", "Tirtir Wada Sheekaysiga", ar: "مسح الدردشة", de: "Chat löschen"), style: const TextStyle(color: Colors.red)),
+                        Text(AppState().translate("Clear Chat", "Tirtir Wada Sheekaysiga", ar: "مسح الدردشة", de: "Chat löschen", et: "Puhasta vestlus"), style: const TextStyle(color: Colors.red)),
                       ],
                     ),
                   ),
@@ -336,7 +336,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  AppState().translate("Contact Information", "Macluumaadka Xiriirka", ar: "معلومات الاتصال", de: "Kontaktinformationen"),
+                  AppState().translate("Contact Information", "Macluumaadka Xiriirka", ar: "معلومات الاتصال", de: "Kontaktinformationen", et: "Kontaktandmed"),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                         fontSize: 20 * context.fontSizeFactor,
@@ -346,21 +346,21 @@ class _ChatScreenState extends State<ChatScreen> {
                 _buildInfoRow(
                   context: context,
                   icon: FontAwesomeIcons.user,
-                  label: AppState().translate("Name", "Magaca", ar: "الاسم", de: "Name"),
+                  label: AppState().translate("Name", "Magaca", ar: "الاسم", de: "Name", et: "Nimi"),
                   value: widget.userName,
                 ),
                 const SizedBox(height: 16),
                 _buildInfoRow(
                   context: context,
                   icon: FontAwesomeIcons.phone,
-                  label: AppState().translate("Phone", "Taleefanka", ar: "الهاتف", de: "Telefon"),
+                  label: AppState().translate("Phone", "Taleefanka", ar: "الهاتف", de: "Telefon", et: "Telefon"),
                   value: '+252 61 xxx xxxx',
                 ),
                 const SizedBox(height: 16),
                 _buildInfoRow(
                   context: context,
                   icon: FontAwesomeIcons.envelope,
-                  label: AppState().translate("Email", "Email", ar: "البريد الإلكتروني", de: "E-Mail"),
+                  label: AppState().translate("Email", "Email", ar: "البريد الإلكتروني", de: "E-Mail", et: "E-post"),
                   value: 'user@example.com',
                 ),
                 const SizedBox(height: 24),
@@ -440,7 +440,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  AppState().translate("Help & Support", "Caawinaad & Taageero", ar: "المساعدة والدعم", de: "Hilfe & Support"),
+                  AppState().translate("Help & Support", "Caawinaad & Taageero", ar: "المساعدة والدعم", de: "Hilfe & Support", et: "Abi ja tugi"),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                         fontSize: 20 * context.fontSizeFactor,
@@ -450,29 +450,29 @@ class _ChatScreenState extends State<ChatScreen> {
                 _buildHelpItem(
                   context: context,
                   icon: FontAwesomeIcons.message,
-                  title: AppState().translate("Message Types", "Noocyada Farimaha", ar: "أنواع الرسائل", de: "Nachrichtentypen"),
-                  description: AppState().translate("Text, SMS, Audio, Images, Documents & Personal Info", "Qoraal, SMS, Cod, Sawirro, Dukumiintiyo & Xog Shakhsi", ar: "نص، SMS، صوت، صور، مستندات ومعلومات شخصية", de: "Text, SMS, Audio, Bilder, Dokumente & persönliche Infos"),
+                  title: AppState().translate("Message Types", "Noocyada Farimaha", ar: "أنواع الرسائل", de: "Nachrichtentypen", et: "Sõnumite tüübid"),
+                  description: AppState().translate("Text, SMS, Audio, Images, Documents & Personal Info", "Qoraal, SMS, Cod, Sawirro, Dukumiintiyo & Xog Shakhsi", ar: "نص، SMS، صوت، صور، مستندات ومعلومات شخصية", de: "Text, SMS, Audio, Bilder, Dokumente & persönliche Infos", et: "Tekst, SMS, heli, pildid, dokumendid ja isikuandmed"),
                 ),
                 const SizedBox(height: 16),
                 _buildHelpItem(
                   context: context,
                   icon: FontAwesomeIcons.share,
-                  title: AppState().translate("Share Information", "Wadaag Macluumaadka", ar: "مشاركة المعلومات", de: "Informationen teilen"),
-                  description: AppState().translate("Securely share your contact details and address", "Si ammaan ah u wadaag xogtaada xiriirka iyo ciwaanka", ar: "شارك تفاصيل الاتصال والعنوان بأمان", de: "Teilen Sie sicher Ihre Kontaktdaten und Adresse"),
+                  title: AppState().translate("Share Information", "Wadaag Macluumaadka", ar: "مشاركة المعلومات", de: "Informationen teilen", et: "Jaga teavet"),
+                  description: AppState().translate("Securely share your contact details and address", "Si ammaan ah u wadaag xogtaada xiriirka iyo ciwaanka", ar: "شارك تفاصيل الاتصال والعنوان بأمان", de: "Teilen Sie sicher Ihre Kontaktdaten und Adresse", et: "Jaga turvaliselt oma kontaktandmeid ja aadressi"),
                 ),
                 const SizedBox(height: 16),
                 _buildHelpItem(
                   context: context,
                   icon: FontAwesomeIcons.magnifyingGlass,
-                  title: AppState().translate("Search Chats", "Raadi Wada Hadalada", ar: "البحث في الدردشات", de: "Chats suchen"),
-                  description: AppState().translate("Find any conversation quickly", "Si degdeg ah u hel wada hadal kasta", ar: "ابحث عن أي محادثة بسرعة", de: "Finden Sie jedes Gespräch schnell"),
+                  title: AppState().translate("Search Chats", "Raadi Wada Hadalada", ar: "البحث في الدردشات", de: "Chats suchen", et: "Otsi vestlusi"),
+                  description: AppState().translate("Find any conversation quickly", "Si degdeg ah u hel wada hadal kasta", ar: "ابحث عن أي محادثة بسرعة", de: "Finden Sie jedes Gespräch schnell", et: "Leia kiiresti mis tahes vestlus"),
                 ),
                 const SizedBox(height: 16),
                 _buildHelpItem(
                   context: context,
                   icon: FontAwesomeIcons.gear,
-                  title: AppState().translate("Chat Settings", "Habaynta Wada Hadalka", ar: "إعدادات الدردشة", de: "Chat-Einstellungen"),
-                  description: AppState().translate("Clear chat history and manage preferences", "Tirtir taariikhda wada hadalka iyo qaabka loo habeeyo", ar: "مسح سجل الدردشة وإدارة التفضيلات", de: "Chatverlauf löschen und Präferenzen verwalten"),
+                  title: AppState().translate("Chat Settings", "Habaynta Wada Hadalka", ar: "إعدادات الدردشة", de: "Chat-Einstellungen", et: "Vestluse seaded"),
+                  description: AppState().translate("Clear chat history and manage preferences", "Tirtir taariikhda wada hadalka iyo qaabka loo habeeyo", ar: "مسح سجل الدردشة وإدارة التفضيلات", de: "Chatverlauf löschen und Präferenzen verwalten", et: "Puhasta vestluse ajalugu ja hallake eelistusi"),
                 ),
                 const SizedBox(height: 32),
               ],
@@ -539,12 +539,12 @@ class _ChatScreenState extends State<ChatScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
-        title: Text(AppState().translate("Clear Chat", "Tirtir Wada Sheekaysiga", ar: "مسح الدردشة", de: "Chat löschen"), style: TextStyle(color: theme.textTheme.titleLarge?.color)),
-        content: Text(AppState().translate("Are you sure you want to clear this chat?", "Ma hubtaa inaad rabto inaad tirtirto wada hadalkan?", ar: "هل أنت متأكد أنك تريد مسح هذه الدردشة؟", de: "Sind Sie sicher, dass Sie diesen Chat löschen möchten?"), style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+        title: Text(AppState().translate("Clear Chat", "Tirtir Wada Sheekaysiga", ar: "مسح الدردشة", de: "Chat löschen", et: "Puhasta vestlus"), style: TextStyle(color: theme.textTheme.titleLarge?.color)),
+        content: Text(AppState().translate("Are you sure you want to clear this chat?", "Ma hubtaa inaad rabto inaad tirtirto wada hadalkan?", ar: "هل أنت متأكد أنك تريد مسح هذه الدردشة؟", de: "Sind Sie sicher, dass Sie diesen Chat löschen möchten?", et: "Kas olete kindel, et soovite selle vestluse puhastada?"), style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppState().translate("Cancel", "Iska daa", ar: "إلغاء", de: "Abbrechen"), style: TextStyle(color: AppColors.grey)),
+            child: Text(AppState().translate("Cancel", "Iska daa", ar: "إلغاء", de: "Abbrechen", et: "Tühista"), style: TextStyle(color: AppColors.grey)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -555,7 +555,7 @@ class _ChatScreenState extends State<ChatScreen> {
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
-            child: Text(AppState().translate("Clear", "Tirtir", ar: "مسح", de: "Löschen")),
+            child: Text(AppState().translate("Clear", "Tirtir", ar: "مسح", de: "Löschen", et: "Puhasta")),
           ),
         ],
       ),

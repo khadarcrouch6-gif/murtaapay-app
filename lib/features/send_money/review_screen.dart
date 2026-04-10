@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
@@ -12,6 +13,7 @@ class ReviewScreen extends StatelessWidget {
   final String receiverPhone;
   final String method;
   final String paymentMethod;
+  final String currencyCode;
 
   const ReviewScreen({
     super.key,
@@ -20,6 +22,7 @@ class ReviewScreen extends StatelessWidget {
     required this.receiverPhone,
     required this.method,
     required this.paymentMethod,
+    required this.currencyCode,
   });
 
   @override
@@ -34,9 +37,16 @@ class ReviewScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : AppColors.accentTeal,
+        backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
         elevation: 0,
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24), onPressed: () => Navigator.pop(context)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24), 
+          onPressed: () {
+            // Go back two steps to PaymentScreen and clear the intermediate form state
+            int count = 0;
+            Navigator.popUntil(context, (route) => count++ == 2);
+          },
+        ),
         title: Text(l10n.reviewTransfer, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white, letterSpacing: -0.5)),
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -48,7 +58,7 @@ class ReviewScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: theme.brightness == Brightness.dark ? AppColors.primaryDark : AppColors.accentTeal,
+                color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
                 borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
               ),
               padding: const EdgeInsets.only(bottom: 20),
@@ -56,16 +66,16 @@ class ReviewScreen extends StatelessWidget {
                 child: MaxWidthBox(
                   maxWidth: 500,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       children: [
-                        _buildStepIndicator(1, "Amount", false, true, isHeader: true),
-                        _buildStepLine(true, isHeader: true),
-                        _buildStepIndicator(2, "Receiver", false, true, isHeader: true),
-                        _buildStepLine(true, isHeader: true),
-                        _buildStepIndicator(3, "Payment", false, true, isHeader: true),
-                        _buildStepLine(true, isHeader: true),
-                        _buildStepIndicator(4, "Review", true, false, isHeader: true),
+                        _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
+                        _buildStepLine(context, true, isHeader: true),
+                        _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
+                        _buildStepLine(context, true, isHeader: true),
+                        _buildStepIndicator(context, 3, l10n.stepPayment, false, true, isHeader: true),
+                        _buildStepLine(context, true, isHeader: true),
+                        _buildStepIndicator(context, 4, l10n.stepReview, true, false, isHeader: true),
                       ],
                     ),
                   ),
@@ -97,27 +107,27 @@ class ReviewScreen extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              _buildReviewRow(context, l10n.youSend, "\$ $amount", isBold: true),
+                              _buildReviewRow(context, l10n.youSend, NumberFormat.simpleCurrency(name: currencyCode).format(amountVal), isBold: true),
                               const Divider(height: 24),
                               _buildReviewRow(context, l10n.receiver, receiverName),
                               const SizedBox(height: 12),
                               _buildReviewRow(
                                 context,
                                 method.contains("Bank")
-                                    ? "Account Number"
+                                    ? l10n.accountNumber
                                     : (method == "Murtaax Wallet"
-                                        ? "Wallet ID"
-                                        : (method.contains("Visa") || method.contains("MasterCard") ? "Card Number" : "Phone Number")),
+                                        ? l10n.walletId
+                                        : (method.contains("Visa") || method.contains("MasterCard") ? l10n.cardNumber : l10n.phoneNumber)),
                                 receiverPhone,
                               ),
                               const SizedBox(height: 12),
-                              _buildReviewRow(context, "Payout Via", method),
+                              _buildReviewRow(context, l10n.payoutVia, method),
                               const SizedBox(height: 12),
-                              _buildReviewRow(context, "Paid Using", paymentMethod),
+                              _buildReviewRow(context, l10n.paidUsing, paymentMethod),
                               const SizedBox(height: 12),
-                              _buildReviewRow(context, l10n.transactionFee, "\$ ${fee.toStringAsFixed(2)}"),
+                              _buildReviewRow(context, l10n.transactionFee, NumberFormat.simpleCurrency(name: currencyCode).format(fee)),
                               const Divider(height: 24),
-                              _buildReviewRow(context, l10n.totalToPay, "\$ ${total.toStringAsFixed(2)}", isTotal: true),
+                              _buildReviewRow(context, l10n.totalToPay, NumberFormat.simpleCurrency(name: currencyCode).format(total), isTotal: true),
                             ],
                           ),
                         ),
@@ -131,18 +141,18 @@ class ReviewScreen extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                               decoration: BoxDecoration(
-                                color: Colors.orange.withValues(alpha: 0.1),
+                                color: theme.colorScheme.errorContainer.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
+                                border: Border.all(color: theme.colorScheme.errorContainer.withValues(alpha: 0.2)),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.info_outline_rounded, color: Colors.orange, size: 18),
+                                  Icon(Icons.info_outline_rounded, color: theme.colorScheme.error, size: 18),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
                                       l10n.deliveryNotice,
-                                      style: const TextStyle(color: Colors.orange, fontSize: 12, fontWeight: FontWeight.bold),
+                                      style: TextStyle(color: theme.colorScheme.error, fontSize: 12, fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ],
@@ -163,13 +173,13 @@ class ReviewScreen extends StatelessWidget {
                               child: OutlinedButton(
                                 onPressed: () => Navigator.pop(context),
                                 style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.redAccent,
-                                  side: const BorderSide(color: Colors.redAccent, width: 2),
+                                  foregroundColor: theme.colorScheme.error,
+                                  side: BorderSide(color: theme.colorScheme.error, width: 2),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 ),
-                                child: const Text(
-                                  "Cancel",
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                                child: Text(
+                                  l10n.cancel,
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                                 ),
                               ),
                             ),
@@ -185,15 +195,15 @@ class ReviewScreen extends StatelessWidget {
                                   _showSuccessDialog(context);
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.accentTeal,
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: theme.colorScheme.secondary,
+                                  foregroundColor: theme.colorScheme.onSecondary,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                   elevation: 4,
-                                  shadowColor: AppColors.accentTeal.withValues(alpha: 0.3),
+                                  shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
                                 ),
                                 child: Text(
-                                  l10n.confirmAndPay,
-                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                                  "${l10n.confirmAndPay} (${NumberFormat.simpleCurrency(name: currencyCode).format(total)})",
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                                 ),
                               ),
                             ),
@@ -212,43 +222,46 @@ class ReviewScreen extends StatelessWidget {
   }
 
   void _showSuccessDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     final transactionId = "TXN${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}";
 
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 20),
-            const Icon(Icons.check_circle_rounded, color: Colors.green, size: 80),
+            Icon(Icons.check_circle_rounded, color: theme.colorScheme.secondary, size: 80),
             const SizedBox(height: 20),
-            const Text("Transfer Successful!", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
+            Text(l10n.transferSuccessful, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900)),
             const SizedBox(height: 10),
-            const Text("Your money is on its way.", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+            Text(l10n.moneyOnWay, textAlign: TextAlign.center, style: theme.textTheme.bodyMedium),
             const SizedBox(height: 16),
             
             // Transaction ID Section
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha: 0.1),
+                color: theme.dividerColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text("Ref ID: ", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
-                  Text(transactionId, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900)),
+                  Text("${l10n.refId}: ", style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(transactionId, style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w900)),
                   const SizedBox(width: 8),
                   InkWell(
                     onTap: () {
                       Clipboard.setData(ClipboardData(text: transactionId));
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ID Copied"), duration: Duration(seconds: 1)));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.idCopied), duration: const Duration(seconds: 1)));
                     },
-                    child: const Icon(Icons.copy_rounded, size: 14, color: AppColors.accentTeal),
+                    child: Icon(Icons.copy_rounded, size: 14, color: theme.colorScheme.secondary),
                   ),
                 ],
               ),
@@ -266,10 +279,10 @@ class ReviewScreen extends StatelessWidget {
                   // Share logic here
                 },
                 icon: const Icon(Icons.share_rounded, size: 20),
-                label: const Text("Share Receipt", style: TextStyle(fontWeight: FontWeight.w900)),
+                label: Text(l10n.shareReceipt, style: const TextStyle(fontWeight: FontWeight.w900)),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.accentTeal,
-                  side: const BorderSide(color: AppColors.accentTeal, width: 2),
+                  foregroundColor: theme.colorScheme.secondary,
+                  side: BorderSide(color: theme.colorScheme.secondary, width: 2),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
               ),
@@ -288,12 +301,12 @@ class ReviewScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accentTeal,
-                  foregroundColor: Colors.white,
+                  backgroundColor: theme.colorScheme.secondary,
+                  foregroundColor: theme.colorScheme.onSecondary,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   elevation: 0,
                 ),
-                child: const Text("Back to Home", style: TextStyle(fontWeight: FontWeight.w900)),
+                child: Text(l10n.backToHome, style: const TextStyle(fontWeight: FontWeight.w900)),
               ),
             ),
           ],
@@ -302,10 +315,11 @@ class ReviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStepIndicator(int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
-    Color activeColor = isHeader ? Colors.white : AppColors.accentTeal;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : Colors.grey[300]!;
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? AppColors.accentTeal : Colors.grey);
+  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
+    final theme = Theme.of(context);
+    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
+    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : theme.dividerColor.withValues(alpha: 0.1);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : theme.textTheme.bodySmall?.color ?? Colors.grey);
 
     return Column(
       children: [
@@ -316,37 +330,58 @@ class ReviewScreen extends StatelessWidget {
             shape: BoxShape.circle,
             border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
           ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? AppColors.accentTeal : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? AppColors.accentTeal : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
+          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
         ),
         const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
+        SizedBox(
+          width: 60,
+          child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor), maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
       ],
     );
   }
 
-  Widget _buildStepLine(bool isCompleted, {bool isHeader = false}) { 
+  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
+    final theme = Theme.of(context);
     Color color = isHeader 
       ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
-      : (isCompleted ? AppColors.accentTeal : Colors.grey[200]!);
+      : (isCompleted ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1));
     return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
   }
 
   Widget _buildReviewRow(BuildContext context, String label, String value, {bool isBold = false, bool isTotal = false}) {
+    final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: AppColors.grey, fontSize: 15, fontWeight: FontWeight.w900)),
+        Expanded(
+          flex: 2,
+          child: Text(
+            label, 
+            style: TextStyle(
+              color: theme.textTheme.bodySmall?.color, 
+              fontSize: 15, 
+              fontWeight: FontWeight.w900
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
         const SizedBox(width: 16),
         Expanded(
-          child: Text(
-            value, 
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              color: isTotal ? AppColors.accentTeal : (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87),
-              fontSize: isTotal ? 24 : (isBold ? 18 : 16), 
-              fontWeight: FontWeight.w900,
-              letterSpacing: -0.5,
+          flex: 3,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerRight,
+            child: Text(
+              value, 
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: isTotal ? theme.colorScheme.secondary : theme.textTheme.bodyLarge?.color,
+                fontSize: isTotal ? 24 : (isBold ? 18 : 16), 
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+              ),
             ),
           ),
         ),

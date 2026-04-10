@@ -15,6 +15,9 @@ class AppState extends ChangeNotifier {
   double _balance = 12450.80;
   double get balance => _balance;
 
+  String _currencyCode = 'USD';
+  String get currencyCode => _currencyCode;
+
   List<BankAccount> _linkedBanks = [];
   List<BankAccount> get linkedBanks => _linkedBanks;
 
@@ -128,7 +131,7 @@ class AppState extends ChangeNotifier {
     switch (_locale.languageCode) {
       case 'so': return so.isNotEmpty ? so : en;
       case 'ar': return ar.isNotEmpty ? ar : en;
-      case 'et': return et.isNotEmpty ? et : (so.isNotEmpty ? so : en);
+      case 'et': return et.isNotEmpty ? et : en;
       case 'de': return de.isNotEmpty ? de : en;
       default:   return en;
     }

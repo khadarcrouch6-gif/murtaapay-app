@@ -188,6 +188,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         _cardIconButton(Icons.copy_all_rounded, widget.onCopyNumber),
                         const SizedBox(width: 10),
@@ -197,7 +198,8 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
                         ),
                       ],
                     ),
-                    _buildBranding(),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildBranding()),
                   ],
                 ),
                 
@@ -231,17 +233,25 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
   }
   Widget _buildBranding() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const Text("MurtaaxPay", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: -0.2)),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-              decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
-              child: const Text("PLATINUM", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w900, fontSize: 7, letterSpacing: 1.5)),
-            ),
-          ],
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text("MurtaaxPay", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: -0.2)),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
+                child: const Text("PLATINUM", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w900, fontSize: 7, letterSpacing: 1.5)),
+              ),
+            ],
+          ),
         ),
         const SizedBox(width: 12),
         Image.asset(
@@ -302,21 +312,34 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(state.translate("Card Holder", "Milkiilaha", ar: "صاحب البطاقة", de: "Karteninhaber").toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 2),
-            Text(widget.card.cardHolder, style: const TextStyle(color: Colors.white, letterSpacing: 1, fontWeight: FontWeight.bold, fontSize: 13)),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(state.translate("Card Holder", "Milkiilaha", ar: "صاحب البطاقة", de: "Karteninhaber").toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
+              ),
+              const SizedBox(height: 2),
+              Text(widget.card.cardHolder, style: const TextStyle(color: Colors.white, letterSpacing: 1, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis),
+            ],
+          ),
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(state.translate("Expires", "Dhicitaanka", ar: "تنتهي في", de: "Ablauf").toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 2),
-            Text(widget.card.expiryDate, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-          ],
+        const SizedBox(width: 12),
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(state.translate("Expires", "Dhicitaanka", ar: "تنتهي في", de: "Ablauf").toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
+              ),
+              const SizedBox(height: 2),
+              Text(widget.card.expiryDate, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis),
+            ],
+          ),
         ),
       ],
     );
@@ -395,7 +418,14 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-               const Text("MurtaaxPay", style: TextStyle(color: Colors.white30, fontWeight: FontWeight.w900, fontSize: 11)),
+                const Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text("MurtaaxPay", style: TextStyle(color: Colors.white30, fontWeight: FontWeight.w900, fontSize: 11)),
+                  ),
+                ),
+                const SizedBox(width: 12),
                 Container(
                   width: 32, height: 32,
                   decoration: BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [const Color(0xFF6366F1).withValues(alpha: 0.4), const Color(0xFF2DD4BF).withValues(alpha: 0.4)])),

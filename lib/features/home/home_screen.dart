@@ -13,6 +13,7 @@ import '../../core/widgets/shimmer_loading.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/widgets/transaction_item.dart';
 import '../send_money/send_amount_screen.dart';
+import 'package:intl/intl.dart';
 import '../history/history_screen.dart';
 import '../cards/cards_screen.dart';
 import '../bills/pay_bills_screen.dart';
@@ -139,6 +140,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildFixedTopBar(BuildContext context, AppState state, ThemeData theme) {
+    final bool isDesktop = ResponsiveBreakpoints.of(context).largerThan(TABLET);
+    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+
     return FadeInDown(
       duration: const Duration(milliseconds: 800),
       child: AnimatedBuilder(
@@ -169,34 +173,54 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            if (!isDesktop && !(isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
+              IconButton(
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: const Icon(Icons.menu_rounded, color: Colors.white),
+                padding: const EdgeInsets.only(right: 12),
+                constraints: const BoxConstraints(),
+              ),
             Expanded(
               child: FadeInLeft(
                 delay: const Duration(milliseconds: 300),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start, 
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      state.translate("Welcome back,", "Ku soo dhawaaw,", ar: "مرحباً بعودتك،", de: "Willkommen zurück,"), 
-                      style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor)
+                      state.translate("Welcome back,", "Ku soo dhawaaw,", ar: "مرحباً بعودtek،", de: "Willkommen zurück,", et: "Tere tulemast tagasi,"),
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                    Text(
-                      _displayedName, 
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: Colors.white, 
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20 * context.fontSizeFactor
-                      ), 
-                      overflow: TextOverflow.ellipsis
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        _displayedName, 
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: Colors.white, 
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20 * context.fontSizeFactor
+                        ), 
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     ),
                   ]
                 ),
               ),
             ),
+            const SizedBox(width: 8),
             Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 FadeInRight(
                   delay: const Duration(milliseconds: 400),
                   child: IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -236,6 +260,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 FadeInRight(
                   delay: const Duration(milliseconds: 500),
                   child: IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -298,27 +324,68 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 borderGradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withValues(alpha: 0.5), Colors.white.withValues(alpha: 0.2)]),
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text(state.translate("Wallet Balance", "Hadhaaga Wallet-ka", ar: "رصيد المحفظة", de: "Kontostand"), style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14 * context.fontSizeFactor)),
-                      IconButton(onPressed: () => setState(() => _isBalanceVisible = !_isBalanceVisible), icon: Icon(_isBalanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.white70, size: 20 * context.fontSizeFactor)),
-                    ]),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: ShimmerLoading(
-                        isLoading: _isLoading,
-                        child: Text(_isBalanceVisible ? r"$12,450.80" : "******", style: theme.textTheme.displayMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 32 * context.fontSizeFactor)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center, 
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                        children: [
+                          Expanded(
+                            child: Text(
+                              state.translate("Wallet Balance", "Hadhaaga Wallet-ka", ar: "رصيد المحفظة", de: "Kontostand", et: "Rahakoti jääk"), 
+                              style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold), 
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            )
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            onPressed: () => setState(() => _isBalanceVisible = !_isBalanceVisible), 
+                            icon: Icon(_isBalanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.white70, size: 20),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ]
                       ),
-                    ),
-                  ]),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: Center(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: ShimmerLoading(
+                              isLoading: _isLoading,
+                              child: Text(
+                                _isBalanceVisible ? NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance) : "******",
+                                style: theme.textTheme.displayMedium?.copyWith(
+                                  color: Colors.white, 
+                                  fontWeight: FontWeight.bold, 
+                                  fontSize: 32 * context.fontSizeFactor
+                                )
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]
+                  ),
                 ),
               ),
               const SizedBox(height: 32),
-              Row(children: [
-                Expanded(child: _buildActionButton(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden"), FontAwesomeIcons.paperPlane, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SendAmountScreen())))),
-                const SizedBox(width: 16),
-                Expanded(child: _buildActionButton(context, state.translate("Add", "Ku dar", ar: "إضافة", de: "Hinzufügen"), FontAwesomeIcons.plus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen())))),
-              ]),
+              Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                alignment: WrapAlignment.center,
+                children: [
+                  ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : double.infinity),
+                    child: _buildActionButton(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden", et: "Saada"), FontAwesomeIcons.paperPlane, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SendAmountScreen()))),
+                  ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : double.infinity),
+                    child: _buildActionButton(context, state.translate("Add", "Ku dar", ar: "إضافة", de: "Hinzufügen", et: "Lisa"), FontAwesomeIcons.plus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
+                  ),
+                ],
+              ),
             ],
           );
         }
@@ -333,38 +400,74 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AnalyticsScreen())),
         child: Container(
           padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(24), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 8))]),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface, 
+            borderRadius: BorderRadius.circular(24), 
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 8))]
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isSmall = constraints.maxWidth < 420;
+              final isVerySmall = constraints.maxWidth < 280;
+              
+              return Column(
                 children: [
-                  Expanded(child: Text(state.translate("Spending Analysis", "Isticmaalka", ar: "تحليل الإنفاق", de: "Ausgabenanalyse"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor), overflow: TextOverflow.ellipsis)),
-                  const SizedBox(width: 8),
                   Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildChartTypeToggle(ChartType.bar, Icons.bar_chart_rounded),
-                      _buildChartTypeToggle(ChartType.line, Icons.show_chart_rounded),
-                      _buildChartTypeToggle(ChartType.pie, Icons.pie_chart_rounded),
+                      Expanded(
+                        child: Text(
+                          state.translate("Spending Analysis", "Isticmaalka", ar: "تحليل الإنفاق", de: "Ausgabenanalyse", et: "Kulude analüüs"), 
+                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: isSmall ? 15 : 18),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            _buildChartTypeToggle(ChartType.bar, Icons.bar_chart_rounded, isSmall),
+                            _buildChartTypeToggle(ChartType.line, Icons.show_chart_rounded, isSmall),
+                            _buildChartTypeToggle(ChartType.pie, Icons.pie_chart_rounded, isSmall),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
+                  const SizedBox(height: 24),
+                  if (!isVerySmall) ...[
+                    SizedBox(
+                      height: constraints.maxWidth > 600 ? 250 : 180,
+                      child: _buildSelectedChart(theme),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                  if (isSmall) 
+                    Column(
+                      children: [
+                        _buildStatItem(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden", et: "Saada"), r"$4,250", Colors.blue, isList: true),
+                        const SizedBox(height: 12),
+                        _buildStatItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen", et: "Arved"), r"$1,120", Colors.orange, isList: true),
+                        const SizedBox(height: 12),
+                        _buildStatItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah", et: "Sadaqah"), r"$450", AppColors.accentTeal, isList: true),
+                      ],
+                    )
+                  else
+                    Row(
+                      children: [
+                        Expanded(child: _buildStatItem(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden", et: "Saada"), r"$4,250", Colors.blue)),
+                        const SizedBox(width: 16),
+                        Expanded(child: _buildStatItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen", et: "Arved"), r"$1,120", Colors.orange)),
+                        const SizedBox(width: 16),
+                        Expanded(child: _buildStatItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah", et: "Sadaqah"), r"$450", AppColors.accentTeal)),
+                      ],
+                    ),
                 ],
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                height: 200,
-                child: _buildSelectedChart(theme),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(child: _buildStatItem(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden"), r"$4,250", Colors.blue)),
-                  Expanded(child: _buildStatItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen"), r"$1,120", Colors.orange)),
-                  Expanded(child: _buildStatItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah"), r"$450", AppColors.accentTeal)),
-                ],
-              ),
-            ],
+              );
+            }
           ),
         ),
       ),
@@ -377,16 +480,26 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(state.translate("Get Started", "Bilow Hadda", ar: "ابدأ الآن", de: "Loslegen"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+          Text(state.translate("Get Started", "Bilow Hadda", ar: "ابدأ الآن", de: "Loslegen", et: "Alusta"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
           const SizedBox(height: 16),
-          GridView.count(
-            crossAxisCount: 4, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), mainAxisSpacing: 16, crossAxisSpacing: 16,
-            children: [
-              _buildFeatureItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen"), Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
-              _buildFeatureItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah"), Icons.volunteer_activism_rounded, AppColors.accentTeal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
-              _buildFeatureItem(context, state.translate("Exchange", "Sarifka", ar: "صرف", de: "Wechselkurs"), Icons.currency_exchange_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
-              _buildFeatureItem(context, state.translate("Vouchers", "Waatsharrada", ar: "قسائم", de: "Gutscheine"), Icons.confirmation_number_rounded, Colors.purple, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final crossAxisCount = constraints.maxWidth < 300 ? 2 : 4;
+              return GridView.count(
+                crossAxisCount: crossAxisCount, 
+                shrinkWrap: true, 
+                physics: const NeverScrollableScrollPhysics(), 
+                mainAxisSpacing: 8, 
+                crossAxisSpacing: 8,
+                childAspectRatio: crossAxisCount == 2 ? 1.5 : 0.8,
+                children: [
+                  _buildFeatureItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen", et: "Arved"), Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
+                  _buildFeatureItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah", et: "Sadaqah"), Icons.volunteer_activism_rounded, AppColors.accentTeal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
+                  _buildFeatureItem(context, state.translate("Exchange", "Sarifka", ar: "صرف", de: "Wechselkurs", et: "Valuutakurss"), Icons.currency_exchange_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
+                  _buildFeatureItem(context, state.translate("Vouchers", "Waatsharrada", ar: "قسائم", de: "Gutscheine", et: "Voucherid"), Icons.confirmation_number_rounded, Colors.purple, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -419,9 +532,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         child: Text("PREMIUM", style: TextStyle(color: Colors.white70, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 1)),
                       ),
                       const SizedBox(height: 12),
-                      Text(state.translate("Virtual Card", "Kaadhka Online-ka ah", ar: "بطاقة افتراضية", de: "Virtuelle Karte"), style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+                      Text(state.translate("Virtual Card", "Kaadhka Online-ka ah", ar: "بطاقة افتراضية", de: "Virtuelle Karte", et: "Virtuaalne kaart"), style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
                       const SizedBox(height: 4),
-                      Text(state.translate("Get your secure virtual card and shop globally.", "Hadda qaado kaadhkaaga online-ka ah si aad wax u iibsato.", ar: "احصل على بطاقتك الافتراضية الآمنة وتسوق عالمياً.", de: "Holen Sie sich Ihre sichere virtuelle Karte und kaufen Sie weltweit ein."), style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
+                      Text(state.translate("Get your secure virtual card and shop globally.", "Hadda qaado kaadhkaaga online-ka ah si aad wax u iibsato.", ar: "احصل على بطاقتك الافتراضية الآمنة وتسوق عالمياً.", de: "Holen Sie sich Ihre sichere virtuelle Karte und kaufen Sie weltweit ein.", et: "Hangi oma turvaline virtuaalkaart ja ostle globaalselt."), style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
                     ],
                   ),
                 ),
@@ -445,13 +558,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             children: [
               Expanded(
                 child: Text(
-                  state.translate("Recent Transactions", "Dhaqdhaqaaqadii u dambeeyay", ar: "المعاملات الأخيرة", de: "Letzte Transaktionen"), 
+                  state.translate("Recent Transactions", "Dhaqdhaqaaqadii u dambeeyay", ar: "المعاملات الأخيرة", de: "Letzte Transaktionen", et: "Viimased tehingud"), 
                   style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 8),
-              TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HistoryScreen())), child: Text(state.translate("See All", "Dhammaan", ar: "عرض الكل", de: "Alle anzeigen"), style: TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+              Flexible(
+                child: TextButton(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HistoryScreen())), 
+                  child: Text(
+                    state.translate("See All", "Dhammaan", ar: "عرض الكل", de: "Alle anzeigen", et: "Vaata kõiki"),
+                    style: TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ),
+              ),
             ],
           ),
           if (_isLoading) ...[
@@ -462,13 +584,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             TransactionItem(
               title: "Amazon.com", 
               subtitle: "Shopping", 
-              amount: r"-$124.50", 
+              amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(124.50)}", 
               date: "Today, 2:45 PM", 
               status: "Success", 
               icon: FontAwesomeIcons.amazon,
               onTap: () => ReceiptView.show(context, {
                 'title': 'Amazon.com',
-                'amount': r'-$124.50',
+                'amount': "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(124.50)}",
                 'date': 'Today, 2:45 PM',
                 'status': 'Success'
               }),
@@ -476,13 +598,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             TransactionItem(
               title: "Ahmed Warsame", 
               subtitle: "Transfer", 
-              amount: r"+$2,500.00", 
+              amount: "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(2500.00)}", 
               date: "Yesterday, 10:20 AM", 
               status: "Success", 
               icon: FontAwesomeIcons.userLarge,
               onTap: () => ReceiptView.show(context, {
                 'title': 'Ahmed Warsame',
-                'amount': r'+$2,500.00',
+                'amount': "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(2500.00)}",
                 'date': 'Yesterday, 10:20 AM',
                 'status': 'Success'
               }),
@@ -490,13 +612,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             TransactionItem(
               title: "Somnet Bill", 
               subtitle: "Utilities", 
-              amount: r"-$35.00", 
+              amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(35.00)}", 
               date: "24 Oct, 4:15 PM", 
               status: "Pending", 
               icon: Icons.wifi_rounded,
               onTap: () => ReceiptView.show(context, {
                 'title': 'Somnet Bill',
-                'amount': r'-$35.00',
+                'amount': "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(35.00)}",
                 'date': '24 Oct, 4:15 PM',
                 'status': 'Pending'
               }),
@@ -518,8 +640,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))]),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           AdaptiveIcon(icon, color: Colors.white, size: 18 * context.fontSizeFactor),
-          const SizedBox(width: 10),
-          Text(label, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor)),
+          const SizedBox(width: 8),
+          Flexible(child: Text(label, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor), overflow: TextOverflow.ellipsis)),
         ]),
       ),
     );
@@ -529,30 +651,41 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return GestureDetector(
       onTap: onTap,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor),
+          Expanded(
+            child: Center(
+              child: FittedBox(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                  child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor),
+                ),
+              ),
+            ),
           ),
-          const SizedBox(height: 8),
-          Flexible(
-            child: Text(label, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w500), textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 4),
+          Text(
+            label, 
+            style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w500), 
+            textAlign: TextAlign.center, 
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildChartTypeToggle(ChartType type, dynamic icon) {
+  Widget _buildChartTypeToggle(ChartType type, dynamic icon, [bool isSmall = false]) {
     final isSelected = _selectedChartType == type;
     return GestureDetector(
       onTap: () => setState(() => _selectedChartType = type),
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(isSmall ? 4 : 6),
         margin: const EdgeInsets.only(left: 4),
         decoration: BoxDecoration(color: isSelected ? AppColors.primaryDark.withValues(alpha: 0.1) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
-        child: AdaptiveIcon(icon, size: 18, color: isSelected ? AppColors.primaryDark : Colors.grey),
+        child: AdaptiveIcon(icon, size: isSmall ? 14 : 16, color: isSelected ? AppColors.primaryDark : Colors.grey),
       ),
     );
   }
@@ -657,19 +790,58 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String label, String amount, Color color) {
+  Widget _buildStatItem(BuildContext context, String label, String amount, Color color, {bool isList = false}) {
+    if (isList) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    label, 
+                    style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w500),
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(amount, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        ],
+      );
+    }
     return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+            Container(width: 6, height: 6, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
             const SizedBox(width: 4),
-            Flexible(child: Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12), overflow: TextOverflow.ellipsis)),
+            Flexible(
+              child: Text(
+                label, 
+                style: const TextStyle(color: Colors.grey, fontSize: 10), 
+                overflow: TextOverflow.ellipsis, 
+                maxLines: 1
+              )
+            ),
           ],
         ),
-        const SizedBox(height: 4),
-        Text(amount, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+        const SizedBox(height: 2),
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(amount, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+          ),
+        ),
       ],
     );
   }

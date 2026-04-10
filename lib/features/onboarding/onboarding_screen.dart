@@ -54,22 +54,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final state = AppState();
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.primaryDark,
+      backgroundColor: isDark ? const Color(0xFF010813) : AppColors.background,
       body: Stack(
         children: [
           // Background Gradient
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.primaryDark,
-                  Color(0xFF0F172A),
-                  AppColors.primaryDark,
-                ],
+                colors: isDark 
+                  ? [const Color(0xFF010813), const Color(0xFF0F172A), const Color(0xFF010813)]
+                  : [AppColors.background, Colors.white, AppColors.background],
               ),
             ),
           ),
@@ -93,7 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: Text(
                             state.translate("Skip", "Sii dhaaf", ar: "تخطى", de: "Überspringen"),
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.6),
+                              color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
                               fontWeight: FontWeight.w600,
                               fontSize: 14 * context.fontSizeFactor,
                             ),
@@ -121,10 +121,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
 
                 Padding(
-                  padding: EdgeInsets.all(context.horizontalPadding),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.horizontalPadding,
+                    vertical: context.responsiveValue(mobile: 12, tablet: 24),
+                  ),
                   child: GlassmorphicContainer(
                     width: double.infinity,
-                    height: 120 * context.fontSizeFactor,
+                    height: context.responsiveValue(mobile: 90, tablet: 110, desktop: 120),
                     borderRadius: 24,
                     blur: 20,
                     alignment: Alignment.center,
@@ -132,18 +135,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     linearGradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.1),
-                        Colors.white.withValues(alpha: 0.05),
-                      ],
+                      colors: isDark 
+                        ? [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)]
+                        : [AppColors.primaryDark.withValues(alpha: 0.05), AppColors.primaryDark.withValues(alpha: 0.02)],
                     ),
                     borderGradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.2),
-                        Colors.white.withValues(alpha: 0.05),
-                      ],
+                      colors: isDark
+                        ? [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)]
+                        : [AppColors.primaryDark.withValues(alpha: 0.1), AppColors.primaryDark.withValues(alpha: 0.05)],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -155,7 +156,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             count: _pages.length,
                             effect: ExpandingDotsEffect(
                               activeDotColor: AppColors.accentTeal,
-                              dotColor: Colors.white.withValues(alpha: 0.2),
+                              dotColor: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.primaryDark.withValues(alpha: 0.1),
                               dotHeight: 8 * context.fontSizeFactor,
                               dotWidth: 8 * context.fontSizeFactor,
                               expansionFactor: 4,
@@ -179,7 +180,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.accentTeal,
                                 foregroundColor: Colors.white,
-                                minimumSize: Size(130 * context.fontSizeFactor, 56 * context.fontSizeFactor),
+                                minimumSize: Size(context.responsiveValue(mobile: 100, tablet: 130), 56 * context.fontSizeFactor),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 elevation: 0,
                               ),
@@ -230,98 +231,109 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Spacer(flex: 1),
-          FadeInDown(
-            child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(32),
-                child: GlassmorphicContainer(
-                  width: double.infinity,
-                  height: 320 * context.fontSizeFactor,
-                  borderRadius: 32,
-                  blur: 10,
-                  alignment: Alignment.center,
-                  border: 2,
-                  linearGradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withValues(alpha: 0.1),
-                      Colors.white.withValues(alpha: 0.05),
-                    ],
-                  ),
-                  borderGradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      data.color.withValues(alpha: 0.5),
-                      Colors.white.withValues(alpha: 0.2),
-                    ],
-                  ),
-                  child: data.imagePath.startsWith('http')
-                      ? Image.network(
-                          data.imagePath,
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final imageHeight = (constraints.maxHeight * 0.45).clamp(180.0, 320.0);
+        
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FadeInDown(
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(32),
+                        child: GlassmorphicContainer(
                           width: double.infinity,
-                          height: double.infinity,
-                          errorBuilder: (c, e, s) => Icon(Icons.broken_image_rounded, size: 100, color: data.color),
-                        )
-                      : Image.asset(
-                          data.imagePath,
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter,
-                          width: double.infinity,
-                          height: double.infinity,
-                          errorBuilder: (c, e, s) => Icon(Icons.image_not_supported_rounded, size: 100, color: data.color),
+                          height: imageHeight,
+                          borderRadius: 32,
+                          blur: 10,
+                          alignment: Alignment.center,
+                          border: 2,
+                          linearGradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: isDark
+                              ? [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)]
+                              : [AppColors.primaryDark.withValues(alpha: 0.05), AppColors.primaryDark.withValues(alpha: 0.02)],
+                          ),
+                          borderGradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              data.color.withValues(alpha: 0.5),
+                              isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.primaryDark.withValues(alpha: 0.1),
+                            ],
+                          ),
+                          child: data.imagePath.startsWith('http')
+                              ? Image.network(
+                                  data.imagePath,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.topCenter,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  errorBuilder: (c, e, s) => Icon(Icons.broken_image_rounded, size: 100, color: data.color),
+                                )
+                              : Image.asset(
+                                  data.imagePath,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.topCenter,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  errorBuilder: (c, e, s) => Icon(Icons.image_not_supported_rounded, size: 100, color: data.color),
+                                ),
                         ),
-                ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: context.responsiveValue(mobile: 24, tablet: 40)),
+                  Column(
+                    children: [
+                      FadeInUp(
+                        duration: const Duration(milliseconds: 800),
+                        child: Text(
+                          data.title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: isDark ? Colors.white : AppColors.textPrimary,
+                            fontSize: context.responsiveValue(mobile: 24, tablet: 28) * context.fontSizeFactor,
+                            fontWeight: FontWeight.w800,
+                            height: 1.2,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: context.responsiveValue(mobile: 12, tablet: 18)),
+                      FadeInUp(
+                        delay: const Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 800),
+                        child: Text(
+                          data.subtitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+                            fontSize: context.responsiveValue(mobile: 14, tablet: 15) * context.fontSizeFactor,
+                            height: 1.6,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: 40),
-          Column(
-            children: [
-              FadeInUp(
-                duration: const Duration(milliseconds: 800),
-                child: Text(
-                  data.title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28 * context.fontSizeFactor,
-                    fontWeight: FontWeight.w800,
-                    height: 1.2,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 18),
-              FadeInUp(
-                delay: const Duration(milliseconds: 200),
-                duration: const Duration(milliseconds: 800),
-                child: Text(
-                  data.subtitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 15 * context.fontSizeFactor,
-                    height: 1.6,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const Spacer(flex: 2),
-        ],
-      ),
+        );
+      },
     );
   }
 }

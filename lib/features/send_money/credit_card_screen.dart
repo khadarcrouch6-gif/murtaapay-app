@@ -5,12 +5,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/widgets/adaptive_icon.dart';
-import 'payment_success_screen.dart';
+import '../../l10n/app_localizations.dart';
+import 'review_screen.dart';
+
 
 class CreditCardScreen extends StatefulWidget {
   final String amount;
   final String receiverName;
   final String receiverPhone;
+  final String payoutMethod;
+  final String currencyCode;
   final String initialCardType;
 
   const CreditCardScreen({
@@ -18,6 +22,8 @@ class CreditCardScreen extends StatefulWidget {
     required this.amount,
     required this.receiverName,
     required this.receiverPhone,
+    required this.payoutMethod,
+    required this.currencyCode,
     this.initialCardType = "unknown",
   });
 
@@ -86,15 +92,18 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
     bool isVisa = _cardType == "visa";
     bool isMastercard = _cardType == "mastercard";
     
-    List<Color> cardGradient = [
-      const Color(0xFF1E1E2C),
-      const Color(0xFF33334C),
-    ];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    List<Color> cardGradient = isDark 
+        ? [const Color(0xFF1E1E2C), const Color(0xFF33334C)]
+        : [AppColors.primaryDark, const Color(0xFF1E4B7A)];
     
     if (isVisa) {
       cardGradient = [const Color(0xFF1A1F71), const Color(0xFF283593)];
     } else if (isMastercard) {
-      cardGradient = [const Color(0xFF222222), const Color(0xFF3B3B3B)];
+      cardGradient = isDark 
+          ? [const Color(0xFF222222), const Color(0xFF3B3B3B)]
+          : [const Color(0xFF424242), const Color(0xFF212121)];
     }
 
     String displayNum = _cardNumberController.text.isEmpty 
@@ -198,15 +207,19 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
 
     setState(() => _isProcessing = true);
     
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     
     if (mounted) {
-      Navigator.of(context).pushReplacement(
+      setState(() => _isProcessing = false);
+      Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => PaymentSuccessScreen(
+          builder: (context) => ReviewScreen(
             amount: widget.amount,
             receiverName: widget.receiverName,
-            method: "Credit Card",
+            receiverPhone: widget.receiverPhone,
+            method: widget.payoutMethod,
+            paymentMethod: "Card ending in ${_cardNumberController.text.substring(_cardNumberController.text.length - 4)}",
+            currencyCode: widget.currencyCode,
           ),
         ),
       );
@@ -216,9 +229,10 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    String title = "Card Information";
-    if (widget.initialCardType == "visa") title = "Visa Details";
-    if (widget.initialCardType == "mastercard") title = "Mastercard Details";
+    final l10n = AppLocalizations.of(context)!;
+    String title = l10n.cardInformation;
+    if (widget.initialCardType == "visa") title = l10n.visaDetails;
+    if (widget.initialCardType == "mastercard") title = l10n.mastercardDetails;
 
     bool isFormValid = _cardNumberController.text.isNotEmpty &&
                        _cardHolderController.text.isNotEmpty &&
@@ -228,263 +242,365 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.white),
+        ),
         centerTitle: true,
       ),
-      body: Center(
-        child: MaxWidthBox(
-          maxWidth: 500,
-          child: SafeArea(
-            top: false,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FadeInDown(
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.accentTeal.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.3)),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.info_rounded, color: AppColors.accentTeal),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              "Enter your card details to complete the transfer of ${widget.amount} EUR",
-                              style: const TextStyle(fontSize: 12, color: AppColors.grey),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  FadeInUp(
-                     child: _buildLiveCard(),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  const Text(
-                    "Card Information",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Card Number
-                  FadeInUp(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("Card Number", style: TextStyle(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        TextField(
-                          controller: _cardNumberController,
-                          inputFormatters: [
-                            CardNumberFormatter(),
-                          ],
-                          decoration: InputDecoration(
-                            hintText: "1234 5678 9012 3456",
-                            suffixIcon: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: _getCardIcon(),
-                            ),
-                            suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                            prefixIcon: const Icon(Icons.payment_rounded, color: AppColors.accentTeal),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.3)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
-                            ),
-                            filled: true,
-                            fillColor: theme.colorScheme.surface,
-                          ),
-                          keyboardType: TextInputType.number,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Card Holder Name
-                  FadeInUp(
-                    delay: const Duration(milliseconds: 100),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("Card Holder Name", style: TextStyle(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        TextField(
-                          controller: _cardHolderController,
-                          textCapitalization: TextCapitalization.words,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")),
-                          ],
-                          decoration: InputDecoration(
-                            hintText: "John Doe",
-                            prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.accentTeal),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.3)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
-                            ),
-                            filled: true,
-                            fillColor: theme.colorScheme.surface,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Expiry and CVV Row
-                  FadeInUp(
-                    delay: const Duration(milliseconds: 150),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // --- HEADER BACKGROUND (Step Indicator) ---
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
+                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+              ),
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Center(
+                child: MaxWidthBox(
+                  maxWidth: 500,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text("Expiry Date", style: TextStyle(fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 8),
-                              TextField(
-                                controller: _expiryController,
-                                inputFormatters: [
-                                  ExpiryDateFormatter(),
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: "MM/YY",
-                                  prefixIcon: const Icon(Icons.calendar_today_rounded, color: AppColors.accentTeal),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.3)),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
-                                  ),
-                                  filled: true,
-                                  fillColor: theme.colorScheme.surface,
-                                ),
-                                keyboardType: TextInputType.number,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text("CVV", style: TextStyle(fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 8),
-                              TextField(
-                                controller: _cvvController,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(3),
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: "123",
-                                  prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.accentTeal),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.3)),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
-                                  ),
-                                  filled: true,
-                                  fillColor: theme.colorScheme.surface,
-                                ),
-                                keyboardType: TextInputType.number,
-                                obscureText: true,
-                              ),
-                            ],
-                          ),
-                        ),
+                        _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
+                        _buildStepLine(context, true, isHeader: true),
+                        _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
+                        _buildStepLine(context, true, isHeader: true),
+                        _buildStepIndicator(context, 3, l10n.stepPayment, true, false, isHeader: true),
+                        _buildStepLine(context, false, isHeader: true),
+                        _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
                       ],
                     ),
                   ),
-
-                  const SizedBox(height: 40),
-
-                  // Action Button moved back to body
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: (_isProcessing || !isFormValid) ? null : _processPayment,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentTeal,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        elevation: 4,
-                        shadowColor: AppColors.accentTeal.withValues(alpha: 0.3),
-                        disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
-                        disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
-                      ),
-                      child: _isProcessing
-                          ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              "Pay ${widget.amount} EUR",
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-                            ),
-                    ),
-                  ),
-                  if (_isProcessing)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: FadeIn(
-                        child: const Center(
-                          child: Text(
-                            "Securely processing your payment...",
-                            style: TextStyle(color: AppColors.grey, fontSize: 13, fontStyle: FontStyle.italic),
-                          ),
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 24),
-                ],
+                ),
               ),
             ),
-          ),
+            Expanded(
+              child: Center(
+                child: MaxWidthBox(
+                  maxWidth: 500,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FadeInDown(
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.3)),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.info_rounded, color: theme.colorScheme.secondary),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    l10n.cardDetailsInfo(widget.amount),
+                                    style: const TextStyle(fontSize: 12, color: AppColors.grey),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        FadeInUp(
+                           child: _buildLiveCard(),
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        Text(
+                          l10n.cardNumber,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold, 
+                            fontSize: 16,
+                            color: theme.brightness == Brightness.dark ? Colors.white : AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Card Number
+                        FadeInUp(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.cardNumber, 
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: _cardNumberController,
+                                inputFormatters: [
+                                  CardNumberFormatter(),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: "1234 5678 9012 3456",
+                                  suffixIcon: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    child: _getCardIcon(),
+                                  ),
+                                  suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                                  prefixIcon: Icon(Icons.payment_rounded, color: theme.colorScheme.secondary),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
+                                  ),
+                                  filled: true,
+                                  fillColor: theme.colorScheme.surface,
+                                ),
+                                keyboardType: TextInputType.number,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Card Holder Name
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 100),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.cardHolderName, 
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: _cardHolderController,
+                                textCapitalization: TextCapitalization.words,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: "John Doe",
+                                  prefixIcon: Icon(Icons.person_outline_rounded, color: theme.colorScheme.secondary),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
+                                  ),
+                                  filled: true,
+                                  fillColor: theme.colorScheme.surface,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Expiry and CVV Row
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 150),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      l10n.expiryDate, 
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    TextField(
+                                      controller: _expiryController,
+                                      inputFormatters: [
+                                        ExpiryDateFormatter(),
+                                      ],
+                                      decoration: InputDecoration(
+                                        hintText: "MM/YY",
+                                        prefixIcon: Icon(Icons.calendar_today_rounded, color: theme.colorScheme.secondary),
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(16),
+                                          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(16),
+                                          borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
+                                        ),
+                                        filled: true,
+                                        fillColor: theme.colorScheme.surface,
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      l10n.cvv, 
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    TextField(
+                                      controller: _cvvController,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly,
+                                        LengthLimitingTextInputFormatter(3),
+                                      ],
+                                      decoration: InputDecoration(
+                                        hintText: "123",
+                                        prefixIcon: Icon(Icons.lock_outline_rounded, color: theme.colorScheme.secondary),
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(16),
+                                          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(16),
+                                          borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
+                                        ),
+                                        filled: true,
+                                        fillColor: theme.colorScheme.surface,
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                      obscureText: true,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 40),
+
+                        // Action Button moved back to body
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: (_isProcessing || !isFormValid) ? null : _processPayment,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.secondary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              elevation: 4,
+                              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
+                              disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
+                              disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
+                            ),
+                            child: _isProcessing
+                                ? const SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 3,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : Text(
+                                    l10n.continueLabel,
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                                  ),
+                          ),
+                        ),
+                        if (_isProcessing)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: FadeIn(
+                              child: Center(
+                                child: Text(
+                                  l10n.secureProcessing,
+                                  style: const TextStyle(color: AppColors.grey, fontSize: 13, fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+
+  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
+    final theme = Theme.of(context);
+    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
+    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
+
+    return Column(
+      children: [
+        Container(
+          width: 32, height: 32,
+          decoration: BoxDecoration(
+            color: isActive || isCompleted ? activeColor : inactiveColor, 
+            shape: BoxShape.circle,
+            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
+          ),
+          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
+        ),
+        const SizedBox(height: 4),
+        Text(label, style: TextStyle(fontSize: 12, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
+      ],
+    );
+  }
+
+  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
+    final theme = Theme.of(context);
+    Color color = isHeader 
+      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
+      : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
+    return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
+  }
+
 
   @override
   void dispose() {

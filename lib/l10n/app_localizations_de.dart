@@ -100,6 +100,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get selectPaymentMethod => 'Zahlungsmethode wählen';
 
   @override
+  String get murtaaxWallet => 'Murtaax Wallet';
+
+  @override
+  String get visaMastercard => 'Visa / MasterCard';
+
+  @override
+  String get mobileMoney => 'Mobile Money';
+
+  @override
   String get transactionFee => 'Transaktionsgebühr';
 
   @override
@@ -195,10 +204,62 @@ class AppLocalizationsDe extends AppLocalizations {
   String get method => 'Methode';
 
   @override
+  String get accountNumber => 'Kontonummer';
+
+  @override
+  String get walletId => 'Wallet-ID';
+
+  @override
+  String get cardNumber => 'Kartennummer';
+
+  @override
+  String get payoutVia => 'Auszahlung über';
+
+  @override
+  String get paidUsing => 'Bezahlt mit';
+
+  @override
+  String get cancel => 'Abbrechen';
+
+  @override
+  String get moneyOnWay => 'Ihr Geld ist unterwegs.';
+
+  @override
+  String get refId => 'Referenz-ID';
+
+  @override
+  String get idCopied => 'ID kopiert';
+
+  @override
+  String get shareReceipt => 'Beleg teilen';
+
+  @override
   String get reference => 'Referenz';
 
   @override
   String get backToHome => 'Zurück zum Start';
+
+  @override
+  String get stepAmount => 'Betrag';
+
+  @override
+  String get stepReceiver => 'Empfänger';
+
+  @override
+  String get stepPayment => 'Zahlung';
+
+  @override
+  String get stepReview => 'Prüfung';
+
+  @override
+  String get feeInfoTitle => 'Info zu Wechselgebühren';
+
+  @override
+  String get feeInfoContent =>
+      'Die Gebühr beträgt 0,99%. Beispiel: Das Senden von 100 \$ kostet nur 0,99 \$ an Gebühren.';
+
+  @override
+  String get maxLabel => 'MAX';
 
   @override
   String get continueLabel => 'Weiter';
@@ -258,4 +319,229 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get payFeeSeparately => 'Gebühr separat bezahlen';
+
+  @override
+  String get myCards => 'Meine Karten';
+
+  @override
+  String get addNewCard => 'Neue Karte hinzufügen';
+
+  @override
+  String get cardNumberCopied => 'Kartennummer kopiert!';
+
+  @override
+  String get deposit => 'Einzahlung';
+
+  @override
+  String get withdraw => 'Auszahlung';
+
+  @override
+  String get savings => 'Sparen';
+
+  @override
+  String get invest => 'Investieren';
+
+  @override
+  String get transactions => 'Transaktionen';
+
+  @override
+  String get food => 'Essen';
+
+  @override
+  String get shopping => 'Shopping';
+
+  @override
+  String get billsLabel => 'Rechnungen';
+
+  @override
+  String get monthlyBudget => 'Monatliches Budget';
+
+  @override
+  String get cardSettings => 'Karteneinstellungen';
+
+  @override
+  String get frozen => 'Gefroren';
+
+  @override
+  String get unfreezeCard => 'Karte entsperren';
+
+  @override
+  String get freezeCard => 'Karte sperren';
+
+  @override
+  String get temporarilyDisablePayments =>
+      'Zahlungen vorübergehend deaktivieren';
+
+  @override
+  String get security => 'Sicherheit';
+
+  @override
+  String get cardControls => 'Kartensteuerung';
+
+  @override
+  String get onlinePayments => 'Online-Zahlungen';
+
+  @override
+  String get internationalUsage => 'Internationale Nutzung';
+
+  @override
+  String get contactlessPayments => 'Kontaktloses Bezahlen';
+
+  @override
+  String get terminateCard => 'Karte kündigen';
+
+  @override
+  String get permanentlyDeleteCard => 'Diese virtuelle Karte dauerhaft löschen';
+
+  @override
+  String get enterSecurityPin =>
+      'Bitte geben Sie Ihre 4-stellige Sicherheits-PIN ein';
+
+  @override
+  String get cardInformation => 'Card Information';
+
+  @override
+  String get visaDetails => 'Visa Details';
+
+  @override
+  String get mastercardDetails => 'Mastercard Details';
+
+  @override
+  String cardDetailsInfo(Object amount) {
+    return 'Enter your card details to complete the transfer of $amount';
+  }
+
+  @override
+  String get cardHolderName => 'Card Holder Name';
+
+  @override
+  String get expiryDate => 'Expiry Date';
+
+  @override
+  String get cvv => 'CVV';
+
+  @override
+  String get secureProcessing => 'Securely processing your payment...';
+
+  @override
+  String get selectBank => 'Select Bank';
+
+  @override
+  String get murtaaxWalletDesc => 'Pay from your app balance';
+
+  @override
+  String get visaMastercardDesc => 'Pay using your card';
+
+  @override
+  String get bankTransferDesc => 'Direct bank transfer';
+
+  @override
+  String get mobileMoneyDesc => 'EVC Plus, Sahal, ZAAD, e-Dahab';
+
+  @override
+  String get identityVerification => 'Identity Verification';
+
+  @override
+  String get verifyYourIdentity => 'Verify Your Identity';
+
+  @override
+  String get verifyIdentityDesc =>
+      'We need to verify your identity to keep your account secure. This only takes 2 minutes.';
+
+  @override
+  String get prepareIdDoc => 'Prepare your ID document';
+
+  @override
+  String get wellLitArea => 'Make sure you\'re in a well-lit area';
+
+  @override
+  String get followInstructions => 'Follow the on-screen instructions';
+
+  @override
+  String get letsGetStarted => 'Let\'s Get Started';
+
+  @override
+  String get encryptedConnection => 'ENCRYPTED & SECURE CONNECTION';
+
+  @override
+  String get personalDetails => 'Personal Details';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get residentialAddress => 'Residential Address';
+
+  @override
+  String get required => 'Required';
+
+  @override
+  String get chooseDocumentType => 'Choose Document Type';
+
+  @override
+  String get passport => 'Passport';
+
+  @override
+  String get nationalIdCard => 'National ID Card';
+
+  @override
+  String get driversLicense => 'Driver\'s License';
+
+  @override
+  String get bankGradeEncryption => 'Bank-grade encryption';
+
+  @override
+  String get dataDeletedNotice => 'Your data is deleted after verification';
+
+  @override
+  String get frontOfIdCard => 'Front of ID Card';
+
+  @override
+  String get verifyYourFace => 'Verify your face';
+
+  @override
+  String get positionFaceNotice => 'Position your face well-lit and clearly';
+
+  @override
+  String get alignId => 'Align your ID';
+
+  @override
+  String get capturing => 'Capturing...';
+
+  @override
+  String get lookStraight => 'Look Straight';
+
+  @override
+  String get lookLeft => 'Look Left';
+
+  @override
+  String get lookRight => 'Look Right';
+
+  @override
+  String get verificationPending => 'Verification Pending';
+
+  @override
+  String get verificationPendingDesc =>
+      'Your documents are being reviewed. This usually takes 10-15 minutes. We\'ll notify you once it\'s complete.';
+
+  @override
+  String get documentCheck => 'Document Check';
+
+  @override
+  String get scanningForClarity => 'Scanning for clarity';
+
+  @override
+  String get biometricMatch => 'Biometric Match';
+
+  @override
+  String get comparingSelfie => 'Comparing selfie with ID';
+
+  @override
+  String get verifyingIdentity => 'Verifying Identity...';
 }

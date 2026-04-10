@@ -81,7 +81,7 @@ class TransactionItem extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             Expanded(
-              flex: 3,
+              flex: 4,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -100,20 +100,21 @@ class TransactionItem extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    amount,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: (isSent == false || amount.startsWith('+')) ? AppColors.accentTeal : null,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      amount,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: (isSent == false || amount.startsWith('+')) ? AppColors.accentTeal : null,
+                      ),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     status == "Success" ? state.translate("Success", "Guul", ar: "ناجح", de: "Erfolgreich") : state.translate("Pending", "Sugayn", ar: "قيد الانتظار", de: "Ausstehend"),
