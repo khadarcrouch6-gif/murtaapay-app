@@ -15,6 +15,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../more/investments_screen.dart';
 import '../more/savings_screen.dart';
 import '../deposit/deposit_screen.dart';
+import '../deposit/deposit_card_screen.dart';
 import '../withdraw/withdraw_screen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../l10n/app_localizations.dart';
@@ -286,7 +287,7 @@ class _CardsScreenState extends State<CardsScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                _buildQuickAction(context, state, "Deposit", l10n.deposit, Icons.add_circle_outline_rounded, AppColors.accentTeal, const DepositScreen()),
+                                _buildQuickAction(context, state, "Deposit", l10n.deposit, Icons.add_circle_outline_rounded, AppColors.accentTeal, const DepositCardScreen(amount: "0", currencyCode: "USD")),
                                 const SizedBox(width: 8),
                                 _buildQuickAction(context, state, "Withdraw", l10n.withdraw, Icons.file_upload_outlined, Colors.orange, const WithdrawScreen()),
                                 const SizedBox(width: 8),

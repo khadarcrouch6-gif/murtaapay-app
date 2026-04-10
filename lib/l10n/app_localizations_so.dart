@@ -241,6 +241,50 @@ class AppLocalizationsSo extends AppLocalizations {
   String get backToHome => 'Ku laabo hoyga';
 
   @override
+  String get addMoney => 'Ku dar Lacag';
+
+  @override
+  String get enterAmountToDeposit => 'Gali cadadka aad dhigato';
+
+  @override
+  String get confirmDeposit => 'Xaqiiji Dhigashada';
+
+  @override
+  String get expiry => 'Wakhtiga dhicitaanka';
+
+  @override
+  String get cardholderName => 'Magaca qofka iska leh';
+
+  @override
+  String get fullNameOnCard => 'Magaca oo buuxa ee kaarka ku qoran';
+
+  @override
+  String get selectProvider => 'Dooro Shirkadda';
+
+  @override
+  String get accountHolderName => 'Magaca qofka akoonka leh';
+
+  @override
+  String get fullName => 'Magaca oo buuxa';
+
+  @override
+  String get reviewDeposit => 'Eeg Dhigashada horta';
+
+  @override
+  String get totalCharged => 'Wadarta Guud';
+
+  @override
+  String get confirmAndDeposit => 'Xaqiiji & Dhigo';
+
+  @override
+  String get depositSuccessful => 'Dhigashadu waa lagu guulaystay!';
+
+  @override
+  String depositSuccessMessage(Object amount) {
+    return '$amount waa lagu daray boorsadaada.';
+  }
+
+  @override
   String get stepAmount => 'Cadadka';
 
   @override
@@ -468,9 +512,6 @@ class AppLocalizationsSo extends AppLocalizations {
   String get personalDetails => 'Personal Details';
 
   @override
-  String get fullName => 'Full Name';
-
-  @override
   String get emailAddress => 'Email Address';
 
   @override
@@ -544,5 +585,47 @@ class AppLocalizationsSo extends AppLocalizations {
   String get comparingSelfie => 'Comparing selfie with ID';
 
   @override
+  String get cardHolder => 'CARD HOLDER';
+
+  @override
+  String get yourName => 'YOUR NAME';
+
+  @override
+  String get expires => 'EXPIRES';
+
+  @override
+  String get requiredField => 'Required';
+
+  @override
+  String get chooseProviderAndEnterPhone =>
+      'Choose your provider and enter phone number';
+
+  @override
+  String get enterNumberToCharge => 'Enter number to charge';
+
+  @override
+  String get servicePin => 'Service PIN';
+
+  @override
+  String get enterPin => 'Enter PIN';
+
+  @override
+  String get ibanHint => 'e.g. GB29 NWBK 6016 1331 9268 19';
+
+  @override
+  String get cardHolderNameLabel => 'Card Holder Name';
+
+  @override
+  String get johnDoe => 'John Doe';
+
+  @override
   String get verifyingIdentity => 'Verifying Identity...';
+
+  @override
+  String get pleaseFillAllFields => 'Please fill in all fields';
+
+  @override
+  String cardEndingIn(String lastFour) {
+    return 'Card ending in $lastFour';
+  }
 }

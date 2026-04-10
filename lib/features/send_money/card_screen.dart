@@ -171,9 +171,9 @@ class _CardScreenState extends State<CardScreen> {
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              const Text("CARD HOLDER", style: TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold)),
+                                              Text(l10n.cardHolder, style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold)),
                                               Text(
-                                                _nameController.text.isEmpty ? "YOUR NAME" : _nameController.text.toUpperCase(),
+                                                _nameController.text.isEmpty ? l10n.yourName : _nameController.text.toUpperCase(),
                                                 style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                                               ),
                                             ],
@@ -181,7 +181,7 @@ class _CardScreenState extends State<CardScreen> {
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              const Text("EXPIRES", style: TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold)),
+                                              Text(l10n.expires, style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold)),
                                               Text(
                                                 _expiryController.text.isEmpty ? "MM/YY" : _expiryController.text,
                                                 style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
@@ -199,14 +199,16 @@ class _CardScreenState extends State<CardScreen> {
                               
                               // --- FORM FIELDS ---
                               _buildTextField(
-                                label: "Card Holder Name",
+                                context: context,
+                                label: l10n.cardHolderNameLabel,
                                 controller: _nameController,
-                                hint: "John Doe",
+                                hint: l10n.johnDoe,
                                 icon: Icons.person_outline_rounded,
                                 onChanged: (v) => setState(() {}),
                               ),
                               const SizedBox(height: 16),
                               _buildTextField(
+                                context: context,
                                 label: l10n.cardNumber,
                                 controller: _cardNumberController,
                                 hint: "XXXX XXXX XXXX XXXX",
@@ -225,7 +227,8 @@ class _CardScreenState extends State<CardScreen> {
                                   Expanded(
                                     flex: 2,
                                     child: _buildTextField(
-                                      label: "Expiry Date",
+                                      context: context,
+                                      label: l10n.expiryDate,
                                       controller: _expiryController,
                                       hint: "MM/YY",
                                       icon: Icons.calendar_today_rounded,
@@ -242,7 +245,8 @@ class _CardScreenState extends State<CardScreen> {
                                   Expanded(
                                     flex: 1,
                                     child: _buildTextField(
-                                      label: "CVV",
+                                      context: context,
+                                      label: l10n.cvv,
                                       controller: _cvvController,
                                       hint: "XXX",
                                       icon: Icons.lock_outline_rounded,
@@ -327,6 +331,7 @@ class _CardScreenState extends State<CardScreen> {
 
 
   Widget _buildTextField({
+    required BuildContext context,
     required String label,
     required TextEditingController controller,
     required String hint,
@@ -337,6 +342,7 @@ class _CardScreenState extends State<CardScreen> {
   }) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -378,7 +384,7 @@ class _CardScreenState extends State<CardScreen> {
               borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
             ),
           ),
-          validator: (value) => value!.isEmpty ? "Required" : null,
+          validator: (value) => value!.isEmpty ? l10n.requiredField : null,
         ),
       ],
     );

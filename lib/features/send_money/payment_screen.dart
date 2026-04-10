@@ -4,11 +4,11 @@ import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/responsive_utils.dart';
 import 'package:intl/intl.dart';
 import 'review_screen.dart';
 import 'wallet_payment_screen.dart';
 import 'credit_card_screen.dart';
-import 'bank_screen.dart';
 import 'sender_bank_screen.dart';
 import 'mobile_money_screen.dart';
 
@@ -265,13 +265,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget _buildSummaryRow(String label, String value, IconData icon) {
+    final fontSizeFactor = context.fontSizeFactor;
     return Row(
       children: [
-        Icon(icon, size: 18, color: AppColors.grey),
+        Icon(icon, size: (18 * fontSizeFactor).toDouble(), color: AppColors.grey),
         const SizedBox(width: 10),
-        Text(label, style: const TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14)),
-        const Spacer(),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
+        Expanded(
+          child: Text(
+            label, 
+            style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: (14 * fontSizeFactor).toDouble()),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Flexible(
+          child: Text(
+            value, 
+            textAlign: TextAlign.right,
+            style: TextStyle(fontWeight: FontWeight.w900, fontSize: (14 * fontSizeFactor).toDouble()),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }

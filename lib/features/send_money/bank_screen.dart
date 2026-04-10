@@ -148,8 +148,6 @@ class _BankScreenState extends State<BankScreen> {
                         ),
 
                         const SizedBox(height: 20),
-                        Text(l10n.accountNumber, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                        const SizedBox(height: 12),
                         _buildTextField(
                           controller: _accountController,
                           focusNode: _accountFocus,
@@ -160,8 +158,6 @@ class _BankScreenState extends State<BankScreen> {
                         ),
 
                         const SizedBox(height: 20),
-                        Text(l10n.receiver, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                        const SizedBox(height: 12),
                         _buildTextField(
                           controller: _nameController,
                           focusNode: _nameFocus,

@@ -6,6 +6,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import 'review_screen.dart';
 
 
@@ -89,6 +90,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
   }
 
   Widget _buildLiveCard() {
+    final l10n = AppLocalizations.of(context)!;
     bool isVisa = _cardType == "visa";
     bool isMastercard = _cardType == "mastercard";
     
@@ -111,7 +113,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
         : _cardNumberController.text;
         
     String displayHolder = _cardHolderController.text.isEmpty 
-        ? "CARD HOLDER" 
+        ? l10n.cardHolder 
         : _cardHolderController.text.toUpperCase();
         
     String displayExpiry = _expiryController.text.isEmpty 
@@ -170,7 +172,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Card Holder", style: TextStyle(color: Colors.white54, fontSize: 10)),
+                  Text(l10n.cardHolder, style: const TextStyle(color: Colors.white54, fontSize: 10)),
                   Text(
                     displayHolder,
                     style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
@@ -180,7 +182,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Text("Expires", style: TextStyle(color: Colors.white54, fontSize: 10)),
+                  Text(l10n.expires, style: const TextStyle(color: Colors.white54, fontSize: 10)),
                   Text(
                     displayExpiry,
                     style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
@@ -195,12 +197,13 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
   }
 
   void _processPayment() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_cardNumberController.text.isEmpty ||
         _cardHolderController.text.isEmpty ||
         _expiryController.text.isEmpty ||
         _cvvController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill in all fields")),
+        SnackBar(content: Text(l10n.pleaseFillAllFields)),
       );
       return;
     }
@@ -218,7 +221,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
             receiverName: widget.receiverName,
             receiverPhone: widget.receiverPhone,
             method: widget.payoutMethod,
-            paymentMethod: "Card ending in ${_cardNumberController.text.substring(_cardNumberController.text.length - 4)}",
+            paymentMethod: l10n.cardEndingIn(_cardNumberController.text.substring(_cardNumberController.text.length - 4)),
             currencyCode: widget.currencyCode,
           ),
         ),
@@ -539,9 +542,12 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                       color: Colors.white,
                                     ),
                                   )
-                                : Text(
-                                    l10n.continueLabel,
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                                : FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
+                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                                    ),
                                   ),
                           ),
                         ),

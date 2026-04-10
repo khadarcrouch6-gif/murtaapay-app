@@ -276,9 +276,12 @@ class _StripeScreenState extends State<StripeScreen> {
                                       Text("Processing...", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                                     ],
                                   )
-                                : Text(
-                                    "Pay ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)}",
-                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                : FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      "Pay ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)}",
+                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                                    ),
                                   ),
                           ),
                         ),

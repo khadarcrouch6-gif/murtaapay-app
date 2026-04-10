@@ -5,10 +5,11 @@ import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'wallet_card_deposit_screen.dart';
 
 class DepositScreen extends StatefulWidget {
   final bool isTab;
@@ -27,62 +28,59 @@ class _DepositScreenState extends State<DepositScreen> {
   final TextEditingController _field4Controller = TextEditingController(); // Cardholder Name / PIN
 
   final AudioPlayer _audioPlayer = AudioPlayer();
-  String _recipientName = "";
-  bool _isLoadingName = false;
-
-  void _lookupName(String value) {
-    if (value.length >= 7) {
-      setState(() => _isLoadingName = true);
-      Future.delayed(const Duration(milliseconds: 1200), () {
-        if (mounted) {
-          setState(() {
-            _isLoadingName = false;
-            _recipientName = value.startsWith("61") ? "Mohamed Ahmed Hassan" : "Sahra Ali Warsame";
-          });
-        }
-      });
-    } else {
-      setState(() {
-        _recipientName = "";
-        _isLoadingName = false;
-      });
-    }
-  }
 
   final List<Map<String, dynamic>> _methods = [
     {
       "id": "card",
-      "title": "Debit / Credit Card",
-      "desc": "Visa or Mastercard — instant",
+      "titleKey": "visaMastercard",
+      "descKey": "visaMastercardDesc",
       "gradient": [const Color(0xFF1A1A2E), const Color(0xFF16213E)],
       "faIcon": FontAwesomeIcons.creditCard,
     },
     {
       "id": "mobile",
-      "title": "Mobile Money",
-      "desc": "ZAAD, EVC Plus, eDahab",
-      "gradient": [const Color(0xFF11998E), const Color(0xFF38EF7D)],
+      "titleKey": "mobileMoney",
+      "descKey": "mobileMoneyDesc",
+      "gradient": [const Color(0xFF00B4DB), const Color(0xFF0083B0)],
       "icon": Icons.phone_android_rounded,
     },
     {
       "id": "bank",
-      "title": "Bank Transfer",
-      "desc": "SEPA / IBAN transfer",
+      "titleKey": "bankTransfer",
+      "descKey": "bankTransferDesc",
       "gradient": [const Color(0xFF2C3E50), const Color(0xFF4CA1AF)],
       "icon": Icons.account_balance_rounded,
     },
   ];
 
+  String _getMethodTitle(String key, AppLocalizations l10n) {
+    switch (key) {
+      case "visaMastercard": return l10n.visaMastercard;
+      case "bankTransfer": return l10n.bankTransfer;
+      case "mobileMoney": return l10n.mobileMoney;
+      default: return "";
+    }
+  }
+
+  String _getMethodDesc(String key, AppLocalizations l10n) {
+    switch (key) {
+      case "visaMastercardDesc": return l10n.visaMastercardDesc;
+      case "bankTransferDesc": return l10n.bankTransferDesc;
+      case "mobileMoneyDesc": return l10n.mobileMoneyDesc;
+      default: return "";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        title: Text(state.translate("Add Money", "Ku dar Lacag", ar: "إضافة أموال", de: "Geld einzahlen"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.textTheme.titleLarge?.color)),
+        title: Text(l10n.addMoney, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.textTheme.titleLarge?.color)),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20 * context.fontSizeFactor, color: theme.iconTheme.color),
@@ -112,14 +110,14 @@ class _DepositScreenState extends State<DepositScreen> {
                         padding: EdgeInsets.all(24 * context.fontSizeFactor),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [AppColors.primaryDark, AppColors.primaryDark.withValues(alpha: 0.8)],
+                            colors: [AppColors.accentTeal, AppColors.accentTeal.withValues(alpha: 0.8)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(32),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primaryDark.withValues(alpha: 0.3),
+                              color: AppColors.accentTeal.withValues(alpha: 0.3),
                               blurRadius: 30,
                               offset: const Offset(0, 15),
                             )
@@ -129,7 +127,7 @@ class _DepositScreenState extends State<DepositScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              state.translate("Enter Amount to Deposit", "Gali cadadka aad dhigato", ar: "أدخل المبلغ للإيداع", de: "Einzahlungsbetrag eingeben"), 
+                              l10n.enterAmountToDeposit, 
                               style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w500)
                             ),
                             const SizedBox(height: 12),
@@ -190,7 +188,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 ),
                 const SizedBox(height: 32),
                 FadeInUp(
-                  child: Text(state.translate("Deposit Method", "Qaabka Lacag Dhigashada", ar: "طريقة الإيداع", de: "Einzahlungsmethode"), style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
+                  child: Text(l10n.paymentMethod, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
                 ),
                 const SizedBox(height: 16),
     
@@ -207,7 +205,6 @@ class _DepositScreenState extends State<DepositScreen> {
                           _field2Controller.clear();
                           _field3Controller.clear();
                           _field4Controller.clear();
-                          _recipientName = "";
                         });
                       },
                       child: AnimatedContainer(
@@ -265,12 +262,12 @@ class _DepositScreenState extends State<DepositScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    state.translate(method["title"], _getSomaliMethodTitle(method["id"]), ar: _getArabicMethodTitle(method["id"]), de: _getGermanMethodTitle(method["id"])),
+                                    _getMethodTitle(method["titleKey"], l10n),
                                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    state.translate(method["desc"], _getSomaliMethodDesc(method["id"]), ar: _getArabicMethodDesc(method["id"]), de: _getGermanMethodDesc(method["id"])),
+                                    _getMethodDesc(method["descKey"], l10n),
                                     style: TextStyle(color: AppColors.grey.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
                                   ),
                                 ],
@@ -294,26 +291,30 @@ class _DepositScreenState extends State<DepositScreen> {
     
                 if (_selectedMethod != null) ...[
                   const SizedBox(height: 8),
-                  FadeInUp(child: _buildDetailsSection(context, state)),
-                  const SizedBox(height: 32),
-                  FadeInUp(
-                    child: ElevatedButton(
-                      onPressed: _amountController.text.isEmpty ? null : () => _showReviewSheet(context, state),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentTeal,
-                        disabledBackgroundColor: AppColors.grey.withValues(alpha: 0.3),
-                        minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          state.translate("Confirm Deposit", "Xaqiiji Dhigashada", ar: "تأكيد الإيداع", de: "Einzahlung bestätigen"), 
-                          style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white)
+                  FadeInUp(child: _buildDetailsSection(context, l10n)),
+                  if (_selectedMethod != "mobile") ...[
+                    const SizedBox(height: 32),
+                    FadeInUp(
+                      child: ElevatedButton(
+                        onPressed: _amountController.text.isEmpty ? null : () {
+                          _showReviewSheet(context, l10n);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accentTeal,
+                          disabledBackgroundColor: AppColors.grey.withValues(alpha: 0.3),
+                          minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            l10n.confirmDeposit, 
+                            style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white)
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
                 const SizedBox(height: 40),
               ],
@@ -324,142 +325,124 @@ class _DepositScreenState extends State<DepositScreen> {
     );
   }
 
-  Widget _buildDetailsSection(BuildContext context, AppState state) {
+  Widget _buildDetailsSection(BuildContext context, AppLocalizations l10n) {
     switch (_selectedMethod) {
       case "card":
-        return Column(children: [
-          _inputField(context, state.translate("Card Number", "Lambarka Kaadhka"), Icons.credit_card_rounded, "0000 0000 0000 0000", _field1Controller, isNumber: true, formatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(16),
-            CardNumberInputFormatter(),
-          ]),
-          const SizedBox(height: 14),
-          Row(children: [
-            Expanded(child: _inputField(context, state.translate("Expiry", "Wakhtiga dhicitaanka"), Icons.date_range_rounded, "MM/YY", _field2Controller, isNumber: true, formatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(4),
-              ExpiryDateInputFormatter(),
-            ])),
-            const SizedBox(width: 14),
-            Expanded(child: _inputField(context, "CVV", Icons.lock_rounded, "•••", _field3Controller, isNumber: true, formatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(3),
-            ])),
-          ]),
-          const SizedBox(height: 14),
-          _inputField(context, state.translate("Cardholder Name", "Magaca qofka iska leh"), Icons.person_rounded, "Full name on card", _field4Controller),
-        ]);
-      case "mobile":
         return Column(
           children: [
-            _inputField(
-              context,
-              state.translate("Mobile Number", "Lambarka Taleefanka"),
-              Icons.phone_android_rounded,
-              "e.g. 61XXXXXXX",
-              _field1Controller,
-              isNumber: true,
-              onChanged: (val) {
-                if (val.length >= 7) {
-                  _lookupName(val);
-                } else {
-                  setState(() => _recipientName = "");
-                }
-              },
-            ),
-            if (_isLoadingName)
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: LinearProgressIndicator(minHeight: 2, backgroundColor: Colors.transparent),
-              ),
-            if (_recipientName.isNotEmpty)
-              FadeIn(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 12),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.person_outline_rounded, size: 16, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Text(
-                        _recipientName,
-                        style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 13),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            _inputField(context, l10n.cardNumber, Icons.credit_card_rounded, "1234 5678 9012 3456", _field1Controller, isNumber: true, formatters: [CardNumberInputFormatter()]),
             const SizedBox(height: 14),
-            _inputField(context, state.translate("Mobile Money PIN", "PIN-ka lacagta mobaylka"), Icons.lock_rounded, "Enter PIN", _field4Controller, isNumber: true, isObscure: true),
+            Row(
+              children: [
+                Expanded(child: _inputField(context, l10n.expiry, Icons.calendar_today_rounded, "MM/YY", _field2Controller, isNumber: true, formatters: [ExpiryDateInputFormatter()])),
+                const SizedBox(width: 14),
+                Expanded(child: _inputField(context, "CVV", Icons.lock_outline_rounded, "123", _field3Controller, isNumber: true, isObscure: true, formatters: [LengthLimitingTextInputFormatter(3)])),
+              ],
+            ),
+            const SizedBox(height: 14),
+            _inputField(context, l10n.cardholderName, Icons.person_outline_rounded, l10n.fullNameOnCard, _field4Controller),
+          ],
+        );
+      case "mobile":
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.selectProvider,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Theme.of(context).textTheme.titleMedium?.color),
+            ),
+            const SizedBox(height: 12),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 2.5,
+              children: [
+                _buildProviderOption("EVC Plus", const Color(0xFF1B5E20), l10n),
+                _buildProviderOption("e-Dahab", const Color(0xFFFBC02D), l10n),
+                _buildProviderOption("Sahal", const Color(0xFF0D47A1), l10n),
+                _buildProviderOption("ZAAD", const Color(0xFFB71C1C), l10n),
+              ],
+            ),
           ],
         );
       case "bank":
         return Column(children: [
-          _inputField(context, state.translate("Account Holder Name", "Magaca qofka akoonka leh"), Icons.person_rounded, "Full name", _field1Controller),
+          _inputField(context, l10n.accountHolderName, Icons.person_rounded, l10n.fullName, _field1Controller),
           const SizedBox(height: 14),
-          _inputField(context, "IBAN", Icons.account_balance_rounded, "e.g. GB29 NWBK 6016 1331 9268 19", _field2Controller),
+          _inputField(context, "IBAN", Icons.account_balance_rounded, l10n.ibanHint, _field2Controller),
         ]);
       default:
         return const SizedBox.shrink();
     }
   }
 
-  String _getSomaliMethodTitle(String id) {
-    switch (id) {
-      case "card": return "Kaadhka Debit / Credit";
-      case "mobile": return "Lacagta Mobaylka";
-      case "bank": return "Xawaalad Bangi";
-      default: return "";
-    }
+  String? _selectedProvider;
+
+  Widget _buildProviderOption(String id, Color color, AppLocalizations l10n) {
+    bool isSelected = _selectedProvider == id;
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: () {
+        setState(() => _selectedProvider = id);
+        _showMobileMoneyDialog(id, color, l10n);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          color: isSelected ? color.withValues(alpha: 0.1) : theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isSelected ? color : theme.dividerColor.withValues(alpha: 0.1), width: 2),
+        ),
+        child: Center(
+          child: Text(
+            id,
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              color: isSelected ? color : theme.textTheme.bodyLarge?.color,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  String _getArabicMethodTitle(String id) {
-    switch (id) {
-      case "card": return "بطاقة دفع / ائتمان";
-      case "mobile": return "نقد عبر الهاتف";
-      case "bank": return "تحويل بنكي";
-      default: return "";
-    }
-  }
-
-  String _getGermanMethodTitle(String id) {
-    switch (id) {
-      case "card": return "Debit- / Kreditkarte";
-      case "mobile": return "Mobiles Geld";
-      case "bank": return "Banküberweisung";
-      default: return "";
-    }
-  }
-
-  String _getSomaliMethodDesc(String id) {
-    switch (id) {
-      case "card": return "Visa ama Mastercard — degdeg ah";
-      case "mobile": return "ZAAD, EVC Plus, eDahab";
-      case "bank": return "Xawaaladda SEPA / IBAN";
-      default: return "";
-    }
-  }
-
-  String _getArabicMethodDesc(String id) {
-    switch (id) {
-      case "card": return "فيزا أو ماستركارد — فوري";
-      case "mobile": return "ZAAD, EVC Plus, eDahab";
-      case "bank": return "تحويل SEPA / IBAN";
-      default: return "";
-    }
-  }
-
-  String _getGermanMethodDesc(String id) {
-    switch (id) {
-      case "card": return "Visa oder Mastercard — sofort";
-      case "mobile": return "ZAAD, EVC Plus, eDahab";
-      case "bank": return "SEPA- / IBAN-Überweisung";
-      default: return "";
-    }
+  void _showMobileMoneyDialog(String provider, Color color, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+              child: Icon(Icons.phone_android_rounded, color: color, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Text(provider, style: const TextStyle(fontWeight: FontWeight.w900)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _inputField(context, l10n.phoneNumber, Icons.phone_iphone_rounded, "61XXXXXXX", _field1Controller, isNumber: true),
+            const SizedBox(height: 16),
+            _inputField(context, l10n.servicePin, Icons.lock_outline_rounded, "••••", _field4Controller, isNumber: true, isObscure: true),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: ElevatedButton.styleFrom(backgroundColor: color, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+            child: Text(l10n.continueLabel, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _inputField(BuildContext context, String label, IconData icon, String hint, TextEditingController controller,
@@ -515,7 +498,7 @@ class _DepositScreenState extends State<DepositScreen> {
     );
   }
 
-  void _showReviewSheet(BuildContext context, AppState state) {
+  void _showReviewSheet(BuildContext context, AppLocalizations l10n) {
     final method = _methods.firstWhere((m) => m["id"] == _selectedMethod);
     showModalBottomSheet(
       context: context,
@@ -539,12 +522,12 @@ class _DepositScreenState extends State<DepositScreen> {
                   Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
                   const SizedBox(height: 24),
                   Text(
-                    state.translate("Review Deposit", "Eeg Dhigashada horta", ar: "مراجعة الإيداع", de: "Einzahlung prüfen"), 
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
+                    l10n.reviewDeposit, 
+                    style: TextStyle(fontSize: 22 * context.fontSizeFactor, fontWeight: FontWeight.bold)
                   ),
                   const SizedBox(height: 32),
                   Container(
-                    padding: const EdgeInsets.all(24),
+                    padding: EdgeInsets.all(24 * context.fontSizeFactor),
                     decoration: BoxDecoration(
                       color: AppColors.accentTeal.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(24),
@@ -552,13 +535,13 @@ class _DepositScreenState extends State<DepositScreen> {
                     ),
                     child: Column(
                       children: [
-                        _reviewRow(context, state.translate("Amount", "Cadadka"), "\$${_amountController.text}"),
+                        _reviewRow(context, l10n.amount, "\$${_amountController.text}"),
                         Divider(height: 32, color: theme.dividerColor.withValues(alpha: 0.1)),
-                        _reviewRow(context, state.translate("Method", "Qaabka"), state.translate(method["title"], _getSomaliMethodTitle(method["id"]), ar: _getArabicMethodTitle(method["id"]), de: _getGermanMethodTitle(method["id"]))),
+                        _reviewRow(context, l10n.method, _getMethodTitle(method["titleKey"], l10n)),
                         Divider(height: 32, color: theme.dividerColor.withValues(alpha: 0.1)),
-                        _reviewRow(context, state.translate("Fee", "Kharashka"), "\$0.00", isFree: true),
+                        _reviewRow(context, l10n.fee, "\$0.00", isFree: true),
                         Divider(height: 32, color: theme.dividerColor.withValues(alpha: 0.1)),
-                        _reviewRow(context, state.translate("Total Charged", "Wadarta Guud"), "\$${_amountController.text}", isTotal: true),
+                        _reviewRow(context, l10n.totalCharged, "\$${_amountController.text}", isTotal: true),
                       ],
                     ),
                   ),
@@ -569,7 +552,7 @@ class _DepositScreenState extends State<DepositScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        _showSuccess(context, state);
+                        _showSuccess(context, l10n);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryDark,
@@ -577,7 +560,7 @@ class _DepositScreenState extends State<DepositScreen> {
                         elevation: 0,
                       ),
                       child: Text(
-                        state.translate("Confirm & Deposit", "Xaqiiji & Dhigo", ar: "تأكيد وإيداع", de: "Bestätigen & Einzahlen"), 
+                        l10n.confirmAndDeposit, 
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: Colors.white)
                       ),
                     ),
@@ -597,23 +580,35 @@ class _DepositScreenState extends State<DepositScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label, 
-          style: TextStyle(color: AppColors.grey.withValues(alpha: 0.7), fontSize: 15, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)
+        Expanded(
+          child: Text(
+            label, 
+            style: TextStyle(
+              color: AppColors.grey.withValues(alpha: 0.7), 
+              fontSize: 15 * context.fontSizeFactor, 
+              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-        Text(
-          value, 
-          style: TextStyle(
-            fontWeight: FontWeight.bold, 
-            fontSize: isTotal ? 18 : 15, 
-            color: isFree ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color
-          )
+        const SizedBox(width: 12),
+        Flexible(
+          child: Text(
+            value, 
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              fontWeight: FontWeight.bold, 
+              fontSize: (isTotal ? 18 : 15) * context.fontSizeFactor, 
+              color: isFree ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );
   }
 
-  void _showSuccess(BuildContext context, AppState state) {
+  void _showSuccess(BuildContext context, AppLocalizations l10n) {
     _audioPlayer.play(AssetSource('sounds/success.mp3'));
     final theme = Theme.of(context);
     Navigator.pushReplacement(
@@ -645,10 +640,10 @@ class _DepositScreenState extends State<DepositScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    Text(state.translate("Deposit Successful!", "Dhigashadu waa lagu guulaystay!", ar: "نجح الإيداع!", de: "Einzahlung erfolgreich!"), style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
+                    Text(l10n.depositSuccessful, style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
                     const SizedBox(height: 12),
                     Text(
-                      "\$${_amountController.text} ${state.translate("has been added to your wallet.", "waa lagu daray boorsadaada.", ar: "تمت إضافتها إلى محفظتك.", de: "wurde Ihrem Wallet hinzugefügt.")}",
+                      l10n.depositSuccessMessage("\$${_amountController.text}"),
                       textAlign: TextAlign.center,
                       style: TextStyle(color: AppColors.grey, fontSize: 16 * context.fontSizeFactor, height: 1.5),
                     ),
@@ -660,7 +655,7 @@ class _DepositScreenState extends State<DepositScreen> {
                         padding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor, horizontal: 40 * context.fontSizeFactor),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
-                      child: Text(state.translate("Back to Home", "Ku laabo Hoyga", ar: "العودة إلى الرئيسية", de: "Zurück zur Startseite"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Colors.white)),
+                      child: Text(l10n.backToHome, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Colors.white)),
                     ),
                   ],
                 ),

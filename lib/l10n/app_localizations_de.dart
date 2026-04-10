@@ -240,6 +240,50 @@ class AppLocalizationsDe extends AppLocalizations {
   String get backToHome => 'Zurück zum Start';
 
   @override
+  String get addMoney => 'Add Money';
+
+  @override
+  String get enterAmountToDeposit => 'Enter Amount to Deposit';
+
+  @override
+  String get confirmDeposit => 'Confirm Deposit';
+
+  @override
+  String get expiry => 'Expiry';
+
+  @override
+  String get cardholderName => 'Cardholder Name';
+
+  @override
+  String get fullNameOnCard => 'Full name on card';
+
+  @override
+  String get selectProvider => 'Select Provider';
+
+  @override
+  String get accountHolderName => 'Account Holder Name';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get reviewDeposit => 'Review Deposit';
+
+  @override
+  String get totalCharged => 'Total Charged';
+
+  @override
+  String get confirmAndDeposit => 'Confirm & Deposit';
+
+  @override
+  String get depositSuccessful => 'Deposit Successful!';
+
+  @override
+  String depositSuccessMessage(Object amount) {
+    return '$amount has been added to your wallet.';
+  }
+
+  @override
   String get stepAmount => 'Betrag';
 
   @override
@@ -467,9 +511,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personalDetails => 'Personal Details';
 
   @override
-  String get fullName => 'Full Name';
-
-  @override
   String get emailAddress => 'Email Address';
 
   @override
@@ -543,5 +584,47 @@ class AppLocalizationsDe extends AppLocalizations {
   String get comparingSelfie => 'Comparing selfie with ID';
 
   @override
+  String get cardHolder => 'CARD HOLDER';
+
+  @override
+  String get yourName => 'YOUR NAME';
+
+  @override
+  String get expires => 'EXPIRES';
+
+  @override
+  String get requiredField => 'Required';
+
+  @override
+  String get chooseProviderAndEnterPhone =>
+      'Choose your provider and enter phone number';
+
+  @override
+  String get enterNumberToCharge => 'Enter number to charge';
+
+  @override
+  String get servicePin => 'Service PIN';
+
+  @override
+  String get enterPin => 'Enter PIN';
+
+  @override
+  String get ibanHint => 'e.g. GB29 NWBK 6016 1331 9268 19';
+
+  @override
+  String get cardHolderNameLabel => 'Card Holder Name';
+
+  @override
+  String get johnDoe => 'John Doe';
+
+  @override
   String get verifyingIdentity => 'Verifying Identity...';
+
+  @override
+  String get pleaseFillAllFields => 'Please fill in all fields';
+
+  @override
+  String cardEndingIn(String lastFour) {
+    return 'Card ending in $lastFour';
+  }
 }

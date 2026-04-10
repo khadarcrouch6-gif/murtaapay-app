@@ -560,6 +560,90 @@ abstract class AppLocalizations {
   /// **'Back to Home'**
   String get backToHome;
 
+  /// No description provided for @addMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Money'**
+  String get addMoney;
+
+  /// No description provided for @enterAmountToDeposit.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Amount to Deposit'**
+  String get enterAmountToDeposit;
+
+  /// No description provided for @confirmDeposit.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Deposit'**
+  String get confirmDeposit;
+
+  /// No description provided for @expiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry'**
+  String get expiry;
+
+  /// No description provided for @cardholderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardholder Name'**
+  String get cardholderName;
+
+  /// No description provided for @fullNameOnCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name on card'**
+  String get fullNameOnCard;
+
+  /// No description provided for @selectProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Provider'**
+  String get selectProvider;
+
+  /// No description provided for @accountHolderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Holder Name'**
+  String get accountHolderName;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @reviewDeposit.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Deposit'**
+  String get reviewDeposit;
+
+  /// No description provided for @totalCharged.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Charged'**
+  String get totalCharged;
+
+  /// No description provided for @confirmAndDeposit.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & Deposit'**
+  String get confirmAndDeposit;
+
+  /// No description provided for @depositSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit Successful!'**
+  String get depositSuccessful;
+
+  /// No description provided for @depositSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} has been added to your wallet.'**
+  String depositSuccessMessage(Object amount);
+
   /// No description provided for @stepAmount.
   ///
   /// In en, this message translates to:
@@ -992,12 +1076,6 @@ abstract class AppLocalizations {
   /// **'Personal Details'**
   String get personalDetails;
 
-  /// No description provided for @fullName.
-  ///
-  /// In en, this message translates to:
-  /// **'Full Name'**
-  String get fullName;
-
   /// No description provided for @emailAddress.
   ///
   /// In en, this message translates to:
@@ -1142,11 +1220,89 @@ abstract class AppLocalizations {
   /// **'Comparing selfie with ID'**
   String get comparingSelfie;
 
+  /// No description provided for @cardHolder.
+  ///
+  /// In en, this message translates to:
+  /// **'CARD HOLDER'**
+  String get cardHolder;
+
+  /// No description provided for @yourName.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR NAME'**
+  String get yourName;
+
+  /// No description provided for @expires.
+  ///
+  /// In en, this message translates to:
+  /// **'EXPIRES'**
+  String get expires;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get requiredField;
+
+  /// No description provided for @chooseProviderAndEnterPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your provider and enter phone number'**
+  String get chooseProviderAndEnterPhone;
+
+  /// No description provided for @enterNumberToCharge.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter number to charge'**
+  String get enterNumberToCharge;
+
+  /// No description provided for @servicePin.
+  ///
+  /// In en, this message translates to:
+  /// **'Service PIN'**
+  String get servicePin;
+
+  /// No description provided for @enterPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter PIN'**
+  String get enterPin;
+
+  /// No description provided for @ibanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. GB29 NWBK 6016 1331 9268 19'**
+  String get ibanHint;
+
+  /// No description provided for @cardHolderNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Holder Name'**
+  String get cardHolderNameLabel;
+
+  /// No description provided for @johnDoe.
+  ///
+  /// In en, this message translates to:
+  /// **'John Doe'**
+  String get johnDoe;
+
   /// No description provided for @verifyingIdentity.
   ///
   /// In en, this message translates to:
   /// **'Verifying Identity...'**
   String get verifyingIdentity;
+
+  /// No description provided for @pleaseFillAllFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all fields'**
+  String get pleaseFillAllFields;
+
+  /// No description provided for @cardEndingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Card ending in {lastFour}'**
+  String cardEndingIn(String lastFour);
 }
 
 class _AppLocalizationsDelegate

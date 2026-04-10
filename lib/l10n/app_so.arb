@@ -83,6 +83,27 @@
   "shareReceipt": "La wadaag rasiidhka",
   "reference": "Tixraaca",
   "backToHome": "Ku laabo hoyga",
+  "addMoney": "Ku dar Lacag",
+  "enterAmountToDeposit": "Gali cadadka aad dhigato",
+  "confirmDeposit": "Xaqiiji Dhigashada",
+  "expiry": "Wakhtiga dhicitaanka",
+  "cardholderName": "Magaca qofka iska leh",
+  "fullNameOnCard": "Magaca oo buuxa ee kaarka ku qoran",
+  "selectProvider": "Dooro Shirkadda",
+  "accountHolderName": "Magaca qofka akoonka leh",
+  "fullName": "Magaca oo buuxa",
+  "reviewDeposit": "Eeg Dhigashada horta",
+  "totalCharged": "Wadarta Guud",
+  "confirmAndDeposit": "Xaqiiji & Dhigo",
+  "depositSuccessful": "Dhigashadu waa lagu guulaystay!",
+  "depositSuccessMessage": "{amount} waa lagu daray boorsadaada.",
+  "@depositSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
   "stepAmount": "Cadadka",
   "stepReceiver": "Qaataha",
   "stepPayment": "Lacag bixinta",

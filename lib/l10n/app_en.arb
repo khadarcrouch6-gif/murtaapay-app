@@ -86,6 +86,27 @@
   "shareReceipt": "Share Receipt",
   "reference": "Reference",
   "backToHome": "Back to Home",
+  "addMoney": "Add Money",
+  "enterAmountToDeposit": "Enter Amount to Deposit",
+  "confirmDeposit": "Confirm Deposit",
+  "expiry": "Expiry",
+  "cardholderName": "Cardholder Name",
+  "fullNameOnCard": "Full name on card",
+  "selectProvider": "Select Provider",
+  "accountHolderName": "Account Holder Name",
+  "fullName": "Full name",
+  "reviewDeposit": "Review Deposit",
+  "totalCharged": "Total Charged",
+  "confirmAndDeposit": "Confirm & Deposit",
+  "depositSuccessful": "Deposit Successful!",
+  "depositSuccessMessage": "{amount} has been added to your wallet.",
+  "@depositSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
   "stepAmount": "Amount",
   "stepReceiver": "Receiver",
   "stepPayment": "Payment",
@@ -197,5 +218,27 @@
   "scanningForClarity": "Scanning for clarity",
   "biometricMatch": "Biometric Match",
   "comparingSelfie": "Comparing selfie with ID",
-  "verifyingIdentity": "Verifying Identity..."
+  "cardHolder": "CARD HOLDER",
+  "yourName": "YOUR NAME",
+  "expires": "EXPIRES",
+  "expiryDate": "Expiry Date",
+  "cvv": "CVV",
+  "requiredField": "Required",
+  "chooseProviderAndEnterPhone": "Choose your provider and enter phone number",
+  "enterNumberToCharge": "Enter number to charge",
+  "servicePin": "Service PIN",
+  "enterPin": "Enter PIN",
+  "ibanHint": "e.g. GB29 NWBK 6016 1331 9268 19",
+  "cardHolderNameLabel": "Card Holder Name",
+  "johnDoe": "John Doe",
+  "verifyingIdentity": "Verifying Identity...",
+  "pleaseFillAllFields": "Please fill in all fields",
+  "cardEndingIn": "Card ending in {lastFour}",
+  "@cardEndingIn": {
+    "placeholders": {
+      "lastFour": {
+        "type": "String"
+      }
+    }
+  }
 }
