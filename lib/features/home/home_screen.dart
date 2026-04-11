@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   Widget _buildFixedTopBar(BuildContext context, AppState state, ThemeData theme) {
     final bool isDesktop = ResponsiveBreakpoints.of(context).largerThan(TABLET);
-    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final bool isTablet = ResponsiveBreakpoints.of(context).equals(TABLET);
 
     return FadeInDown(
       duration: const Duration(milliseconds: 800),
@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (!isDesktop && !(isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
+            if (isTablet)
               IconButton(
                 onPressed: () => Scaffold.of(context).openDrawer(),
                 icon: const Icon(Icons.menu_rounded, color: Colors.white),

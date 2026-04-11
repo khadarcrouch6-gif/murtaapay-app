@@ -163,5 +163,7 @@
   "contactlessPayments": "Lacag bixinta aan taabashada lahayn",
   "terminateCard": "Tirtir Kaarka",
   "permanentlyDeleteCard": "Si joogto ah u tirtir kaarkan virtual-ka ah",
-  "enterSecurityPin": "Fadlan geli 4-ta god ee PIN-kaaga sirta ah"
+  "enterSecurityPin": "Fadlan geli 4-ta god ee PIN-kaaga sirta ah",
+  "accountName": "Magaca Koontada",
+  "transferToAccountBelow": "Fadlan lacagta ugu wareeji koontada hoos ku qoran ka dibna taabo sii soco."
 }

@@ -657,6 +657,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get accountName => 'Account Name';
 
   @override
+  String get transferToAccountBelow =>
+      'Please transfer the amount to the account below and click continue.';
+
+  @override
   String cardEndingIn(String lastFour) {
     return 'Card ending in $lastFour';
   }

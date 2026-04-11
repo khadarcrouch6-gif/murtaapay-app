@@ -250,6 +250,7 @@
   "confirm": "Confirm",
   "submit": "Submit",
   "accountName": "Account Name",
+  "transferToAccountBelow": "Please transfer the amount to the account below and click continue.",
   "cardEndingIn": "Card ending in {lastFour}",
   "@cardEndingIn": {
     "placeholders": {

@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:audioplayers/audioplayers.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
+import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
@@ -28,7 +28,15 @@ class _DepositScreenState extends State<DepositScreen> {
   final TextEditingController _field3Controller = TextEditingController(); // CVV
   final TextEditingController _field4Controller = TextEditingController(); // Cardholder Name / PIN
 
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _field1Controller.dispose();
+    _field2Controller.dispose();
+    _field3Controller.dispose();
+    _field4Controller.dispose();
+    super.dispose();
+  }
 
   final List<Map<String, dynamic>> _methods = [
     {
@@ -55,11 +63,36 @@ class _DepositScreenState extends State<DepositScreen> {
   ];
 
   final List<Map<String, dynamic>> _banks = [
-    {"name": "Premier Bank", "color": const Color(0xFF01579B)},
-    {"name": "IBS Bank", "color": const Color(0xFFC62828)},
-    {"name": "Salaam Bank", "color": const Color(0xFF2E7D32)},
-    {"name": "Amal Bank", "color": const Color(0xFFEF6C00)},
-    {"name": "MyBank", "color": const Color(0xFF4527A0)},
+    {
+      "name": "Premier Bank",
+      "accountNumber": "1022334455",
+      "accountName": "MURTAPAY SOLUTIONS",
+      "color": const Color(0xFF01579B)
+    },
+    {
+      "name": "IBS Bank",
+      "accountNumber": "9988776655",
+      "accountName": "MURTAPAY SOLUTIONS",
+      "color": const Color(0xFFC62828)
+    },
+    {
+      "name": "Salaam Bank",
+      "accountNumber": "4455667788",
+      "accountName": "MURTAPAY SOLUTIONS",
+      "color": const Color(0xFF2E7D32)
+    },
+    {
+      "name": "Amal Bank",
+      "accountNumber": "1122334455",
+      "accountName": "MURTAPAY SOLUTIONS",
+      "color": const Color(0xFFEF6C00)
+    },
+    {
+      "name": "MyBank",
+      "accountNumber": "5566778899",
+      "accountName": "MURTAPAY SOLUTIONS",
+      "color": const Color(0xFF4527A0)
+    },
   ];
 
   String _getMethodTitle(String key, AppLocalizations l10n) {
@@ -321,44 +354,54 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   Widget _buildDetailsSection(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
     switch (_selectedMethod) {
       case "card":
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.visaMastercard,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Theme.of(context).textTheme.titleMedium?.color),
-            ),
-            const SizedBox(height: 12),
-            GestureDetector(
-              onTap: () => _showCardDepositDialog(l10n),
-              child: Container(
+        return FadeInUp(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              _buildCardPreview(context, l10n),
+              const SizedBox(height: 24),
+              Text(
+                l10n.cardDetails,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.titleLarge?.color),
+              ),
+              const SizedBox(height: 16),
+              _inputField(context, l10n.cardNumber, Icons.credit_card_rounded, "1234 5678 9012 3456", _field1Controller, isNumber: true, formatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(16), CardNumberInputFormatter()], onChanged: (_) => setState((){})),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(child: _inputField(context, l10n.expiry, Icons.calendar_today_rounded, "MM/YY", _field2Controller, isNumber: true, formatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4), ExpiryDateInputFormatter()], onChanged: (_) => setState((){}))),
+                  const SizedBox(width: 16),
+                  Expanded(child: _inputField(context, "CVV", Icons.lock_outline_rounded, "123", _field3Controller, isNumber: true, isObscure: true, formatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)], onChanged: (_) => setState((){}))),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _inputField(context, l10n.cardholderName, Icons.person_outline_rounded, l10n.fullNameOnCard, _field4Controller, onChanged: (_) => setState((){})),
+              const SizedBox(height: 32),
+              SizedBox(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Color(0xFF232526), Color(0xFF414345)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 5))],
-                ),
-                child: Row(
-                  children: [
-                    AdaptiveIcon(FontAwesomeIcons.creditCard, color: Colors.white, size: 28),
-                    const SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(l10n.payWithCard, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                        Text(l10n.securePayment, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12)),
-                      ],
-                    ),
-                    const Spacer(),
-                    const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white54, size: 16),
-                  ],
+                height: 56 * context.fontSizeFactor,
+                child: ElevatedButton(
+                  onPressed: (_field1Controller.text.length >= 16 && _field2Controller.text.length >= 5 && _field3Controller.text.length >= 3 && _field4Controller.text.isNotEmpty) 
+                    ? () => _showReviewSheet(context, l10n) 
+                    : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryDark,
+                    disabledBackgroundColor: theme.dividerColor.withValues(alpha: 0.1),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    l10n.continueLabel, 
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       case "mobile":
         return Column(
@@ -366,7 +409,7 @@ class _DepositScreenState extends State<DepositScreen> {
           children: [
             Text(
               l10n.selectProvider,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Theme.of(context).textTheme.titleMedium?.color),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.titleMedium?.color),
             ),
             const SizedBox(height: 12),
             GridView.count(
@@ -386,62 +429,302 @@ class _DepositScreenState extends State<DepositScreen> {
           ],
         );
       case "bank":
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.selectBank,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Theme.of(context).textTheme.titleMedium?.color),
-            ),
-            const SizedBox(height: 12),
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _banks.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 10),
-              itemBuilder: (context, index) {
-                final bank = _banks[index];
-                return _buildBankOption(bank, l10n);
-              },
-            ),
-          ],
+        final bank = (_selectedBank != null && _selectedBank != "Other")
+          ? _banks.firstWhere((b) => b["name"] == _selectedBank) 
+          : null;
+        return FadeInUp(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              Text(
+                l10n.selectBank,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.titleLarge?.color),
+              ),
+              const SizedBox(height: 16),
+              GestureDetector(
+                onTap: () => _showBankPicker(context, l10n),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                      )
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: (bank?["color"] as Color? ?? AppColors.accentTeal).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(Icons.account_balance_rounded, color: bank?["color"] as Color? ?? AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                      ),
+                      const SizedBox(width: 16),
+                      Text(
+                        _selectedBank ?? l10n.selectBank,
+                        style: TextStyle(
+                          fontSize: 16 * context.fontSizeFactor,
+                          fontWeight: FontWeight.w600,
+                          color: _selectedBank == null ? AppColors.grey.withValues(alpha: 0.5) : theme.textTheme.bodyLarge?.color,
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey),
+                    ],
+                  ),
+                ),
+              ),
+              if (_selectedBank != null) ...[
+                const SizedBox(height: 16),
+                if (_selectedBank == "Other") ...[
+                  _inputField(context, "Bank Name", Icons.account_balance_rounded, "Enter Bank Name", _field1Controller, onChanged: (_) => setState((){})),
+                  const SizedBox(height: 16),
+                ],
+                _inputField(context, l10n.accountNumber, Icons.numbers_rounded, "Enter Account Number", _field2Controller, isNumber: true, onChanged: (_) => setState((){})),
+                const SizedBox(height: 16),
+                _inputField(context, l10n.accountName, Icons.person_outline_rounded, "Enter Account Name", _field4Controller, onChanged: (_) => setState((){})),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56 * context.fontSizeFactor,
+                  child: ElevatedButton(
+                    onPressed: (_field2Controller.text.isNotEmpty && _field4Controller.text.isNotEmpty && (_selectedBank != "Other" || _field1Controller.text.isNotEmpty))
+                      ? () => _showReviewSheet(context, l10n)
+                      : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: bank?["color"] as Color? ?? AppColors.primaryDark,
+                      disabledBackgroundColor: theme.dividerColor.withValues(alpha: 0.1),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      l10n.continueLabel, 
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
         );
       default:
         return const SizedBox.shrink();
     }
   }
 
-  Widget _buildBankOption(Map<String, dynamic> bank, AppLocalizations l10n) {
-    bool isSelected = _selectedBank == bank["name"];
-    final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: () {
-        setState(() => _selectedBank = bank["name"]);
-        _showBankTransferDialog(bank, l10n);
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+
+
+  Widget _buildCardPreview(BuildContext context, AppLocalizations l10n) {
+    return Center(
+      child: Container(
+        width: double.infinity,
+        height: 200 * context.fontSizeFactor,
         decoration: BoxDecoration(
-          color: isSelected ? (bank["color"] as Color).withValues(alpha: 0.05) : theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isSelected ? (bank["color"] as Color) : theme.dividerColor.withValues(alpha: 0.1), width: 1.5),
+          borderRadius: BorderRadius.circular(24),
+          gradient: const LinearGradient(
+            colors: [Color(0xFF1e3c72), Color(0xFF2a5298)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF1e3c72).withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            )
+          ],
         ),
-        child: Row(
+        child: Stack(
           children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(color: (bank["color"] as Color).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-              child: Icon(Icons.account_balance_rounded, color: bank["color"], size: 20),
+            // Background patterns or icons
+            Positioned(
+              right: -20,
+              bottom: -20,
+              child: AdaptiveIcon(FontAwesomeIcons.ccVisa, color: Colors.white.withValues(alpha: 0.05), size: 150),
             ),
-            const SizedBox(width: 16),
-            Text(bank["name"], style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
-            const Spacer(),
-            Icon(Icons.arrow_forward_ios_rounded, size: 14, color: theme.dividerColor),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AdaptiveIcon(FontAwesomeIcons.microchip, color: Colors.amber.withValues(alpha: 0.8), size: 36 * context.fontSizeFactor),
+                      AdaptiveIcon(FontAwesomeIcons.wifi, color: Colors.white.withValues(alpha: 0.6), size: 24 * context.fontSizeFactor),
+                    ],
+                  ),
+                  Text(
+                    _field1Controller.text.isEmpty ? "XXXX XXXX XXXX XXXX" : _field1Controller.text,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22 * context.fontSizeFactor,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l10n.cardholderName.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10 * context.fontSizeFactor)),
+                          const SizedBox(height: 4),
+                          Text(
+                            _field4Controller.text.isEmpty ? "YOUR NAME" : _field4Controller.text.toUpperCase(),
+                            style: TextStyle(color: Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(l10n.expiry.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10 * context.fontSizeFactor)),
+                          const SizedBox(height: 4),
+                          Text(
+                            _field2Controller.text.isEmpty ? "MM/YY" : _field2Controller.text,
+                            style: TextStyle(color: Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _displayField(BuildContext context, String label, String value, IconData icon) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          )
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: TextStyle(color: AppColors.grey.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
+                Text(value, style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.copy_rounded, size: 18, color: AppColors.accentTeal),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: value));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Copied to clipboard")));
+            },
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showBankPicker(BuildContext context, AppLocalizations l10n) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return Container(
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+              const SizedBox(height: 16),
+              Text(l10n.selectBank, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _banks.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == _banks.length) {
+                      return ListTile(
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle),
+                          child: const Icon(Icons.add_rounded, color: AppColors.accentTeal, size: 20),
+                        ),
+                        title: const Text("Other Bank / Add New", style: TextStyle(fontWeight: FontWeight.bold)),
+                        onTap: () {
+                          setState(() {
+                            _selectedBank = "Other";
+                            _field1Controller.clear();
+                            _field2Controller.clear();
+                            _field4Controller.clear();
+                          });
+                          Navigator.pop(context);
+                        },
+                      );
+                    }
+                    final bank = _banks[index];
+                    return ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(color: (bank["color"] as Color).withValues(alpha: 0.1), shape: BoxShape.circle),
+                        child: Icon(Icons.account_balance_rounded, color: bank["color"], size: 20),
+                      ),
+                      title: Text(bank["name"], style: const TextStyle(fontWeight: FontWeight.bold)),
+                      onTap: () {
+                        setState(() {
+                          _selectedBank = bank["name"];
+                          _field2Controller.text = bank["accountNumber"];
+                          _field4Controller.text = bank["accountName"];
+                        });
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -504,52 +787,38 @@ class _DepositScreenState extends State<DepositScreen> {
     );
   }
 
-  void _showBankTransferDialog(Map<String, dynamic> bank, AppLocalizations l10n) {
-    _field1Controller.clear();
-    _field2Controller.clear();
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          bool isValid = _field1Controller.text.isNotEmpty && _field2Controller.text.length >= 10;
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            title: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: (bank["color"] as Color).withValues(alpha: 0.1), shape: BoxShape.circle),
-                  child: Icon(Icons.account_balance_rounded, color: bank["color"], size: 20),
-                ),
-                const SizedBox(width: 12),
-                Text(bank["name"], style: const TextStyle(fontWeight: FontWeight.w900)),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _inputField(context, l10n.accountHolderName, Icons.person_rounded, l10n.fullName, _field1Controller, onChanged: (_) => setDialogState((){})),
-                const SizedBox(height: 16),
-                _inputField(context, "Account Number / IBAN", Icons.numbers_rounded, "001XXXXXXXX", _field2Controller, isNumber: true, onChanged: (_) => setDialogState((){})),
-              ],
-            ),
-            actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
-              ElevatedButton(
-                onPressed: !isValid ? null : () {
-                  Navigator.pop(context);
-                  _showReviewSheet(this.context, l10n);
+
+
+  Widget _infoBox(String label, String value) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.grey.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.grey.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: TextStyle(color: AppColors.grey.withValues(alpha: 0.7), fontSize: 12)),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
+              IconButton(
+                icon: const Icon(Icons.copy_rounded, size: 18, color: AppColors.accentTeal),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: value));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Copied to clipboard")));
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: bank["color"],
-                  disabledBackgroundColor: Colors.grey.withValues(alpha: 0.3),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
-                ),
-                child: Text(l10n.continueLabel, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
               ),
             ],
-          );
-        }
+          ),
+        ],
       ),
     );
   }
@@ -738,8 +1007,8 @@ class _DepositScreenState extends State<DepositScreen> {
                     height: 60 * context.fontSizeFactor,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context);
-                        _showSuccess(context, l10n);
+                        Navigator.pop(context); // Xir bottom sheet-ka
+                        _processTransaction(this.context, l10n); // Isticmaal screen context
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryDark,
@@ -795,61 +1064,100 @@ class _DepositScreenState extends State<DepositScreen> {
     );
   }
 
-  void _showSuccess(BuildContext context, AppLocalizations l10n) {
-    HapticFeedback.lightImpact();
-    _audioPlayer.play(AssetSource('sounds/success.mp3'));
+  void _processTransaction(BuildContext context, AppLocalizations l10n) async {
     final theme = Theme.of(context);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          body: Center(
-            child: MaxWidthBox(
-              maxWidth: 500,
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FadeInDown(
-                      child: Container(
-                        height: 110 * context.fontSizeFactor, width: 110 * context.fontSizeFactor,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF11998E), Color(0xFF38EF7D)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          shape: BoxShape.circle,
-                          boxShadow: [BoxShadow(color: const Color(0xFF11998E).withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 10))],
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (ctx) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Center(
+          child: ZoomIn(
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              width: 200 * context.fontSizeFactor,
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 60 * context.fontSizeFactor,
+                        height: 60 * context.fontSizeFactor,
+                        child: const CircularProgressIndicator(
+                          color: AppColors.accentTeal,
+                          strokeWidth: 3,
                         ),
-                        child: Icon(Icons.check_rounded, color: Colors.white, size: 65 * context.fontSizeFactor),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                    Text(l10n.depositSuccessful, style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
-                    const SizedBox(height: 12),
-                    Text(
-                      l10n.depositSuccessMessage("\$${_amountController.text}"),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.grey, fontSize: 16 * context.fontSizeFactor, height: 1.5),
-                    ),
-                    const SizedBox(height: 48),
-                    ElevatedButton(
-                      onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentTeal,
-                        padding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor, horizontal: 40 * context.fontSizeFactor),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      Icon(
+                        Icons.bolt_rounded,
+                        color: AppColors.accentTeal,
+                        size: 30 * context.fontSizeFactor,
                       ),
-                      child: Text(l10n.backToHome, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Colors.white)),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(
+                    "Processing...", 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16 * context.fontSizeFactor,
+                      color: theme.textTheme.bodyLarge?.color,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                  SizedBox(height: 8 * context.fontSizeFactor),
+                  Text(
+                    "Just a moment", 
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 12 * context.fontSizeFactor,
+                      color: AppColors.grey,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+
+    // Sug 1 ilbiriqsi oo qura
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (!mounted) return;
+    
+    // Xir dialog-ka si suuban
+    Navigator.of(context, rootNavigator: true).pop();
+    
+    // Toos ugu gudbi Success Screen
+    _showSuccess(context, l10n);
+  }
+
+  void _showSuccess(BuildContext context, AppLocalizations l10n) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SuccessScreen(
+          title: l10n.depositSuccessful,
+          message: l10n.depositSuccessMessage("\$${_amountController.text}"),
+          buttonText: l10n.backToHome,
         ),
       ),
     );

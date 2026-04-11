@@ -1358,6 +1358,12 @@ abstract class AppLocalizations {
   /// **'Account Name'**
   String get accountName;
 
+  /// No description provided for @transferToAccountBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Please transfer the amount to the account below and click continue.'**
+  String get transferToAccountBelow;
+
   /// No description provided for @cardEndingIn.
   ///
   /// In en, this message translates to:

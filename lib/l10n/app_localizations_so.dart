@@ -655,7 +655,11 @@ class AppLocalizationsSo extends AppLocalizations {
   String get submit => 'Submit';
 
   @override
-  String get accountName => 'Account Name';
+  String get accountName => 'Magaca Koontada';
+
+  @override
+  String get transferToAccountBelow =>
+      'Fadlan lacagta ugu wareeji koontada hoos ku qoran ka dibna taabo sii soco.';
 
   @override
   String cardEndingIn(String lastFour) {

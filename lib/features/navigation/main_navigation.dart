@@ -76,7 +76,8 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final bool isDesktop = ResponsiveBreakpoints.of(context).largerThan(TABLET);
-    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final bool isTablet = ResponsiveBreakpoints.of(context).equals(TABLET);
+    final bool isMobile = ResponsiveBreakpoints.of(context).isMobile;
     final theme = Theme.of(context);
     final state = AppState();
     final screens = _getScreens();
@@ -97,12 +98,12 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
         },
         child: Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
-          drawer: (!isDesktop && !(isLandscape && !ResponsiveBreakpoints.of(context).isMobile)) 
+          drawer: isTablet 
               ? _buildSidebar(context, state, theme, isDrawer: true) 
               : null,
           body: Row(
             children: [
-              if (isDesktop || (isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
+              if (isDesktop)
                 _buildSidebar(context, state, theme),
                 
               Expanded(
@@ -122,7 +123,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                         child: screens[state.selectedNavIndex],
                       ),
                       
-                      if (!isDesktop && !(isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
+                      if (isMobile)
                         _buildMobileBottomNav(context, state),
                     ],
                   ),

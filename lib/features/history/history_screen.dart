@@ -84,6 +84,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: ResponsiveBreakpoints.of(context).equals(TABLET)
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: Icon(Icons.menu_rounded, color: theme.iconTheme.color),
+              ),
+            )
+          : null,
       body: Center(
         child: MaxWidthBox(
           maxWidth: 800,
