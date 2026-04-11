@@ -258,5 +258,81 @@
         "type": "String"
       }
     }
-  }
+  },
+  "withdrawMoney": "Withdraw Money",
+  "withdrawToStripe": "Withdraw to your Stripe account",
+  "withdrawalMethod": "Withdrawal Method",
+  "stripeEmail": "Stripe Email",
+  "mobileNumber": "Mobile Number",
+  "iban": "IBAN",
+  "reviewWithdrawal": "Review Withdrawal",
+  "details": "Details",
+  "free": "Free",
+  "totalDeducted": "Total Deducted",
+  "confirmWithdraw": "Confirm & Withdraw",
+  "withdrawalRequested": "Withdrawal Requested!",
+  "withdrawalSuccessMessage": "Your withdrawal of {amount} is being processed.",
+  "@withdrawalSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payBills": "Pay Bills",
+  "selectCategory": "Select Category",
+  "recentBills": "Recent Bills",
+  "amountToPay": "Amount to Pay ($)",
+  "confirmPayment": "Confirm Payment",
+  "paymentSuccessful": "Payment Successful!",
+  "paymentSuccessMessage": "Your payment of {amount} for {category} has been processed.",
+  "@paymentSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "billDetails": "Bill Details",
+  "serviceProvider": "Service Provider",
+  "category": "Category",
+  "accountId": "Account ID",
+  "amountPaid": "Amount Paid",
+  "paymentDate": "Payment Date",
+  "status": "Status",
+  "completed": "Completed",
+  "downloadReceipt": "Download Receipt",
+  "close": "Close",
+  "backToBills": "Back to Bills",
+  "electricity": "Electricity",
+  "water": "Water",
+  "internet": "Internet",
+  "tvCable": "TV Cable",
+  "education": "Education",
+  "govServices": "Gov Services",
+  "stripe": "Stripe",
+  "debitCreditCard": "Debit / Credit Card",
+  "justAMoment": "Just a moment",
+  "processing": "Processing...",
+  "copiedToClipboard": "Copied to clipboard",
+  "otherBank": "Other Bank",
+  "bankName": "Bank Name",
+  "enterBankName": "Enter Bank Name",
+  "enterAccountNumber": "Enter Account Number",
+  "enterAccountName": "Enter Account Name",
+  "noActiveCards": "No active cards",
+  "orderVirtualCard": "Order Virtual Card",
+  "instantlyIssueNewCard": "Instantly issue a new digital card",
+  "addToAppleWallet": "Add to Apple Wallet",
+  "addToGooglePay": "Add to Google Pay",
+  "terminateCardConfirm": "Are you sure you want to permanently delete this card? This action cannot be undone.",
+  "all": "All",
+  "subscriptions": "Subscriptions",
+  "cardTerminated": "Card Terminated",
+  "cardTerminatedSuccess": "Your virtual card has been permanently deleted.",
+  "topUpFromWallet": "Top-up from Wallet",
+  "withdrawToStripeDesc": "Withdraw to your Stripe account"
 }

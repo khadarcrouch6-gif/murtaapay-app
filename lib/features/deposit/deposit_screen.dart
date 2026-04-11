@@ -470,7 +470,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       ),
                       const SizedBox(width: 16),
                       Text(
-                        _selectedBank ?? l10n.selectBank,
+                        _selectedBank == "Other" ? l10n.otherBank : (_selectedBank ?? l10n.selectBank),
                         style: TextStyle(
                           fontSize: 16 * context.fontSizeFactor,
                           fontWeight: FontWeight.w600,
@@ -486,12 +486,12 @@ class _DepositScreenState extends State<DepositScreen> {
               if (_selectedBank != null) ...[
                 const SizedBox(height: 16),
                 if (_selectedBank == "Other") ...[
-                  _inputField(context, "Bank Name", Icons.account_balance_rounded, "Enter Bank Name", _field1Controller, onChanged: (_) => setState((){})),
+                  _inputField(context, l10n.bankName, Icons.account_balance_rounded, l10n.enterBankName, _field1Controller, onChanged: (_) => setState((){})),
                   const SizedBox(height: 16),
                 ],
-                _inputField(context, l10n.accountNumber, Icons.numbers_rounded, "Enter Account Number", _field2Controller, isNumber: true, onChanged: (_) => setState((){})),
+                _inputField(context, l10n.accountNumber, Icons.numbers_rounded, l10n.enterAccountNumber, _field2Controller, isNumber: true, onChanged: (_) => setState((){})),
                 const SizedBox(height: 16),
-                _inputField(context, l10n.accountName, Icons.person_outline_rounded, "Enter Account Name", _field4Controller, onChanged: (_) => setState((){})),
+                _inputField(context, l10n.accountName, Icons.person_outline_rounded, l10n.enterAccountName, _field4Controller, onChanged: (_) => setState((){})),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,
@@ -610,53 +610,6 @@ class _DepositScreenState extends State<DepositScreen> {
     );
   }
 
-  Widget _displayField(BuildContext context, String label, String value, IconData icon) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          )
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-            child: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: TextStyle(color: AppColors.grey.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
-                Text(value, style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.copy_rounded, size: 18, color: AppColors.accentTeal),
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: value));
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Copied to clipboard")));
-            },
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showBankPicker(BuildContext context, AppLocalizations l10n) {
     showModalBottomSheet(
       context: context,
@@ -688,7 +641,7 @@ class _DepositScreenState extends State<DepositScreen> {
                           decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle),
                           child: const Icon(Icons.add_rounded, color: AppColors.accentTeal, size: 20),
                         ),
-                        title: const Text("Other Bank / Add New", style: TextStyle(fontWeight: FontWeight.bold)),
+                        title: Text(l10n.otherBank, style: const TextStyle(fontWeight: FontWeight.bold)),
                         onTap: () {
                           setState(() {
                             _selectedBank = "Other";
@@ -725,101 +678,6 @@ class _DepositScreenState extends State<DepositScreen> {
           ),
         );
       },
-    );
-  }
-
-  void _showCardDepositDialog(AppLocalizations l10n) {
-    _field1Controller.clear();
-    _field2Controller.clear();
-    _field3Controller.clear();
-    _field4Controller.clear();
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          bool isValid = _field1Controller.text.length >= 16 && _field2Controller.text.length >= 5 && _field3Controller.text.length >= 3 && _field4Controller.text.isNotEmpty;
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            title: Row(
-              children: [
-                AdaptiveIcon(FontAwesomeIcons.creditCard, color: AppColors.accentTeal, size: 20),
-                const SizedBox(width: 12),
-                Text(l10n.cardDetails, style: const TextStyle(fontWeight: FontWeight.w900)),
-              ],
-            ),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _inputField(context, l10n.cardNumber, Icons.credit_card_rounded, "1234 5678 9012 3456", _field1Controller, isNumber: true, formatters: [CardNumberInputFormatter()], onChanged: (_) => setDialogState((){})),
-                  const SizedBox(height: 14),
-                  Row(
-                    children: [
-                      Expanded(child: _inputField(context, l10n.expiry, Icons.calendar_today_rounded, "MM/YY", _field2Controller, isNumber: true, formatters: [ExpiryDateInputFormatter()], onChanged: (_) => setDialogState((){}))),
-                      const SizedBox(width: 14),
-                      Expanded(child: _inputField(context, "CVV", Icons.lock_outline_rounded, "123", _field3Controller, isNumber: true, isObscure: true, formatters: [LengthLimitingTextInputFormatter(3)], onChanged: (_) => setDialogState((){}))),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  _inputField(context, l10n.cardholderName, Icons.person_outline_rounded, l10n.fullNameOnCard, _field4Controller, onChanged: (_) => setDialogState((){})),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
-              ElevatedButton(
-                onPressed: !isValid ? null : () {
-                  Navigator.pop(context);
-                  _showReviewSheet(this.context, l10n);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accentTeal,
-                  disabledBackgroundColor: Colors.grey.withValues(alpha: 0.3),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
-                ),
-                child: Text(l10n.continueLabel, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          );
-        }
-      ),
-    );
-  }
-
-
-
-  Widget _infoBox(String label, String value) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.grey.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.grey.withValues(alpha: 0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: TextStyle(color: AppColors.grey.withValues(alpha: 0.7), fontSize: 12)),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(child: Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
-              IconButton(
-                icon: const Icon(Icons.copy_rounded, size: 18, color: AppColors.accentTeal),
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: value));
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Copied to clipboard")));
-                },
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -864,24 +722,24 @@ class _DepositScreenState extends State<DepositScreen> {
             title: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8 * context.fontSizeFactor),
                   decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-                  child: Icon(Icons.phone_android_rounded, color: color, size: 20),
+                  child: Icon(Icons.phone_android_rounded, color: color, size: 20 * context.fontSizeFactor),
                 ),
-                const SizedBox(width: 12),
-                Text(provider, style: const TextStyle(fontWeight: FontWeight.w900)),
+                SizedBox(width: 12 * context.fontSizeFactor),
+                Text(provider, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor)),
               ],
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 _inputField(context, l10n.phoneNumber, Icons.phone_iphone_rounded, "61XXXXXXX", _field1Controller, isNumber: true, onChanged: (_) => setDialogState((){})),
-                const SizedBox(height: 16),
+                SizedBox(height: 16 * context.fontSizeFactor),
                 _inputField(context, l10n.servicePin, Icons.lock_outline_rounded, "••••", _field4Controller, isNumber: true, isObscure: true, onChanged: (_) => setDialogState((){})),
               ],
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
               ElevatedButton(
                 onPressed: !isValid ? null : () {
                   Navigator.pop(context);
@@ -890,7 +748,8 @@ class _DepositScreenState extends State<DepositScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: color, 
                   disabledBackgroundColor: Colors.grey.withValues(alpha: 0.3),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 10 * context.fontSizeFactor),
                 ),
                 child: Text(l10n.continueLabel, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
               ),
@@ -1007,8 +866,8 @@ class _DepositScreenState extends State<DepositScreen> {
                     height: 60 * context.fontSizeFactor,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context); // Xir bottom sheet-ka
-                        _processTransaction(this.context, l10n); // Isticmaal screen context
+                        Navigator.pop(context);
+                        _processTransaction(this.context, l10n);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryDark,
@@ -1071,12 +930,12 @@ class _DepositScreenState extends State<DepositScreen> {
       barrierDismissible: false,
       useRootNavigator: true,
       builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Center(
           child: ZoomIn(
             duration: const Duration(milliseconds: 300),
             child: Container(
-              width: 200 * context.fontSizeFactor,
+              width: 220 * context.fontSizeFactor,
               padding: EdgeInsets.all(32 * context.fontSizeFactor),
               decoration: BoxDecoration(
                 color: theme.scaffoldBackgroundColor,
@@ -1096,8 +955,8 @@ class _DepositScreenState extends State<DepositScreen> {
                     alignment: Alignment.center,
                     children: [
                       SizedBox(
-                        width: 60 * context.fontSizeFactor,
-                        height: 60 * context.fontSizeFactor,
+                        width: 65 * context.fontSizeFactor,
+                        height: 65 * context.fontSizeFactor,
                         child: const CircularProgressIndicator(
                           color: AppColors.accentTeal,
                           strokeWidth: 3,
@@ -1106,26 +965,26 @@ class _DepositScreenState extends State<DepositScreen> {
                       Icon(
                         Icons.bolt_rounded,
                         color: AppColors.accentTeal,
-                        size: 30 * context.fontSizeFactor,
+                        size: 32 * context.fontSizeFactor,
                       ),
                     ],
                   ),
                   SizedBox(height: 24 * context.fontSizeFactor),
                   Text(
-                    "Processing...", 
+                    l10n.processing, 
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16 * context.fontSizeFactor,
+                      fontSize: 18 * context.fontSizeFactor,
                       color: theme.textTheme.bodyLarge?.color,
                       decoration: TextDecoration.none,
                     )
                   ),
                   SizedBox(height: 8 * context.fontSizeFactor),
                   Text(
-                    "Just a moment", 
+                    l10n.justAMoment,
                     style: TextStyle(
                       fontWeight: FontWeight.normal,
-                      fontSize: 12 * context.fontSizeFactor,
+                      fontSize: 13 * context.fontSizeFactor,
                       color: AppColors.grey,
                       decoration: TextDecoration.none,
                     )
@@ -1138,15 +997,12 @@ class _DepositScreenState extends State<DepositScreen> {
       ),
     );
 
-    // Sug 1 ilbiriqsi oo qura
     await Future.delayed(const Duration(seconds: 1));
 
     if (!mounted) return;
     
-    // Xir dialog-ka si suuban
     Navigator.of(context, rootNavigator: true).pop();
     
-    // Toos ugu gudbi Success Screen
     _showSuccess(context, l10n);
   }
 

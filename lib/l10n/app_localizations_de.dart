@@ -240,47 +240,47 @@ class AppLocalizationsDe extends AppLocalizations {
   String get backToHome => 'Zurück zum Start';
 
   @override
-  String get addMoney => 'Add Money';
+  String get addMoney => 'Geld hinzufügen';
 
   @override
-  String get enterAmountToDeposit => 'Enter Amount to Deposit';
+  String get enterAmountToDeposit => 'Betrag zum Einzahlen eingeben';
 
   @override
-  String get confirmDeposit => 'Confirm Deposit';
+  String get confirmDeposit => 'Einzahlung bestätigen';
 
   @override
-  String get expiry => 'Expiry';
+  String get expiry => 'Ablaufdatum';
 
   @override
-  String get cardholderName => 'Cardholder Name';
+  String get cardholderName => 'Name des Karteninhabers';
 
   @override
-  String get fullNameOnCard => 'Full name on card';
+  String get fullNameOnCard => 'Vollständiger Name auf der Karte';
 
   @override
-  String get selectProvider => 'Select Provider';
+  String get selectProvider => 'Anbieter wählen';
 
   @override
-  String get accountHolderName => 'Account Holder Name';
+  String get accountHolderName => 'Name des Kontoinhabers';
 
   @override
-  String get fullName => 'Full Name';
+  String get fullName => 'Vollständiger Name';
 
   @override
-  String get reviewDeposit => 'Review Deposit';
+  String get reviewDeposit => 'Einzahlung prüfen';
 
   @override
-  String get totalCharged => 'Total Charged';
+  String get totalCharged => 'Gesamtbelastung';
 
   @override
-  String get confirmAndDeposit => 'Confirm & Deposit';
+  String get confirmAndDeposit => 'Bestätigen & Einzahlen';
 
   @override
-  String get depositSuccessful => 'Deposit Successful!';
+  String get depositSuccessful => 'Einzahlung erfolgreich!';
 
   @override
   String depositSuccessMessage(Object amount) {
-    return '$amount has been added to your wallet.';
+    return '$amount wurde Ihrer Wallet hinzugefügt.';
   }
 
   @override
@@ -633,35 +633,219 @@ class AppLocalizationsDe extends AppLocalizations {
   String get pleaseFillAllFields => 'Please fill in all fields';
 
   @override
-  String get virtualCardTopUp => 'Virtual Card Top-Up';
+  String get virtualCardTopUp => 'Virtuelle Karte aufladen';
 
   @override
   String topUpInstantlyVia(String method) {
-    return 'Top up instantly via $method';
+    return 'Sofort aufladen über $method';
   }
 
   @override
-  String get walletPin => 'Wallet PIN';
+  String get walletPin => 'Wallet-PIN';
 
   @override
   String get enterWalletPinMessage =>
-      'Enter your 4-digit wallet PIN to authorize top-up.';
+      'Geben Sie Ihre 4-stellige Wallet-PIN ein, um die Aufladung zu autorisieren.';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'Bestätigen';
 
   @override
-  String get submit => 'Submit';
+  String get submit => 'Absenden';
 
   @override
-  String get accountName => 'Account Name';
+  String get accountName => 'Kontoname';
 
   @override
   String get transferToAccountBelow =>
-      'Please transfer the amount to the account below and click continue.';
+      'Bitte überweisen Sie den Betrag auf das unten stehende Konto und klicken Sie auf Weiter.';
 
   @override
   String cardEndingIn(String lastFour) {
     return 'Card ending in $lastFour';
   }
+
+  @override
+  String get withdrawMoney => 'Geld abheben';
+
+  @override
+  String get withdrawToStripe => 'Auf Stripe-Konto auszahlen';
+
+  @override
+  String get withdrawalMethod => 'Auszahlungsmethode';
+
+  @override
+  String get stripeEmail => 'Stripe-E-Mail';
+
+  @override
+  String get mobileNumber => 'Handynummer';
+
+  @override
+  String get iban => 'IBAN';
+
+  @override
+  String get reviewWithdrawal => 'Auszahlung prüfen';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get free => 'Kostenlos';
+
+  @override
+  String get totalDeducted => 'Gesamt abgezogen';
+
+  @override
+  String get confirmWithdraw => 'Bestätigen & Auszahlen';
+
+  @override
+  String get withdrawalRequested => 'Auszahlung beantragt!';
+
+  @override
+  String withdrawalSuccessMessage(String amount) {
+    return 'Ihre Auszahlung von $amount wird bearbeitet.';
+  }
+
+  @override
+  String get payBills => 'Rechnungen bezahlen';
+
+  @override
+  String get selectCategory => 'Kategorie wählen';
+
+  @override
+  String get recentBills => 'Letzte Rechnungen';
+
+  @override
+  String get amountToPay => 'Zu zahlender Betrag (\$)';
+
+  @override
+  String get confirmPayment => 'Zahlung bestätigen';
+
+  @override
+  String get paymentSuccessful => 'Zahlung erfolgreich!';
+
+  @override
+  String paymentSuccessMessage(String amount, String category) {
+    return 'Ihre Zahlung von $amount für $category wurde bearbeitet.';
+  }
+
+  @override
+  String get billDetails => 'Rechnungsdetails';
+
+  @override
+  String get serviceProvider => 'Dienstanbieter';
+
+  @override
+  String get category => 'Kategorie';
+
+  @override
+  String get accountId => 'Konto-ID';
+
+  @override
+  String get amountPaid => 'Gezahlter Betrag';
+
+  @override
+  String get paymentDate => 'Zahlungsdatum';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get completed => 'Abgeschlossen';
+
+  @override
+  String get downloadReceipt => 'Beleg herunterladen';
+
+  @override
+  String get close => 'Schließen';
+
+  @override
+  String get backToBills => 'Zurück zu Rechnungen';
+
+  @override
+  String get electricity => 'Strom';
+
+  @override
+  String get water => 'Wasser';
+
+  @override
+  String get internet => 'Internet';
+
+  @override
+  String get tvCable => 'TV & Kabel';
+
+  @override
+  String get education => 'Bildung';
+
+  @override
+  String get govServices => 'Behördendienste';
+
+  @override
+  String get stripe => 'Stripe';
+
+  @override
+  String get debitCreditCard => 'Debit- / Kreditkarte';
+
+  @override
+  String get justAMoment => 'Einen Moment bitte';
+
+  @override
+  String get processing => 'Verarbeitung...';
+
+  @override
+  String get copiedToClipboard => 'In Zwischenablage kopiert';
+
+  @override
+  String get otherBank => 'Andere Bank';
+
+  @override
+  String get bankName => 'Bankname';
+
+  @override
+  String get enterBankName => 'Bankname eingeben';
+
+  @override
+  String get enterAccountNumber => 'Kontonummer eingeben';
+
+  @override
+  String get enterAccountName => 'Kontonamen eingeben';
+
+  @override
+  String get noActiveCards => 'Keine aktiven Karten';
+
+  @override
+  String get orderVirtualCard => 'Virtuelle Karte bestellen';
+
+  @override
+  String get instantlyIssueNewCard =>
+      'Sofort eine neue digitale Karte ausstellen';
+
+  @override
+  String get addToAppleWallet => 'Zu Apple Wallet hinzufügen';
+
+  @override
+  String get addToGooglePay => 'Zu Google Pay hinzufügen';
+
+  @override
+  String get terminateCardConfirm =>
+      'Sind Sie sicher, dass Sie diese Karte dauerhaft löschen möchten? Dieser Vorgang kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get all => 'Alle';
+
+  @override
+  String get subscriptions => 'Abonnements';
+
+  @override
+  String get cardTerminated => 'Karte gekündigt';
+
+  @override
+  String get cardTerminatedSuccess =>
+      'Ihre virtuelle Karte wurde dauerhaft gelöscht.';
+
+  @override
+  String get topUpFromWallet => 'Aus Wallet aufladen';
+
+  @override
+  String get withdrawToStripeDesc => 'Auszahlung auf Ihr Stripe-Konto';
 }

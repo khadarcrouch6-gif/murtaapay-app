@@ -142,5 +142,117 @@
   "contactlessPayments": "مدفوعات بدون تلامس",
   "terminateCard": "إلغاء البطاقة",
   "permanentlyDeleteCard": "حذف هذه البطاقة الافتراضية بشكل دائم",
-  "enterSecurityPin": "يرجى إدخال رمز PIN السري المكون من 4 أرقام"
+  "enterSecurityPin": "يرجى إدخال رمز PIN السري المكون من 4 أرقام",
+  "addMoney": "إضافة أموال",
+  "enterAmountToDeposit": "أدخل المبلغ للإيداع",
+  "confirmDeposit": "تأكيد الإيداع",
+  "expiry": "تاريخ الانتهاء",
+  "cardholderName": "اسم حامل البطاقة",
+  "fullNameOnCard": "الاسم الكامل على البطاقة",
+  "selectProvider": "اختر المزود",
+  "accountHolderName": "اسم صاحب الحساب",
+  "fullName": "الاسم الكامل",
+  "reviewDeposit": "مراجعة الإيداع",
+  "totalCharged": "إجمالي الخصم",
+  "confirmAndDeposit": "تأكيد وإيداع",
+  "depositSuccessful": "تم الإيداع بنجاح!",
+  "depositSuccessMessage": "تمت إضافة {amount} إلى محفظتك.",
+  "@depositSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "topUpFromWallet": "شحن من المحفظة",
+  "virtualCardTopUp": "شحن البطاقة الافتراضية",
+  "topUpInstantlyVia": "شحن فوري عبر {method}",
+  "@topUpInstantlyVia": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "walletPin": "رمز PIN للمحفظة",
+  "enterWalletPinMessage": "أدخل رمز PIN للمحفظة المكون من 4 أرقام لتفويض الشحن.",
+  "confirm": "تأكيد",
+  "submit": "إرسال",
+  "accountName": "اسم الحساب",
+  "transferToAccountBelow": "يرجى تحويل المبلغ إلى الحساب أدناه والنقر على متابعة.",
+  "processing": "جاري المعالجة...",
+  "justAMoment": "لحظة واحدة فقط",
+  "withdrawMoney": "سحب الأموال",
+  "withdrawToStripe": "سحب إلى حساب Stripe",
+  "withdrawToStripeDesc": "سحب إلى حساب Stripe الخاص بك",
+  "withdrawalMethod": "طريقة السحب",
+  "stripeEmail": "بريد Stripe الإلكتروني",
+  "mobileNumber": "رقم الهاتف المحمول",
+  "iban": "IBAN",
+  "reviewWithdrawal": "مراجعة السحب",
+  "details": "التفاصيل",
+  "free": "مجاني",
+  "totalDeducted": "إجمالي المخصوم",
+  "confirmWithdraw": "تأكيد وسحب",
+  "withdrawalRequested": "تم طلب السحب!",
+  "withdrawalSuccessMessage": "جاري معالجة سحب {amount}.",
+  "@withdrawalSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payBills": "دفع الفواتير",
+  "selectCategory": "اختر الفئة",
+  "recentBills": "الفواتير الأخيرة",
+  "amountToPay": "المبلغ المراد دفعه ($)",
+  "confirmPayment": "تأكيد الدفع",
+  "paymentSuccessful": "تم الدفع بنجاح!",
+  "paymentSuccessMessage": "تمت معالجة دفع {amount} لـ {category}.",
+  "@paymentSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "billDetails": "تفاصيل الفاتورة",
+  "serviceProvider": "مزود الخدمة",
+  "category": "الفئة",
+  "accountId": "معرف الحساب",
+  "amountPaid": "المبلغ المدفوع",
+  "paymentDate": "تاريخ الدفع",
+  "status": "الحالة",
+  "completed": "مكتمل",
+  "downloadReceipt": "تنزيل الإيصال",
+  "close": "إغلاق",
+  "backToBills": "العودة للفواتير",
+  "electricity": "كهرباء",
+  "water": "ماء",
+  "internet": "إنترنت",
+  "tvCable": "تلفزيون وكابل",
+  "education": "تعليم",
+  "govServices": "خدمات حكومية",
+  "stripe": "Stripe",
+  "debitCreditCard": "بطاقة مدين / ائتمان",
+  "copiedToClipboard": "تم النسخ إلى الحافظة",
+  "otherBank": "بنك آخر",
+  "bankName": "اسم البنك",
+  "enterBankName": "أدخل اسم البنك",
+  "enterAccountNumber": "أدخل رقم الحساب",
+  "enterAccountName": "أدخل اسم الحساب",
+  "noActiveCards": "لا توجد بطاقات نشطة",
+  "orderVirtualCard": "طلب بطاقة افتراضية",
+  "instantlyIssueNewCard": "إصدار بطاقة رقمية جديدة فوراً",
+  "addToAppleWallet": "إضافة إلى Apple Wallet",
+  "addToGooglePay": "إضافة إلى Google Pay",
+  "terminateCardConfirm": "هل أنت متأكد أنك تريد حذف هذه البطاقة بشكل دائم؟ لا يمكن التراجع عن هذا الإجراء.",
+  "all": "الكل",
+  "subscriptions": "الاشتراكات",
+  "cardTerminated": "تم إلغاء البطاقة",
+  "cardTerminatedSuccess": "تم حذف بطاقتك الافتراضية بشكل دائم."
 }

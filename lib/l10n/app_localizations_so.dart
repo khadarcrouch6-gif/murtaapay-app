@@ -594,13 +594,13 @@ class AppLocalizationsSo extends AppLocalizations {
   String get comparingSelfie => 'Comparing selfie with ID';
 
   @override
-  String get cardHolder => 'CARD HOLDER';
+  String get cardHolder => 'MILKIILAHA KAARKAA';
 
   @override
   String get yourName => 'YOUR NAME';
 
   @override
-  String get expires => 'EXPIRES';
+  String get expires => 'WUXUU DHACAYAA';
 
   @override
   String get requiredField => 'Required';
@@ -665,4 +665,188 @@ class AppLocalizationsSo extends AppLocalizations {
   String cardEndingIn(String lastFour) {
     return 'Card ending in $lastFour';
   }
+
+  @override
+  String get withdrawMoney => 'Kala Bax Lacag';
+
+  @override
+  String get withdrawToStripe => 'Withdraw to your Stripe account';
+
+  @override
+  String get withdrawalMethod => 'Habka Kala Bixista';
+
+  @override
+  String get stripeEmail => 'Email-ka Stripe-ka';
+
+  @override
+  String get mobileNumber => 'Lambarka Moobaylka';
+
+  @override
+  String get iban => 'IBAN';
+
+  @override
+  String get reviewWithdrawal => 'Dib u eegista Kala Bixista';
+
+  @override
+  String get details => 'Faahfaahinta';
+
+  @override
+  String get free => 'Bilaash';
+
+  @override
+  String get totalDeducted => 'Wadarta laga jaray';
+
+  @override
+  String get confirmWithdraw => 'Xaqiiji oo Kala Bax';
+
+  @override
+  String get withdrawalRequested => 'Kala bixista waa la codsaday!';
+
+  @override
+  String withdrawalSuccessMessage(String amount) {
+    return 'Kala bixistaadi $amount aya lagu guda jiraa.';
+  }
+
+  @override
+  String get payBills => 'Bixi Biilasha';
+
+  @override
+  String get selectCategory => 'Dooro Qaybta';
+
+  @override
+  String get recentBills => 'Biilashii Dhowaa';
+
+  @override
+  String get amountToPay => 'Cadadka la bixinayo (\$)';
+
+  @override
+  String get confirmPayment => 'Xaqiiji Lacag Bixinta';
+
+  @override
+  String get paymentSuccessful => 'Lacag bixinta waa lagu guulaystay!';
+
+  @override
+  String paymentSuccessMessage(String amount, String category) {
+    return 'Lacag bixintaadi $amount ee $category waa laga gudubay.';
+  }
+
+  @override
+  String get billDetails => 'Faahfaahinta Biilka';
+
+  @override
+  String get serviceProvider => 'Bixiyaha Adeegga';
+
+  @override
+  String get category => 'Qaybta';
+
+  @override
+  String get accountId => 'Aqoonsiga Xisaabta';
+
+  @override
+  String get amountPaid => 'Lacagta la bixiyay';
+
+  @override
+  String get paymentDate => 'Taariikhda Lacag Bixinta';
+
+  @override
+  String get status => 'Heerka';
+
+  @override
+  String get completed => 'Dhammaystiran';
+
+  @override
+  String get downloadReceipt => 'Soo deji Receipt-ka';
+
+  @override
+  String get close => 'Xidh';
+
+  @override
+  String get backToBills => 'Ku laabo Biillasha';
+
+  @override
+  String get electricity => 'Korontada';
+
+  @override
+  String get water => 'Biyaha';
+
+  @override
+  String get internet => 'Internet-ka';
+
+  @override
+  String get tvCable => 'TV-ga';
+
+  @override
+  String get education => 'Waxbarashada';
+
+  @override
+  String get govServices => 'Adeegyada Dawladda';
+
+  @override
+  String get stripe => 'Stripe';
+
+  @override
+  String get debitCreditCard => 'Kaadhka Bangiga';
+
+  @override
+  String get justAMoment => 'Daqiiqad sug';
+
+  @override
+  String get processing => 'Waa la farsameynayaa...';
+
+  @override
+  String get copiedToClipboard => 'Waa la koobiyeeyay';
+
+  @override
+  String get otherBank => 'Bangiga Kale';
+
+  @override
+  String get bankName => 'Magaca Bangiga';
+
+  @override
+  String get enterBankName => 'Geli Magaca Bangiga';
+
+  @override
+  String get enterAccountNumber => 'Geli Lambarka Akoonka';
+
+  @override
+  String get enterAccountName => 'Geli Magaca Akoonka';
+
+  @override
+  String get noActiveCards => 'Ma jiraan kaarar shaqeynaya';
+
+  @override
+  String get orderVirtualCard => 'Dalbo Kaar Cusub';
+
+  @override
+  String get instantlyIssueNewCard =>
+      'Isla markiiba hel kaar cusub oo digital ah';
+
+  @override
+  String get addToAppleWallet => 'Ku dar Apple Wallet';
+
+  @override
+  String get addToGooglePay => 'Ku dar Google Pay';
+
+  @override
+  String get terminateCardConfirm =>
+      'Ma hubtaa inaad si joogto ah u tirtirto kaarkan? Ficilkan lagama noqon karo.';
+
+  @override
+  String get all => 'Dhammaan';
+
+  @override
+  String get subscriptions => 'Is-diiwaangelinta';
+
+  @override
+  String get cardTerminated => 'Kaarkii waa la tirtiray';
+
+  @override
+  String get cardTerminatedSuccess =>
+      'Kaarkaagii virtual-ka ahaa si joogto ah ayaa loo tirtiray.';
+
+  @override
+  String get topUpFromWallet => 'Kaga buuxi Boorsada';
+
+  @override
+  String get withdrawToStripeDesc => 'Kala bax akoonkaaga Stripe';
 }

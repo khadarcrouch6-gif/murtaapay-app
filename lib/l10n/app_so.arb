@@ -142,6 +142,8 @@
   "payWithCard": "Ku bixi Kaar",
   "securePayment": "Lacag bixin ammaan ah",
   "cardDetails": "Faahfaahinta Kaarka",
+  "cardHolder": "MILKIILAHA KAARKAA",
+  "expires": "WUXUU DHACAYAA",
   "deposit": "Dhigasho",
   "withdraw": "La bixid",
   "savings": "Kaydka",
@@ -165,5 +167,80 @@
   "permanentlyDeleteCard": "Si joogto ah u tirtir kaarkan virtual-ka ah",
   "enterSecurityPin": "Fadlan geli 4-ta god ee PIN-kaaga sirta ah",
   "accountName": "Magaca Koontada",
-  "transferToAccountBelow": "Fadlan lacagta ugu wareeji koontada hoos ku qoran ka dibna taabo sii soco."
+  "transferToAccountBelow": "Fadlan lacagta ugu wareeji koontada hoos ku qoran ka dibna taabo sii soco.",
+  "withdrawMoney": "Kala Bax Lacag",
+  "withdrawalMethod": "Habka Kala Bixista",
+  "stripeEmail": "Email-ka Stripe-ka",
+  "mobileNumber": "Lambarka Moobaylka",
+  "iban": "IBAN",
+  "reviewWithdrawal": "Dib u eegista Kala Bixista",
+  "details": "Faahfaahinta",
+  "free": "Bilaash",
+  "totalDeducted": "Wadarta laga jaray",
+  "confirmWithdraw": "Xaqiiji oo Kala Bax",
+  "withdrawalRequested": "Kala bixista waa la codsaday!",
+  "withdrawalSuccessMessage": "Kala bixistaadi {amount} aya lagu guda jiraa.",
+  "@withdrawalSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payBills": "Bixi Biilasha",
+  "selectCategory": "Dooro Qaybta",
+  "recentBills": "Biilashii Dhowaa",
+  "amountToPay": "Cadadka la bixinayo ($)",
+  "confirmPayment": "Xaqiiji Lacag Bixinta",
+  "paymentSuccessful": "Lacag bixinta waa lagu guulaystay!",
+  "paymentSuccessMessage": "Lacag bixintaadi {amount} ee {category} waa laga gudubay.",
+  "@paymentSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "billDetails": "Faahfaahinta Biilka",
+  "serviceProvider": "Bixiyaha Adeegga",
+  "category": "Qaybta",
+  "accountId": "Aqoonsiga Xisaabta",
+  "amountPaid": "Lacagta la bixiyay",
+  "paymentDate": "Taariikhda Lacag Bixinta",
+  "status": "Heerka",
+  "completed": "Dhammaystiran",
+  "downloadReceipt": "Soo deji Receipt-ka",
+  "close": "Xidh",
+  "backToBills": "Ku laabo Biillasha",
+  "electricity": "Korontada",
+  "water": "Biyaha",
+  "internet": "Internet-ka",
+  "tvCable": "TV-ga",
+  "education": "Waxbarashada",
+  "govServices": "Adeegyada Dawladda",
+  "stripe": "Stripe",
+  "debitCreditCard": "Kaadhka Bangiga",
+  "justAMoment": "Daqiiqad sug",
+  "processing": "Waa la farsameynayaa...",
+  "copiedToClipboard": "Waa la koobiyeeyay",
+  "otherBank": "Bangiga Kale",
+  "bankName": "Magaca Bangiga",
+  "enterBankName": "Geli Magaca Bangiga",
+  "enterAccountNumber": "Geli Lambarka Akoonka",
+  "enterAccountName": "Geli Magaca Akoonka",
+  "noActiveCards": "Ma jiraan kaarar shaqeynaya",
+  "orderVirtualCard": "Dalbo Kaar Cusub",
+  "instantlyIssueNewCard": "Isla markiiba hel kaar cusub oo digital ah",
+  "addToAppleWallet": "Ku dar Apple Wallet",
+  "addToGooglePay": "Ku dar Google Pay",
+  "terminateCardConfirm": "Ma hubtaa inaad si joogto ah u tirtirto kaarkan? Ficilkan lagama noqon karo.",
+  "all": "Dhammaan",
+  "subscriptions": "Is-diiwaangelinta",
+  "cardTerminated": "Kaarkii waa la tirtiray",
+  "cardTerminatedSuccess": "Kaarkaagii virtual-ka ahaa si joogto ah ayaa loo tirtiray.",
+  "topUpFromWallet": "Kaga buuxi Boorsada",
+  "withdrawToStripeDesc": "Kala bax akoonkaaga Stripe"
 }

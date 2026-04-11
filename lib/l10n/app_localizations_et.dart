@@ -240,47 +240,47 @@ class AppLocalizationsEt extends AppLocalizations {
   String get backToHome => 'Tagasi avalehele';
 
   @override
-  String get addMoney => 'Add Money';
+  String get addMoney => 'Lisa raha';
 
   @override
-  String get enterAmountToDeposit => 'Enter Amount to Deposit';
+  String get enterAmountToDeposit => 'Sisesta hoiustatav summa';
 
   @override
-  String get confirmDeposit => 'Confirm Deposit';
+  String get confirmDeposit => 'Kinnita hoius';
 
   @override
-  String get expiry => 'Expiry';
+  String get expiry => 'Kehtivusaeg';
 
   @override
-  String get cardholderName => 'Cardholder Name';
+  String get cardholderName => 'Kaardiomaniku nimi';
 
   @override
-  String get fullNameOnCard => 'Full name on card';
+  String get fullNameOnCard => 'Täisnimi kaardil';
 
   @override
-  String get selectProvider => 'Select Provider';
+  String get selectProvider => 'Vali pakkuja';
 
   @override
-  String get accountHolderName => 'Account Holder Name';
+  String get accountHolderName => 'Konto valdaja nimi';
 
   @override
   String get fullName => 'Täisnimi';
 
   @override
-  String get reviewDeposit => 'Review Deposit';
+  String get reviewDeposit => 'Vaata hoius üle';
 
   @override
-  String get totalCharged => 'Total Charged';
+  String get totalCharged => 'Kokku debiteeritakse';
 
   @override
-  String get confirmAndDeposit => 'Confirm & Deposit';
+  String get confirmAndDeposit => 'Kinnita ja hoiusta';
 
   @override
-  String get depositSuccessful => 'Deposit Successful!';
+  String get depositSuccessful => 'Hoiustamine õnnestus!';
 
   @override
   String depositSuccessMessage(Object amount) {
-    return '$amount has been added to your wallet.';
+    return '$amount on lisatud teie rahakotti.';
   }
 
   @override
@@ -632,35 +632,218 @@ class AppLocalizationsEt extends AppLocalizations {
   String get pleaseFillAllFields => 'Please fill in all fields';
 
   @override
-  String get virtualCardTopUp => 'Virtual Card Top-Up';
+  String get virtualCardTopUp => 'Virtuaalkaardi laadimine';
 
   @override
   String topUpInstantlyVia(String method) {
-    return 'Top up instantly via $method';
+    return 'Laadi kohe $method kaudu';
   }
 
   @override
-  String get walletPin => 'Wallet PIN';
+  String get walletPin => 'Rahakoti PIN';
 
   @override
   String get enterWalletPinMessage =>
-      'Enter your 4-digit wallet PIN to authorize top-up.';
+      'Laadimise autoriseerimiseks sisesta oma 4-kohaline rahakoti PIN.';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'Kinnita';
 
   @override
-  String get submit => 'Submit';
+  String get submit => 'Saada';
 
   @override
-  String get accountName => 'Account Name';
+  String get accountName => 'Konto nimi';
 
   @override
   String get transferToAccountBelow =>
-      'Please transfer the amount to the account below and click continue.';
+      'Palun kanda summa allolevale kontole ja klõpsake jätka.';
 
   @override
   String cardEndingIn(String lastFour) {
     return 'Card ending in $lastFour';
   }
+
+  @override
+  String get withdrawMoney => 'Võta raha välja';
+
+  @override
+  String get withdrawToStripe => 'Väljamakse Stripe\'i kontole';
+
+  @override
+  String get withdrawalMethod => 'Väljamakse meetod';
+
+  @override
+  String get stripeEmail => 'Stripe\'i e-post';
+
+  @override
+  String get mobileNumber => 'Mobiilinumber';
+
+  @override
+  String get iban => 'IBAN';
+
+  @override
+  String get reviewWithdrawal => 'Vaata väljamakse üle';
+
+  @override
+  String get details => 'Andmed';
+
+  @override
+  String get free => 'Tasuta';
+
+  @override
+  String get totalDeducted => 'Kokku maha arvatud';
+
+  @override
+  String get confirmWithdraw => 'Kinnita ja võta välja';
+
+  @override
+  String get withdrawalRequested => 'Väljamakse taotletud!';
+
+  @override
+  String withdrawalSuccessMessage(String amount) {
+    return 'Teie väljamakset summas $amount töödeldakse.';
+  }
+
+  @override
+  String get payBills => 'Maksa arveid';
+
+  @override
+  String get selectCategory => 'Vali kategooria';
+
+  @override
+  String get recentBills => 'Viimased arved';
+
+  @override
+  String get amountToPay => 'Makstav summa (\$)';
+
+  @override
+  String get confirmPayment => 'Kinnita makse';
+
+  @override
+  String get paymentSuccessful => 'Makse õnnestus!';
+
+  @override
+  String paymentSuccessMessage(String amount, String category) {
+    return 'Teie makse summas $amount kategoorias $category on töödeldud.';
+  }
+
+  @override
+  String get billDetails => 'Arve andmed';
+
+  @override
+  String get serviceProvider => 'Teenusepakkuja';
+
+  @override
+  String get category => 'Kategooria';
+
+  @override
+  String get accountId => 'Konto ID';
+
+  @override
+  String get amountPaid => 'Makstud summa';
+
+  @override
+  String get paymentDate => 'Makse kuupäev';
+
+  @override
+  String get status => 'Olek';
+
+  @override
+  String get completed => 'Lõpetatud';
+
+  @override
+  String get downloadReceipt => 'Laadi kviitung alla';
+
+  @override
+  String get close => 'Sulge';
+
+  @override
+  String get backToBills => 'Tagasi arvete juurde';
+
+  @override
+  String get electricity => 'Elekter';
+
+  @override
+  String get water => 'Vesi';
+
+  @override
+  String get internet => 'Internet';
+
+  @override
+  String get tvCable => 'TV ja kaabel';
+
+  @override
+  String get education => 'Haridus';
+
+  @override
+  String get govServices => 'Riigiteenused';
+
+  @override
+  String get stripe => 'Stripe';
+
+  @override
+  String get debitCreditCard => 'Deebet- / krediitkaart';
+
+  @override
+  String get justAMoment => 'Üks hetk';
+
+  @override
+  String get processing => 'Töötlemine...';
+
+  @override
+  String get copiedToClipboard => 'Kopeeritud lõikelauale';
+
+  @override
+  String get otherBank => 'Muu pank';
+
+  @override
+  String get bankName => 'Panga nimi';
+
+  @override
+  String get enterBankName => 'Sisesta panga nimi';
+
+  @override
+  String get enterAccountNumber => 'Sisesta kontonumber';
+
+  @override
+  String get enterAccountName => 'Sisesta konto nimi';
+
+  @override
+  String get noActiveCards => 'Aktiivseid kaarte pole';
+
+  @override
+  String get orderVirtualCard => 'Telli virtuaalkaart';
+
+  @override
+  String get instantlyIssueNewCard => 'Väljasta kohe uus digitaalne kaart';
+
+  @override
+  String get addToAppleWallet => 'Lisa Apple Walletisse';
+
+  @override
+  String get addToGooglePay => 'Lisa Google Pay\'sse';
+
+  @override
+  String get terminateCardConfirm =>
+      'Kas olete kindel, et soovite selle kaardi jäädavalt kustutada? Seda toimingut ei saa tühistada.';
+
+  @override
+  String get all => 'Kõik';
+
+  @override
+  String get subscriptions => 'Tellimused';
+
+  @override
+  String get cardTerminated => 'Kaart suletud';
+
+  @override
+  String get cardTerminatedSuccess =>
+      'Teie virtuaalkaart on jäädavalt kustutatud.';
+
+  @override
+  String get topUpFromWallet => 'Laadi rahakotist';
+
+  @override
+  String get withdrawToStripeDesc => 'Väljamakse teie Stripe\'i kontole';
 }

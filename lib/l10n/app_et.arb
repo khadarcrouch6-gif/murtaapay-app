@@ -194,5 +194,117 @@
   "scanningForClarity": "Selguse kontrollimine",
   "biometricMatch": "Biomeetriline vastavus",
   "comparingSelfie": "Selfi võrdlemine ID-ga",
-  "verifyingIdentity": "Isiku kinnitamine..."
+  "verifyingIdentity": "Isiku kinnitamine...",
+  "addMoney": "Lisa raha",
+  "enterAmountToDeposit": "Sisesta hoiustatav summa",
+  "confirmDeposit": "Kinnita hoius",
+  "expiry": "Kehtivusaeg",
+  "cardholderName": "Kaardiomaniku nimi",
+  "fullNameOnCard": "Täisnimi kaardil",
+  "selectProvider": "Vali pakkuja",
+  "accountHolderName": "Konto valdaja nimi",
+  "fullName": "Täisnimi",
+  "reviewDeposit": "Vaata hoius üle",
+  "totalCharged": "Kokku debiteeritakse",
+  "confirmAndDeposit": "Kinnita ja hoiusta",
+  "depositSuccessful": "Hoiustamine õnnestus!",
+  "depositSuccessMessage": "{amount} on lisatud teie rahakotti.",
+  "@depositSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "topUpFromWallet": "Laadi rahakotist",
+  "virtualCardTopUp": "Virtuaalkaardi laadimine",
+  "topUpInstantlyVia": "Laadi kohe {method} kaudu",
+  "@topUpInstantlyVia": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "walletPin": "Rahakoti PIN",
+  "enterWalletPinMessage": "Laadimise autoriseerimiseks sisesta oma 4-kohaline rahakoti PIN.",
+  "confirm": "Kinnita",
+  "submit": "Saada",
+  "accountName": "Konto nimi",
+  "transferToAccountBelow": "Palun kanda summa allolevale kontole ja klõpsake jätka.",
+  "processing": "Töötlemine...",
+  "justAMoment": "Üks hetk",
+  "withdrawMoney": "Võta raha välja",
+  "withdrawToStripe": "Väljamakse Stripe'i kontole",
+  "withdrawToStripeDesc": "Väljamakse teie Stripe'i kontole",
+  "withdrawalMethod": "Väljamakse meetod",
+  "stripeEmail": "Stripe'i e-post",
+  "mobileNumber": "Mobiilinumber",
+  "iban": "IBAN",
+  "reviewWithdrawal": "Vaata väljamakse üle",
+  "details": "Andmed",
+  "free": "Tasuta",
+  "totalDeducted": "Kokku maha arvatud",
+  "confirmWithdraw": "Kinnita ja võta välja",
+  "withdrawalRequested": "Väljamakse taotletud!",
+  "withdrawalSuccessMessage": "Teie väljamakset summas {amount} töödeldakse.",
+  "@withdrawalSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payBills": "Maksa arveid",
+  "selectCategory": "Vali kategooria",
+  "recentBills": "Viimased arved",
+  "amountToPay": "Makstav summa ($)",
+  "confirmPayment": "Kinnita makse",
+  "paymentSuccessful": "Makse õnnestus!",
+  "paymentSuccessMessage": "Teie makse summas {amount} kategoorias {category} on töödeldud.",
+  "@paymentSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "billDetails": "Arve andmed",
+  "serviceProvider": "Teenusepakkuja",
+  "category": "Kategooria",
+  "accountId": "Konto ID",
+  "amountPaid": "Makstud summa",
+  "paymentDate": "Makse kuupäev",
+  "status": "Olek",
+  "completed": "Lõpetatud",
+  "downloadReceipt": "Laadi kviitung alla",
+  "close": "Sulge",
+  "backToBills": "Tagasi arvete juurde",
+  "electricity": "Elekter",
+  "water": "Vesi",
+  "internet": "Internet",
+  "tvCable": "TV ja kaabel",
+  "education": "Haridus",
+  "govServices": "Riigiteenused",
+  "stripe": "Stripe",
+  "debitCreditCard": "Deebet- / krediitkaart",
+  "copiedToClipboard": "Kopeeritud lõikelauale",
+  "otherBank": "Muu pank",
+  "bankName": "Panga nimi",
+  "enterBankName": "Sisesta panga nimi",
+  "enterAccountNumber": "Sisesta kontonumber",
+  "enterAccountName": "Sisesta konto nimi",
+  "noActiveCards": "Aktiivseid kaarte pole",
+  "orderVirtualCard": "Telli virtuaalkaart",
+  "instantlyIssueNewCard": "Väljasta kohe uus digitaalne kaart",
+  "addToAppleWallet": "Lisa Apple Walletisse",
+  "addToGooglePay": "Lisa Google Pay'sse",
+  "terminateCardConfirm": "Kas olete kindel, et soovite selle kaardi jäädavalt kustutada? Seda toimingut ei saa tühistada.",
+  "all": "Kõik",
+  "subscriptions": "Tellimused",
+  "cardTerminated": "Kaart suletud",
+  "cardTerminatedSuccess": "Teie virtuaalkaart on jäädavalt kustutatud."
 }

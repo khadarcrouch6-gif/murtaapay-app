@@ -240,47 +240,47 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backToHome => 'العودة للرئيسية';
 
   @override
-  String get addMoney => 'Add Money';
+  String get addMoney => 'إضافة أموال';
 
   @override
-  String get enterAmountToDeposit => 'Enter Amount to Deposit';
+  String get enterAmountToDeposit => 'أدخل المبلغ للإيداع';
 
   @override
-  String get confirmDeposit => 'Confirm Deposit';
+  String get confirmDeposit => 'تأكيد الإيداع';
 
   @override
-  String get expiry => 'Expiry';
+  String get expiry => 'تاريخ الانتهاء';
 
   @override
-  String get cardholderName => 'Cardholder Name';
+  String get cardholderName => 'اسم حامل البطاقة';
 
   @override
-  String get fullNameOnCard => 'Full name on card';
+  String get fullNameOnCard => 'الاسم الكامل على البطاقة';
 
   @override
-  String get selectProvider => 'Select Provider';
+  String get selectProvider => 'اختر المزود';
 
   @override
-  String get accountHolderName => 'Account Holder Name';
+  String get accountHolderName => 'اسم صاحب الحساب';
 
   @override
-  String get fullName => 'Full Name';
+  String get fullName => 'الاسم الكامل';
 
   @override
-  String get reviewDeposit => 'Review Deposit';
+  String get reviewDeposit => 'مراجعة الإيداع';
 
   @override
-  String get totalCharged => 'Total Charged';
+  String get totalCharged => 'إجمالي الخصم';
 
   @override
-  String get confirmAndDeposit => 'Confirm & Deposit';
+  String get confirmAndDeposit => 'تأكيد وإيداع';
 
   @override
-  String get depositSuccessful => 'Deposit Successful!';
+  String get depositSuccessful => 'تم الإيداع بنجاح!';
 
   @override
   String depositSuccessMessage(Object amount) {
-    return '$amount has been added to your wallet.';
+    return 'تمت إضافة $amount إلى محفظتك.';
   }
 
   @override
@@ -630,35 +630,217 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseFillAllFields => 'Please fill in all fields';
 
   @override
-  String get virtualCardTopUp => 'Virtual Card Top-Up';
+  String get virtualCardTopUp => 'شحن البطاقة الافتراضية';
 
   @override
   String topUpInstantlyVia(String method) {
-    return 'Top up instantly via $method';
+    return 'شحن فوري عبر $method';
   }
 
   @override
-  String get walletPin => 'Wallet PIN';
+  String get walletPin => 'رمز PIN للمحفظة';
 
   @override
   String get enterWalletPinMessage =>
-      'Enter your 4-digit wallet PIN to authorize top-up.';
+      'أدخل رمز PIN للمحفظة المكون من 4 أرقام لتفويض الشحن.';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'تأكيد';
 
   @override
-  String get submit => 'Submit';
+  String get submit => 'إرسال';
 
   @override
-  String get accountName => 'Account Name';
+  String get accountName => 'اسم الحساب';
 
   @override
   String get transferToAccountBelow =>
-      'Please transfer the amount to the account below and click continue.';
+      'يرجى تحويل المبلغ إلى الحساب أدناه والنقر على متابعة.';
 
   @override
   String cardEndingIn(String lastFour) {
     return 'Card ending in $lastFour';
   }
+
+  @override
+  String get withdrawMoney => 'سحب الأموال';
+
+  @override
+  String get withdrawToStripe => 'سحب إلى حساب Stripe';
+
+  @override
+  String get withdrawalMethod => 'طريقة السحب';
+
+  @override
+  String get stripeEmail => 'بريد Stripe الإلكتروني';
+
+  @override
+  String get mobileNumber => 'رقم الهاتف المحمول';
+
+  @override
+  String get iban => 'IBAN';
+
+  @override
+  String get reviewWithdrawal => 'مراجعة السحب';
+
+  @override
+  String get details => 'التفاصيل';
+
+  @override
+  String get free => 'مجاني';
+
+  @override
+  String get totalDeducted => 'إجمالي المخصوم';
+
+  @override
+  String get confirmWithdraw => 'تأكيد وسحب';
+
+  @override
+  String get withdrawalRequested => 'تم طلب السحب!';
+
+  @override
+  String withdrawalSuccessMessage(String amount) {
+    return 'جاري معالجة سحب $amount.';
+  }
+
+  @override
+  String get payBills => 'دفع الفواتير';
+
+  @override
+  String get selectCategory => 'اختر الفئة';
+
+  @override
+  String get recentBills => 'الفواتير الأخيرة';
+
+  @override
+  String get amountToPay => 'المبلغ المراد دفعه (\$)';
+
+  @override
+  String get confirmPayment => 'تأكيد الدفع';
+
+  @override
+  String get paymentSuccessful => 'تم الدفع بنجاح!';
+
+  @override
+  String paymentSuccessMessage(String amount, String category) {
+    return 'تمت معالجة دفع $amount لـ $category.';
+  }
+
+  @override
+  String get billDetails => 'تفاصيل الفاتورة';
+
+  @override
+  String get serviceProvider => 'مزود الخدمة';
+
+  @override
+  String get category => 'الفئة';
+
+  @override
+  String get accountId => 'معرف الحساب';
+
+  @override
+  String get amountPaid => 'المبلغ المدفوع';
+
+  @override
+  String get paymentDate => 'تاريخ الدفع';
+
+  @override
+  String get status => 'الحالة';
+
+  @override
+  String get completed => 'مكتمل';
+
+  @override
+  String get downloadReceipt => 'تنزيل الإيصال';
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
+  String get backToBills => 'العودة للفواتير';
+
+  @override
+  String get electricity => 'كهرباء';
+
+  @override
+  String get water => 'ماء';
+
+  @override
+  String get internet => 'إنترنت';
+
+  @override
+  String get tvCable => 'تلفزيون وكابل';
+
+  @override
+  String get education => 'تعليم';
+
+  @override
+  String get govServices => 'خدمات حكومية';
+
+  @override
+  String get stripe => 'Stripe';
+
+  @override
+  String get debitCreditCard => 'بطاقة مدين / ائتمان';
+
+  @override
+  String get justAMoment => 'لحظة واحدة فقط';
+
+  @override
+  String get processing => 'جاري المعالجة...';
+
+  @override
+  String get copiedToClipboard => 'تم النسخ إلى الحافظة';
+
+  @override
+  String get otherBank => 'بنك آخر';
+
+  @override
+  String get bankName => 'اسم البنك';
+
+  @override
+  String get enterBankName => 'أدخل اسم البنك';
+
+  @override
+  String get enterAccountNumber => 'أدخل رقم الحساب';
+
+  @override
+  String get enterAccountName => 'أدخل اسم الحساب';
+
+  @override
+  String get noActiveCards => 'لا توجد بطاقات نشطة';
+
+  @override
+  String get orderVirtualCard => 'طلب بطاقة افتراضية';
+
+  @override
+  String get instantlyIssueNewCard => 'إصدار بطاقة رقمية جديدة فوراً';
+
+  @override
+  String get addToAppleWallet => 'إضافة إلى Apple Wallet';
+
+  @override
+  String get addToGooglePay => 'إضافة إلى Google Pay';
+
+  @override
+  String get terminateCardConfirm =>
+      'هل أنت متأكد أنك تريد حذف هذه البطاقة بشكل دائم؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get subscriptions => 'الاشتراكات';
+
+  @override
+  String get cardTerminated => 'تم إلغاء البطاقة';
+
+  @override
+  String get cardTerminatedSuccess => 'تم حذف بطاقتك الافتراضية بشكل دائم.';
+
+  @override
+  String get topUpFromWallet => 'شحن من المحفظة';
+
+  @override
+  String get withdrawToStripeDesc => 'سحب إلى حساب Stripe الخاص بك';
 }

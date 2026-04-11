@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:provider/provider.dart';
 import 'core/app_theme.dart';
 import 'core/app_state.dart';
 import 'core/somali_localizations.dart';
@@ -23,42 +24,45 @@ class MurtaaxPayApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: appState,
-      builder: (context, child) {
-        return MaterialApp(
-          onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: appState.themeMode,
-          locale: appState.locale,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            SomaliLocalizationsDelegate(), 
-            SomaliCupertinoLocalizationsDelegate(),
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: AppLocalizations.supportedLocales,
-          builder: (context, child) {
-            return GestureDetector(
-              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              child: ResponsiveBreakpoints.builder(
-                child: child!,
-                breakpoints: [
-                  const Breakpoint(start: 0, end: 450, name: MOBILE),
-                  const Breakpoint(start: 451, end: 800, name: TABLET),
-                  const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-                  const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
-                ],
-              ),
-            );
-          },
-          home: const SplashScreen(),
-        );
-      },
+    return ChangeNotifierProvider.value(
+      value: appState,
+      child: ListenableBuilder(
+        listenable: appState,
+        builder: (context, child) {
+          return MaterialApp(
+            onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: appState.themeMode,
+            locale: appState.locale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              SomaliLocalizationsDelegate(), 
+              SomaliCupertinoLocalizationsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            builder: (context, child) {
+              return GestureDetector(
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                child: ResponsiveBreakpoints.builder(
+                  child: child!,
+                  breakpoints: [
+                    const Breakpoint(start: 0, end: 450, name: MOBILE),
+                    const Breakpoint(start: 451, end: 800, name: TABLET),
+                    const Breakpoint(start: 801, end: 1920, name: DESKTOP),
+                    const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
+                  ],
+                ),
+              );
+            },
+            home: const SplashScreen(),
+          );
+        },
+      ),
     );
   }
 }

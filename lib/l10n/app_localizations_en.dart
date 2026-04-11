@@ -662,4 +662,187 @@ class AppLocalizationsEn extends AppLocalizations {
   String cardEndingIn(String lastFour) {
     return 'Card ending in $lastFour';
   }
+
+  @override
+  String get withdrawMoney => 'Withdraw Money';
+
+  @override
+  String get withdrawToStripe => 'Withdraw to your Stripe account';
+
+  @override
+  String get withdrawalMethod => 'Withdrawal Method';
+
+  @override
+  String get stripeEmail => 'Stripe Email';
+
+  @override
+  String get mobileNumber => 'Mobile Number';
+
+  @override
+  String get iban => 'IBAN';
+
+  @override
+  String get reviewWithdrawal => 'Review Withdrawal';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get free => 'Free';
+
+  @override
+  String get totalDeducted => 'Total Deducted';
+
+  @override
+  String get confirmWithdraw => 'Confirm & Withdraw';
+
+  @override
+  String get withdrawalRequested => 'Withdrawal Requested!';
+
+  @override
+  String withdrawalSuccessMessage(String amount) {
+    return 'Your withdrawal of $amount is being processed.';
+  }
+
+  @override
+  String get payBills => 'Pay Bills';
+
+  @override
+  String get selectCategory => 'Select Category';
+
+  @override
+  String get recentBills => 'Recent Bills';
+
+  @override
+  String get amountToPay => 'Amount to Pay (\$)';
+
+  @override
+  String get confirmPayment => 'Confirm Payment';
+
+  @override
+  String get paymentSuccessful => 'Payment Successful!';
+
+  @override
+  String paymentSuccessMessage(String amount, String category) {
+    return 'Your payment of $amount for $category has been processed.';
+  }
+
+  @override
+  String get billDetails => 'Bill Details';
+
+  @override
+  String get serviceProvider => 'Service Provider';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get accountId => 'Account ID';
+
+  @override
+  String get amountPaid => 'Amount Paid';
+
+  @override
+  String get paymentDate => 'Payment Date';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get downloadReceipt => 'Download Receipt';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get backToBills => 'Back to Bills';
+
+  @override
+  String get electricity => 'Electricity';
+
+  @override
+  String get water => 'Water';
+
+  @override
+  String get internet => 'Internet';
+
+  @override
+  String get tvCable => 'TV Cable';
+
+  @override
+  String get education => 'Education';
+
+  @override
+  String get govServices => 'Gov Services';
+
+  @override
+  String get stripe => 'Stripe';
+
+  @override
+  String get debitCreditCard => 'Debit / Credit Card';
+
+  @override
+  String get justAMoment => 'Just a moment';
+
+  @override
+  String get processing => 'Processing...';
+
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get otherBank => 'Other Bank';
+
+  @override
+  String get bankName => 'Bank Name';
+
+  @override
+  String get enterBankName => 'Enter Bank Name';
+
+  @override
+  String get enterAccountNumber => 'Enter Account Number';
+
+  @override
+  String get enterAccountName => 'Enter Account Name';
+
+  @override
+  String get noActiveCards => 'No active cards';
+
+  @override
+  String get orderVirtualCard => 'Order Virtual Card';
+
+  @override
+  String get instantlyIssueNewCard => 'Instantly issue a new digital card';
+
+  @override
+  String get addToAppleWallet => 'Add to Apple Wallet';
+
+  @override
+  String get addToGooglePay => 'Add to Google Pay';
+
+  @override
+  String get terminateCardConfirm =>
+      'Are you sure you want to permanently delete this card? This action cannot be undone.';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get subscriptions => 'Subscriptions';
+
+  @override
+  String get cardTerminated => 'Card Terminated';
+
+  @override
+  String get cardTerminatedSuccess =>
+      'Your virtual card has been permanently deleted.';
+
+  @override
+  String get topUpFromWallet => 'Top-up from Wallet';
+
+  @override
+  String get withdrawToStripeDesc => 'Withdraw to your Stripe account';
 }

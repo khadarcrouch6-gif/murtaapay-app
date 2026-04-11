@@ -1369,6 +1369,360 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Card ending in {lastFour}'**
   String cardEndingIn(String lastFour);
+
+  /// No description provided for @withdrawMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw Money'**
+  String get withdrawMoney;
+
+  /// No description provided for @withdrawToStripe.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw to your Stripe account'**
+  String get withdrawToStripe;
+
+  /// No description provided for @withdrawalMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal Method'**
+  String get withdrawalMethod;
+
+  /// No description provided for @stripeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Stripe Email'**
+  String get stripeEmail;
+
+  /// No description provided for @mobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Number'**
+  String get mobileNumber;
+
+  /// No description provided for @iban.
+  ///
+  /// In en, this message translates to:
+  /// **'IBAN'**
+  String get iban;
+
+  /// No description provided for @reviewWithdrawal.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Withdrawal'**
+  String get reviewWithdrawal;
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @free.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get free;
+
+  /// No description provided for @totalDeducted.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Deducted'**
+  String get totalDeducted;
+
+  /// No description provided for @confirmWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & Withdraw'**
+  String get confirmWithdraw;
+
+  /// No description provided for @withdrawalRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal Requested!'**
+  String get withdrawalRequested;
+
+  /// No description provided for @withdrawalSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your withdrawal of {amount} is being processed.'**
+  String withdrawalSuccessMessage(String amount);
+
+  /// No description provided for @payBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay Bills'**
+  String get payBills;
+
+  /// No description provided for @selectCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Category'**
+  String get selectCategory;
+
+  /// No description provided for @recentBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Bills'**
+  String get recentBills;
+
+  /// No description provided for @amountToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to Pay (\$)'**
+  String get amountToPay;
+
+  /// No description provided for @confirmPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Payment'**
+  String get confirmPayment;
+
+  /// No description provided for @paymentSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Successful!'**
+  String get paymentSuccessful;
+
+  /// No description provided for @paymentSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment of {amount} for {category} has been processed.'**
+  String paymentSuccessMessage(String amount, String category);
+
+  /// No description provided for @billDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill Details'**
+  String get billDetails;
+
+  /// No description provided for @serviceProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Provider'**
+  String get serviceProvider;
+
+  /// No description provided for @category.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// No description provided for @accountId.
+  ///
+  /// In en, this message translates to:
+  /// **'Account ID'**
+  String get accountId;
+
+  /// No description provided for @amountPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount Paid'**
+  String get amountPaid;
+
+  /// No description provided for @paymentDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Date'**
+  String get paymentDate;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// No description provided for @downloadReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Receipt'**
+  String get downloadReceipt;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @backToBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Bills'**
+  String get backToBills;
+
+  /// No description provided for @electricity.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity'**
+  String get electricity;
+
+  /// No description provided for @water.
+  ///
+  /// In en, this message translates to:
+  /// **'Water'**
+  String get water;
+
+  /// No description provided for @internet.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet'**
+  String get internet;
+
+  /// No description provided for @tvCable.
+  ///
+  /// In en, this message translates to:
+  /// **'TV Cable'**
+  String get tvCable;
+
+  /// No description provided for @education.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get education;
+
+  /// No description provided for @govServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Gov Services'**
+  String get govServices;
+
+  /// No description provided for @stripe.
+  ///
+  /// In en, this message translates to:
+  /// **'Stripe'**
+  String get stripe;
+
+  /// No description provided for @debitCreditCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Debit / Credit Card'**
+  String get debitCreditCard;
+
+  /// No description provided for @justAMoment.
+  ///
+  /// In en, this message translates to:
+  /// **'Just a moment'**
+  String get justAMoment;
+
+  /// No description provided for @processing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get processing;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// No description provided for @otherBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Bank'**
+  String get otherBank;
+
+  /// No description provided for @bankName.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank Name'**
+  String get bankName;
+
+  /// No description provided for @enterBankName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Bank Name'**
+  String get enterBankName;
+
+  /// No description provided for @enterAccountNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Account Number'**
+  String get enterAccountNumber;
+
+  /// No description provided for @enterAccountName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Account Name'**
+  String get enterAccountName;
+
+  /// No description provided for @noActiveCards.
+  ///
+  /// In en, this message translates to:
+  /// **'No active cards'**
+  String get noActiveCards;
+
+  /// No description provided for @orderVirtualCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Virtual Card'**
+  String get orderVirtualCard;
+
+  /// No description provided for @instantlyIssueNewCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Instantly issue a new digital card'**
+  String get instantlyIssueNewCard;
+
+  /// No description provided for @addToAppleWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Apple Wallet'**
+  String get addToAppleWallet;
+
+  /// No description provided for @addToGooglePay.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Google Pay'**
+  String get addToGooglePay;
+
+  /// No description provided for @terminateCardConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to permanently delete this card? This action cannot be undone.'**
+  String get terminateCardConfirm;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @subscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions'**
+  String get subscriptions;
+
+  /// No description provided for @cardTerminated.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Terminated'**
+  String get cardTerminated;
+
+  /// No description provided for @cardTerminatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your virtual card has been permanently deleted.'**
+  String get cardTerminatedSuccess;
+
+  /// No description provided for @topUpFromWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Top-up from Wallet'**
+  String get topUpFromWallet;
+
+  /// No description provided for @withdrawToStripeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw to your Stripe account'**
+  String get withdrawToStripeDesc;
 }
 
 class _AppLocalizationsDelegate

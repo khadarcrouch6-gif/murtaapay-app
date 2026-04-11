@@ -6,6 +6,7 @@ import 'dart:ui';
 import '../../../core/app_colors.dart';
 import '../../../core/app_state.dart';
 import '../../../core/responsive_utils.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/card_model.dart';
 
 class EliteVirtualCard extends StatefulWidget {
@@ -308,6 +309,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
   }
 
   Widget _buildCardFooter(AppState state) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -319,7 +321,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             children: [
               FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(state.translate("Card Holder", "Milkiilaha", ar: "صاحب البطاقة", de: "Karteninhaber").toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
+                child: Text(l10n.cardHolder.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
               ),
               const SizedBox(height: 2),
               Text(widget.card.cardHolder, style: const TextStyle(color: Colors.white, letterSpacing: 1, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis),
@@ -334,7 +336,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             children: [
               FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(state.translate("Expires", "Dhicitaanka", ar: "تنتهي في", de: "Ablauf").toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
+                child: Text(l10n.expires.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
               ),
               const SizedBox(height: 2),
               Text(widget.card.expiryDate, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis),
@@ -358,6 +360,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
   }
 
   Widget _buildFrozenOverlay(AppState state) {
+    final l10n = AppLocalizations.of(context)!;
     return Positioned.fill(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
@@ -371,7 +374,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
                 children: [
                   const Icon(Icons.lock_rounded, color: Colors.white, size: 40),
                   const SizedBox(height: 12),
-                  Text(state.translate("CARD FROZEN", "KAADHKA WAA XANIBAN YAHAY", ar: "البطاقة مجمدة", de: "KARTE GESPERRT"), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 3, fontSize: 12)),
+                  Text(l10n.frozen.toUpperCase(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 3, fontSize: 12)),
                 ],
               ),
             ),

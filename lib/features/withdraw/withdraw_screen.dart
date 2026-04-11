@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/detail_row.dart';
 import '../../core/widgets/adaptive_icon.dart';
+import '../../core/widgets/success_screen.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class WithdrawScreen extends StatefulWidget {
@@ -56,12 +60,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: widget.isTab ? null : AppBar(
-        title: Text(state.translate("Withdraw Money", "Kala Bax Lacag", ar: "سحب الأموال", de: "Geld abheben"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor)),
+        title: Text(l10n.withdrawMoney, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
       ),
       body: Center(
@@ -88,7 +92,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(state.translate("Available Balance", "Haraaga diyaar ah", ar: "الرصيد المتاح", de: "Verfügbares Guthaben"), style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14 * context.fontSizeFactor)),
+                            Text(l10n.availableBalance, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14 * context.fontSizeFactor)),
                             const SizedBox(height: 8),
                             Text("\$2,450.00", style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                             const SizedBox(height: 20),
@@ -147,7 +151,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 ),
                 const SizedBox(height: 32),
                 FadeInUp(
-                  child: Text(state.translate("Withdrawal Method", "Habka Kala Bixista", ar: "طريقة السحب", de: "Auszahlungsmethode"), style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                  child: Text(l10n.withdrawalMethod, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(height: 16),
                 ...List.generate(_methods.length, (index) {
@@ -207,8 +211,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(state.translate(method["title"], method["title"], ar: _getArMethodTitle(method["id"]), de: _getDeMethodTitle(method["id"])), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
-                                  Text(state.translate(method["desc"], method["desc"], ar: _getArMethodDesc(method["id"]), de: _getDeMethodDesc(method["id"])), style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
+                                  Text(_getMethodTitle(method["id"], l10n), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+                                  Text(_getMethodDesc(method["id"], l10n), style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
                                 ],
                               ),
                             ),
@@ -234,11 +238,14 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 // Dynamic detail fields
                 if (_selectedMethod != null) ...[
                   const SizedBox(height: 8),
-                  FadeInUp(child: _buildDetailsSection(context, state)),
+                  FadeInUp(child: _buildDetailsSection(context, l10n)),
                   const SizedBox(height: 32),
                   FadeInUp(
                     child: ElevatedButton(
-                      onPressed: _amountController.text.isEmpty ? null : () => _showReviewSheet(context, state),
+                      onPressed: _amountController.text.isEmpty ? null : () {
+                        final state = AppState();
+                        _showReviewSheet(context, l10n, state);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryDark,
                         disabledBackgroundColor: AppColors.grey.withValues(alpha: 0.3),
@@ -248,7 +255,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          state.translate("Continue to Review", "Sii soco", ar: "الاستمرار للمراجعة", de: "Weiter zur Überprüfung"), 
+                          l10n.continueToReview, 
                           style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white)
                         ),
                       ),
@@ -264,25 +271,25 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     );
   }
 
-  Widget _buildDetailsSection(BuildContext context, AppState state) {
+  Widget _buildDetailsSection(BuildContext context, AppLocalizations l10n) {
     switch (_selectedMethod) {
       case "stripe":
-        return _inputField(context, state.translate("Stripe Email", "Email-ka Stripe-ka", ar: "بريد سترايب", de: "Stripe-E-Mail"), Icons.email_rounded, "you@email.com", _field1Controller, isEmail: true);
+        return _inputField(context, l10n.stripeEmail, Icons.email_rounded, "you@email.com", _field1Controller, isEmail: true);
       case "card":
         return Column(children: [
-          _inputField(context, state.translate("Card Number", "Lambarka Kaadhka", ar: "رقم البطاقة", de: "Kartennummer"), Icons.credit_card_rounded, "•••• •••• •••• ••••", _field1Controller, isNumber: true),
+          _inputField(context, l10n.cardNumber, Icons.credit_card_rounded, "•••• •••• •••• ••••", _field1Controller, isNumber: true),
           const SizedBox(height: 14),
           Row(children: [
-            Expanded(child: _inputField(context, state.translate("Expiry", "Wakhtiga dhicitaanka", ar: "تاريخ الانتهاء", de: "Ablaufdatum"), Icons.date_range_rounded, "MM/YY", _field2Controller)),
+            Expanded(child: _inputField(context, l10n.expiry, Icons.date_range_rounded, "MM/YY", _field2Controller)),
           ]),
         ]);
       case "mobile":
-        return _inputField(context, state.translate("Mobile Number", "Lambarka Moobaylka", ar: "رقم الجوال", de: "Mobilnummer"), Icons.phone_android_rounded, "e.g. +252 61 XXX XXXX", _field1Controller, isNumber: true);
+        return _inputField(context, l10n.mobileNumber, Icons.phone_android_rounded, "e.g. +252 61 XXX XXXX", _field1Controller, isNumber: true);
       case "bank":
         return Column(children: [
-          _inputField(context, state.translate("Account Holder Name", "Magaca xisaabta leh", ar: "اسم صاحب الحساب", de: "Name des Kontoinhabers"), Icons.person_rounded, state.translate("Full name", "Magaca oo buuxa", ar: "الاسم الكامل", de: "Vollständiger Name"), _field1Controller),
+          _inputField(context, l10n.accountHolderName, Icons.person_rounded, l10n.fullName, _field1Controller),
           const SizedBox(height: 14),
-          _inputField(context, state.translate("IBAN", "IBAN", ar: "رقم الآيبان", de: "IBAN"), Icons.account_balance_rounded, "e.g. GB29 NWBK 6016 1331 9268 19", _field2Controller),
+          _inputField(context, l10n.iban, Icons.account_balance_rounded, l10n.ibanHint, _field2Controller),
         ]);
       default:
         return const SizedBox.shrink();
@@ -318,7 +325,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     );
   }
 
-  void _showReviewSheet(BuildContext context, AppState state) {
+  void _showReviewSheet(BuildContext context, AppLocalizations l10n, AppState state) {
     final method = _methods.firstWhere((m) => m["id"] == _selectedMethod);
     final theme = Theme.of(context);
     showModalBottomSheet(
@@ -352,7 +359,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(ctx);
-                      _showSuccess(context, state);
+                      _processTransaction(context, l10n, state);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryDark,
@@ -371,51 +378,95 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     );
   }
 
-  void _showSuccess(BuildContext context, AppState state) {
+  void _processTransaction(BuildContext context, AppLocalizations l10n, AppState state) async {
     final theme = Theme.of(context);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          body: Center(
-            child: MaxWidthBox(
-              maxWidth: 500,
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FadeInDown(
-                      child: Container(
-                        height: 110 * context.fontSizeFactor, width: 110 * context.fontSizeFactor,
-                        decoration: const BoxDecoration(color: AppColors.accentTeal, shape: BoxShape.circle),
-                        child: Icon(Icons.check_rounded, color: Colors.white, size: 65 * context.fontSizeFactor),
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (ctx) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Center(
+          child: ZoomIn(
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              width: 220 * context.fontSizeFactor,
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 65 * context.fontSizeFactor,
+                        height: 65 * context.fontSizeFactor,
+                        child: const CircularProgressIndicator(
+                          color: AppColors.accentTeal,
+                          strokeWidth: 3,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                    Text(state.translate("Withdrawal Requested!", "Kala bixista waa la codsaday!", ar: "تم طلب السحب!", de: "Auszahlung angefordert!"), style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
-                    const SizedBox(height: 12),
-                    Text(
-                      "${state.translate("Your withdrawal of", "Kala bixistaadi", ar: "طلب سحبك بمبلغ", de: "Ihre Auszahlung von")} \$${_amountController.text} ${state.translate("is being processed.", "ayaa lagu guda jiraa.", ar: "قيد المعالجة.", de: "wird bearbeitet.")}",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.grey, fontSize: 16 * context.fontSizeFactor, height: 1.5),
-                    ),
-                    const SizedBox(height: 48),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryDark,
-                        padding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor, horizontal: 40 * context.fontSizeFactor),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      Icon(
+                        Icons.bolt_rounded,
+                        color: AppColors.accentTeal,
+                        size: 32 * context.fontSizeFactor,
                       ),
-                      child: Text(state.translate("Back to Home", "Ku laabo Hoyga", ar: "العودة إلى الرئيسية", de: "Zurück zur Startseite"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Colors.white)),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(
+                    l10n.processing, 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18 * context.fontSizeFactor,
+                      color: theme.textTheme.bodyLarge?.color,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                  SizedBox(height: 8 * context.fontSizeFactor),
+                  Text(
+                    l10n.justAMoment, 
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13 * context.fontSizeFactor,
+                      color: AppColors.grey,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (!mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
+    _showSuccess(context, l10n, state);
+  }
+
+  void _showSuccess(BuildContext context, AppLocalizations l10n, AppState state) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SuccessScreen(
+          title: state.translate("Withdrawal Requested!", "Kala bixista waa la codsaday!", ar: "تم طلب السحب!", de: "Auszahlung angefordert!"),
+          message: "${state.translate("Your withdrawal of", "Kala bixistaadi", ar: "طلب سحبك بمبلغ", de: "Ihre Auszahlung von")} \$${_amountController.text} ${state.translate("is being processed.", "ayaa lagu guda jiraa.", ar: "قيد المعالجة.", de: "wird bearbeitet.")}",
+          buttonText: state.translate("Back to Home", "Ku laabo Hoyga", ar: "العودة إلى الرئيسية", de: "Zurück zur Startseite"),
         ),
       ),
     );
@@ -451,13 +502,33 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     }
   }
 
-  String _getDeMethodDesc(String id) {
+  String _getMethodTitle(String id, AppLocalizations l10n) {
     switch (id) {
-      case "stripe": return "Abheben auf Ihr Stripe-Konto";
-      case "card": return "Visa oder Mastercard";
-      case "mobile": return "ZAAD, EVC Plus, eDahab";
-      case "bank": return "IBAN- / SEPA-Überweisung";
-      default: return "";
+      case "stripe":
+        return "Stripe";
+      case "card":
+        return l10n.debitCreditCard;
+      case "mobile":
+        return l10n.mobileMoney;
+      case "bank":
+        return l10n.bankTransfer;
+      default:
+        return "";
+    }
+  }
+
+  String _getMethodDesc(String id, AppLocalizations l10n) {
+    switch (id) {
+      case "stripe":
+        return l10n.withdrawToStripe;
+      case "card":
+        return "Visa / Mastercard";
+      case "mobile":
+        return "ZAAD, EVC Plus, eDahab";
+      case "bank":
+        return l10n.bankTransferDesc;
+      default:
+        return "";
     }
   }
 }

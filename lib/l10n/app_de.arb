@@ -142,5 +142,117 @@
   "contactlessPayments": "Kontaktloses Bezahlen",
   "terminateCard": "Karte kündigen",
   "permanentlyDeleteCard": "Diese virtuelle Karte dauerhaft löschen",
-  "enterSecurityPin": "Bitte geben Sie Ihre 4-stellige Sicherheits-PIN ein"
+  "enterSecurityPin": "Bitte geben Sie Ihre 4-stellige Sicherheits-PIN ein",
+  "addMoney": "Geld hinzufügen",
+  "enterAmountToDeposit": "Betrag zum Einzahlen eingeben",
+  "confirmDeposit": "Einzahlung bestätigen",
+  "expiry": "Ablaufdatum",
+  "cardholderName": "Name des Karteninhabers",
+  "fullNameOnCard": "Vollständiger Name auf der Karte",
+  "selectProvider": "Anbieter wählen",
+  "accountHolderName": "Name des Kontoinhabers",
+  "fullName": "Vollständiger Name",
+  "reviewDeposit": "Einzahlung prüfen",
+  "totalCharged": "Gesamtbelastung",
+  "confirmAndDeposit": "Bestätigen & Einzahlen",
+  "depositSuccessful": "Einzahlung erfolgreich!",
+  "depositSuccessMessage": "{amount} wurde Ihrer Wallet hinzugefügt.",
+  "@depositSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "topUpFromWallet": "Aus Wallet aufladen",
+  "virtualCardTopUp": "Virtuelle Karte aufladen",
+  "topUpInstantlyVia": "Sofort aufladen über {method}",
+  "@topUpInstantlyVia": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "walletPin": "Wallet-PIN",
+  "enterWalletPinMessage": "Geben Sie Ihre 4-stellige Wallet-PIN ein, um die Aufladung zu autorisieren.",
+  "confirm": "Bestätigen",
+  "submit": "Absenden",
+  "accountName": "Kontoname",
+  "transferToAccountBelow": "Bitte überweisen Sie den Betrag auf das unten stehende Konto und klicken Sie auf Weiter.",
+  "processing": "Verarbeitung...",
+  "justAMoment": "Einen Moment bitte",
+  "withdrawMoney": "Geld abheben",
+  "withdrawToStripe": "Auf Stripe-Konto auszahlen",
+  "withdrawToStripeDesc": "Auszahlung auf Ihr Stripe-Konto",
+  "withdrawalMethod": "Auszahlungsmethode",
+  "stripeEmail": "Stripe-E-Mail",
+  "mobileNumber": "Handynummer",
+  "iban": "IBAN",
+  "reviewWithdrawal": "Auszahlung prüfen",
+  "details": "Details",
+  "free": "Kostenlos",
+  "totalDeducted": "Gesamt abgezogen",
+  "confirmWithdraw": "Bestätigen & Auszahlen",
+  "withdrawalRequested": "Auszahlung beantragt!",
+  "withdrawalSuccessMessage": "Ihre Auszahlung von {amount} wird bearbeitet.",
+  "@withdrawalSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payBills": "Rechnungen bezahlen",
+  "selectCategory": "Kategorie wählen",
+  "recentBills": "Letzte Rechnungen",
+  "amountToPay": "Zu zahlender Betrag ($)",
+  "confirmPayment": "Zahlung bestätigen",
+  "paymentSuccessful": "Zahlung erfolgreich!",
+  "paymentSuccessMessage": "Ihre Zahlung von {amount} für {category} wurde bearbeitet.",
+  "@paymentSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "billDetails": "Rechnungsdetails",
+  "serviceProvider": "Dienstanbieter",
+  "category": "Kategorie",
+  "accountId": "Konto-ID",
+  "amountPaid": "Gezahlter Betrag",
+  "paymentDate": "Zahlungsdatum",
+  "status": "Status",
+  "completed": "Abgeschlossen",
+  "downloadReceipt": "Beleg herunterladen",
+  "close": "Schließen",
+  "backToBills": "Zurück zu Rechnungen",
+  "electricity": "Strom",
+  "water": "Wasser",
+  "internet": "Internet",
+  "tvCable": "TV & Kabel",
+  "education": "Bildung",
+  "govServices": "Behördendienste",
+  "stripe": "Stripe",
+  "debitCreditCard": "Debit- / Kreditkarte",
+  "copiedToClipboard": "In Zwischenablage kopiert",
+  "otherBank": "Andere Bank",
+  "bankName": "Bankname",
+  "enterBankName": "Bankname eingeben",
+  "enterAccountNumber": "Kontonummer eingeben",
+  "enterAccountName": "Kontonamen eingeben",
+  "noActiveCards": "Keine aktiven Karten",
+  "orderVirtualCard": "Virtuelle Karte bestellen",
+  "instantlyIssueNewCard": "Sofort eine neue digitale Karte ausstellen",
+  "addToAppleWallet": "Zu Apple Wallet hinzufügen",
+  "addToGooglePay": "Zu Google Pay hinzufügen",
+  "terminateCardConfirm": "Sind Sie sicher, dass Sie diese Karte dauerhaft löschen möchten? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+  "all": "Alle",
+  "subscriptions": "Abonnements",
+  "cardTerminated": "Karte gekündigt",
+  "cardTerminatedSuccess": "Ihre virtuelle Karte wurde dauerhaft gelöscht."
 }
