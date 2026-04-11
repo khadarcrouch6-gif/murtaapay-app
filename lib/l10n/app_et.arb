@@ -57,6 +57,7 @@
   "payViaTelesom": "Maksa Telesom ZAAD kaudu",
   "payViaSomtel": "Maksa Somtel e-Dahab kaudu",
   "bankTransfer": "Pangaülekanne",
+  "addBank": "Lisa pank",
   "localBankTransfer": "Kohalik Somaalia pangaülekanne",
   "internationalMethods": "Rahvusvahelised meetodid",
   "payWithInternationalCard": "Maksa rahvusvahelise kaardiga",

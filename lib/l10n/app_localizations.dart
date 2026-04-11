@@ -572,11 +572,11 @@ abstract class AppLocalizations {
   /// **'Enter Amount to Deposit'**
   String get enterAmountToDeposit;
 
-  /// No description provided for @confirmDeposit.
+  /// No description provided for @confirmTopUp.
   ///
   /// In en, this message translates to:
-  /// **'Confirm Deposit'**
-  String get confirmDeposit;
+  /// **'Confirm Top-Up'**
+  String get confirmTopUp;
 
   /// No description provided for @expiry.
   ///
@@ -1016,6 +1016,12 @@ abstract class AppLocalizations {
   /// **'Select Bank'**
   String get selectBank;
 
+  /// No description provided for @addBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Bank'**
+  String get addBank;
+
   /// No description provided for @murtaaxWalletDesc.
   ///
   /// In en, this message translates to:
@@ -1321,6 +1327,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Virtual Card Top-Up'**
   String get virtualCardTopUp;
+
+  /// No description provided for @cardTopUpSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Top-Up Successful!'**
+  String get cardTopUpSuccessful;
+
+  /// No description provided for @cardTopUpSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} has been added to your virtual card.'**
+  String cardTopUpSuccessMessage(String amount);
+
+  /// No description provided for @enterAmountToTopUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter amount to top up'**
+  String get enterAmountToTopUp;
+
+  /// No description provided for @topUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Up'**
+  String get topUp;
 
   /// No description provided for @topUpInstantlyVia.
   ///
@@ -1718,11 +1748,47 @@ abstract class AppLocalizations {
   /// **'Top-up from Wallet'**
   String get topUpFromWallet;
 
+  /// No description provided for @withdrawToWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to Wallet'**
+  String get withdrawToWallet;
+
+  /// No description provided for @withdrawToWalletDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer to your main wallet balance'**
+  String get withdrawToWalletDesc;
+
+  /// No description provided for @withdrawToBankDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw to local or international bank'**
+  String get withdrawToBankDesc;
+
   /// No description provided for @withdrawToStripeDesc.
   ///
   /// In en, this message translates to:
   /// **'Withdraw to your Stripe account'**
   String get withdrawToStripeDesc;
+
+  /// No description provided for @enterVirtualCardPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your 4-digit virtual card PIN to authorize withdrawal.'**
+  String get enterVirtualCardPin;
+
+  /// No description provided for @currentCardBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'CURRENT CARD BALANCE'**
+  String get currentCardBalance;
+
+  /// No description provided for @virtualCardBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'VIRTUAL CARD BALANCE'**
+  String get virtualCardBalance;
 }
 
 class _AppLocalizationsDelegate

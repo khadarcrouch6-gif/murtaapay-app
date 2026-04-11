@@ -246,7 +246,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get enterAmountToDeposit => 'Betrag zum Einzahlen eingeben';
 
   @override
-  String get confirmDeposit => 'Einzahlung bestätigen';
+  String get confirmTopUp => 'Confirm Top-Up';
 
   @override
   String get expiry => 'Ablaufdatum';
@@ -480,6 +480,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get selectBank => 'Select Bank';
 
   @override
+  String get addBank => 'Bank hinzufügen';
+
+  @override
   String get murtaaxWalletDesc => 'Pay from your app balance';
 
   @override
@@ -634,6 +637,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get virtualCardTopUp => 'Virtuelle Karte aufladen';
+
+  @override
+  String get cardTopUpSuccessful => 'Card Top-Up Successful!';
+
+  @override
+  String cardTopUpSuccessMessage(String amount) {
+    return '$amount has been added to your virtual card.';
+  }
+
+  @override
+  String get enterAmountToTopUp => 'Enter amount to top up';
+
+  @override
+  String get topUp => 'Top Up';
 
   @override
   String topUpInstantlyVia(String method) {
@@ -847,5 +864,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String get topUpFromWallet => 'Aus Wallet aufladen';
 
   @override
+  String get withdrawToWallet => 'Send to Wallet';
+
+  @override
+  String get withdrawToWalletDesc => 'Transfer to your main wallet balance';
+
+  @override
+  String get withdrawToBankDesc => 'Withdraw to local or international bank';
+
+  @override
   String get withdrawToStripeDesc => 'Auszahlung auf Ihr Stripe-Konto';
+
+  @override
+  String get enterVirtualCardPin =>
+      'Enter your 4-digit virtual card PIN to authorize withdrawal.';
+
+  @override
+  String get currentCardBalance => 'CURRENT CARD BALANCE';
+
+  @override
+  String get virtualCardBalance => 'VIRTUAL CARD BALANCE';
 }

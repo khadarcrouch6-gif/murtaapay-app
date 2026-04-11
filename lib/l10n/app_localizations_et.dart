@@ -246,7 +246,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get enterAmountToDeposit => 'Sisesta hoiustatav summa';
 
   @override
-  String get confirmDeposit => 'Kinnita hoius';
+  String get confirmTopUp => 'Confirm Top-Up';
 
   @override
   String get expiry => 'Kehtivusaeg';
@@ -478,6 +478,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get selectBank => 'Vali pank';
 
   @override
+  String get addBank => 'Lisa pank';
+
+  @override
   String get murtaaxWalletDesc => 'Maksa oma rakenduse saldost';
 
   @override
@@ -633,6 +636,20 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get virtualCardTopUp => 'Virtuaalkaardi laadimine';
+
+  @override
+  String get cardTopUpSuccessful => 'Card Top-Up Successful!';
+
+  @override
+  String cardTopUpSuccessMessage(String amount) {
+    return '$amount has been added to your virtual card.';
+  }
+
+  @override
+  String get enterAmountToTopUp => 'Enter amount to top up';
+
+  @override
+  String get topUp => 'Top Up';
 
   @override
   String topUpInstantlyVia(String method) {
@@ -845,5 +862,24 @@ class AppLocalizationsEt extends AppLocalizations {
   String get topUpFromWallet => 'Laadi rahakotist';
 
   @override
+  String get withdrawToWallet => 'Send to Wallet';
+
+  @override
+  String get withdrawToWalletDesc => 'Transfer to your main wallet balance';
+
+  @override
+  String get withdrawToBankDesc => 'Withdraw to local or international bank';
+
+  @override
   String get withdrawToStripeDesc => 'Väljamakse teie Stripe\'i kontole';
+
+  @override
+  String get enterVirtualCardPin =>
+      'Enter your 4-digit virtual card PIN to authorize withdrawal.';
+
+  @override
+  String get currentCardBalance => 'CURRENT CARD BALANCE';
+
+  @override
+  String get virtualCardBalance => 'VIRTUAL CARD BALANCE';
 }

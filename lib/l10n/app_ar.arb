@@ -54,6 +54,7 @@
   "payViaTelesom": "دفع عبر تليسوم ZAAD",
   "payViaSomtel": "دفع عبر صومتل e-Dahab",
   "bankTransfer": "تحويل بنكي",
+  "addBank": "إضافة بنك",
   "localBankTransfer": "تحويل بنكي صومالي محلي",
   "internationalMethods": "طرق دولية",
   "payWithInternationalCard": "الدفع ببطاقة دولية",

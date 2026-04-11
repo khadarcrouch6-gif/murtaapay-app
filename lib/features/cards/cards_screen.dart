@@ -8,6 +8,7 @@ import 'dart:ui';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:intl/intl.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -166,7 +167,7 @@ class _CardsScreenState extends State<CardsScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
                 child: ElevatedButton(
-                  onPressed: () => _showAddCardDialog(context, state),
+                  onPressed: () => _showNewCardDialog(context, state),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                     foregroundColor: AppColors.accentTeal,
@@ -298,13 +299,13 @@ class _CardsScreenState extends State<CardsScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                _buildQuickAction(context, state, "Deposit", l10n.deposit, Icons.add_circle_outline_rounded, AppColors.accentTeal, const DepositCardScreen(amount: "0", currencyCode: "USD")),
+                                _buildQuickAction(context, state, "Deposit", l10n.deposit, Icons.add_circle_outline_rounded, AppColors.accentTeal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DepositCardScreen(amount: "0", currencyCode: "USD")))),
                                 const SizedBox(width: 8),
-                                _buildQuickAction(context, state, "Withdraw", l10n.withdraw, Icons.file_upload_outlined, Colors.orange, const WithdrawScreen()),
+                                _buildQuickAction(context, state, "Withdraw", l10n.withdraw, Icons.file_upload_outlined, Colors.orange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WithdrawScreen()))),
                                 const SizedBox(width: 8),
-                                _buildQuickAction(context, state, "Savings", l10n.savings, Icons.account_balance_outlined, Colors.blue, const SavingsScreen()),
+                                _buildQuickAction(context, state, "Savings", l10n.savings, Icons.account_balance_outlined, Colors.blue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SavingsScreen()))),
                                 const SizedBox(width: 8),
-                                _buildQuickAction(context, state, "Invest", l10n.invest, Icons.auto_graph_rounded, Colors.purple, const InvestmentsScreen()),
+                                _buildQuickAction(context, state, "Invest", l10n.invest, Icons.auto_graph_rounded, Colors.purple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InvestmentsScreen()))),
                               ],
                             ),
                           ),
@@ -374,9 +375,9 @@ class _CardsScreenState extends State<CardsScreen> {
 
   Widget _legendItem(BuildContext context, String label, Color color) => Row(children: [Container(width: 8 * context.fontSizeFactor, height: 8 * context.fontSizeFactor, decoration: BoxDecoration(color: color, shape: BoxShape.circle)), const SizedBox(width: 8), Text(label, style: TextStyle(fontSize: 12 * context.fontSizeFactor))]);
 
-  Widget _buildQuickAction(BuildContext context, AppState state, String title, String translatedTitle, IconData icon, Color color, Widget screen) {
+  Widget _buildQuickAction(BuildContext context, AppState state, String title, String translatedTitle, IconData icon, Color color, {VoidCallback? onTap}) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => screen)),
+      onTap: onTap,
       child: Container(
         width: 90 * context.fontSizeFactor, padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
         decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(16)),
@@ -761,7 +762,7 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  void _showAddCardDialog(BuildContext context, AppState state) {
+  void _showNewCardDialog(BuildContext context, AppState state) {
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,

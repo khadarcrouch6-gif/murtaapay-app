@@ -88,7 +88,7 @@
   "backToHome": "Back to Home",
   "addMoney": "Add Money",
   "enterAmountToDeposit": "Enter Amount to Deposit",
-  "confirmDeposit": "Confirm Deposit",
+  "confirmTopUp": "Confirm Top-Up",
   "expiry": "Expiry",
   "cardholderName": "Cardholder Name",
   "fullNameOnCard": "Full name on card",
@@ -183,6 +183,7 @@
   "cvv": "CVV",
   "secureProcessing": "Securely processing your payment...",
   "selectBank": "Select Bank",
+  "addBank": "Add Bank",
   "murtaaxWalletDesc": "Pay from your app balance",
   "visaMastercardDesc": "Pay using your card",
   "bankTransferDesc": "Direct bank transfer",
@@ -237,6 +238,17 @@
   "verifyingIdentity": "Verifying Identity...",
   "pleaseFillAllFields": "Please fill in all fields",
   "virtualCardTopUp": "Virtual Card Top-Up",
+  "cardTopUpSuccessful": "Card Top-Up Successful!",
+  "cardTopUpSuccessMessage": "{amount} has been added to your virtual card.",
+  "@cardTopUpSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "enterAmountToTopUp": "Enter amount to top up",
+  "topUp": "Top Up",
   "topUpInstantlyVia": "Top up instantly via {method}",
   "@topUpInstantlyVia": {
     "placeholders": {
@@ -334,5 +346,11 @@
   "cardTerminated": "Card Terminated",
   "cardTerminatedSuccess": "Your virtual card has been permanently deleted.",
   "topUpFromWallet": "Top-up from Wallet",
-  "withdrawToStripeDesc": "Withdraw to your Stripe account"
+  "withdrawToWallet": "Send to Wallet",
+  "withdrawToWalletDesc": "Transfer to your main wallet balance",
+  "withdrawToBankDesc": "Withdraw to local or international bank",
+  "withdrawToStripeDesc": "Withdraw to your Stripe account",
+  "enterVirtualCardPin": "Enter your 4-digit virtual card PIN to authorize withdrawal.",
+  "currentCardBalance": "CURRENT CARD BALANCE",
+  "virtualCardBalance": "VIRTUAL CARD BALANCE"
 }

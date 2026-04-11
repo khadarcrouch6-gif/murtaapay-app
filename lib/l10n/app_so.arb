@@ -54,6 +54,7 @@
   "payViaTelesom": "Ku bixi Telesom ZAAD",
   "payViaSomtel": "Ku bixi Somtel e-Dahab",
   "bankTransfer": "Xawaalad bangi",
+  "addBank": "Ku dar Bangi",
   "localBankTransfer": "Xawaalad bangi oo maxalli ah",
   "internationalMethods": "Hababka caalamiga ah",
   "payWithInternationalCard": "Ku bixi kaar caalami ah",

@@ -272,8 +272,8 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
-          title: l10n.depositSuccessful,
-          message: l10n.depositSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
+          title: l10n.cardTopUpSuccessful,
+          message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
           buttonText: l10n.backToHome,
         ),
       ),
@@ -416,7 +416,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
-        child: Text(l10n.confirmDeposit, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+        child: Text(l10n.confirmTopUp, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
       ),
     );
   }

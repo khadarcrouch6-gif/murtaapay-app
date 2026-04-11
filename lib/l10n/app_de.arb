@@ -54,6 +54,7 @@
   "payViaTelesom": "Mit Telesom ZAAD bezahlen",
   "payViaSomtel": "Mit Somtel e-Dahab bezahlen",
   "bankTransfer": "Banküberweisung",
+  "addBank": "Bank hinzufügen",
   "localBankTransfer": "Lokale somalische Banküberweisung",
   "internationalMethods": "Internationale Methoden",
   "payWithInternationalCard": "Mit internationaler Karte bezahlen",
