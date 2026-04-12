@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../core/app_colors.dart';
@@ -385,8 +384,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 onPressed: _field1Controller.text.length < 4
                     ? null
                     : () {
+                        final localContext = this.context;
                         Navigator.pop(context);
-                        _processTransaction(this.context, l10n, state);
+                        _processTransaction(localContext, l10n, state);
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.accentTeal,
@@ -552,8 +552,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 onPressed: (selectedBank == null || (isCustomBank && customBankController.text.isEmpty) || _field1Controller.text.isEmpty || _field2Controller.text.isEmpty)
                     ? null
                     : () {
+                        final localContext = this.context;
                         Navigator.pop(context);
-                        _processTransaction(this.context, l10n, state);
+                        _processTransaction(localContext, l10n, state);
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -648,7 +649,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
     await Future.delayed(const Duration(seconds: 1));
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     Navigator.of(context, rootNavigator: true).pop();
     _showSuccess(context, l10n, state);
   }

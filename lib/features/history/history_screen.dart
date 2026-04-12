@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
-import '../../core/widgets/detail_row.dart';
+
 import '../../core/widgets/transaction_item.dart';
+import '../../core/widgets/wallet_receipt_view.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class Transaction {
@@ -198,40 +199,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   void _showTransactionDetails(BuildContext context, AppState state, ThemeData theme, Transaction tx) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useRootNavigator: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(color: theme.scaffoldBackgroundColor, borderRadius: const BorderRadius.vertical(top: Radius.circular(32))),
-        padding: EdgeInsets.fromLTRB(32, 24, 32, 32 + MediaQuery.of(context).padding.bottom),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.grey.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2))),
-              const SizedBox(height: 24),
-              Text(state.translate("Transaction Details", "Faahfaahinta", ar: "تفاصيل المعاملة", de: "Transaktionsdetails", et: "Tehingu andmed"), style: theme.textTheme.titleLarge),
-              const SizedBox(height: 32),
-              DetailRow(label: state.translate("Recipient/Sender", "Qofka/Dhinaca", ar: "المستلم/المرسل", de: "Empfänger/Sender", et: "Saaja/Saatja"), value: tx.name),
-              DetailRow(label: state.translate("Amount", "Lacagta", ar: "المبلغ", de: "Betrag", et: "Summa"), value: tx.amount, valueColor: tx.isSent ? null : AppColors.accentTeal),
-              DetailRow(label: state.translate("Type", "Nooca", ar: "النوع", de: "Typ", et: "Tüüp"), value: tx.type),
-              DetailRow(label: state.translate("Date", "Taariikhda", ar: "التاريخ", de: "Datum", et: "Kuupäev"), value: tx.date),
-              DetailRow(label: state.translate("Status", "Heerka", ar: "الحالة", de: "Status", et: "Olek"), value: state.translate(tx.status, tx.status == "Success" ? "Guul" : "Sugayn", ar: tx.status == "Success" ? "ناجح" : "قيد الانتظار", de: tx.status == "Success" ? "Erfolgreich" : "Ausstehend", et: tx.status == "Success" ? "Edukas" : "Ootel"), valueColor: tx.status == "Success" ? AppColors.accentTeal : Colors.orange),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context), 
-                  child: Text(state.translate("Close", "Xidh", ar: "إغلاق", de: "Schließen", et: "Sulge")),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    WalletReceiptView.show(context, {
+      "title": tx.name,
+      "amount": tx.amount,
+      "date": tx.date,
+      "status": tx.status,
+      "isNegative": tx.isSent,
+    });
   }
 
   Widget _buildEmptyState(BuildContext context, AppState state) {

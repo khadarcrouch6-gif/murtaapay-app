@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import '../../l10n/app_localizations.dart';
 
 class VouchersScreen extends StatefulWidget {
   const VouchersScreen({super.key});
@@ -16,14 +16,14 @@ class VouchersScreen extends StatefulWidget {
 class _VouchersScreenState extends State<VouchersScreen> {
   String? redeemedCode;
 
-  void _redeemVoucher(String code, AppState state) {
+  void _redeemVoucher(String code, AppLocalizations l10n) {
     setState(() {
       redeemedCode = code;
     });
     Clipboard.setData(ClipboardData(text: code));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(state.translate("Voucher code copied! Ready to use.", "Koodhka waatsharka waa la koobiyeeyay!", ar: "تم نسخ كود القسيمة! جاهز للاستخدام.", de: "Gutscheincode kopiert! Bereit zur Verwendung.")),
+        content: Text(l10n.voucherCopied),
         backgroundColor: AppColors.primaryDark,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -36,123 +36,120 @@ class _VouchersScreenState extends State<VouchersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return ListenableBuilder(
-      listenable: state,
-      builder: (context, child) => Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: Text(state.translate("My Vouchers", "Waatsharradayda", ar: "قسائمي", de: "Meine Gutscheine"), 
-              style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color, fontSize: 20 * context.fontSizeFactor)),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(state.isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.iconTheme.color),
-            onPressed: () => Navigator.pop(context),
-          ),
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(l10n.vouchers,
+            style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color, fontSize: 20 * context.fontSizeFactor)),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Directionality.of(context) == TextDirection.rtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.iconTheme.color),
+          onPressed: () => Navigator.pop(context),
         ),
-        body: Center(
-          child: MaxWidthBox(
-            maxWidth: 1000,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final isWide = constraints.maxWidth > 700;
-                return SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(
-                    context.horizontalPadding,
-                    12,
-                    context.horizontalPadding,
-                    context.responsiveValue(mobile: 120, tablet: 24, desktop: 24),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      FadeInDown(
-                        child: Text(
-                          state.translate("Active Rewards", "Abaalmarinnada Firfircoon", ar: "المكافآت النشطة", de: "Aktive Belohnungen"),
-                          style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color),
-                        ),
+      ),
+      body: Center(
+        child: MaxWidthBox(
+          maxWidth: 1000,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 700;
+              return SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  context.horizontalPadding,
+                  12,
+                  context.horizontalPadding,
+                  context.responsiveValue(mobile: 120, tablet: 24, desktop: 24),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FadeInDown(
+                      child: Text(
+                        l10n.vouchers,
+                        style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color),
                       ),
-                      const SizedBox(height: 24),
-                      if (isWide)
-                        GridView.count(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 24,
-                          mainAxisSpacing: 0,
-                          childAspectRatio: 1.8,
-                          children: _buildVoucherList(context, state, theme, isDark),
-                        )
-                      else
-                        Column(
-                          children: _buildVoucherList(context, state, theme, isDark),
-                        ),
-                      
-                      const SizedBox(height: 48),
-                      FadeInUp(
-                        delay: const Duration(milliseconds: 400),
-                        child: Text(state.translate("How to use", "Sida loo isticmaalo", ar: "كيفية الاستخدام", de: "So wird's verwendet"), 
-                            style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
+                    ),
+                    const SizedBox(height: 24),
+                    if (isWide)
+                      GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 24,
+                        mainAxisSpacing: 0,
+                        childAspectRatio: 1.8,
+                        children: _buildVoucherList(context, l10n, theme, isDark),
+                      )
+                    else
+                      Column(
+                        children: _buildVoucherList(context, l10n, theme, isDark),
                       ),
-                      const SizedBox(height: 20),
-                      _buildStep(context, state, theme, 1, state.translate("Tap 'Redeem Now' to copy the code.", "Riix 'Hadda Fur' si aad u koobiyeysato koodhka.", ar: "اضغط على 'استرداد الآن' لنسخ الرمز.", de: "Tippen Sie auf „Jetzt einlösen“, um den Code zu kopieren."), 500),
-                      _buildStep(context, state, theme, 2, state.translate("Start a new money transfer.", "Bilow xawaalad lacageed oo cusub.", ar: "ابدأ تحويل أموال جديد.", de: "Starten Sie eine neue Geldüberweisung."), 600),
-                      _buildStep(context, state, theme, 3, state.translate("Paste code in the 'Promo Code' field.", "Dhig koodhka qaybta 'Promo Code'.", ar: "الصق الرمز في حقل 'كود الخصم'.", de: "Fügen Sie den Code in das Feld „Promo-Code“ ein."), 700),
-                      const SizedBox(height: 40),
-                    ],
-                  ),
-                );
-              }
-            ),
+                    
+                    const SizedBox(height: 48),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 400),
+                      child: Text(l10n.howToUse, 
+                          style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildStep(context, theme, 1, l10n.stepRedeem, 500),
+                    _buildStep(context, theme, 2, l10n.stepTransfer, 600),
+                    _buildStep(context, theme, 3, l10n.stepPaste, 700),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              );
+            }
           ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildVoucherList(BuildContext context, AppState state, ThemeData theme, bool isDark) {
+  List<Widget> _buildVoucherList(BuildContext context, AppLocalizations l10n, ThemeData theme, bool isDark) {
     return [
       _buildTicketVoucher(
         context: context,
-        state: state,
+        l10n: l10n,
         theme: theme,
         isDark: isDark,
-        title: state.translate("Welcome Bonus", "Abaalmarinta Soo-dhaweynta", ar: "مكافأة الترحيب", de: "Willkommensbonus"),
-        desc: state.translate("Get 5% cashback on your next transfer.", "Hel 5% lacag celin ah xawaaladdaada xigta.", ar: "احصل على 5% كاش باك على تحويلك القادم.", de: "Erhalten Sie 5 % Cashback auf Ihre nächste Überweisung."),
+        title: l10n.welcomeBonus,
+        desc: l10n.welcomeBonusDesc,
         code: "WELCOME5",
         color: const Color(0xFFF59E0B),
-        expiry: state.translate("Expires: 30 Dec", "Dhacaya: 30 Dec", ar: "ينتهي في: 30 ديسمبر", de: "Läuft am 30. Dez. ab"),
+        expiry: l10n.expires30Dec,
         icon: Icons.card_giftcard_rounded,
         delay: 100,
       ),
       _buildTicketVoucher(
         context: context,
-        state: state,
+        l10n: l10n,
         theme: theme,
         isDark: isDark,
-        title: state.translate("Family Friday", "Jimcaha Qoyska", ar: "جمعة العائلة", de: "Familienfreitag"),
-        desc: state.translate("Zero fees for any transfer to Somalia today!", "Khidmad la'aan xawaalad kasta oo Soomaaliya maanta!", ar: "رسوم صفرية لأي تحويل إلى الصومال اليوم!", de: "Heute keine Gebühren für Überweisungen nach Somalia!"),
+        title: l10n.familyFriday,
+        desc: l10n.familyFridayDesc,
         code: "FREEFRI",
         color: AppColors.accentTeal,
-        expiry: state.translate("Expires: Tomorrow", "Dhacaya: Berri", ar: "ينتهي: غداً", de: "Läuft morgen ab"),
+        expiry: l10n.expiresTomorrow,
         icon: Icons.family_restroom_rounded,
         delay: 200,
       ),
       _buildTicketVoucher(
         context: context,
-        state: state,
+        l10n: l10n,
         theme: theme,
         isDark: isDark,
-        title: state.translate("Eid Special", "Gaar u ah Ciidda", ar: "خاص بالعيد", de: "Eid-Spezial"),
-        desc: state.translate("\$10 bonus on transfers over \$100.", "\$10 oo gunno ah xawaaladaha ka badan \$100.", ar: "مكافأة 10 دولار على التحويلات التي تزيد عن 100 دولار.", de: "10 \$ Bonus auf Überweisungen über 100 \$."),
+        title: l10n.eidSpecial,
+        desc: l10n.eidSpecialDesc,
         code: "EID2024",
         color: const Color(0xFF8B5CF6),
-        expiry: state.translate("Expires: in 5 days", "Dhacaya: 5 maalin", ar: "ينتهي: خلال 5 أيام", de: "Läuft in 5 Tagen ab"),
+        expiry: l10n.expiresIn5Days,
         icon: Icons.mosque_rounded,
         delay: 300,
       ),
@@ -161,7 +158,7 @@ class _VouchersScreenState extends State<VouchersScreen> {
 
   Widget _buildTicketVoucher({
     required BuildContext context,
-    required AppState state,
+    required AppLocalizations l10n,
     required ThemeData theme,
     required bool isDark,
     required String title,
@@ -205,7 +202,7 @@ class _VouchersScreenState extends State<VouchersScreen> {
                       RotatedBox(
                         quarterTurns: -1,
                         child: Text(
-                          state.translate("REWARD", "ABAALMARIN", ar: "مكافأة", de: "BELOHNUNG"),
+                          l10n.reward,
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 3, fontSize: 10 * context.fontSizeFactor),
                         ),
                       ),
@@ -232,7 +229,7 @@ class _VouchersScreenState extends State<VouchersScreen> {
                         Text(desc, style: TextStyle(fontSize: 13 * context.fontSizeFactor, color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7), height: 1.4)),
                         const SizedBox(height: 16),
                         GestureDetector(
-                          onTap: () => _redeemVoucher(code, state),
+                          onTap: () => _redeemVoucher(code, l10n),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeInOut,
@@ -245,7 +242,7 @@ class _VouchersScreenState extends State<VouchersScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                isRedeemed ? state.translate("Copied!", "Waa la koobiyey!", ar: "تم النسخ!", de: "Kopiert!") : state.translate("Redeem Now", "Hadda Fur", ar: "استرداد الآن", de: "Jetzt einlösen"),
+                                isRedeemed ? l10n.copied : l10n.redeemNow,
                                 style: TextStyle(
                                   color: isRedeemed ? Colors.white : color,
                                   fontWeight: FontWeight.bold,
@@ -267,7 +264,7 @@ class _VouchersScreenState extends State<VouchersScreen> {
     );
   }
 
-  Widget _buildStep(BuildContext context, AppState state, ThemeData theme, int number, String text, int delay) {
+  Widget _buildStep(BuildContext context, ThemeData theme, int number, String text, int delay) {
     final isDark = theme.brightness == Brightness.dark;
     return FadeInUp(
       delay: Duration(milliseconds: delay),

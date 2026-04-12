@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../l10n/app_localizations.dart';
-import 'review_screen.dart';
 import 'payment_screen.dart';
 
 class BankScreen extends StatefulWidget {
@@ -254,7 +253,7 @@ class _BankScreenState extends State<BankScreen> {
         ),
       ),
       child: DropdownButtonFormField<String>(
-        value: _selectedBank,
+        initialValue: _selectedBank,
         dropdownColor: theme.colorScheme.surface,
         style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w900, fontSize: 16),
         decoration: InputDecoration(

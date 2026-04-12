@@ -3,12 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'dart:math';
 import 'dart:ui';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:intl/intl.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -16,10 +14,9 @@ import '../../core/widgets/success_screen.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../more/investments_screen.dart';
 import '../more/savings_screen.dart';
-import '../deposit/deposit_screen.dart';
 import '../deposit/deposit_card_screen.dart';
+import '../../core/widgets/card_receipt_view.dart';
 import '../withdraw/withdraw_screen.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../l10n/app_localizations.dart';
 import 'models/card_model.dart';
 import 'widgets/elite_virtual_card.dart';
@@ -33,9 +30,39 @@ class CardsScreen extends StatefulWidget {
 
 class _CardsScreenState extends State<CardsScreen> {
   final PageController _pageController = PageController(viewportFraction: 0.9);
+  final TextEditingController _searchController = TextEditingController();
   int _currentIndex = 0;
   bool _showBack = false;
   bool _showNumber = false;
+  bool _isSearching = false;
+  String _searchQuery = "";
+  String _selectedFilter = "All";
+
+  final List<Map<String, dynamic>> _allTransactions = [
+    {"title": "Netflix", "date": "Oct 24", "amount": r"-$15.99", "isNegative": true, "category": "Subscriptions", "status": "Success", "type": "payment"},
+    {"title": "Amazon", "date": "Oct 22", "amount": r"-$124.50", "isNegative": true, "category": "Shopping", "status": "Success", "type": "payment"},
+    {"title": "Topup", "date": "Oct 20", "amount": r"+$500.00", "isNegative": false, "category": "All", "status": "Success", "type": "deposit", "method": "Wallet"},
+    {"title": "Starbucks", "date": "Oct 19", "amount": r"-$5.50", "isNegative": true, "category": "Food", "status": "Success", "type": "payment"},
+    {"title": "Apple Music", "date": "Oct 18", "amount": r"-$9.99", "isNegative": true, "category": "Subscriptions", "status": "Success", "type": "payment"},
+    {"title": "Uber", "date": "Oct 17", "amount": r"-$25.00", "isNegative": true, "category": "Transport", "status": "Success", "type": "payment"},
+    {"title": "Salary", "date": "Oct 15", "amount": r"+$2500.00", "isNegative": false, "category": "All", "status": "Success", "type": "deposit", "method": "Bank"},
+    {"title": "Bank Transfer", "date": "Oct 14", "amount": r"-$100.00", "isNegative": true, "category": "All", "status": "Success", "type": "withdraw"},
+  ];
+
+  List<Map<String, dynamic>> get _filteredTransactions {
+    return _allTransactions.where((tx) {
+      final matchesSearch = tx['title'].toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesFilter = _selectedFilter == "All" || tx['category'] == _selectedFilter;
+      return matchesSearch && matchesFilter;
+    }).toList();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
 
   final List<VirtualCard> _cards = [
     VirtualCard(
@@ -318,8 +345,32 @@ class _CardsScreenState extends State<CardsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(l10n.transactions, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                        IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded)),
+                        if (!_isSearching)
+                          Text(l10n.transactions, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))
+                        else
+                          Expanded(
+                            child: TextField(
+                              controller: _searchController,
+                              autofocus: true,
+                              decoration: InputDecoration(
+                                hintText: l10n.searchTransactions,
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
+                              ),
+                              style: TextStyle(fontSize: 14 * context.fontSizeFactor),
+                              onChanged: (value) => setState(() => _searchQuery = value),
+                            ),
+                          ),
+                        IconButton(
+                          onPressed: () => setState(() {
+                            _isSearching = !_isSearching;
+                            if (!_isSearching) {
+                              _searchController.clear();
+                              _searchQuery = "";
+                            }
+                          }),
+                          icon: Icon(_isSearching ? Icons.close_rounded : Icons.search_rounded),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -327,17 +378,38 @@ class _CardsScreenState extends State<CardsScreen> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          _buildFilterChip(l10n.all, true),
-                          _buildFilterChip(l10n.shopping, false),
-                          _buildFilterChip(l10n.food, false),
-                          _buildFilterChip(l10n.subscriptions, false),
+                          _buildFilterChip(l10n.all, _selectedFilter == "All", (sel) => setState(() => _selectedFilter = "All")),
+                          _buildFilterChip(l10n.shopping, _selectedFilter == "Shopping", (sel) => setState(() => _selectedFilter = "Shopping")),
+                          _buildFilterChip(l10n.food, _selectedFilter == "Food", (sel) => setState(() => _selectedFilter = "Food")),
+                          _buildFilterChip(l10n.subscriptions, _selectedFilter == "Subscriptions", (sel) => setState(() => _selectedFilter = "Subscriptions")),
                         ],
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildTxItem(context, state, "Netflix", "Oct 24", r"-$15.99", true),
-                    _buildTxItem(context, state, "Amazon", "Oct 22", r"-$124.50", true),
-                    _buildTxItem(context, state, "Topup", "Oct 20", r"+$500.00", false),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _filteredTransactions.length,
+                      itemBuilder: (context, index) {
+                        final tx = _filteredTransactions[index];
+                        return _buildTxItem(
+                          context, 
+                          state, 
+                          tx['title'], 
+                          tx['date'], 
+                          tx['amount'], 
+                          tx['isNegative'],
+                          onTap: () => CardReceiptView.show(context, tx),
+                        );
+                      },
+                    ),
+                    if (_filteredTransactions.isEmpty)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Text(l10n.noTransactionsFound, style: TextStyle(color: AppColors.grey)),
+                        ),
+                      ),
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -393,23 +465,26 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  Widget _buildTxItem(BuildContext context, AppState state, String title, String date, String amt, bool neg) {
+  Widget _buildTxItem(BuildContext context, AppState state, String title, String date, String amt, bool neg, {VoidCallback? onTap}) {
     final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12), padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20)),
-      child: Row(
-        children: [
-          Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: neg ? Colors.red.withValues(alpha: 0.1) : AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(neg ? Icons.shopping_bag_outlined : Icons.add_circle_outline, color: neg ? Colors.red : AppColors.accentTeal, size: 20 * context.fontSizeFactor)),
-          const SizedBox(width: 16),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)), Text(date, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor))])),
-          Text(amt, style: TextStyle(fontWeight: FontWeight.bold, color: neg ? null : AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor)),
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12), padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20)),
+        child: Row(
+          children: [
+            Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: neg ? Colors.red.withValues(alpha: 0.1) : AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(neg ? Icons.shopping_bag_outlined : Icons.add_circle_outline, color: neg ? Colors.red : AppColors.accentTeal, size: 20 * context.fontSizeFactor)),
+            const SizedBox(width: 16),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)), Text(date, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor))])),
+            Text(amt, style: TextStyle(fontWeight: FontWeight.bold, color: neg ? null : AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFilterChip(String label, bool sel) => Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: (_) {}, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+  Widget _buildFilterChip(String label, bool sel, ValueChanged<bool> onSelected) => Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: onSelected, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), selectedColor: AppColors.accentTeal.withValues(alpha: 0.2), checkmarkColor: AppColors.accentTeal));
 
   void _showCardSettings(BuildContext context, AppState state) {
     final currentCard = _cards[_currentIndex];
@@ -578,8 +653,9 @@ class _CardsScreenState extends State<CardsScreen> {
             ),
             ElevatedButton(
               onPressed: () {
+                final localContext = context;
                 Navigator.pop(context); // Close dialog
-                _processTransaction(context, l10n);
+                _processTransaction(localContext, l10n);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
@@ -670,9 +746,10 @@ class _CardsScreenState extends State<CardsScreen> {
 
     await Future.delayed(const Duration(seconds: 2));
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     Navigator.of(context, rootNavigator: true).pop();
     
+    if (!context.mounted) return;
     setState(() {
       _cards.removeAt(_currentIndex);
       if (_currentIndex >= _cards.length && _cards.isNotEmpty) {
@@ -680,10 +757,12 @@ class _CardsScreenState extends State<CardsScreen> {
       }
     });
     
+    if (!context.mounted) return;
     if (Navigator.canPop(context)) {
       Navigator.pop(context); // Close settings bottom sheet
     }
 
+    if (!context.mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -755,7 +834,7 @@ class _CardsScreenState extends State<CardsScreen> {
           onChanged: onChanged,
           secondary: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)),
           title: Text(title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-          activeColor: AppColors.accentTeal,
+          activeTrackColor: AppColors.accentTeal,
         ),
         Divider(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05), indent: 64),
       ],

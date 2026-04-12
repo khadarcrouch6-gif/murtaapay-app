@@ -232,7 +232,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
         ),
       ),
       child: DropdownButtonFormField<String>(
-        value: _selectedBank,
+        initialValue: _selectedBank,
         dropdownColor: theme.colorScheme.surface,
         style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w900, fontSize: 16),
         decoration: InputDecoration(

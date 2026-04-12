@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:provider/provider.dart';
+
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
+
 import '../../core/widgets/adaptive_icon.dart';
-import 'dart:ui';
+import 'dart:ui' as ui;
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
@@ -39,6 +39,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
   final TextEditingController _bankNameController = TextEditingController();
 
   String _selectedBank = "IBS Bank";
+
   final List<Map<String, String>> _banks = [
     {"name": "IBS Bank", "image": "assets/images/bank.png"},
     {"name": "Premier Bank", "image": "assets/images/bank.png"},
@@ -114,12 +115,13 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
 
   void _processTransaction(BuildContext context, AppLocalizations l10n) async {
     final theme = Theme.of(context);
+    final localContext = context;
     showDialog(
       context: context,
       barrierDismissible: false,
       useRootNavigator: true,
       builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Center(
           child: ZoomIn(
             duration: const Duration(milliseconds: 300),
@@ -188,15 +190,13 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
 
     await Future.delayed(const Duration(seconds: 1));
 
-    if (!mounted) return;
-    Navigator.of(context, rootNavigator: true).pop();
-    _showSuccess(context, l10n);
+    if (!localContext.mounted) return;
+    Navigator.of(localContext, rootNavigator: true).pop();
+    _showSuccess(localContext, l10n);
   }
 
   void _showWalletPinDialog() {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final state = Provider.of<AppState>(context, listen: false);
     
     _pinController.clear();
 
@@ -213,64 +213,15 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
               Text(l10n.topUpFromWallet, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
             ],
           ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 16 * context.fontSizeFactor),
-                Container(
-                  padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                  decoration: BoxDecoration(
-                    color: AppColors.accentTeal.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(l10n.walletBalance, style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
-                      Text(
-                        NumberFormat.simpleCurrency(name: 'USD').format(state.balance),
-                        style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 24 * context.fontSizeFactor),
-                Text(
-                  l10n.enterWalletPinMessage,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: AppColors.grey),
-                ),
-                SizedBox(height: 20 * context.fontSizeFactor),
-                SizedBox(
-                  width: 200 * context.fontSizeFactor,
-                  child: TextField(
-                    controller: _pinController,
-                    keyboardType: TextInputType.number,
-                    obscureText: true,
-                    maxLength: 4,
-                    textAlign: TextAlign.center,
-                    autofocus: true,
-                    style: TextStyle(fontSize: 28 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 16),
-                    onChanged: (_) => setDialogState(() {}),
-                    decoration: InputDecoration(
-                      counterText: "",
-                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.accentTeal.withValues(alpha: 0.2))),
-                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.accentTeal, width: 2)),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey))),
             ElevatedButton(
               onPressed: _pinController.text.length < 4
                   ? null
                   : () {
+                      final localContext = this.context;
                       Navigator.pop(context);
-                      _processTransaction(this.context, l10n);
+                      _processTransaction(localContext, l10n);
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.accentTeal,
@@ -338,8 +289,9 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
               onPressed: (_accountNumberController.text.isEmpty || _accountNameController.text.isEmpty || (_selectedBank == "Add Bank" && _bankNameController.text.isEmpty))
                   ? null
                   : () {
+                      final localContext = this.context;
                       Navigator.pop(dialogContext);
-                      _processTransaction(this.context, l10n);
+                      _processTransaction(localContext, l10n);
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.secondary,
@@ -366,7 +318,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
         ),
       ),
       child: DropdownButtonFormField<String>(
-        value: _selectedBank,
+        initialValue: _selectedBank,
         dropdownColor: theme.colorScheme.surface,
         style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
         decoration: InputDecoration(

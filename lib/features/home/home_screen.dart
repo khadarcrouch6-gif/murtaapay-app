@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -20,10 +21,11 @@ import '../bills/pay_bills_screen.dart';
 import '../chat/chat_screen.dart';
 import '../more/sadaqah_screen.dart';
 import '../more/exchange_rates_screen.dart';
-import '../more/vouchers_screen.dart';
+
 import '../deposit/deposit_screen.dart';
 import '../notifications/notifications_screen.dart';
 import '../analytics/analytics_screen.dart';
+import '../hagbad/hagbad_screen.dart';
 import '../../core/widgets/receipt_view.dart';
 
 enum ChartType { bar, pie, line }
@@ -99,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     
     return Scaffold(
@@ -107,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         color: Colors.transparent,
         child: Column(
           children: [
-            _buildFixedTopBar(context, state, theme),
+            _buildFixedTopBar(context, state, l10n, theme),
             Expanded(
               child: Center(
                 child: MaxWidthBox(
@@ -117,15 +120,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildRemainingHeader(context, state, theme),
+                        _buildRemainingHeader(context, state, l10n, theme),
                         SizedBox(height: context.verticalPadding),
-                        _buildSpendingAnalysis(context, state, theme),
+                        _buildSpendingAnalysis(context, state, l10n, theme),
                         SizedBox(height: context.verticalPadding),
-                        _buildQuickActions(context, state, theme),
+                        _buildQuickActions(context, state, l10n, theme),
                         SizedBox(height: context.verticalPadding),
-                        _buildVirtualCardPromo(context, state, theme),
+                        _buildVirtualCardPromo(context, state, l10n, theme),
                         SizedBox(height: context.verticalPadding * 1.5),
-                        _buildRecentTransactions(context, state, theme),
+                        _buildRecentTransactions(context, state, l10n, theme),
                         const SizedBox(height: 100),
                       ],
                     ),
@@ -139,8 +142,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildFixedTopBar(BuildContext context, AppState state, ThemeData theme) {
-    final bool isDesktop = ResponsiveBreakpoints.of(context).largerThan(TABLET);
+  Widget _buildFixedTopBar(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {
     final bool isTablet = ResponsiveBreakpoints.of(context).equals(TABLET);
 
     return FadeInDown(
@@ -192,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      state.translate("Welcome back,", "Ku soo dhawaaw,", ar: "مرحباً بعودtek،", de: "Willkommen zurück,", et: "Tere tulemast tagasi,"),
+                      l10n.welcome,
                       style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
@@ -303,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildRemainingHeader(BuildContext context, AppState state, ThemeData theme) {
+  Widget _buildRemainingHeader(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {
     // Use narrower padding on desktop to accommodate the sidebar
     final horizontalPadding = context.isDesktop ? 24.0 : context.horizontalPadding;
     
@@ -339,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         children: [
                           Expanded(
                             child: Text(
-                              state.translate("Wallet Balance", "Hadhaaga Wallet-ka", ar: "رصيد المحفظة", de: "Kontostand", et: "Rahakoti jääk"), 
+                              l10n.walletBalance, 
                               style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold), 
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
@@ -385,11 +387,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 children: [
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : double.infinity),
-                    child: _buildActionButton(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden", et: "Saada"), FontAwesomeIcons.paperPlane, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SendAmountScreen()))),
+                    child: _buildActionButton(context, l10n.send, FontAwesomeIcons.paperPlane, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SendAmountScreen()))),
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : double.infinity),
-                    child: _buildActionButton(context, state.translate("Add", "Ku dar", ar: "إضافة", de: "Hinzufügen", et: "Lisa"), FontAwesomeIcons.plus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
+                    child: _buildActionButton(context, l10n.add, FontAwesomeIcons.plus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
                   ),
                 ],
               ),
@@ -400,7 +402,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildSpendingAnalysis(BuildContext context, AppState state, ThemeData theme) {
+  Widget _buildSpendingAnalysis(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
       child: GestureDetector(
@@ -424,7 +426,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     children: [
                       Expanded(
                         child: Text(
-                          state.translate("Spending Analysis", "Isticmaalka", ar: "تحليل الإنفاق", de: "Ausgabenanalyse", et: "Kulude analüüs"), 
+                          l10n.spendingAnalysis, 
                           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: isSmall ? 15 : 18),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
@@ -455,21 +457,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   if (isSmall) 
                     Column(
                       children: [
-                        _buildStatItem(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden", et: "Saada"), r"$4,250", Colors.blue, isList: true),
+                        _buildStatItem(context, l10n.send, r"$4,250", Colors.blue, isList: true),
                         const SizedBox(height: 12),
-                        _buildStatItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen", et: "Arved"), r"$1,120", Colors.orange, isList: true),
+                        _buildStatItem(context, l10n.bills, r"$1,120", Colors.orange, isList: true),
                         const SizedBox(height: 12),
-                        _buildStatItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah", et: "Sadaqah"), r"$450", AppColors.accentTeal, isList: true),
+                        _buildStatItem(context, l10n.sadaqah, r"$450", AppColors.accentTeal, isList: true),
                       ],
                     )
                   else
                     Row(
                       children: [
-                        Expanded(child: _buildStatItem(context, state.translate("Send", "Dir", ar: "إرسال", de: "Senden", et: "Saada"), r"$4,250", Colors.blue)),
+                        Expanded(child: _buildStatItem(context, l10n.send, r"$4,250", Colors.blue)),
                         const SizedBox(width: 16),
-                        Expanded(child: _buildStatItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen", et: "Arved"), r"$1,120", Colors.orange)),
+                        Expanded(child: _buildStatItem(context, l10n.bills, r"$1,120", Colors.orange)),
                         const SizedBox(width: 16),
-                        Expanded(child: _buildStatItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah", et: "Sadaqah"), r"$450", AppColors.accentTeal)),
+                        Expanded(child: _buildStatItem(context, l10n.sadaqah, r"$450", AppColors.accentTeal)),
                       ],
                     ),
                 ],
@@ -481,13 +483,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildQuickActions(BuildContext context, AppState state, ThemeData theme) {
+  Widget _buildQuickActions(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(state.translate("Get Started", "Bilow Hadda", ar: "ابدأ الآن", de: "Loslegen", et: "Alusta"), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+          Text(l10n.getStarted, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
           const SizedBox(height: 16),
           LayoutBuilder(
             builder: (context, constraints) {
@@ -500,10 +502,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 crossAxisSpacing: 8,
                 childAspectRatio: crossAxisCount == 2 ? 1.5 : 0.8,
                 children: [
-                  _buildFeatureItem(context, state.translate("Bills", "Biilasha", ar: "الفواتير", de: "Rechnungen", et: "Arved"), Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
-                  _buildFeatureItem(context, state.translate("Sadaqah", "Sadaqada", ar: "الصدقة", de: "Sadaqah", et: "Sadaqah"), Icons.volunteer_activism_rounded, AppColors.accentTeal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
-                  _buildFeatureItem(context, state.translate("Exchange", "Sarifka", ar: "صرف", de: "Wechselkurs", et: "Valuutakurss"), Icons.currency_exchange_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
-                  _buildFeatureItem(context, state.translate("Vouchers", "Waatsharrada", ar: "قسائم", de: "Gutscheine", et: "Voucherid"), Icons.confirmation_number_rounded, Colors.purple, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))),
+                  _buildFeatureItem(context, "Hagbad", Icons.group_work_rounded, Colors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HagbadScreen()))),
+                  _buildFeatureItem(context, l10n.bills, Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
+                  _buildFeatureItem(context, l10n.sadaqah, Icons.volunteer_activism_rounded, AppColors.accentTeal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
+                  _buildFeatureItem(context, l10n.exchange, Icons.currency_exchange_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
                 ],
               );
             },
@@ -513,7 +515,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildVirtualCardPromo(BuildContext context, AppState state, ThemeData theme) {
+  Widget _buildVirtualCardPromo(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
       child: ZoomIn(
@@ -539,9 +541,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         child: Text("PREMIUM", style: TextStyle(color: Colors.white70, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 1)),
                       ),
                       const SizedBox(height: 12),
-                      Text(state.translate("Virtual Card", "Kaadhka Online-ka ah", ar: "بطاقة افتراضية", de: "Virtuelle Karte", et: "Virtuaalne kaart"), style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+                      Text(l10n.virtualCard, style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
                       const SizedBox(height: 4),
-                      Text(state.translate("Get your secure virtual card and shop globally.", "Hadda qaado kaadhkaaga online-ka ah si aad wax u iibsato.", ar: "احصل على بطاقتك الافتراضية الآمنة وتسوق عالمياً.", de: "Holen Sie sich Ihre sichere virtuelle Karte und kaufen Sie weltweit ein.", et: "Hangi oma turvaline virtuaalkaart ja ostle globaalselt."), style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
+                      Text(l10n.virtualCardDesc, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
                     ],
                   ),
                 ),
@@ -555,7 +557,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildRecentTransactions(BuildContext context, AppState state, ThemeData theme) {
+  Widget _buildRecentTransactions(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
       child: Column(
@@ -565,7 +567,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             children: [
               Expanded(
                 child: Text(
-                  state.translate("Recent Transactions", "Dhaqdhaqaaqadii u dambeeyay", ar: "المعاملات الأخيرة", de: "Letzte Transaktionen", et: "Viimased tehingud"), 
+                  l10n.recentTransactions, 
                   style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -575,7 +577,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 child: TextButton(
                   onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HistoryScreen())), 
                   child: Text(
-                    state.translate("See All", "Dhammaan", ar: "عرض الكل", de: "Alle anzeigen", et: "Vaata kõiki"),
+                    l10n.seeAll,
                     style: TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
                     overflow: TextOverflow.ellipsis,
                   )
@@ -608,7 +610,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               amount: "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(2500.00)}", 
               date: "Yesterday, 10:20 AM", 
               status: "Success", 
-              icon: FontAwesomeIcons.userLarge,
+              icon: FontAwesomeIcons.user,
               onTap: () => ReceiptView.show(context, {
                 'title': 'Ahmed Warsame',
                 'amount': "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(2500.00)}",

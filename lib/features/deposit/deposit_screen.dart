@@ -999,10 +999,11 @@ class _DepositScreenState extends State<DepositScreen> {
 
     await Future.delayed(const Duration(seconds: 1));
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     
     Navigator.of(context, rootNavigator: true).pop();
     
+    if (!context.mounted) return;
     _showSuccess(context, l10n);
   }
 

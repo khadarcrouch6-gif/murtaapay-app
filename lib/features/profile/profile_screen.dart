@@ -10,8 +10,8 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../onboarding/splash_screen.dart';
 import '../auth/kyc_screen.dart';
 import '../more/refer_earn_screen.dart';
-import 'change_pin_screen.dart';
-import '../chat/chat_list_screen.dart';
+import '../more/vouchers_screen.dart';
+
 import '../chat/chat_screen.dart';
 import 'terms_screen.dart';
 import 'security_center_screen.dart';
@@ -42,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _userPostalCode = "10001";
   String _userCountry = "Somalia";
 
-  String _userAddress = "Mogadishu, Somalia";
+
   final String _profileImageUrl = 'https://i.pravatar.cc/300';
   final String _coverImageUrl = 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800';
 
@@ -194,6 +194,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                           _buildProfileOption(
                                             context, 
+                                            state.translate("Vouchers", "Waatsharrada", ar: "قسائم", de: "Gutscheine", et: "Voucherid"), 
+                                            Icons.confirmation_number_rounded, 
+                                            () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))
+                                          ),
+                                          _buildProfileOption(
+                                            context, 
                                             state.translate("Help & Support", "Caawinaad & Taageero", ar: "المساعدة والدعم", de: "Hilfe & Support", et: "Abi ja tugi"), 
                                             FontAwesomeIcons.headset, 
                                             () => _showSupportOptions(context, state)
@@ -286,6 +292,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 state.translate("Refer & Earn", "Tixraac & Guulayso", ar: "دعوة الأصدقاء", de: "Empfehlen & Verdienen", et: "Soovita ja teeni"), 
                                 FontAwesomeIcons.userPlus, 
                                 () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ReferEarnScreen()))
+                              ),
+                              _buildProfileOption(
+                                context, 
+                                state.translate("Vouchers", "Waatsharrada", ar: "قسائم", de: "Gutscheine", et: "Voucherid"),
+                                Icons.confirmation_number_rounded, 
+                                () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))
                               ),
                               
                               _buildProfileOption(
@@ -606,14 +618,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             height: MediaQuery.of(context).size.height * 0.9,
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
             padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -695,7 +705,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: isDark ? AppColors.accentTeal : AppColors.primaryDark, 
+                              backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.accentTeal : AppColors.primaryDark,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                               elevation: 0,
                             ),
@@ -792,7 +802,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(width: 16 * context.fontSizeFactor),
                 Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15 * context.fontSizeFactor, color: isLogout ? Colors.red : null))),
-                if (trailing != null) trailing,
+                trailing ?? const SizedBox.shrink(),
                 if (!isLogout) Icon(Icons.chevron_right_rounded, color: Colors.grey.withValues(alpha: 0.4), size: 24 * context.fontSizeFactor),
               ],
             ),
@@ -831,7 +841,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15 * context.fontSizeFactor)),
           value: value,
           onChanged: onChanged,
-          activeColor: AppColors.accentTeal,
+          activeThumbColor: Colors.white,
+          activeTrackColor: AppColors.accentTeal,
         ),
       ),
     );
@@ -1003,14 +1014,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
             child: SingleChildScrollView(
@@ -1071,8 +1080,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: ListenableBuilder(
@@ -1143,14 +1150,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
             child: Padding(
@@ -1203,13 +1208,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
             child: SingleChildScrollView(

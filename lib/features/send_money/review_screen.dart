@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +8,6 @@ import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
-import '../navigation/main_navigation.dart';
 
 class ReviewScreen extends StatelessWidget {
   final String amount;

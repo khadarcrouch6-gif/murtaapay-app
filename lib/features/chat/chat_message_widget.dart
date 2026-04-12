@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
@@ -106,7 +106,7 @@ class ChatMessageWidget extends StatelessWidget {
               SizedBox(width: 8 * context.fontSizeFactor),
               Flexible(
                 child: Text(
-                  AppState().translate("Location", "Goobta", ar: "الموقع", de: "Standort"),
+                  AppLocalizations.of(context)!.location,
                   style: TextStyle(
                     color: isCurrentUser ? Colors.white : theme.textTheme.titleSmall?.color,
                     fontSize: 12 * context.fontSizeFactor,
@@ -182,8 +182,8 @@ class ChatMessageWidget extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             isCurrentUser 
-                ? AppState().translate("You sent money", "Lacag baad dirtay", ar: "لقد أرسلت أموالاً", de: "Du hast Geld gesendet") 
-                : AppState().translate("You received money", "Lacag baad heshay", ar: "لقد استلمت أموالاً", de: "Du hast Geld erhalten"),
+                ? AppLocalizations.of(context)!.youSentMoney 
+                : AppLocalizations.of(context)!.youReceivedMoney,
             style: TextStyle(
               color: isCurrentUser ? Colors.white.withValues(alpha: 0.9) : theme.textTheme.bodySmall?.color,
               fontSize: 12 * context.fontSizeFactor,
@@ -207,7 +207,7 @@ class ChatMessageWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              AppState().translate("Completed", "Waa la dhameeyay", ar: "إكتمل", de: "Abgeschlossen"),
+              AppLocalizations.of(context)!.completed,
               style: TextStyle(
                 color: isCurrentUser ? Colors.white : AppColors.accentTeal,
                 fontSize: 11 * context.fontSizeFactor,
@@ -269,7 +269,7 @@ class ChatMessageWidget extends StatelessWidget {
               SizedBox(width: 8 * context.fontSizeFactor),
               Flexible(
                 child: Text(
-                  AppState().translate("SMS Message", "Fariinta SMS", ar: "رسالة SMS", de: "SMS-Nachricht"),
+                  AppLocalizations.of(context)!.smsMessage,
                   style: TextStyle(
                     color:
                         isCurrentUser ? Colors.white : (isDark ? Colors.blue[300] : AppColors.primaryDark),
@@ -321,7 +321,7 @@ class ChatMessageWidget extends StatelessWidget {
               SizedBox(width: 8 * context.fontSizeFactor),
               Flexible(
                 child: Text(
-                  AppState().translate("Audio Message", "Fariin Cod ah", ar: "رسالة صوتية", de: "Audionachricht"),
+                  AppLocalizations.of(context)!.audioMessage,
                   style: TextStyle(
                     color: isCurrentUser ? Colors.white : theme.textTheme.titleSmall?.color,
                     fontSize: 12 * context.fontSizeFactor,
@@ -505,7 +505,7 @@ class ChatMessageWidget extends StatelessWidget {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppState().translate("Downloading document...", "Dukumiintiga ayaa la soo dejinayaa...", ar: "جارٍ تنزيل المستند...", de: "Dokument wird heruntergeladen...")),
+                  content: Text(AppLocalizations.of(context)!.downloadingDocument),
                   duration: const Duration(seconds: 2),
                 ),
               );
@@ -547,7 +547,7 @@ class ChatMessageWidget extends StatelessWidget {
               SizedBox(width: 12 * context.fontSizeFactor),
               Flexible(
                 child: Text(
-                  AppState().translate("Personal Information", "Xogta Shakhsiga", ar: "معلومات شخصية", de: "Persönliche Informationen"),
+                  AppLocalizations.of(context)!.personalInformation,
                   style: TextStyle(
                     fontSize: 14 * context.fontSizeFactor,
                     fontWeight: FontWeight.w600,
@@ -560,19 +560,19 @@ class ChatMessageWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          _buildInfoItem(context, theme, AppState().translate("Full Name", "Magaca oo buuxa", ar: "الاسم الكامل", de: "Vollständiger Name"), info.fullName),
+          _buildInfoItem(context, theme, AppLocalizations.of(context)!.fullName, info.fullName),
           const SizedBox(height: 8),
-          _buildInfoItem(context, theme, AppState().translate("Email", "Email", ar: "البريد الإلكتروني", de: "E-Mail"), info.email),
+          _buildInfoItem(context, theme, AppLocalizations.of(context)!.emailAddress, info.email),
           const SizedBox(height: 8),
-          _buildInfoItem(context, theme, AppState().translate("Phone", "Taleefanka", ar: "الهاتف", de: "Telefon"), info.phone),
+          _buildInfoItem(context, theme, AppLocalizations.of(context)!.phoneNumber, info.phone),
           const SizedBox(height: 8),
-          _buildInfoItem(context, theme, AppState().translate("Address", "Ciwaanka", ar: "العنوان", de: "Adresse"), info.address),
+          _buildInfoItem(context, theme, AppLocalizations.of(context)!.residentialAddress, info.address),
           const SizedBox(height: 8),
-          _buildInfoItem(context, theme, AppState().translate("City", "Magaalada", ar: "المدينة", de: "Stadt"), info.city),
+          _buildInfoItem(context, theme, AppLocalizations.of(context)!.city, info.city),
           const SizedBox(height: 8),
-          _buildInfoItem(context, theme, AppState().translate("Country", "Waddanka", ar: "البلد", de: "Land"), info.country),
+          _buildInfoItem(context, theme, AppLocalizations.of(context)!.country, info.country),
           const SizedBox(height: 8),
-          _buildInfoItem(context, theme, AppState().translate("Postal Code", "Boostada", ar: "الرمز البريدي", de: "Postleitzahl"), info.postalCode),
+          _buildInfoItem(context, theme, AppLocalizations.of(context)!.postalCode, info.postalCode),
         ],
       ),
     );

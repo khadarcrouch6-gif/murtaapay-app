@@ -1,8 +1,7 @@
+import 'dart:math' show pi;
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart';
-import 'dart:math';
-import 'dart:ui';
 import '../../../core/app_colors.dart';
 import '../../../core/app_state.dart';
 import '../../../core/responsive_utils.dart';
@@ -475,7 +474,6 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
           holographic2: const Color(0xFF6366F1),
         );
       case CardThemeType.obsidian:
-      default:
         return _CardThemeColors(
           baseGradient: [const Color(0xFF020617), const Color(0xFF0F172A)],
           primaryGlow: AppColors.accentTeal,

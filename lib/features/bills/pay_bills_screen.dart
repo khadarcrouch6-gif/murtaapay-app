@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/detail_row.dart';
 import '../../core/widgets/success_screen.dart';
@@ -339,7 +338,7 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
 
     await Future.delayed(const Duration(seconds: 1));
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     Navigator.of(context, rootNavigator: true).pop();
     
     _showSuccess(context, l10nKey, amount);
@@ -353,7 +352,7 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.paymentSuccessful,
-          message: l10n.paymentSuccessMessage("$amount", translatedCategory),
+          message: l10n.paymentSuccessMessage(amount, translatedCategory),
           buttonText: l10n.backToBills,
         ),
       ),

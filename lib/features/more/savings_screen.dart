@@ -5,7 +5,7 @@ import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:intl/intl.dart';
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/widgets/success_screen.dart';
@@ -66,7 +66,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
   @override
   Widget build(BuildContext context) {
     final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final isRtl = Directionality.of(context) == ui.TextDirection.rtl;
     return ListenableBuilder(
       listenable: state,
       builder: (context, child) => Scaffold(
@@ -74,10 +76,10 @@ class _SavingsScreenState extends State<SavingsScreen> {
         appBar: widget.isTab ? null : AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text(state.translate("Savings & Goals", "Kaydka & Hadafka", ar: "المدخرات والأهداف", de: "Ersparnisse & Ziele"), style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 20 * context.fontSizeFactor)),
+          title: Text(l10n.savingsAndGoals, style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 20 * context.fontSizeFactor)),
           centerTitle: true,
           leading: IconButton(
-            icon: Icon(state.isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.colorScheme.primary),
+            icon: Icon(isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.colorScheme.primary),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -92,17 +94,17 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   Center(
                     child: MaxWidthBox(
                       maxWidth: 500,
-                      child: _buildTotalSavings(context, state),
+                      child: _buildTotalSavings(context, l10n),
                     ),
                   ),
                   const SizedBox(height: 32),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(state.translate("Active Goals", "Hadafyada Socda", ar: "الأهداف النشطة", de: "Aktive Ziele"), style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
+                      Text(l10n.activeGoals, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
                       TextButton(
                         onPressed: () {},
-                        child: Text(state.translate("See All", "Arag Dhammaan", ar: "مشاهدة الكل", de: "Alle sehen"), style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                        child: Text(l10n.seeAll, style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
                       ),
                     ],
                   ),
@@ -111,7 +113,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     final goal = _goals[index];
                     return _buildSavingsGoalCard(
                       context: context,
-                      state: state,
+                      l10n: l10n,
                       index: index,
                       goal: goal,
                     );
@@ -137,9 +139,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         width: double.infinity,
                         height: 60 * context.fontSizeFactor,
                         child: ElevatedButton.icon(
-                          onPressed: () => _showCreateGoalDialog(context, state),
+                          onPressed: () => _showCreateGoalDialog(context, l10n),
                           icon: Icon(Icons.add_circle_outline_rounded, color: Colors.white, size: 24 * context.fontSizeFactor),
-                          label: Text(state.translate("Create New Goal", "Samee Hadaf Cusub", ar: "إنشاء هدف جديد", de: "Neues Ziel erstellen"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+                          label: Text(l10n.createNewGoal, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: theme.colorScheme.primary,
                             elevation: 4,
@@ -159,7 +161,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  Widget _buildTotalSavings(BuildContext context, AppState state) {
+  Widget _buildTotalSavings(BuildContext context, AppLocalizations l10n) {
     return FadeInDown(
       child: Container(
         width: double.infinity,
@@ -176,7 +178,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(state.translate("Total Savings", "Kaydka Dhan", ar: "إجمالي المدخرات", de: "Gesamtersparnisse"), style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w500)),
+                Text(l10n.totalSavings, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w500)),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(14)),
@@ -198,22 +200,22 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 Expanded(
                   child: _buildBalanceAction(
                     context, 
-                    state.translate("Deposit", "Dhig", ar: "إيداع", de: "Einzahlen"), 
+                    l10n.deposit, 
                     Icons.add_rounded, 
                     Colors.white, 
                     AppColors.primaryDark,
-                    onTap: () => _showDepositMethodDialog(context, state),
+                    onTap: () => _showDepositMethodDialog(context, l10n),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildBalanceAction(
                     context, 
-                    state.translate("Withdraw", "La Bax", ar: "سحب", de: "Abheben"), 
+                    l10n.withdraw, 
                     Icons.remove_rounded, 
                     Colors.white.withValues(alpha: 0.15), 
                     Colors.white,
-                    onTap: () => _showWithdrawMethodDialog(context, state),
+                    onTap: () => _showWithdrawMethodDialog(context, l10n),
                   ),
                 ),
               ],
@@ -242,38 +244,36 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  void _showWithdrawMethodDialog(BuildContext context, AppState state) {
-    final l10n = AppLocalizations.of(context);
-    if (l10n == null) return;
+  void _showWithdrawMethodDialog(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(state.translate("Choose Withdrawal Method", "Dooro Habka Lacag Bixinta", ar: "اختر طريقة السحب", de: "Auszahlungsmethode wählen"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+        title: Text(l10n.chooseWithdrawalMethod, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildMethodTile(
               context,
-              "Send to wallet",
-              "Pay from your Saving balance",
+              l10n.sendToWallet,
+              l10n.payFromSavingBalance,
               Icons.account_balance_wallet_rounded,
               AppColors.accentTeal,
               () {
                 Navigator.pop(context);
-                _showWalletWithdrawDialog(this.context, state, l10n);
+                _showWalletWithdrawDialog(this.context, l10n);
               },
             ),
             const SizedBox(height: 12),
             _buildMethodTile(
               context,
-              "Send to Card",
-              "withdraw to your virtual card",
+              l10n.sendToCard,
+              l10n.withdrawToVirtualCard,
               Icons.account_balance_rounded,
               Colors.blue,
               () {
                 Navigator.pop(context);
-                _showBankWithdrawDialog(this.context, state, l10n);
+                _showBankWithdrawDialog(this.context, l10n);
               },
             ),
           ],
@@ -282,7 +282,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  void _showWalletWithdrawDialog(BuildContext context, AppState state, AppLocalizations l10n) {
+  void _showWalletWithdrawDialog(BuildContext context, AppLocalizations l10n) {
     final TextEditingController amountController = TextEditingController();
     final TextEditingController pinController = TextEditingController();
     final double savingsBalance = _totalSavingsBalance;
@@ -306,7 +306,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     children: [
                       Container(padding: EdgeInsets.all(12 * context.fontSizeFactor), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle), child: Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 32 * context.fontSizeFactor)),
                       SizedBox(height: 16 * context.fontSizeFactor),
-                      Text(state.translate("SAVINGS BALANCE", "KAYDKA HARAY", ar: "رصيد المدخرات", de: "SPARGUTHABEN"), style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
+                      Text(l10n.savingsBalanceLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
                       SizedBox(height: 4 * context.fontSizeFactor),
                       FittedBox(fit: BoxFit.scaleDown, child: Text(NumberFormat.simpleCurrency(name: 'USD').format(savingsBalance), style: TextStyle(color: Colors.white, fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.w900))),
                     ],
@@ -318,7 +318,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     children: [
                       _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
                       SizedBox(height: 16 * context.fontSizeFactor),
-                      _dialogInputField(context, "wallet pin", Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
+                      _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                     ],
                   ),
                 ),
@@ -344,7 +344,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  void _showBankWithdrawDialog(BuildContext context, AppState state, AppLocalizations l10n) {
+  void _showBankWithdrawDialog(BuildContext context, AppLocalizations l10n) {
     final TextEditingController amountController = TextEditingController();
     final TextEditingController pinController = TextEditingController();
     final double savingsBalance = _totalSavingsBalance;
@@ -368,7 +368,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     children: [
                       Container(padding: EdgeInsets.all(12 * context.fontSizeFactor), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle), child: Icon(Icons.account_balance_rounded, color: Colors.white, size: 32 * context.fontSizeFactor)),
                       SizedBox(height: 16 * context.fontSizeFactor),
-                      Text(state.translate("SAVINGS BALANCE", "KAYDKA HARAY", ar: "رصيد المدخرات", de: "SPARGUTHABEN"), style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
+                      Text(l10n.savingsBalanceLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
                       SizedBox(height: 4 * context.fontSizeFactor),
                       FittedBox(fit: BoxFit.scaleDown, child: Text(NumberFormat.simpleCurrency(name: 'USD').format(savingsBalance), style: TextStyle(color: Colors.white, fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.w900))),
                     ],
@@ -380,7 +380,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     children: [
                       _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
                       SizedBox(height: 16 * context.fontSizeFactor),
-                      _dialogInputField(context, "card pin", Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
+                      _dialogInputField(context, l10n.cardPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                     ],
                   ),
                 ),
@@ -408,13 +408,12 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
   void _processWithdraw(BuildContext context, AppLocalizations l10n, String amount) async {
     final theme = Theme.of(context);
-    final state = AppState();
     showDialog(
       context: context,
       barrierDismissible: false,
       useRootNavigator: true,
       builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Center(
           child: ZoomIn(
             duration: const Duration(milliseconds: 300),
@@ -427,9 +426,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 children: [
                   Stack(alignment: Alignment.center, children: [SizedBox(width: 65 * context.fontSizeFactor, height: 65 * context.fontSizeFactor, child: const CircularProgressIndicator(color: AppColors.accentTeal, strokeWidth: 3)), Icon(Icons.bolt_rounded, color: AppColors.accentTeal, size: 32 * context.fontSizeFactor)]),
                   SizedBox(height: 24 * context.fontSizeFactor),
-                  Text(l10n.processing, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, decoration: TextDecoration.none)),
+                  Text(l10n.processing, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, decoration: ui.TextDecoration.none)),
                   SizedBox(height: 8 * context.fontSizeFactor),
-                  Text(l10n.justAMoment, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey, decoration: TextDecoration.none)),
+                  Text(l10n.justAMoment, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey, decoration: ui.TextDecoration.none)),
                 ],
               ),
             ),
@@ -439,27 +438,25 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
 
     await Future.delayed(const Duration(seconds: 1));
+    if (!context.mounted) return;
+
     if (!mounted) return;
-
-    setState(() {
-      _totalSavingsBalance += double.tryParse(amount) ?? 0;
-    });
-
     Navigator.of(context, rootNavigator: true).pop();
     
+    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => SuccessScreen(
-          title: state.translate("Withdrawal Successful", "Lacag bixintu waa guul", ar: "سحب ناجح", de: "Auszahlung erfolgreich"),
-          message: state.translate("You have successfully withdrawn ${NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(amount) ?? 0)} from your savings.", "Waxaad si guul leh ugala baxday ${NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(amount) ?? 0)} kaydkaaga.", ar: "لقد سحبت بنجاح ${NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(amount) ?? 0)} من مدخراتك.", de: "Sie haben erfolgreich ${NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(amount) ?? 0)} von Ihren Ersparnissen abgehoben."),
+          title: l10n.withdrawalSuccessful,
+          message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(amount) ?? 0)),
           buttonText: l10n.backToHome,
         ),
       ),
     );
   }
 
-  void _showCreateGoalDialog(BuildContext context, AppState state) {
+  void _showCreateGoalDialog(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final TextEditingController titleController = TextEditingController();
     final TextEditingController amountController = TextEditingController();
@@ -495,7 +492,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          title: Text(state.translate("Create New Goal", "Samee Hadaf Cusub", ar: "إنشاء هدف جديد", de: "Neues Ziel erstellen"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
+          title: Text(l10n.createNewGoal, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
           content: SizedBox(
             width: 400 * context.fontSizeFactor,
             child: SingleChildScrollView(
@@ -503,13 +500,13 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _dialogInputField(context, state.translate("Goal Name", "Magaca Hadafka", ar: "اسم الهدف", de: "Zielname"), Icons.edit_rounded, titleController),
+                  _dialogInputField(context, l10n.goalName, Icons.edit_rounded, titleController),
                   SizedBox(height: 16 * context.fontSizeFactor),
-                  _dialogInputField(context, state.translate("Target Amount", "Lacagta la rabo", ar: "المبلغ المستهدف", de: "Zielbetrag"), Icons.attach_money_rounded, amountController, isNumber: true),
+                  _dialogInputField(context, l10n.targetAmount, Icons.attach_money_rounded, amountController, isNumber: true),
                   SizedBox(height: 16 * context.fontSizeFactor),
                   _dialogInputField(
                     context, 
-                    state.translate("Deadline", "Wakhtiga kama dambaysta ah", ar: "الموعد النهائي", de: "Frist"), 
+                    l10n.deadline, 
                     Icons.calendar_month_rounded, 
                     deadlineController,
                     readOnly: true,
@@ -573,7 +570,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     },
                   ),
                   SizedBox(height: 24 * context.fontSizeFactor),
-                  Text(state.translate("Select Icon", "Dooro Icon-ka", ar: "اختر أيقونة", de: "Icon auswählen"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
+                  Text(l10n.selectIcon, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
                   SizedBox(height: 12 * context.fontSizeFactor),
                   SizedBox(
                     height: 55 * context.fontSizeFactor,
@@ -600,7 +597,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     ),
                   ),
                   SizedBox(height: 24 * context.fontSizeFactor),
-                  Text(state.translate("Select Color", "Dooro Midabka", ar: "اختر لونًا", de: "Farbe auswählen"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
+                  Text(l10n.selectColor, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
                   SizedBox(height: 12 * context.fontSizeFactor),
                   SizedBox(
                     height: 45 * context.fontSizeFactor,
@@ -631,16 +628,16 @@ class _SavingsScreenState extends State<SavingsScreen> {
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(state.translate("Cancel", "Iska Daay", ar: "إلغاء", de: "Abbrechen"), style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
             ElevatedButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
                   Navigator.pop(context);
-                  _processCreateGoal(this.context, state, titleController.text, amountController.text, deadlineController.text, selectedIcon, selectedColor);
+                  _processCreateGoal(this.context, l10n, titleController.text, amountController.text, deadlineController.text, selectedIcon, selectedColor);
                 }
               },
               style: ElevatedButton.styleFrom(backgroundColor: theme.colorScheme.primary, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor, vertical: 12 * context.fontSizeFactor)),
-              child: Text(state.translate("Create", "Abuur", ar: "إنشاء", de: "Erstellen"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+              child: Text(l10n.create, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
             ),
           ],
         ),
@@ -648,16 +645,15 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  void _processCreateGoal(BuildContext context, AppState state, String title, String amount, String deadline, IconData icon, Color color) async {
+  void _processCreateGoal(BuildContext context, AppLocalizations l10n, String title, String amount, String deadline, IconData icon, Color color) async {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
     
     showDialog(
       context: context,
       barrierDismissible: false,
       useRootNavigator: true,
       builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Center(
           child: ZoomIn(
             duration: const Duration(milliseconds: 300),
@@ -670,7 +666,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 children: [
                   Stack(alignment: Alignment.center, children: [SizedBox(width: 65 * context.fontSizeFactor, height: 65 * context.fontSizeFactor, child: const CircularProgressIndicator(color: AppColors.accentTeal, strokeWidth: 3)), Icon(Icons.auto_awesome_rounded, color: AppColors.accentTeal, size: 32 * context.fontSizeFactor)]),
                   SizedBox(height: 24 * context.fontSizeFactor),
-                  Text(state.translate("Creating...", "Abuuraya...", ar: "جاري الإنشاء...", de: "Erstellen..."), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, decoration: TextDecoration.none)),
+                  Text(l10n.processing, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, decoration: ui.TextDecoration.none)),
                 ],
               ),
             ),
@@ -680,7 +676,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
 
     await Future.delayed(const Duration(milliseconds: 1500));
-    if (!mounted) return;
+    if (!context.mounted) return;
     
     setState(() {
       _goals.add({
@@ -704,9 +700,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => SuccessScreen(
-          title: state.translate("Goal Created!", "Hadafka waa la abuuray!", ar: "تم إنشاء الهدف!", de: "Ziel erstellt!"),
-          message: state.translate("Your new goal '$title' with a target of ${NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(amount) ?? 0)} has been set up successfully.", "Hadafkaaga cusub '$title' oo bartilmaameedkiisu yahay ${NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(amount) ?? 0)} si guul leh ayaa loo dejiyay.", ar: "تم إعداد هدفك الجديد '$title' بمبلغ مستهدف قدره ${NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(amount) ?? 0)} بنجاح.", de: "Ihr neues Ziel '$title' mit einem Zielbetrag von ${NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(amount) ?? 0)} wurde erfolgreich eingerichtet."),
-          buttonText: state.translate("Back to Savings", "Ku laabo Kaydka", ar: "العودة إلى المدخرات", de: "Zurück zum Sparen"),
+          title: l10n.goalCreated,
+          message: l10n.goalCreatedSuccess(title, NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(amount) ?? 0)),
+          buttonText: l10n.backToSavings,
           onPressed: () {
             Navigator.of(context).pop(); // Pop SuccessScreen
           },
@@ -715,9 +711,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  void _showDepositMethodDialog(BuildContext context, AppState state) {
-    final l10n = AppLocalizations.of(context);
-    if (l10n == null) return;
+  void _showDepositMethodDialog(BuildContext context, AppLocalizations l10n) {
+    final state = AppState();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -728,8 +723,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
           children: [
             _buildMethodTile(
               context,
-              "Send from Wallet",
-              "Pay from your wallet balance",
+              l10n.sendFromWallet,
+              l10n.payFromWalletBalance,
               Icons.account_balance_wallet_rounded,
               AppColors.accentTeal,
               () {
@@ -740,8 +735,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
             const SizedBox(height: 12),
             _buildMethodTile(
               context,
-              "Send from Card",
-              "Pay from your Virtual Card",
+              l10n.sendFromCard,
+              l10n.payFromVirtualCard,
               FontAwesomeIcons.ccVisa,
               const Color(0xFF1A1F71),
               () {
@@ -827,7 +822,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     children: [
                       _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
                       SizedBox(height: 16 * context.fontSizeFactor),
-                      _dialogInputField(context, "wallet pin", Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
+                      _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                     ],
                   ),
                 ),
@@ -889,7 +884,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     children: [
                       _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
                       SizedBox(height: 16 * context.fontSizeFactor),
-                      _dialogInputField(context, "Card PIN", Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
+                      _dialogInputField(context, l10n.cardPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                     ],
                   ),
                 ),
@@ -947,7 +942,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
       barrierDismissible: false,
       useRootNavigator: true,
       builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Center(
           child: ZoomIn(
             duration: const Duration(milliseconds: 300),
@@ -960,9 +955,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 children: [
                   Stack(alignment: Alignment.center, children: [SizedBox(width: 65 * context.fontSizeFactor, height: 65 * context.fontSizeFactor, child: const CircularProgressIndicator(color: AppColors.accentTeal, strokeWidth: 3)), Icon(Icons.bolt_rounded, color: AppColors.accentTeal, size: 32 * context.fontSizeFactor)]),
                   SizedBox(height: 24 * context.fontSizeFactor),
-                  Text(l10n.processing, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, decoration: TextDecoration.none)),
+                  Text(l10n.processing, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, decoration: ui.TextDecoration.none)),
                   SizedBox(height: 8 * context.fontSizeFactor),
-                  Text(l10n.justAMoment, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey, decoration: TextDecoration.none)),
+                  Text(l10n.justAMoment, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey, decoration: ui.TextDecoration.none)),
                 ],
               ),
             ),
@@ -972,14 +967,12 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
 
     await Future.delayed(const Duration(seconds: 1));
-    if (!mounted) return;
+    if (!context.mounted) return;
 
-    setState(() {
-      _totalSavingsBalance += double.tryParse(amount) ?? 0;
-    });
-
+    if (!context.mounted) return;
     Navigator.of(context, rootNavigator: true).pop();
     
+    if (!context.mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -994,12 +987,12 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
   Widget _buildSavingsGoalCard({
     required BuildContext context,
-    required AppState state,
+    required AppLocalizations l10n,
     required int index,
     required Map<String, dynamic> goal,
   }) {
     final theme = Theme.of(context);
-    final title = state.translate(goal['title'], goal['soTitle'], ar: goal['arTitle'], de: goal['deTitle']);
+    final title = goal['title'];
     final double savedAmount = goal['saved'];
     final double targetAmount = goal['target'];
     final String deadline = goal['deadline'] ?? "Ongoing";
@@ -1028,7 +1021,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: InkWell(
-            onTap: () => _showGoalOptionsSheet(context, state, index, goal),
+            onTap: () => _showGoalOptionsSheet(context, l10n, index, goal),
             child: Opacity(
               opacity: isPaused ? 0.7 : 1.0,
               child: ColorFiltered(
@@ -1076,14 +1069,14 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                       ),
                                     ),
                                     if (isPaused)
-                                      _buildBadge(context, state.translate("Paused", "Hakin", ar: "متوقف", de: "Pausiert"), Colors.grey),
+                                      _buildBadge(context, l10n.paused, Colors.grey),
                                     if (isCompleted)
-                                      _buildBadge(context, state.translate("Completed", "Dhammaaday", ar: "مكتمل", de: "Fertig"), AppColors.accentTeal),
+                                      _buildBadge(context, l10n.completed, AppColors.accentTeal),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  "${state.translate("Target: ", "Hadafka: ", ar: "الهدف: ", de: "Ziel: ")}${NumberFormat.simpleCurrency(name: 'USD').format(targetAmount)} • $deadline",
+                                  "${l10n.targetWithColon}${NumberFormat.simpleCurrency(name: 'USD').format(targetAmount)} • $deadline",
                                   style: TextStyle(
                                     color: AppColors.grey,
                                     fontSize: 12 * context.fontSizeFactor,
@@ -1162,18 +1155,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
       ),
     );
   }
-
-
-  Widget _buildGoalMenu(BuildContext context, AppState state, int index, Map<String, dynamic> goal) {
-    return IconButton(
-      icon: Icon(Icons.more_vert_rounded, color: AppColors.grey, size: 22 * context.fontSizeFactor),
-      onPressed: () => _showGoalOptionsSheet(context, state, index, goal),
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(),
-    );
-  }
-
-  void _showGoalOptionsSheet(BuildContext context, AppState state, int index, Map<String, dynamic> goal) {
+  void _showGoalOptionsSheet(BuildContext context, AppLocalizations l10n, int index, Map<String, dynamic> goal) {
     final theme = Theme.of(context);
     final bool isPaused = goal['isPaused'] ?? false;
     final bool isCompleted = (goal['saved'] ?? 0) >= (goal['target'] ?? 0);
@@ -1217,7 +1199,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      state.translate(goal['title'], goal['soTitle'], ar: goal['arTitle'], de: goal['deTitle']),
+                      goal['title'],
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.colorScheme.primary),
                     ),
                   ),
@@ -1234,29 +1216,29 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   if (!isCompleted)
                     _buildSheetAction(
                       context,
-                      state.translate("Add Funds", "Ku dar Lacag", ar: "إضافة أموال", de: "Guthaben hinzufügen"),
+                      l10n.addFunds,
                       Icons.add_circle_outline_rounded,
                       AppColors.accentTeal,
                       () {
                         Navigator.pop(context);
-                        _showAddFundsDialog(context, state, index);
+                        _showAddFundsDialog(context, l10n, index);
                       },
                     ),
                   _buildSheetAction(
                     context,
-                    state.translate("Edit", "Wax ka bedel", ar: "تعديل", de: "Bearbeiten"),
+                    l10n.edit,
                     Icons.edit_rounded,
                     Colors.blue,
                     () {
                       Navigator.pop(context);
-                      _showEditGoalDialogAt(context, state, index, goal);
+                      _showEditGoalDialogAt(context, l10n, index, goal);
                     },
                   ),
                   _buildSheetAction(
                     context,
                     isPaused 
-                      ? state.translate("Resume", "Sii wad", ar: "استئناف", de: "Fortsetzen")
-                      : state.translate("Pause", "Haki", ar: "إيقاف", de: "Pausieren"),
+                      ? l10n.resume
+                      : l10n.pause,
                     isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
                     Colors.orange,
                     () {
@@ -1268,12 +1250,12 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   ),
                   _buildSheetAction(
                     context,
-                    state.translate("Delete", "Tirtir", ar: "حذف", de: "Löschen"),
+                    l10n.delete,
                     Icons.delete_outline_rounded,
                     Colors.red,
                     () {
                       Navigator.pop(context);
-                      _showDeleteConfirm(context, state, index);
+                      _showDeleteConfirm(context, l10n, index);
                     },
                   ),
                 ],
@@ -1319,7 +1301,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  void _showAddFundsDialog(BuildContext context, AppState state, int index) {
+  void _showAddFundsDialog(BuildContext context, AppLocalizations l10n, int index) {
     final theme = Theme.of(context);
     final TextEditingController amountController = TextEditingController();
     final goal = _goals[index];
@@ -1329,21 +1311,21 @@ class _SavingsScreenState extends State<SavingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        title: Text(state.translate("Add Funds", "Ku dar Lacag", ar: "إضافة أموال", de: "Guthaben hinzufügen"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
+        title: Text(l10n.addFunds, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              state.translate("Target: ", "Hadafka: ", ar: "الهدف: ", de: "Ziel: ") + NumberFormat.simpleCurrency(name: 'USD').format(goal['target']),
+              l10n.targetWithColon + NumberFormat.simpleCurrency(name: 'USD').format(goal['target']),
               style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
             ),
             const SizedBox(height: 16),
-            _dialogInputField(context, state.translate("Amount to add", "Lacagta lagu darayo", ar: "المبلغ المراد إضافته", de: "Hinzuzufügender Betrag"), Icons.add_card_rounded, amountController, isNumber: true),
+            _dialogInputField(context, l10n.amountToAdd, Icons.add_card_rounded, amountController, isNumber: true),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(state.translate("Cancel", "Iska Daay", ar: "إلغاء", de: "Abbrechen"), style: TextStyle(color: AppColors.grey))),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey))),
           ElevatedButton(
             onPressed: () {
               final double amount = double.tryParse(amountController.text) ?? 0;
@@ -1355,7 +1337,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(state.translate("Successfully added funds!", "Lacagta si guul leh ayaa loogu daray!", ar: "تم إضافة الأموال بنجاح!", de: "Guthaben erfolgreich hinzugefügt!")),
+                    content: Text(l10n.fundsAddedSuccess),
                     backgroundColor: AppColors.accentTeal,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -1364,7 +1346,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: color, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            child: Text(state.translate("Confirm", "Xaqiiji", ar: "تأكيد", de: "Bestätigen")),
+            child: Text(l10n.confirm),
           ),
         ],
       ),
@@ -1372,7 +1354,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
   }
 
 
-  void _showDeleteConfirm(BuildContext context, AppState state, int index) {
+  void _showDeleteConfirm(BuildContext context, AppLocalizations l10n, int index) {
     showDialog(
       context: context,
       builder: (context) => ZoomIn(
@@ -1387,18 +1369,18 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 child: const Icon(Icons.delete_outline_rounded, color: Colors.red, size: 32),
               ),
               const SizedBox(height: 16),
-              Text(state.translate("Delete Goal?", "Ma tirtirtaa?", ar: "حذف الهدف؟", de: "Ziel löschen?"), style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(l10n.deleteGoal, style: const TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
           content: Text(
-            state.translate("Are you sure? This action cannot be undone.", "Ma hubtaa? Tallaabadan dib looma soo celin karo.", ar: "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.", de: "Sind Sie sicher? Dies kann nicht rückgängig gemacht werden."),
+            l10n.deleteGoalConfirm,
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context), 
-              child: Text(state.translate("Cancel", "Iska Daay", ar: "إلغاء", de: "Abbrechen"), style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold))
+              child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold))
             ),
             const SizedBox(width: 8),
             ElevatedButton(
@@ -1415,7 +1397,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
-              child: Text(state.translate("Delete", "Tirtir", ar: "حذف", de: "Löschen"), style: const TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(l10n.delete, style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -1423,7 +1405,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  void _showEditGoalDialogAt(BuildContext context, AppState state, int index, Map<String, dynamic> goal) {
+  void _showEditGoalDialogAt(BuildContext context, AppLocalizations l10n, int index, Map<String, dynamic> goal) {
     final theme = Theme.of(context);
     final TextEditingController titleController = TextEditingController(text: goal['title']);
     final TextEditingController amountController = TextEditingController(text: goal['target'].toString());
@@ -1459,7 +1441,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          title: Text(state.translate("Edit Goal", "Wax ka bedel Hadafka", ar: "تعديل الهدف", de: "Ziel bearbeiten"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
+          title: Text(l10n.editGoal, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
           content: SizedBox(
             width: 400 * context.fontSizeFactor,
             child: SingleChildScrollView(
@@ -1467,13 +1449,13 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _dialogInputField(context, state.translate("Goal Name", "Magaca Hadafka", ar: "اسم الهدف", de: "Zielname"), Icons.edit_rounded, titleController),
+                  _dialogInputField(context, l10n.goalName, Icons.edit_rounded, titleController),
                   SizedBox(height: 16 * context.fontSizeFactor),
-                  _dialogInputField(context, state.translate("Target Amount", "Lacagta la rabo", ar: "المبلغ المستهدف", de: "Zielbetrag"), Icons.attach_money_rounded, amountController, isNumber: true),
+                  _dialogInputField(context, l10n.targetAmount, Icons.attach_money_rounded, amountController, isNumber: true),
                   SizedBox(height: 16 * context.fontSizeFactor),
                   _dialogInputField(
                     context, 
-                    state.translate("Deadline", "Wakhtiga kama dambaysta ah", ar: "الموعد النهائي", de: "Frist"), 
+                    l10n.deadline, 
                     Icons.calendar_month_rounded, 
                     deadlineController,
                     readOnly: true,
@@ -1537,7 +1519,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     },
                   ),
                   SizedBox(height: 24 * context.fontSizeFactor),
-                  Text(state.translate("Select Icon", "Dooro Icon-ka", ar: "اختر أيقونة", de: "Icon auswählen"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
+                  Text(l10n.selectIcon, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
                   SizedBox(height: 12 * context.fontSizeFactor),
                   SizedBox(
                     height: 55 * context.fontSizeFactor,
@@ -1564,7 +1546,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     ),
                   ),
                   SizedBox(height: 24 * context.fontSizeFactor),
-                  Text(state.translate("Select Color", "Dooro Midabka", ar: "اختر لونًا", de: "Farbe auswählen"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
+                  Text(l10n.selectColor, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
                   SizedBox(height: 12 * context.fontSizeFactor),
                   SizedBox(
                     height: 45 * context.fontSizeFactor,
@@ -1595,7 +1577,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(state.translate("Cancel", "Iska Daay", ar: "إلغاء", de: "Abbrechen"), style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
             ElevatedButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
@@ -1610,7 +1592,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(backgroundColor: theme.colorScheme.primary, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor, vertical: 12 * context.fontSizeFactor)),
-              child: Text(state.translate("Save", "Keydi", ar: "حفظ", de: "Speichern"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+              child: Text(l10n.save, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
             ),
           ],
         ),

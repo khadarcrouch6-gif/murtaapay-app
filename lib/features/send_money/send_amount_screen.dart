@@ -392,7 +392,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text("Refreshed: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 10, color: AppColors.grey.withValues(alpha: 0.7), fontWeight: FontWeight.bold)),
+                                          Text("${l10n.refreshed}: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 10, color: AppColors.grey.withValues(alpha: 0.7), fontWeight: FontWeight.bold)),
                                           const SizedBox(width: 4),
                                           _isRefreshing ? const SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1.5)) : Icon(Icons.auto_awesome, size: 10, color: theme.colorScheme.secondary),
                                         ],
@@ -518,7 +518,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(l10n.feeInfoTitle, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
       content: Text(l10n.feeInfoContent, style: const TextStyle(fontSize: 16, height: 1.6, fontWeight: FontWeight.w600)),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text("OK", style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.w900, fontSize: 18)))]
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.ok, style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.w900, fontSize: 18)))]
     ));
   }
 
@@ -585,6 +585,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     String? balance, required Function(String) onChanged, required VoidCallback onCurrencyTap,
     bool isReceiver = false, bool isError = false, bool isLoading = false, int decimals = 2, VoidCallback? onMaxTap,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     return ListenableBuilder(
       listenable: focusNode,
       builder: (context, child) {
@@ -647,9 +648,9 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                   ),
                                 ],
                               ),
-                              child: const Text(
-                                "MAX",
-                                style: TextStyle(
+                              child: Text(
+                                l10n.maxLabel,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,

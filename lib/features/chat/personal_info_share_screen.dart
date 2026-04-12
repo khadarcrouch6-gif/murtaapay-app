@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
@@ -44,12 +44,13 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(AppState().translate("Share Personal Info", "Wadaag Xogta Shakhsiga", ar: "مشاركة المعلومات الشخصية", de: "Persönliche Info teilen")),
+        title: Text(l10n.sharePersonalInfo),
         elevation: 0,
         backgroundColor: theme.colorScheme.surface,
         foregroundColor: theme.textTheme.titleLarge?.color,
@@ -62,7 +63,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                AppState().translate("Review information to share", "Diri xogta si aad u wadaagto", ar: "مراجعة المعلومات للمشاركة", de: "Informationen zur Freigabe überprüfen"),
+                l10n.reviewInfoToShare,
                 style: TextStyle(
                   fontSize: 18 * context.fontSizeFactor,
                   fontWeight: FontWeight.w600,
@@ -71,7 +72,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                AppState().translate("This information will be shared with the current conversation.", "Xogtan waxaa lala wadaagi doonaa wada hadalka hadda socda.", ar: "سيتم مشاركة هذه المعلومات مع المحادثة الحالية.", de: "Diese Informationen werden mit dem aktuellen Gespräch geteilt."),
+                l10n.infoSharedNotice,
                 style: TextStyle(
                   fontSize: 14 * context.fontSizeFactor,
                   color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
@@ -82,7 +83,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
                 context: context,
                 theme: theme,
                 controller: _nameController,
-                label: AppState().translate("Full Name", "Magaca oo dhammaystiran", ar: "الاسم الكامل", de: "Vollständiger Name"),
+                label: l10n.fullName,
                 icon: FontAwesomeIcons.user,
               ),
               const SizedBox(height: 16),
@@ -90,7 +91,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
                 context: context,
                 theme: theme,
                 controller: _emailController,
-                label: AppState().translate("Email", "Email", ar: "البريد الإلكتروني", de: "E-Mail"),
+                label: l10n.emailLabel,
                 icon: FontAwesomeIcons.envelope,
               ),
               const SizedBox(height: 16),
@@ -98,7 +99,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
                 context: context,
                 theme: theme,
                 controller: _phoneController,
-                label: AppState().translate("Phone Number", "Lambarka Taleefanka", ar: "رقم الهاتف", de: "Telefonnummer"),
+                label: l10n.phoneLabel,
                 icon: FontAwesomeIcons.phone,
               ),
               const SizedBox(height: 16),
@@ -106,7 +107,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
                 context: context,
                 theme: theme,
                 controller: _addressController,
-                label: AppState().translate("Address", "Ciwaanka", ar: "العنوان", de: "Adresse"),
+                label: l10n.address,
                 icon: FontAwesomeIcons.locationDot,
               ),
               const SizedBox(height: 16),
@@ -117,7 +118,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
                       context: context,
                       theme: theme,
                       controller: _cityController,
-                      label: AppState().translate("City", "Magaalada", ar: "المدينة", de: "Stadt"),
+                      label: l10n.city,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -126,7 +127,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
                       context: context,
                       theme: theme,
                       controller: _postalCodeController,
-                      label: AppState().translate("Postal Code", "Boostada", ar: "الرمز البريدي", de: "Postleitzahl"),
+                      label: l10n.postalCode,
                     ),
                   ),
                 ],
@@ -136,7 +137,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
                 context: context,
                 theme: theme,
                 controller: _countryController,
-                label: AppState().translate("Country", "Waddanka", ar: "البلد", de: "Land"),
+                label: l10n.country,
                 icon: FontAwesomeIcons.globe,
               ),
               const SizedBox(height: 40),
@@ -153,7 +154,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
                     elevation: 0,
                   ),
                   child: Text(
-                    AppState().translate("Share Information", "Wadaag Xogta", ar: "مشاركة المعلومات", de: "Informationen teilen"),
+                    l10n.shareInformation,
                     style: TextStyle(
                       fontSize: 16 * context.fontSizeFactor,
                       fontWeight: FontWeight.w600,
@@ -176,6 +177,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
     required String label,
     dynamic icon,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -213,7 +215,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return '${AppState().translate("Please enter", "Fadlan geli", ar: "يرجى إدخال", de: "Bitte eingeben")} $label';
+              return '${l10n.pleaseEnter} $label';
             }
             return null;
           },

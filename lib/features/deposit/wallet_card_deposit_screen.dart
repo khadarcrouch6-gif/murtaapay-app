@@ -10,7 +10,6 @@ import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 class WalletCardDepositScreen extends StatefulWidget {
   final String amount;
@@ -31,8 +30,8 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
   final TextEditingController _cardHolderController = TextEditingController();
   final TextEditingController _expiryController = TextEditingController();
   final TextEditingController _cvvController = TextEditingController();
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  bool _isProcessing = false;
+  // final AudioPlayer _audioPlayer = AudioPlayer();
+  // final bool _isProcessing = false;
   String _cardType = "unknown";
 
   @override
@@ -183,7 +182,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
       return;
     }
 
-    _processTransaction(this.context, l10n);
+    _processTransaction(context, l10n);
   }
 
   void _processTransaction(BuildContext context, AppLocalizations l10n) async {
@@ -262,8 +261,9 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
 
     await Future.delayed(const Duration(seconds: 1));
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     Navigator.of(context, rootNavigator: true).pop();
+    if (!context.mounted) return;
     _showSuccess(context, l10n);
   }
 

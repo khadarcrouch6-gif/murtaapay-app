@@ -30,6 +30,12 @@ class AppLocalizationsEt extends AppLocalizations {
   String get balance => 'Saldo';
 
   @override
+  String get searchTransactions => 'Otsi tehinguid...';
+
+  @override
+  String get noTransactionsFound => 'Tehinguid ei leitud';
+
+  @override
   String get recentTransactions => 'Viimased tehingud';
 
   @override
@@ -296,6 +302,12 @@ class AppLocalizationsEt extends AppLocalizations {
   String get stepReview => 'Ülevaade';
 
   @override
+  String get refreshed => 'Refreshed';
+
+  @override
+  String get ok => 'OK';
+
+  @override
   String get feeInfoTitle => 'Vahetustasu teave';
 
   @override
@@ -554,7 +566,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get frontOfIdCard => 'ID-kaardi esikülg';
 
   @override
-  String get verifyYourFace => 'Kinnitage oma nägu';
+  String get verifyYourFace => 'Kinnita oma nägu';
 
   @override
   String get positionFaceNotice =>
@@ -767,10 +779,49 @@ class AppLocalizationsEt extends AppLocalizations {
   String get status => 'Olek';
 
   @override
+  String get success => 'Success';
+
+  @override
+  String get pending => 'Pending';
+
+  @override
   String get completed => 'Lõpetatud';
 
   @override
   String get downloadReceipt => 'Laadi kviitung alla';
+
+  @override
+  String get downloadPdf => 'Download PDF';
+
+  @override
+  String get transactionSuccessful => 'Transaction Successful!';
+
+  @override
+  String get topUpSuccessful => 'Top-up Successful!';
+
+  @override
+  String get withdrawalSuccessful => 'Withdrawal Successful!';
+
+  @override
+  String get cardPaymentSuccessful => 'Card Payment Successful!';
+
+  @override
+  String get walletTransaction => 'Wallet Transaction';
+
+  @override
+  String get merchant => 'Merchant';
+
+  @override
+  String get sourceReceiver => 'Source/Receiver';
+
+  @override
+  String get receiverSource => 'Receiver/Source';
+
+  @override
+  String get transactionId => 'Transaction ID';
+
+  @override
+  String get date => 'Date';
 
   @override
   String get close => 'Sulge';
@@ -862,24 +913,871 @@ class AppLocalizationsEt extends AppLocalizations {
   String get topUpFromWallet => 'Laadi rahakotist';
 
   @override
-  String get withdrawToWallet => 'Send to Wallet';
+  String get withdrawToWallet => 'Saada rahakotti';
 
   @override
-  String get withdrawToWalletDesc => 'Transfer to your main wallet balance';
+  String get withdrawToWalletDesc => 'Kanna üle oma põhirahakoti saldosse';
 
   @override
-  String get withdrawToBankDesc => 'Withdraw to local or international bank';
+  String get withdrawToBankDesc =>
+      'Võta välja kohalikku või rahvusvahelisse panka';
 
   @override
   String get withdrawToStripeDesc => 'Väljamakse teie Stripe\'i kontole';
 
   @override
   String get enterVirtualCardPin =>
-      'Enter your 4-digit virtual card PIN to authorize withdrawal.';
+      'Väljamakse autoriseerimiseks sisesta oma 4-kohaline virtuaalkaardi PIN.';
 
   @override
-  String get currentCardBalance => 'CURRENT CARD BALANCE';
+  String get currentCardBalance => 'KAARDI PRAEGUNE SALDO';
 
   @override
-  String get virtualCardBalance => 'VIRTUAL CARD BALANCE';
+  String get welcomeBack => 'Tere tulemast tagasi';
+
+  @override
+  String get enterPhoneNumberToContinue =>
+      'Jätkamiseks sisesta oma telefoninumber';
+
+  @override
+  String get dontHaveAccountSignUp => 'Sul pole kontot? Registreeru';
+
+  @override
+  String get createAccount => 'Loo konto';
+
+  @override
+  String get joinMurtaaxPayToday =>
+      'Liitu MurtaaxPayga juba täna ja alusta raha turvalist saatmist.';
+
+  @override
+  String get password => 'Parool';
+
+  @override
+  String get signUp => 'Registreeru';
+
+  @override
+  String get alreadyHaveAccountLogin => 'Sul on juba konto? Logi sisse';
+
+  @override
+  String get confirmYourPin => 'Kinnita oma PIN';
+
+  @override
+  String get toKeepYourMoneySafe => 'Raha turvalisuse tagamiseks';
+
+  @override
+  String get useFaceIdFingerprint => 'Kasuta FaceID-d / sõrmejälge';
+
+  @override
+  String get virtualCardBalance => 'VIRTUAALKAARDI SALDO';
+
+  @override
+  String get messages => 'Sõnumid';
+
+  @override
+  String get startNewConversation => 'Alusta uut vestlust';
+
+  @override
+  String get searchConversations => 'Otsi vestlusi...';
+
+  @override
+  String get noMessages => 'Sõnumeid pole';
+
+  @override
+  String get now => 'nüüd';
+
+  @override
+  String minutesAgo(int minutes) {
+    return '${minutes}m tagasi';
+  }
+
+  @override
+  String hoursAgo(int hours) {
+    return '${hours}h tagasi';
+  }
+
+  @override
+  String daysAgo(int days) {
+    return '${days}p tagasi';
+  }
+
+  @override
+  String get online => 'Sees';
+
+  @override
+  String get viewInfo => 'Vaata infot';
+
+  @override
+  String get helpSupport => 'Abi ja tugi';
+
+  @override
+  String get clearChat => 'Tühjenda vestlus';
+
+  @override
+  String get contactInformation => 'Kontaktandmed';
+
+  @override
+  String get nameLabel => 'Nimi';
+
+  @override
+  String get phoneLabel => 'Telefon';
+
+  @override
+  String get emailLabel => 'E-post';
+
+  @override
+  String get messageTypes => 'Sõnumite tüübid';
+
+  @override
+  String get messageTypesDesc =>
+      'Tekst, SMS, audio, pildid, dokumendid ja isikuandmed';
+
+  @override
+  String get shareInformation => 'Jaga teavet';
+
+  @override
+  String get shareInformationDesc =>
+      'Jaga turvaliselt oma kontaktandmeid ja aadressi';
+
+  @override
+  String get searchChats => 'Otsi vestlusi';
+
+  @override
+  String get searchChatsDesc => 'Leia mis tahes vestlus kiiresti';
+
+  @override
+  String get chatSettings => 'Vestluse seaded';
+
+  @override
+  String get chatSettingsDesc =>
+      'Tühjenda vestluse ajalugu ja hallata eelistusi';
+
+  @override
+  String get clearChatConfirm =>
+      'Kas olete kindel, et soovite selle vestluse tühjendada?';
+
+  @override
+  String get clear => 'Tühjenda';
+
+  @override
+  String get location => 'Asukoht';
+
+  @override
+  String get youSentMoney => 'Saatsid raha';
+
+  @override
+  String get youReceivedMoney => 'Sait raha';
+
+  @override
+  String get smsMessage => 'SMS-sõnum';
+
+  @override
+  String get audioMessage => 'Audiosõnum';
+
+  @override
+  String get downloadingDocument => 'Dokumendi allalaadimine...';
+
+  @override
+  String get personalInformation => 'Isikuandmed';
+
+  @override
+  String get sms => 'SMS';
+
+  @override
+  String get gallery => 'Galerii';
+
+  @override
+  String get file => 'Fail';
+
+  @override
+  String get contact => 'Kontakt';
+
+  @override
+  String get typeAMessage => 'Kirjuta sõnum...';
+
+  @override
+  String get shareContent => 'Jaga sisu';
+
+  @override
+  String get smsSentSuccess => 'SMS edukalt saadetud!';
+
+  @override
+  String get audioSentSuccess => 'Audiosõnum saadetud!';
+
+  @override
+  String get imageSentSuccess => 'Pilt saadetud!';
+
+  @override
+  String get documentSentSuccess => 'Dokument saadetud!';
+
+  @override
+  String get personalInfoSharedSuccess => 'Isikuandmed jagatud!';
+
+  @override
+  String get sharePersonalInfo => 'Jaga isikuandmeid';
+
+  @override
+  String get reviewInfoToShare => 'Vaata jagatavad andmed üle';
+
+  @override
+  String get infoSharedNotice => 'Seda teavet jagatakse praeguse vestlusega.';
+
+  @override
+  String get address => 'Aadress';
+
+  @override
+  String get postalCode => 'Postiindeks';
+
+  @override
+  String get country => 'Riik';
+
+  @override
+  String get pleaseEnter => 'Palun sisesta';
+
+  @override
+  String get help => 'Abi';
+
+  @override
+  String get returnToHome => 'Tagasi avalehele';
+
+  @override
+  String get verification => 'Kinnitamine';
+
+  @override
+  String get voucherCopied => 'Vautšeri kood kopeeritud! Kasutamiseks valmis.';
+
+  @override
+  String get howToUse => 'Kuidas kasutada';
+
+  @override
+  String get stepRedeem => 'Koodi kopeerimiseks puudutage \'Lunasta kohe\'.';
+
+  @override
+  String get stepTransfer => 'Alusta uut rahaülekannet.';
+
+  @override
+  String get stepPaste => 'Kleebi kood väljale \'Sooduskood\'.';
+
+  @override
+  String get welcomeBonus => 'Tervitusboonus';
+
+  @override
+  String get welcomeBonusDesc =>
+      'Saa 5% raha tagasi oma järgmiselt ülekandelt.';
+
+  @override
+  String get expires30Dec => 'Aegub: 30. dets';
+
+  @override
+  String get familyFriday => 'Pere reede';
+
+  @override
+  String get familyFridayDesc =>
+      'Täna Somaaliasse tehtavatele ülekannetele tasu ei lisandu!';
+
+  @override
+  String get expiresTomorrow => 'Aegub: homme';
+
+  @override
+  String get eidSpecial => 'Eid-i eripakkumine';
+
+  @override
+  String get eidSpecialDesc => '\$10 boonus ülekannetele üle \$100.';
+
+  @override
+  String get expiresIn5Days => 'Aegub: 5 päeva pärast';
+
+  @override
+  String get reward => 'PREEMIA';
+
+  @override
+  String get copied => 'Kopeeritud!';
+
+  @override
+  String get redeemNow => 'Lunasta kohe';
+
+  @override
+  String get referAndEarn => 'Soovita ja teeni';
+
+  @override
+  String get referralCodeCopied => 'Soovituskood kopeeritud lõikelauale!';
+
+  @override
+  String get rewardsWaiting => 'Preemiad ootavad';
+
+  @override
+  String get inviteFriendsGet10 => 'Kutsu sõpru, saa \$10';
+
+  @override
+  String get referralDescription =>
+      'Jaga MurtaaxPayd oma sõpradega ja te mõlemad saate \$10, kui nad teevad oma esimese ülekande summas \$50 või rohkem.';
+
+  @override
+  String get yourReferralCode => 'Sinu soovituskood';
+
+  @override
+  String get copy => 'KOPEERI';
+
+  @override
+  String get whatsApp => 'WhatsApp';
+
+  @override
+  String get sadaqahCommunity => 'Annetused ja kogukond';
+
+  @override
+  String get medicalEmergency => 'Meditsiiniline hädaabi';
+
+  @override
+  String get medicalEmergencyDesc =>
+      'Aita Ahmedil katta südameoperatsiooni kulud Türgis.';
+
+  @override
+  String get villageWaterWell => 'Küla veekaev';
+
+  @override
+  String get villageWaterWellDesc => 'Püsiva veeallika ehitamine Gedo külla.';
+
+  @override
+  String get educationSupport => 'Haridustoetus';
+
+  @override
+  String get educationSupportDesc => 'Stipendiumid 10-le orvule Mogadishus.';
+
+  @override
+  String get verified => 'Kinnitatud';
+
+  @override
+  String get by => 'Autor:';
+
+  @override
+  String get raised => 'Kogutud';
+
+  @override
+  String get goal => 'Eesmärk';
+
+  @override
+  String get startAFundraiser => 'Alusta korjandust';
+
+  @override
+  String get totalInvestment => 'Kogu investeering';
+
+  @override
+  String get yourPortfolio => 'Sinu portfell';
+
+  @override
+  String get bitcoin => 'Bitcoin';
+
+  @override
+  String get ethereum => 'Ethereum';
+
+  @override
+  String get gold => 'Kuld';
+
+  @override
+  String get investmentOpportunities => 'Investeerimisvõimalused';
+
+  @override
+  String get realEstate => 'Kinnisvara';
+
+  @override
+  String get realEstateDesc =>
+      'Investeerimine kvaliteetsetesse kinnisvaraprojektidesse.';
+
+  @override
+  String get agriculture => 'Põllumajandus';
+
+  @override
+  String get agricultureDesc => 'Toeta kohalikku säästvat põllumajandust.';
+
+  @override
+  String get savingsAndGoals => 'Säästmine ja eesmärgid';
+
+  @override
+  String get activeGoals => 'Aktiivsed eesmärgid';
+
+  @override
+  String get createNewGoal => 'Loo uus eesmärk';
+
+  @override
+  String get totalSavings => 'Kogu säästud';
+
+  @override
+  String get chooseWithdrawalMethod => 'Vali väljamakse meetod';
+
+  @override
+  String get sendToWallet => 'Saada rahakotti';
+
+  @override
+  String get payFromSavingBalance => 'Maksa oma säästuarve saldost';
+
+  @override
+  String get sendToCard => 'Saada kaardile';
+
+  @override
+  String get withdrawToVirtualCard => 'väljamakse oma virtuaalkaardile';
+
+  @override
+  String get savingsBalanceLabel => 'SÄÄSTUDE SALDO';
+
+  @override
+  String get cardPin => 'Kaardi PIN';
+
+  @override
+  String withdrawalSuccessFromSavings(String amount) {
+    return 'Olete edukalt võtnud oma säästudest välja $amount.';
+  }
+
+  @override
+  String get goalName => 'Eesmärgi nimi';
+
+  @override
+  String get targetAmount => 'Sihtsumma';
+
+  @override
+  String get deadline => 'Tähtaeg';
+
+  @override
+  String get selectIcon => 'Vali ikoon';
+
+  @override
+  String get selectColor => 'Vali värv';
+
+  @override
+  String get create => 'Loo';
+
+  @override
+  String get creating => 'Loomine...';
+
+  @override
+  String get goalCreated => 'Eesmärk loodud!';
+
+  @override
+  String goalCreatedSuccess(String title, String amount) {
+    return 'Teie uus eesmärk \'$title\' sihtsummas $amount on edukalt seadistatud.';
+  }
+
+  @override
+  String get backToSavings => 'Tagasi säästmise juurde';
+
+  @override
+  String get sendFromWallet => 'Saada rahakotist';
+
+  @override
+  String get payFromWalletBalance => 'Maksa oma rahakoti saldost';
+
+  @override
+  String get sendFromCard => 'Saada kaardilt';
+
+  @override
+  String get payFromVirtualCard => 'Maksa oma virtuaalkaardiga';
+
+  @override
+  String get paused => 'Peatatud';
+
+  @override
+  String get targetWithColon => 'Eesmärk: ';
+
+  @override
+  String get addFunds => 'Lisa raha';
+
+  @override
+  String get edit => 'Muuda';
+
+  @override
+  String get resume => 'Jätka';
+
+  @override
+  String get pause => 'Peata';
+
+  @override
+  String get delete => 'Kustuta';
+
+  @override
+  String get amountToAdd => 'Lisatav summa';
+
+  @override
+  String get fundsAddedSuccess => 'Raha lisamine õnnestus!';
+
+  @override
+  String get deleteGoal => 'Kustuta eesmärk?';
+
+  @override
+  String get deleteGoalConfirm =>
+      'Kas olete kindel? Seda toimingut ei saa tühistada.';
+
+  @override
+  String get editGoal => 'Muuda eesmärki';
+
+  @override
+  String get save => 'Salvesta';
+
+  @override
+  String get pinChangedSuccess =>
+      'Teie PIN on edukalt uuendatud. Kasutage oma uut PIN-i edasiste tehingute jaoks.';
+
+  @override
+  String get done => 'Valmis';
+
+  @override
+  String get changePin => 'Muuda PIN-i';
+
+  @override
+  String get createNewPin => 'Loo uus PIN';
+
+  @override
+  String get newPinDescription =>
+      'Sisesta oma praegune PIN ja vali uus 4-kohaline turva-PIN.';
+
+  @override
+  String get currentPin => 'Praegune PIN';
+
+  @override
+  String get pleaseEnterCurrentPin => 'Palun sisesta praegune PIN';
+
+  @override
+  String get pinMustBe4Digits => 'PIN peab olema 4-kohaline';
+
+  @override
+  String get newPin => 'Uus PIN';
+
+  @override
+  String get pleaseEnterNewPin => 'Palun sisesta uus PIN';
+
+  @override
+  String get cannotBeSameAsOld => 'Ei tohi olla sama mis vana PIN';
+
+  @override
+  String get confirmNewPin => 'Kinnita uus PIN';
+
+  @override
+  String get pleaseConfirmNewPin => 'Palun kinnita uus PIN';
+
+  @override
+  String get pinsDoNotMatch => 'PIN-koodid ei ühti';
+
+  @override
+  String get saveChanges => 'Salvesta muudatused';
+
+  @override
+  String get termsConditions => 'Kasutustingimused';
+
+  @override
+  String get lastUpdated => 'Viimati uuendatud';
+
+  @override
+  String get acceptanceOfTerms => '1. Tingimustega nõustumine';
+
+  @override
+  String get acceptanceOfTermsDesc =>
+      'MurtaaxPayle juurde pääsedes või seda kasutades nõustute end nende tingimustega siduma. Kui te ei nõustu kõigi nende tingimustega, ärge kasutage meie teenuseid.';
+
+  @override
+  String get userVerificationL10n => '2. Kasutaja kinnitamine';
+
+  @override
+  String get userVerificationDescL10n =>
+      'Finantseeskirjade täitmiseks nõuame teatud tehingulimiitide puhul isikutuvastust. Nõustute esitama täpset teavet.';
+
+  @override
+  String get transactionFees => '3. Tehingutasud';
+
+  @override
+  String get transactionFeesDesc =>
+      'Tasud kuvatakse selgelt enne iga tehingut. Tehingu kinnitamisega nõustute maksma määratud tasusid.';
+
+  @override
+  String get privacyPolicyL10n => '4. Privaatsuspoliitika';
+
+  @override
+  String get privacyPolicyDescL10n =>
+      'Teie privaatsus on meile oluline. Kasutame teie andmete kaitsmiseks pangataseme krüpteerimist. Lisateabe saamiseks vaadake meie täielikku privaatsuspoliitikat.';
+
+  @override
+  String get limitationOfLiability => '5. Vastutuse piiramine';
+
+  @override
+  String get limitationOfLiabilityDesc =>
+      'MurtaaxPay ei vastuta kaudsete, juhuslike või põhjuslike kahjude eest, mis tulenevad teenuse kasutamisest või suutmatusest seda kasutada.';
+
+  @override
+  String get allRightsReserved => 'Kõik õigused kaitstud';
+
+  @override
+  String get oct2023 => 'Okt 2023';
+
+  @override
+  String get copyrightMurtaaxPay => '© 2026 MurtaaxPay.';
+
+  @override
+  String get hagbad => 'Hagbad';
+
+  @override
+  String get myGroups => 'Minu grupid';
+
+  @override
+  String get createHagbad => 'Loo Hagbad';
+
+  @override
+  String get totalSavingsPot => 'Kogu säästupott';
+
+  @override
+  String get activeGroups => 'Aktiivsed grupid';
+
+  @override
+  String get nextPayout => 'Järgmine väljamakse';
+
+  @override
+  String get days => 'Päevad';
+
+  @override
+  String get nextInLine => 'Järgmine järjekorras';
+
+  @override
+  String get rotation => 'Rotatsioon';
+
+  @override
+  String get groupChat => 'Grupi vestlus';
+
+  @override
+  String get payContribution => 'Maksa osaluspanus';
+
+  @override
+  String get createNewHagbad => 'Loo uus Hagbad';
+
+  @override
+  String get groupName => 'Grupi nimi';
+
+  @override
+  String get contributionAmount => 'Osalustasu suurus';
+
+  @override
+  String get frequency => 'Sagedus';
+
+  @override
+  String get addMembers => 'Lisa liikmeid (telefon või nimi)';
+
+  @override
+  String get createGroup => 'Loo grupp';
+
+  @override
+  String get received => 'Saadud';
+
+  @override
+  String get currentBalance => 'Praegune jääk';
+
+  @override
+  String get potWadar => 'Kogupott';
+
+  @override
+  String get daily => 'Igapäevane';
+
+  @override
+  String get weekly => 'Iganädalane';
+
+  @override
+  String get tenDays => '10 päeva';
+
+  @override
+  String get monthly => 'Igakuine';
+
+  @override
+  String get yearly => 'Iga-aastane';
+
+  @override
+  String get hagbadCreatedSuccess => 'Hagbad Group Created Successfully!';
+
+  @override
+  String get drawing => 'Drawing...';
+
+  @override
+  String get qoriTuur => 'Qori-tuur';
+
+  @override
+  String get noHagbadGroups => 'No groups yet. Create one to start saving!';
+
+  @override
+  String get progress => 'Progress';
+
+  @override
+  String get members => 'Members';
+
+  @override
+  String get you => 'You';
+
+  @override
+  String get youAdmin => 'You (Admin)';
+
+  @override
+  String payoutAfterFee(String fee) {
+    return 'Payout after $fee fee';
+  }
+
+  @override
+  String get receiptDownloaded => 'Receipt downloaded to your gallery';
+
+  @override
+  String yourTurnInDays(int days) {
+    return 'Your turn in $days days';
+  }
+
+  @override
+  String dayWithNumber(int number) {
+    return 'Day $number';
+  }
+
+  @override
+  String weekWithNumber(int number) {
+    return 'Week $number';
+  }
+
+  @override
+  String monthWithNumber(int number) {
+    return 'Month $number';
+  }
+
+  @override
+  String turnWithNumber(int number) {
+    return 'Turn $number';
+  }
+
+  @override
+  String get cannotSwapReceived =>
+      'Cannot swap with members who already received their payout.';
+
+  @override
+  String get swapTurn => 'Swap Turn';
+
+  @override
+  String swapWith(String name) {
+    return 'Swap with $name';
+  }
+
+  @override
+  String get trustedMember => 'Trusted Member';
+
+  @override
+  String get yourTurnToday => 'It\'s your turn today!';
+
+  @override
+  String get yourTurnTomorrow => 'Your turn is tomorrow!';
+
+  @override
+  String get serviceFee => 'Service Fee';
+
+  @override
+  String get payoutMethod => 'Payout Method';
+
+  @override
+  String get payoutReady => 'Payout Ready';
+
+  @override
+  String get totalPot => 'Total Fund';
+
+  @override
+  String get hagbadPot => 'Hagbad Pot (Escrow)';
+
+  @override
+  String get amountToReceive => 'Amount to Receive';
+
+  @override
+  String get claimPayout => 'Claim Payout';
+
+  @override
+  String get guarantor => 'Guarantor (Uul)';
+
+  @override
+  String get guarantorNameLabel => 'Guarantor Name';
+
+  @override
+  String get guarantorIdLabel => 'Guarantor Wallet ID';
+
+  @override
+  String get requireGuarantor => 'This member requires a guarantor (Uul)';
+
+  @override
+  String get guarantorDetails => 'Guarantor Details';
+
+  @override
+  String get debtor => 'Debtor';
+
+  @override
+  String get remaining => 'Remaining';
+
+  @override
+  String get hagbadTerms => '6. Hagbad Social Trust';
+
+  @override
+  String get hagbadTermsDesc =>
+      'Hagbad is based on mutual trust (Aaminaad). By joining, you agree to make timely contributions. If a member fails to pay, the Guarantor (Uul) is responsible for covering the debt.';
+
+  @override
+  String get iAgreeToHagbadTerms =>
+      'I agree to the Hagbad Social Trust terms and conditions.';
+
+  @override
+  String get hagbadOath => 'Religious Oath (Dhaar)';
+
+  @override
+  String get hagbadOathDesc =>
+      'Do you swear by Allah that you will be honest and fulfill your contributions on time?';
+
+  @override
+  String get iConfirmOath => 'I swear by Allah to be honest.';
+
+  @override
+  String get remindAll => 'Remind All';
+
+  @override
+  String get remindMember => 'Remind Member';
+
+  @override
+  String reminderSent(Object name) {
+    return 'Reminder sent to $name';
+  }
+
+  @override
+  String get allRemindersSent => 'Reminders sent to all pending members';
+
+  @override
+  String get replaceMember => 'Replace Member';
+
+  @override
+  String get substituteMember => 'Substitute Member';
+
+  @override
+  String get enterNewMemberDetails => 'Enter new member details';
+
+  @override
+  String get memberReplaced => 'Member has been successfully replaced';
+
+  @override
+  String get cannotReplaceReceived =>
+      'Cannot replace a member who has already received a payout';
+
+  @override
+  String get paymentHistory => 'Payment History';
+
+  @override
+  String paidOn(Object date) {
+    return 'Paid on $date';
+  }
+
+  @override
+  String get noPaymentsYet => 'No payments recorded yet';
+
+  @override
+  String get lateFee => 'Late Fee';
+
+  @override
+  String get applyPenalty => 'Apply Penalty';
+
+  @override
+  String get penaltyAmount => 'Penalty Amount (\$)';
+
+  @override
+  String penaltyApplied(Object amount, Object name) {
+    return 'Penalty of \$$amount applied to $name';
+  }
+
+  @override
+  String get apr2026 => 'Apr 2026';
 }
