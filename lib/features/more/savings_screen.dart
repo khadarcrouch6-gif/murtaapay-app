@@ -255,8 +255,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
           children: [
             _buildMethodTile(
               context,
-              l10n.withdrawToWallet,
-              l10n.murtaaxWalletDesc,
+              "Send to wallet",
+              "Pay from your Saving balance",
               Icons.account_balance_wallet_rounded,
               AppColors.accentTeal,
               () {
@@ -267,8 +267,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
             const SizedBox(height: 12),
             _buildMethodTile(
               context,
-              l10n.bankTransfer,
-              state.translate("Withdraw to your bank account", "U wareeji akoonkaaga bangiga", ar: "سحب إلى حسابك المصرفي", de: "Auf Ihr Bankkonto abheben"),
+              "Send to Card",
+              "withdraw to your virtual card",
               Icons.account_balance_rounded,
               Colors.blue,
               () {
@@ -318,7 +318,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     children: [
                       _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
                       SizedBox(height: 16 * context.fontSizeFactor),
-                      _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
+                      _dialogInputField(context, "wallet pin", Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                     ],
                   ),
                 ),
@@ -380,7 +380,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     children: [
                       _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
                       SizedBox(height: 16 * context.fontSizeFactor),
-                      _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
+                      _dialogInputField(context, "card pin", Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                     ],
                   ),
                 ),
@@ -728,8 +728,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
           children: [
             _buildMethodTile(
               context,
-              l10n.topUpFromWallet,
-              l10n.murtaaxWalletDesc,
+              "Send from Wallet",
+              "Pay from your wallet balance",
               Icons.account_balance_wallet_rounded,
               AppColors.accentTeal,
               () {
@@ -740,8 +740,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
             const SizedBox(height: 12),
             _buildMethodTile(
               context,
-              l10n.visaMastercard,
-              l10n.payWithInternationalCard,
+              "Send from Card",
+              "Pay from your Virtual Card",
               FontAwesomeIcons.ccVisa,
               const Color(0xFF1A1F71),
               () {
@@ -827,7 +827,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     children: [
                       _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
                       SizedBox(height: 16 * context.fontSizeFactor),
-                      _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
+                      _dialogInputField(context, "wallet pin", Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                     ],
                   ),
                 ),
