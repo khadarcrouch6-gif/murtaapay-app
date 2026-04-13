@@ -5,9 +5,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/widgets/adaptive_icon.dart';
+import 'dart:ui';
+import '../../core/responsive_utils.dart';
+import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 class WalletCardDepositScreen extends StatefulWidget {
   final String amount;
@@ -28,8 +30,8 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
   final TextEditingController _cardHolderController = TextEditingController();
   final TextEditingController _expiryController = TextEditingController();
   final TextEditingController _cvvController = TextEditingController();
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  bool _isProcessing = false;
+  // final AudioPlayer _audioPlayer = AudioPlayer();
+  // final bool _isProcessing = false;
   String _cardType = "unknown";
 
   @override
@@ -58,17 +60,6 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
       setState(() {
         _cardType = type;
       });
-    }
-  }
-
-  Widget _getCardIcon() {
-    switch (_cardType) {
-      case "visa":
-        return const AdaptiveIcon(FontAwesomeIcons.ccVisa, color: AppColors.primaryDark, size: 28);
-      case "mastercard":
-        return const AdaptiveIcon(FontAwesomeIcons.ccMastercard, color: AppColors.primaryDark, size: 28);
-      default:
-        return const Icon(Icons.credit_card_rounded, color: AppColors.grey, size: 28);
     }
   }
 
@@ -104,9 +95,9 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
         : _expiryController.text;
 
     return Container(
-      height: 200,
+      height: 200 * context.fontSizeFactor,
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24 * context.fontSizeFactor),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -116,7 +107,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: cardGradient[0].withOpacity(0.4),
+            color: cardGradient[0].withValues(alpha: 0.4),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -129,46 +120,46 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(Icons.contactless_rounded, color: Colors.white70, size: 32),
+              Icon(Icons.contactless_rounded, color: Colors.white70, size: 32 * context.fontSizeFactor),
               if (isVisa) 
-                   const AdaptiveIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 40)
+                   AdaptiveIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 40 * context.fontSizeFactor)
               else if (isMastercard)
-                   const AdaptiveIcon(FontAwesomeIcons.ccMastercard, color: Colors.amber, size: 40)
+                   AdaptiveIcon(FontAwesomeIcons.ccMastercard, color: Colors.amber, size: 40 * context.fontSizeFactor)
               else
-                   const AdaptiveIcon(FontAwesomeIcons.creditCard, color: Colors.white, size: 32)
+                   AdaptiveIcon(FontAwesomeIcons.creditCard, color: Colors.white, size: 32 * context.fontSizeFactor)
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * context.fontSizeFactor),
           Text(
             displayNum,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 22,
+              fontSize: 22 * context.fontSizeFactor,
               letterSpacing: 2.0,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * context.fontSizeFactor),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l10n.cardHolder, style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                  Text(l10n.cardHolder, style: TextStyle(color: Colors.white54, fontSize: 10 * context.fontSizeFactor)),
                   Text(
                     displayHolder,
-                    style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(l10n.expires, style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                  Text(l10n.expires, style: TextStyle(color: Colors.white54, fontSize: 10 * context.fontSizeFactor)),
                   Text(
                     displayExpiry,
-                    style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -191,70 +182,99 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
       return;
     }
 
-    setState(() => _isProcessing = true);
-    
-    await Future.delayed(const Duration(seconds: 1));
-    
-    if (mounted) {
-      setState(() => _isProcessing = false);
-      _showSuccess(context, l10n);
-    }
+    _processTransaction(context, l10n);
   }
 
-  void _showSuccess(BuildContext context, AppLocalizations l10n) {
-    _audioPlayer.play(AssetSource('sounds/success.mp3'));
+  void _processTransaction(BuildContext context, AppLocalizations l10n) async {
     final theme = Theme.of(context);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          body: Center(
-            child: MaxWidthBox(
-              maxWidth: 500,
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FadeInDown(
-                      child: Container(
-                        height: 110, width: 110,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF11998E), Color(0xFF38EF7D)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          shape: BoxShape.circle,
-                          boxShadow: [BoxShadow(color: const Color(0xFF11998E).withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 10))],
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (ctx) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Center(
+          child: ZoomIn(
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              width: 220 * context.fontSizeFactor,
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 65 * context.fontSizeFactor,
+                        height: 65 * context.fontSizeFactor,
+                        child: const CircularProgressIndicator(
+                          color: AppColors.accentTeal,
+                          strokeWidth: 3,
                         ),
-                        child: const Icon(Icons.check_rounded, color: Colors.white, size: 65),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                    Text(l10n.depositSuccessful, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
-                    const SizedBox(height: 12),
-                    Text(
-                      l10n.depositSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.grey, fontSize: 16, height: 1.5),
-                    ),
-                    const SizedBox(height: 48),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentTeal,
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 40),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      Icon(
+                        Icons.bolt_rounded,
+                        color: AppColors.accentTeal,
+                        size: 32 * context.fontSizeFactor,
                       ),
-                      child: Text(l10n.backToHome, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(
+                    l10n.processing, 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18 * context.fontSizeFactor,
+                      color: theme.textTheme.bodyLarge?.color,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                  SizedBox(height: 8 * context.fontSizeFactor),
+                  Text(
+                    l10n.justAMoment,
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13 * context.fontSizeFactor,
+                      color: AppColors.grey,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (!context.mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
+    if (!context.mounted) return;
+    _showSuccess(context, l10n);
+  }
+
+  void _showSuccess(BuildContext context, AppLocalizations l10n) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SuccessScreen(
+          title: l10n.cardTopUpSuccessful,
+          message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
+          buttonText: l10n.backToHome,
         ),
       ),
     );
@@ -277,63 +297,63 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
         backgroundColor: AppColors.accentTeal,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24 * context.fontSizeFactor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           screenTitle,
-          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20 * context.fontSizeFactor, color: Colors.white),
         ),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: AppColors.accentTeal,
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
-              ),
-              padding: const EdgeInsets.only(bottom: 20, left: 24, right: 24),
-              child: Column(
-                children: [
-                   Text(
-                    l10n.amount,
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+      body: Center(
+        child: MaxWidthBox(
+          maxWidth: 800,
+          child: SafeArea(
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: AppColors.accentTeal,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0),
-                    style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+                  padding: EdgeInsets.only(bottom: 20 * context.fontSizeFactor, left: 24 * context.fontSizeFactor, right: 24 * context.fontSizeFactor),
+                  child: Column(
+                    children: [
+                       Text(
+                        l10n.amount,
+                        style: TextStyle(color: Colors.white70, fontSize: 14 * context.fontSizeFactor),
+                      ),
+                      SizedBox(height: 4 * context.fontSizeFactor),
+                      Text(
+                        NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0),
+                        style: TextStyle(color: Colors.white, fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: MaxWidthBox(
-                  maxWidth: 500,
+                ),
+                Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: EdgeInsets.all(24 * context.fontSizeFactor),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FadeInUp(
                            child: _buildLiveCard(),
                         ),
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32 * context.fontSizeFactor),
                         _buildForm(l10n, theme),
-                        const SizedBox(height: 40),
+                        SizedBox(height: 40 * context.fontSizeFactor),
                         _buildButton(l10n, theme, isFormValid),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24 * context.fontSizeFactor),
                       ],
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -343,13 +363,13 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
     return Column(
       children: [
         _inputField(l10n.cardNumber, _cardNumberController, "1234 5678 9012 3456", Icons.payment_rounded, [CardNumberFormatter()], TextInputType.number, theme),
-        const SizedBox(height: 16),
+        SizedBox(height: 16 * context.fontSizeFactor),
         _inputField(l10n.cardHolderName, _cardHolderController, "John Doe", Icons.person_outline_rounded, [FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]"))], TextInputType.text, theme),
-        const SizedBox(height: 16),
+        SizedBox(height: 16 * context.fontSizeFactor),
         Row(
           children: [
             Expanded(child: _inputField(l10n.expiryDate, _expiryController, "MM/YY", Icons.calendar_today_rounded, [ExpiryDateFormatter()], TextInputType.number, theme)),
-            const SizedBox(width: 12),
+            SizedBox(width: 12 * context.fontSizeFactor),
             Expanded(child: _inputField(l10n.cvv, _cvvController, "123", Icons.lock_outline_rounded, [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)], TextInputType.number, theme, obscure: true)),
           ],
         ),
@@ -361,21 +381,24 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(fontWeight: FontWeight.bold, color: theme.brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary)),
-        const SizedBox(height: 8),
+        Text(label, style: TextStyle(fontWeight: FontWeight.bold, color: theme.brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary, fontSize: 14 * context.fontSizeFactor)),
+        SizedBox(height: 8 * context.fontSizeFactor),
         TextField(
           controller: controller,
           inputFormatters: formatters,
           obscureText: obscure,
           keyboardType: type,
+          style: TextStyle(fontSize: 16 * context.fontSizeFactor),
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(icon, color: AppColors.accentTeal),
+            hintStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
+            prefixIcon: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
             filled: true,
             fillColor: theme.colorScheme.surface,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.withOpacity(0.1))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1))),
             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.accentTeal, width: 2)),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 14 * context.fontSizeFactor),
           ),
         ),
       ],
@@ -385,15 +408,15 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
   Widget _buildButton(AppLocalizations l10n, ThemeData theme, bool isFormValid) {
     return SizedBox(
       width: double.infinity,
-      height: 56,
+      height: 56 * context.fontSizeFactor,
       child: ElevatedButton(
-        onPressed: (_isProcessing || !isFormValid) ? null : _processPayment,
+        onPressed: isFormValid ? _processPayment : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.accentTeal,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
-        child: _isProcessing ? const CircularProgressIndicator(color: Colors.white) : Text(l10n.confirmDeposit, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        child: Text(l10n.confirmTopUp, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
       ),
     );
   }

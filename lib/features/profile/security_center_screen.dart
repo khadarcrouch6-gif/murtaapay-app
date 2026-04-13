@@ -151,7 +151,8 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.accentTeal,
+            activeThumbColor: Colors.white,
+            activeTrackColor: AppColors.accentTeal,
           ),
         ],
       ),

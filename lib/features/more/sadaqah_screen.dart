@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:provider/provider.dart';
 import 'dart:ui';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'campaign_detail_screen.dart';
 import 'create_campaign_screen.dart';
@@ -311,68 +313,68 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
       default: return cat;
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final state = Provider.of<AppState>(context);
     final campaigns = _getCampaigns(state);
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
     
-    return ListenableBuilder(
-      listenable: state,
-      builder: (context, child) => Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: Text(state.translate("Sadaqah & Community", "Sadaqada & Bulshada", ar: "الصدقة والمجتمع", de: "Sadaqah & Gemeinschaft"), style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 20 * context.fontSizeFactor)),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(state.isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.colorScheme.primary),
-            onPressed: () => Navigator.pop(context),
-          ),
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(l10n.sadaqahCommunity, style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 20 * context.fontSizeFactor)),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.colorScheme.primary),
+          onPressed: () => Navigator.pop(context),
         ),
-        body: Center(
-          child: MaxWidthBox(
-            maxWidth: 1000,
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    children: [
-                      if (campaigns.isNotEmpty) _buildHeroSection(context, campaigns.first, state),
-                      _buildTrustBanner(context, state),
-                      _buildCategories(context, state),
-                      ...campaigns.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final campaign = entry.value;
-                        return FadeInUp(
-                          delay: Duration(milliseconds: 100 * index),
-                          child: Center(
-                            child: MaxWidthBox(
-                              maxWidth: 800,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-                                child: _buildCampaignCard(context, campaign, state),
-                              ),
+      ),
+      body: Center(
+        child: MaxWidthBox(
+          maxWidth: 1000,
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  children: [
+                    if (campaigns.isNotEmpty) _buildHeroSection(context, campaigns.first, state),
+                    _buildTrustBanner(context, state),
+                    _buildCategories(context, state),
+                    ...campaigns.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final campaign = entry.value;
+                      return FadeInUp(
+                        delay: Duration(milliseconds: 100 * index),
+                        child: Center(
+                          child: MaxWidthBox(
+                            maxWidth: 800,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+                              child: _buildCampaignCard(context, campaign, l10n),
                             ),
                           ),
-                        );
-                      }).toList(),
-                      const SizedBox(height: 100),
-                    ],
-                  ),
+                        ),
+                      );
+                    }).toList(),
+                    const SizedBox(height: 100),
+                  ],
                 ),
-                _buildBottomAction(context, state),
-              ],
-            ),
+              ),
+              _buildBottomAction(context, l10n),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCampaignCard(BuildContext context, Campaign campaign, AppState state) {
+  Widget _buildCampaignCard(BuildContext context, Campaign campaign, AppLocalizations l10n) {
     double progress = campaign.raisedAmount / campaign.goalAmount;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -406,66 +408,97 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
             ],
           ),
           clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              if (isTablet) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Stack(
+                        children: [
+                          Image.network(
+                            campaign.imageUrl,
+                            height: 280 * context.fontSizeFactor,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              height: 280 * context.fontSizeFactor,
+                              width: double.infinity,
+                              color: theme.colorScheme.primary.withOpacity(0.05),
+                              child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withOpacity(0.2)),
+                            ),
+                          ),
+                          _buildVerifiedBadge(context, l10n),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Padding(
+                        padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                        child: _buildCardContent(context, campaign, l10n, progress),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.network(
-                    campaign.imageUrl,
-                    height: 220 * context.fontSizeFactor,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      height: 220 * context.fontSizeFactor,
-                      width: double.infinity,
-                      color: theme.colorScheme.primary.withOpacity(0.05),
-                      child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withOpacity(0.2)),
-                    ),
+                  Stack(
+                    children: [
+                      Image.network(
+                        campaign.imageUrl,
+                        height: 180 * context.fontSizeFactor,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          height: 180 * context.fontSizeFactor,
+                          width: double.infinity,
+                          color: theme.colorScheme.primary.withOpacity(0.05),
+                          child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withOpacity(0.2)),
+                        ),
+                      ),
+                      _buildVerifiedBadge(context, l10n),
+                    ],
                   ),
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)]),
-                      child: const Icon(Icons.favorite_rounded, color: Colors.redAccent, size: 18),
-                    ),
+                  Padding(
+                    padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                    child: _buildCardContent(context, campaign, l10n, progress),
                   ),
                 ],
-              ),
-              Padding(
-                padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                child: _buildCardContent(context, campaign, state, progress),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget _buildVerifiedBadge(BuildContext context, AppState state) {
+  Widget _buildVerifiedBadge(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     return Positioned(
       top: 16,
       left: 16,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 14 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
-        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)]),
+        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10)]),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.verified_rounded, color: const Color(0xFF10B981), size: 16 * context.fontSizeFactor),
             const SizedBox(width: 6),
-            Text(state.translate("Verified", "La Hubiyay", ar: "تم التحقق منه", de: "Verifiziert"), style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+            Text(l10n.verified, style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCardContent(BuildContext context, Campaign campaign, AppState state, double progress) {
+  Widget _buildCardContent(BuildContext context, Campaign campaign, AppLocalizations l10n, double progress) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -477,7 +510,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
             const Icon(Icons.trending_up_rounded, size: 14, color: AppColors.accentTeal),
             const SizedBox(width: 4),
             Text(
-              "${state.translate("Trending", "Hadda Socda", ar: "رائج", de: "Beliebt")} • ${campaign.lastDonationAgo} ${state.translate("ago", "ka hor", ar: "منذ", de: "vor")}",
+              "${AppState().translate("Trending", "Hadda Socda", ar: "رائج", de: "Beliebt")} • ${campaign.lastDonationAgo} ${AppState().translate("ago", "ka hor", ar: "منذ", de: "vor")}",
               style: TextStyle(color: AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
             ),
           ],
@@ -501,7 +534,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
           children: [
             Text("\$${campaign.raisedAmount.toInt()}", style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 18 * context.fontSizeFactor)),
             const SizedBox(width: 4),
-            Text("${state.translate("raised of", "la ururiyay")} \$${campaign.goalAmount.toInt()}", style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+            Text("${AppState().translate("raised of", "la ururiyay")} \$${campaign.goalAmount.toInt()}", style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
           ],
         ),
         const SizedBox(height: 12),
@@ -512,7 +545,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
             Icon(Icons.people_outline_rounded, size: 16, color: AppColors.grey.withOpacity(0.8)),
             const SizedBox(width: 6),
             Text(
-              "${campaign.donorCount} ${state.translate("donations", "deeqoodo")}",
+              "${campaign.donorCount} ${AppState().translate("donations", "deeqoodo")}",
               style: TextStyle(color: AppColors.grey.withOpacity(0.8), fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w500),
             ),
           ],
@@ -521,14 +554,14 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     );
   }
 
-  Widget _buildBottomAction(BuildContext context, AppState state) {
+  Widget _buildBottomAction(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     return Container(
       padding: EdgeInsets.fromLTRB(24, 16, 24, context.responsiveValue(mobile: 120, tablet: 24, desktop: 24)),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(theme.brightness == Brightness.dark ? 0.2 : 0.05), blurRadius: 20, offset: const Offset(0, -5))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.05), blurRadius: 20, offset: const Offset(0, -5))],
       ),
       child: Center(
         child: MaxWidthBox(
@@ -547,9 +580,9 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                 backgroundColor: theme.colorScheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 elevation: 8,
-                shadowColor: theme.colorScheme.primary.withOpacity(0.3),
+                shadowColor: theme.colorScheme.primary.withValues(alpha: 0.3),
               ),
-              child: Text(state.translate("Start a Fundraiser", "Bilow Ururinta Sadaqo", ar: "بدء حملة تبرع", de: "Fundraiser starten"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+              child: Text(l10n.startAFundraiser, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
             ),
           ),
         ),

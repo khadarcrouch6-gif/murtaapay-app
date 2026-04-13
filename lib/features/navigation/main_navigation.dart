@@ -76,7 +76,8 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final bool isDesktop = ResponsiveBreakpoints.of(context).largerThan(TABLET);
-    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final bool isTablet = ResponsiveBreakpoints.of(context).equals(TABLET);
+    final bool isMobile = ResponsiveBreakpoints.of(context).isMobile;
     final theme = Theme.of(context);
     final state = AppState();
     final screens = _getScreens();
@@ -100,7 +101,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
           drawer: _buildSidebar(context, state, theme, isDrawer: true),
           body: Row(
             children: [
-              if (isDesktop || (isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
+              if (isDesktop)
                 _buildSidebar(context, state, theme),
                 
               Expanded(
@@ -120,7 +121,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                         child: screens[state.selectedNavIndex],
                       ),
                       
-                      if (!isDesktop && !(isLandscape && !ResponsiveBreakpoints.of(context).isMobile))
+                      if (isMobile)
                         _buildMobileBottomNav(context, state),
                     ],
                   ),
@@ -159,19 +160,31 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      borderRadius: BorderRadius.circular(12),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
                     ),
-                    child: const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 24),
+                    child: const CircleAvatar(
+                      radius: 18,
+                      backgroundColor: AppColors.primaryDark,
+                      backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=rayaale'),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   const Expanded(
-                    child: Text(
-                      "MurtaaxPay",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      overflow: TextOverflow.ellipsis,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "MurtaaxPay",
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          "Elite Member",
+                          style: TextStyle(color: AppColors.grey, fontSize: 10, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
                 ],

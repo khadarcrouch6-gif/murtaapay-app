@@ -29,18 +29,30 @@ class SenderBankScreen extends StatefulWidget {
 class _SenderBankScreenState extends State<SenderBankScreen> {
   final TextEditingController _accountController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _bankNameController = TextEditingController();
   final FocusNode _accountFocus = FocusNode();
   final FocusNode _nameFocus = FocusNode();
+  final FocusNode _bankNameFocus = FocusNode();
   
   String _selectedBank = "IBS Bank";
-  final List<String> _banks = ["IBS Bank", "Premier Bank", "Salaam Bank", "Amal Bank", "Dahabshil Bank"];
+  final List<Map<String, String>> _banks = [
+    {"name": "IBS Bank", "image": "assets/images/bank.png"},
+    {"name": "Premier Bank", "image": "assets/images/bank.png"},
+    {"name": "Salaam Bank", "image": "assets/images/bank.png"},
+    {"name": "Amal Bank", "image": "assets/images/bank.png"},
+    {"name": "Dahabshil Bank", "image": "assets/images/bank.png"},
+    {"name": "MyBank", "image": "assets/images/bank.png"},
+    {"name": "Amana Bank", "image": "assets/images/bank.png"},
+  ];
 
   @override
   void dispose() {
     _accountController.dispose();
     _nameController.dispose();
+    _bankNameController.dispose();
     _accountFocus.dispose();
     _nameFocus.dispose();
+    _bankNameFocus.dispose();
     super.dispose();
   }
 
@@ -54,7 +66,7 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
           receiverName: widget.receiverName,
           receiverPhone: widget.receiverPhone,
           method: widget.payoutMethod,
-          paymentMethod: "Bank Transfer ($_selectedBank - ${_nameController.text})",
+          paymentMethod: "Bank Transfer (${_selectedBank == "Add Bank" ? _bankNameController.text : _selectedBank} - ${_nameController.text})",
           currencyCode: widget.currencyCode,
         ),
       ),
@@ -126,32 +138,21 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                           const SizedBox(height: 16),
                           Text(l10n.selectBank, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
                           const SizedBox(height: 12),
-                          
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.surface,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5),
+                          _buildBankDropdown(theme, l10n),
+
+                          if (_selectedBank == "Add Bank") ...[
+                            const SizedBox(height: 20),
+                            Text(l10n.bankName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                            const SizedBox(height: 12),
+                            _buildTextField(
+                              controller: _bankNameController,
+                              focusNode: _bankNameFocus,
+                              hint: l10n.enterBankName,
+                              icon: Icons.account_balance_rounded,
+                              type: TextInputType.text,
+                              theme: theme,
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: _selectedBank,
-                                isExpanded: true,
-                                icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.secondary),
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: theme.textTheme.bodyLarge?.color),
-                                onChanged: (String? newValue) {
-                                  if (newValue != null) setState(() => _selectedBank = newValue);
-                                },
-                                items: _banks.map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ),
+                          ],
 
                           const SizedBox(height: 20),
                           Text(l10n.accountNumber, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
@@ -166,12 +167,12 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                           ),
 
                           const SizedBox(height: 20),
-                          Text(l10n.fullName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                          Text(l10n.accountName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
                           const SizedBox(height: 12),
                           _buildTextField(
                             controller: _nameController,
                             focusNode: _nameFocus,
-                            hint: l10n.fullName,
+                            hint: l10n.accountName,
                             icon: Icons.person_rounded,
                             type: TextInputType.name,
                             theme: theme,
@@ -183,7 +184,7 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                             width: double.infinity,
                             height: 56,
                             child: ElevatedButton(
-                              onPressed: (_accountController.text.isNotEmpty && _nameController.text.isNotEmpty) 
+                              onPressed: (_accountController.text.isNotEmpty && _nameController.text.isNotEmpty && (_selectedBank != "Add Bank" || _bankNameController.text.isNotEmpty))
                                   ? () => _handleContinue(l10n) : null,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: theme.colorScheme.secondary,
@@ -253,6 +254,45 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildBankDropdown(ThemeData theme, AppLocalizations l10n) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: theme.dividerColor.withValues(alpha: 0.1),
+          width: 2,
+        ),
+      ),
+      child: DropdownButtonFormField<String>(
+        initialValue: _selectedBank,
+        dropdownColor: theme.colorScheme.surface,
+        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w900, fontSize: 16),
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.account_balance_rounded, color: theme.colorScheme.secondary),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        ),
+        icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.secondary),
+        items: [
+          ..._banks.map((bank) => DropdownMenuItem(
+            value: bank["name"],
+            child: Text(bank["name"]!),
+          )),
+          DropdownMenuItem(
+            value: "Add Bank",
+            child: Text(l10n.addBank),
+          ),
+        ],
+        onChanged: (value) {
+          if (value != null) {
+            setState(() => _selectedBank = value);
+          }
+        },
+      ),
     );
   }
 

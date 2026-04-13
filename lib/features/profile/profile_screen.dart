@@ -10,8 +10,8 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../onboarding/splash_screen.dart';
 import '../auth/kyc_screen.dart';
 import '../more/refer_earn_screen.dart';
-import 'change_pin_screen.dart';
-import '../chat/chat_list_screen.dart';
+import '../more/vouchers_screen.dart';
+
 import '../chat/chat_screen.dart';
 import 'terms_screen.dart';
 import 'security_center_screen.dart';
@@ -42,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _userPostalCode = "10001";
   String _userCountry = "Somalia";
 
-  String _userAddress = "Mogadishu, Somalia";
+
   final String _profileImageUrl = 'https://i.pravatar.cc/300';
   final String _coverImageUrl = 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800';
 
@@ -58,6 +58,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: ResponsiveBreakpoints.of(context).equals(TABLET)
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: Icon(Icons.menu_rounded, color: theme.iconTheme.color),
+              ),
+            )
+          : null,
       body: ListenableBuilder(
         listenable: state,
         builder: (context, child) {
@@ -98,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Expanded(
                                       child: Column(
                                         children: [
-                                          _buildSectionTitle(state.translate("Account Settings", "Habaynta Koontada", ar: "إعدادات الحساب", de: "Kontoeinstellungen", et: "Konto seaded")),
+                                          _buildSectionTitle(state.translate("Account Settings", "Habaynta Koontada", ar: "إعدادات الحساب", de: "Kontoeinstellungen", et: "Konto seaded"), context),
                                           _buildProfileOption(
                                             context, 
                                             state.translate("Personal Information", "Xogta Shakhsiga", ar: "معلومات شخصية", de: "Persönliche Angaben", et: "Isikuandmed"), 
@@ -111,11 +121,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             Icons.verified_user_rounded, 
                                             () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen())),
                                             trailing: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                              padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
                                               decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
                                               child: Text(
                                                 state.translate("Verified", "La Hubiyay", ar: "موثق", de: "Verifiziert", et: "Kinnitatud"),
-                                                style: const TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold),
+                                                style: TextStyle(color: Colors.green, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                                               ),
                                             ),
                                           ),
@@ -128,33 +138,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(width: 24),
+                                    SizedBox(width: 24 * context.fontSizeFactor),
                                     Expanded(
                                       child: Column(
                                         children: [
-                                          _buildSectionTitle(state.translate("Financial", "Maaliyadda", ar: "المالية", de: "Finanzen", et: "Finantid")),
+                                          _buildSectionTitle(state.translate("Financial", "Maaliyadda", ar: "المالية", de: "Finanzen", et: "Finantid"), context),
                                           _buildProfileOption(
                                             context, 
                                             state.translate("Linked Bank Accounts", "Bangiyada ku Xidhan", ar: "حسابات بنكية مرتبطة", de: "Verknüpfte Bankkonten", et: "Seotud pangakontod"), 
                                             FontAwesomeIcons.buildingColumns, 
                                             () => _showLinkedBanks(context, state)
                                           ),
-                                          const SizedBox(height: 12),
-                                          _buildSectionTitle(state.translate("Account Limits", "Xadka Akoonka", ar: "حدود الحساب", de: "Kontolimits", et: "Konto piirangud")),
+                                          SizedBox(height: 12 * context.fontSizeFactor),
+                                          _buildSectionTitle(state.translate("Account Limits", "Xadka Akoonka", ar: "حدود الحساب", de: "Kontolimits", et: "Konto piirangud"), context),
                                           _buildAccountLimits(context, state, theme),
                                         ],
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 24),
+                                SizedBox(height: 24 * context.fontSizeFactor),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Expanded(
                                       child: Column(
                                         children: [
-                                          _buildSectionTitle(state.translate("Preferences", "Dookhyada", ar: "التفضيلات", de: "Präferenzen", et: "Eelistused")),
+                                          _buildSectionTitle(state.translate("Preferences", "Dookhyada", ar: "التفضيلات", de: "Präferenzen", et: "Eelistused"), context),
                                           _buildSettingSwitch(
                                             context,
                                             state.translate("Dark Mode", "Habka Habeenkii", ar: "الوضع الليلي", de: "Dunkler Modus", et: "Tume režiim"), 
@@ -171,16 +181,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(width: 24),
+                                    SizedBox(width: 24 * context.fontSizeFactor),
                                     Expanded(
                                       child: Column(
                                         children: [
-                                          _buildSectionTitle(state.translate("Others", "Kuwa kale", ar: "آخرون", de: "Andere", et: "Muu")),
+                                          _buildSectionTitle(state.translate("Others", "Kuwa kale", ar: "آخرون", de: "Andere", et: "Muu"), context),
                                           _buildProfileOption(
                                             context, 
                                             state.translate("Refer & Earn", "Tixraac & Guulayso", ar: "دعوة الأصدقاء", de: "Empfehlen & Verdienen", et: "Soovita ja teeni"), 
                                             FontAwesomeIcons.userPlus, 
                                             () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ReferEarnScreen()))
+                                          ),
+                                          _buildProfileOption(
+                                            context, 
+                                            state.translate("Vouchers", "Vouchers", ar: "قسائم", de: "Gutscheine", et: "Voucherid"),
+                                            Icons.confirmation_number_rounded, 
+                                            () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))
                                           ),
                                           _buildProfileOption(
                                             context, 
@@ -205,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           
                           return Column(
                             children: [
-                              _buildSectionTitle(state.translate("Account Settings", "Habaynta Koontada", ar: "إعدادات الحساب", de: "Kontoeinstellungen", et: "Konto seaded")),
+                              _buildSectionTitle(state.translate("Account Settings", "Habaynta Koontada", ar: "إعدادات الحساب", de: "Kontoeinstellungen", et: "Konto seaded"), context),
                               
                               _buildProfileOption(
                                 context, 
@@ -220,11 +236,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Icons.verified_user_rounded, 
                                 () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen())),
                                 trailing: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
                                   decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
                                   child: Text(
                                     state.translate("Verified", "La Hubiyay", ar: "موثق", de: "Verifiziert", et: "Kinnitatud"),
-                                    style: const TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold),
+                                    style: TextStyle(color: Colors.green, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ),
@@ -236,8 +252,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SecurityCenterScreen()))
                               ),
 
-                              const SizedBox(height: 24),
-                              _buildSectionTitle(state.translate("Financial", "Maaliyadda", ar: "المالية", de: "Finanzen", et: "Finantid")),
+                              SizedBox(height: 24 * context.fontSizeFactor),
+                              _buildSectionTitle(state.translate("Financial", "Maaliyadda", ar: "المالية", de: "Finanzen", et: "Finantid"), context),
                               
                               _buildProfileOption(
                                 context, 
@@ -246,12 +262,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 () => _showLinkedBanks(context, state)
                               ),
 
-                              const SizedBox(height: 24),
-                              _buildSectionTitle(state.translate("Account Limits", "Xadka Akoonka", ar: "حدود الحساب", de: "Kontolimits", et: "Konto piirangud")),
+                              SizedBox(height: 24 * context.fontSizeFactor),
+                              _buildSectionTitle(state.translate("Account Limits", "Xadka Akoonka", ar: "حدود الحساب", de: "Kontolimits", et: "Konto piirangud"), context),
                               _buildAccountLimits(context, state, theme),
 
-                              const SizedBox(height: 24),
-                              _buildSectionTitle(state.translate("Preferences", "Dookhyada", ar: "التفضيلات", de: "Präferenzen", et: "Eelistused")),
+                              SizedBox(height: 24 * context.fontSizeFactor),
+                              _buildSectionTitle(state.translate("Preferences", "Dookhyada", ar: "التفضيلات", de: "Präferenzen", et: "Eelistused"), context),
                               
                               _buildSettingSwitch(
                                 context,
@@ -268,14 +284,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 () => _showLanguagePicker(context, state)
                               ),
 
-                              const SizedBox(height: 24),
-                              _buildSectionTitle(state.translate("Others", "Kuwa kale", ar: "آخرون", de: "Andere", et: "Muu")),
+                              SizedBox(height: 24 * context.fontSizeFactor),
+                              _buildSectionTitle(state.translate("Others", "Kuwa kale", ar: "آخرون", de: "Andere", et: "Muu"), context),
                               
                               _buildProfileOption(
                                 context, 
                                 state.translate("Refer & Earn", "Tixraac & Guulayso", ar: "دعوة الأصدقاء", de: "Empfehlen & Verdienen", et: "Soovita ja teeni"), 
                                 FontAwesomeIcons.userPlus, 
                                 () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ReferEarnScreen()))
+                              ),
+                              _buildProfileOption(
+                                context, 
+                                state.translate("Vouchers", "Waatsharrada", ar: "قسائم", de: "Gutscheine", et: "Voucherid"),
+                                Icons.confirmation_number_rounded, 
+                                () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))
                               ),
                               
                               _buildProfileOption(
@@ -305,9 +327,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         isLogout: true
                       ),
 
-                      const SizedBox(height: 40),
-                      _buildAppFooter(state),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 40 * context.fontSizeFactor),
+                      _buildAppFooter(state, context),
+                      SizedBox(height: 20 * context.fontSizeFactor),
                     ],
                   ),
                 ),
@@ -319,14 +341,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(left: 4, bottom: 12),
+      padding: EdgeInsets.only(left: 4, bottom: 12 * context.fontSizeFactor),
       child: Text(
         title.toUpperCase(),
-        style: const TextStyle(
-          fontSize: 12,
+        style: TextStyle(
+          fontSize: 12 * context.fontSizeFactor,
           fontWeight: FontWeight.w800,
           color: AppColors.accentTeal,
           letterSpacing: 1.2,
@@ -480,16 +502,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Flexible(
                 child: Text(
                   _userName, 
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, letterSpacing: -0.5),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24 * context.fontSizeFactor, letterSpacing: -0.5),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(Icons.verified_rounded, color: AppColors.accentTeal, size: 20),
+              Icon(Icons.verified_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(_userEmail, style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6), fontSize: 14)),
+          SizedBox(height: 4 * context.fontSizeFactor),
+          Text(_userEmail, style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6), fontSize: 14 * context.fontSizeFactor)),
         ],
       ),
     );
@@ -550,23 +572,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Expanded(
       child: Column(
         children: [
-          AdaptiveIcon(icon, color: AppColors.accentTeal, size: 14),
-          const SizedBox(height: 4),
+          AdaptiveIcon(icon, color: AppColors.accentTeal, size: 14 * context.fontSizeFactor),
+          SizedBox(height: 4 * context.fontSizeFactor),
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
               value, 
               style: TextStyle(
                 fontWeight: FontWeight.w800, 
-                fontSize: 14, 
+                fontSize: 14 * context.fontSizeFactor, 
                 color: isDark ? Colors.white : AppColors.primaryDark,
               ),
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: 2 * context.fontSizeFactor),
           Text(
             label, 
-            style: const TextStyle(color: AppColors.grey, fontSize: 10, fontWeight: FontWeight.w500),
+            style: TextStyle(color: AppColors.grey, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.w500),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -596,14 +618,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             height: MediaQuery.of(context).size.height * 0.9,
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
             padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -613,13 +633,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
                 const SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         state.translate("Edit Personal Information", "Wax ka beddel Xogta", ar: "تعديل المعلومات الشخصية", de: "Persönliche Daten bearbeiten", et: "Muuda isikuandmeid"), 
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -0.5)
+                        style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.w800, letterSpacing: -0.5)
                       ),
                       IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close_rounded))
                     ],
@@ -627,46 +647,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
+                    padding: EdgeInsets.all(24 * context.fontSizeFactor),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildFormHeader(state.translate("Identity Information", "Macluumaadka Aqoonsiga", ar: "معلومات الهوية", de: "Identitätsinformationen", et: "Isikutuvastus")),
+                        _buildFormHeader(state.translate("Identity Information", "Macluumaadka Aqoonsiga", ar: "معلومات الهوية", de: "Identitätsinformationen", et: "Isikutuvastus"), context),
                         _buildEditorField(nameCtrl, state.translate("Full Name", "Magaca oo dhammaystiran", ar: "الاسم الكامل", de: "Vollständiger Name", et: "Täisnimi"), Icons.person_outline, context: context),
                         Row(
                           children: [
                             Expanded(child: _buildEditorField(dobCtrl, state.translate("Date of Birth", "Taariikhda dhalashada", ar: "تاريخ الميلاد", de: "Geburtsdatum", et: "Sünniaeg"), Icons.calendar_today_outlined, context: context)),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12 * context.fontSizeFactor),
                             Expanded(child: _buildEditorField(nationalityCtrl, state.translate("Nationality", "Dhalashada", ar: "الجنسية", de: "Nationalität", et: "Kodakondsus"), Icons.flag_outlined, context: context)),
                           ],
                         ),
                         _buildEditorField(idNumberCtrl, state.translate("National ID / Tax Number", "Lambarka Aqoonsiga", ar: "رقم الهوية الوطنية", de: "Personalausweis- / Steuernummer", et: "Isikukood / Maksunumber"), Icons.badge_outlined, context: context),
 
-                        const SizedBox(height: 24),
-                        _buildFormHeader(state.translate("Contact Details", "Xogta Lagala Xidhiidho", ar: "تفاصيل الاتصال", de: "Kontaktdetails", et: "Kontaktandmed")),
+                        SizedBox(height: 24 * context.fontSizeFactor),
+                        _buildFormHeader(state.translate("Contact Details", "Xogta Lagala Xidhiidho", ar: "تفاصيل الاتصال", de: "Kontaktdetails", et: "Kontaktandmed"), context),
                         _buildEditorField(emailCtrl, state.translate("Email Address", "Boostada qoraalka", ar: "عنوان البريد الإلكتروني", de: "E-Mail-Adresse", et: "E-posti aadress"), Icons.email_outlined, context: context),
                         _buildEditorField(phoneCtrl, state.translate("Phone Number", "Lambarka taleefanka", ar: "رقم الهاتف", de: "Telefonnummer", et: "Telefoninumber"), Icons.phone_outlined, context: context),
 
-                        const SizedBox(height: 24),
-                        _buildFormHeader(state.translate("Residential Address", "Cinwaanka Hoyga", ar: "عنوان السكن", de: "Wohnadresse", et: "Elukoha aadress")),
+                        SizedBox(height: 24 * context.fontSizeFactor),
+                        _buildFormHeader(state.translate("Residential Address", "Cinwaanka Hoyga", ar: "عنوان السكن", de: "Wohnadresse", et: "Elukoha aadress"), context),
                         _buildEditorField(streetCtrl, state.translate("Street Address", "Wadada", ar: "عنوان الشارع", de: "Straßenadresse", et: "Tänava aadress"), Icons.home_outlined, context: context),
                         Row(
                           children: [
                             Expanded(child: _buildEditorField(cityCtrl, state.translate("City", "Magaalada", ar: "المدينة", de: "Stadt", et: "Linn"), Icons.location_city_outlined, context: context)),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12 * context.fontSizeFactor),
                             Expanded(child: _buildEditorField(postalCtrl, state.translate("Postal Code", "Boostada", ar: "الرمز البريدي", de: "Postleitzahl", et: "Postiindeks"), Icons.mark_as_unread_outlined, context: context)),
                           ],
                         ),
                         _buildEditorField(countryCtrl, state.translate("Country", "Wadanka", ar: "البلد", de: "Land", et: "Riik"), Icons.public_outlined, context: context),
 
-                        const SizedBox(height: 24),
-                        _buildFormHeader(state.translate("Employment", "Shaqada", ar: "العمل", de: "Beschäftigung", et: "Tööhõive")),
+                        SizedBox(height: 24 * context.fontSizeFactor),
+                        _buildFormHeader(state.translate("Employment", "Shaqada", ar: "العمل", de: "Beschäftigung", et: "Tööhõive"), context),
                         _buildEditorField(occupationCtrl, state.translate("Occupation / Source of Funds", "Nooca Shaqada", ar: "المهنة / مصدر الأموال", de: "Beruf / Herkunft der Mittel", et: "Amet / Rahaliste vahendite allikas"), Icons.work_outline, context: context),
                         
-                        const SizedBox(height: 40),
+                        SizedBox(height: 40 * context.fontSizeFactor),
                         SizedBox(
                           width: double.infinity,
-                          height: 56,
+                          height: 56 * context.fontSizeFactor,
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {
@@ -685,17 +705,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: isDark ? AppColors.accentTeal : AppColors.primaryDark, 
+                              backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.accentTeal : AppColors.primaryDark,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                               elevation: 0,
                             ),
                             child: Text(
                               state.translate("Save Changes", "Keydi Isbeddelka", ar: "حفظ التغييرات", de: "Änderungen speichern", et: "Salvesta muudatused"), 
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
                             ),
                           ),
                         ),
-                        const SizedBox(height: 40),
+                        SizedBox(height: 40 * context.fontSizeFactor),
                       ],
                     ),
                   ),
@@ -708,29 +728,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildFormHeader(String title) {
+  Widget _buildFormHeader(String title, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16, left: 4),
+      padding: EdgeInsets.only(bottom: 16 * context.fontSizeFactor, left: 4),
       child: Text(
         title.toUpperCase(),
-        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.accentTeal, letterSpacing: 1.2),
+        style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w800, color: AppColors.accentTeal, letterSpacing: 1.2),
       ),
     );
   }
 
-  Widget _buildEditorField(TextEditingController controller, String label, IconData icon, {BuildContext? context}) {
-    final theme = context != null ? Theme.of(context) : null;
-    final isDark = theme?.brightness == Brightness.dark;
+  Widget _buildEditorField(TextEditingController controller, String label, IconData icon, {required BuildContext context}) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: 16 * context.fontSizeFactor),
       child: TextField(
         controller: controller,
-        style: TextStyle(color: isDark == true ? Colors.white : Colors.black87),
+        style: TextStyle(color: isDark == true ? Colors.white : Colors.black87, fontSize: 16 * context.fontSizeFactor),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(fontSize: 14, color: AppColors.grey),
-          prefixIcon: Icon(icon, color: AppColors.accentTeal, size: 20),
+          labelStyle: TextStyle(fontSize: 14 * context.fontSizeFactor, color: AppColors.grey),
+          prefixIcon: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16), 
             borderSide: BorderSide(color: isDark == true ? Colors.white10 : Colors.grey.withValues(alpha: 0.2)),
@@ -741,7 +761,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           filled: true,
           fillColor: isDark == true ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.05),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 16 * context.fontSizeFactor),
         ),
       ),
     );
@@ -750,7 +770,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildProfileOption(BuildContext context, String title, dynamic icon, VoidCallback onTap, {bool isLogout = false, Widget? trailing}) {
     final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -767,23 +787,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 16 * context.fontSizeFactor),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10 * context.fontSizeFactor),
                   decoration: BoxDecoration(
                     color: (isLogout ? Colors.red : AppColors.accentTeal).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: icon is IconData 
-                    ? Icon(icon, color: isLogout ? Colors.red : AppColors.accentTeal, size: 18)
-                    : FaIcon(icon, color: isLogout ? Colors.red : AppColors.accentTeal, size: 18),
+                    ? Icon(icon, color: isLogout ? Colors.red : AppColors.accentTeal, size: 18 * context.fontSizeFactor)
+                    : FaIcon(icon, color: isLogout ? Colors.red : AppColors.accentTeal, size: 18 * context.fontSizeFactor),
                 ),
-                const SizedBox(width: 16),
-                Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: isLogout ? Colors.red : null))),
-                if (trailing != null) trailing,
-                if (!isLogout) Icon(Icons.chevron_right_rounded, color: Colors.grey.withValues(alpha: 0.4)),
+                SizedBox(width: 16 * context.fontSizeFactor),
+                Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15 * context.fontSizeFactor, color: isLogout ? Colors.red : null))),
+                trailing ?? const SizedBox.shrink(),
+                if (!isLogout) Icon(Icons.chevron_right_rounded, color: Colors.grey.withValues(alpha: 0.4), size: 24 * context.fontSizeFactor),
               ],
             ),
           ),
@@ -795,7 +815,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildSettingSwitch(BuildContext context, String title, bool value, IconData icon, Function(bool) onChanged) {
     final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
+      padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface, 
         borderRadius: BorderRadius.circular(18),
@@ -807,22 +828,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
           )
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: SwitchListTile.adaptive(
-          secondary: Container(
-            padding: const EdgeInsets.all(10),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(10 * context.fontSizeFactor),
             decoration: BoxDecoration(
               color: AppColors.accentTeal.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: AppColors.accentTeal, size: 18),
+            child: Icon(icon, color: AppColors.accentTeal, size: 18 * context.fontSizeFactor),
           ),
-          title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-          value: value,
-          onChanged: onChanged,
-          activeColor: AppColors.accentTeal,
-        ),
+          SizedBox(width: 16 * context.fontSizeFactor),
+          Expanded(
+            child: Text(
+              title, 
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15 * context.fontSizeFactor)
+            )
+          ),
+          Switch.adaptive(
+            value: value, 
+            onChanged: onChanged,
+            activeTrackColor: AppColors.accentTeal,
+          ),
+        ],
       ),
     );
   }
@@ -832,7 +860,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return FadeIn(
       duration: const Duration(milliseconds: 800),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20 * context.fontSizeFactor),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [AppColors.accentTeal.withValues(alpha: 0.1), theme.colorScheme.surface],
@@ -846,31 +874,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Row(
               children: [
-                const Icon(Icons.bolt_rounded, color: AppColors.accentTeal, size: 20),
-                const SizedBox(width: 8),
+                Icon(Icons.bolt_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                SizedBox(width: 8 * context.fontSizeFactor),
                 Expanded(
                   child: Text(
                     "${state.translate("Profile", "Profile-kaagu", ar: "الملف الشخصي", de: "Profil", et: "Profiil")} ${(completion * 100).toInt()}% ${state.translate("Complete", "waa diyaar", ar: "مكتml", de: "Vollständig", et: "valmis")}",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
                   ),
                 ),
                 TextButton(
                   onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen())),
                   child: Text(
                     state.translate("Complete Now", "Dhameey Hadda", ar: "أكمل الآن", de: "Jetzt ergänzen", et: "Lõpeta kohe"),
-                    style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 12),
+                    style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 12 * context.fontSizeFactor),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8 * context.fontSizeFactor),
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: LinearProgressIndicator(
                 value: completion,
                 backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                 valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
-                minHeight: 8,
+                minHeight: 8 * context.fontSizeFactor,
               ),
             ),
           ],
@@ -906,7 +934,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final double percent = used / total;
     
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
@@ -919,38 +947,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(8 * context.fontSizeFactor),
                 decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-                child: Icon(icon, color: AppColors.accentTeal, size: 18),
+                child: Icon(icon, color: AppColors.accentTeal, size: 18 * context.fontSizeFactor),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12 * context.fontSizeFactor),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                    const SizedBox(height: 2),
+                    Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor)),
+                    SizedBox(height: 2 * context.fontSizeFactor),
                     Text(
                       "\$${used.toStringAsFixed(0)} / \$${total.toStringAsFixed(0)}",
-                      style: const TextStyle(color: AppColors.grey, fontSize: 11),
+                      style: TextStyle(color: AppColors.grey, fontSize: 11 * context.fontSizeFactor),
                     ),
                   ],
                 ),
               ),
               Text(
                 "${(percent * 100).toInt()}%",
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: AppColors.accentTeal),
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12 * context.fontSizeFactor, color: AppColors.accentTeal),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12 * context.fontSizeFactor),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: percent,
               backgroundColor: Colors.grey.withValues(alpha: 0.1),
               valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
-              minHeight: 4,
+              minHeight: 4 * context.fontSizeFactor,
             ),
           ),
         ],
@@ -958,12 +986,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildAppFooter(AppState state) {
+  Widget _buildAppFooter(AppState state, BuildContext context) {
     return Column(
       children: [
-        const Text(
+        Text(
           "MurtaaxPay v2.1.0",
-          style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -993,31 +1021,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
             child: SingleChildScrollView(
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   Text(
                     state.translate("Select Language", "Dooro Luqadda", ar: "اختر اللغة", de: "Sprache auswählen", et: "Vali keel"), 
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+                    style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   ...languages.map((lang) {
                     final isSelected = state.locale.languageCode == lang["code"];
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                      padding: EdgeInsets.only(bottom: 8 * context.fontSizeFactor),
                       child: Material(
                         color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent,
                         borderRadius: BorderRadius.circular(16),
@@ -1027,14 +1054,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             borderRadius: BorderRadius.circular(8),
                             child: Image.network(
                               "https://flagcdn.com/w80/${lang["country"]}.png",
-                              width: 32,
-                              height: 24,
+                              width: 32 * context.fontSizeFactor,
+                              height: 24 * context.fontSizeFactor,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.flag_rounded),
+                              errorBuilder: (context, error, stackTrace) => Icon(Icons.flag_rounded, size: 24 * context.fontSizeFactor),
                             ),
                           ),
-                          title: Text(lang["native"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          trailing: isSelected ? const Icon(Icons.check_circle, color: AppColors.accentTeal) : null,
+                          title: Text(lang["native"]!, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+                          trailing: isSelected ? Icon(Icons.check_circle, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor) : null,
                           onTap: () {
                             state.setLanguage(lang["code"]!);
                             Navigator.pop(context);
@@ -1043,7 +1070,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     );
                   }),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20 * context.fontSizeFactor),
                 ],
               ),
             ),
@@ -1060,38 +1087,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: ListenableBuilder(
             listenable: state,
             builder: (context, _) => SingleChildScrollView(
-              padding: const EdgeInsets.all(32),
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
               child: Column(
                 mainAxisSize: MainAxisSize.min, 
                 children: [
                   Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(state.translate("Bank Accounts", "Akoonada Bangiga", ar: "حسابات بنكية", de: "Bankkonten", et: "Pangakontod"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      Text(state.translate("Bank Accounts", "Akoonada Bangiga", ar: "حسابات بنكية", de: "Bankkonten", et: "Pangakontod"), style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                       IconButton(
                         onPressed: () => _showAddBankForm(context, state),
-                        icon: const Icon(Icons.add_circle_outline_rounded, color: AppColors.accentTeal),
+                        icon: Icon(Icons.add_circle_outline_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
                       )
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20 * context.fontSizeFactor),
                   if (state.linkedBanks.isEmpty)
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 40),
-                      child: Text(state.translate("No linked accounts yet.", "Ma jiraan bangiyo ku xidhan.", ar: "لا توجد حسابات مرتبطة بعد.", de: "Noch keine verknüpften Konten.", et: "Seotud kontosid pole veel."), style: const TextStyle(color: AppColors.grey)),
+                      padding: EdgeInsets.symmetric(vertical: 40 * context.fontSizeFactor),
+                      child: Text(state.translate("No linked accounts yet.", "Ma jiraan bangiyo ku xidhan.", ar: "لا توجد حسابات مرتبطة بعد.", de: "Noch keine verknüpften Konten.", et: "Seotud kontosid pole veel."), style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
                     )
                   else
                     ...state.linkedBanks.map((bank) => _buildBankTile(context, state, bank)),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20 * context.fontSizeFactor),
                 ],
               ),
             ),
@@ -1103,18 +1128,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildBankTile(BuildContext context, AppState state, BankAccount bank) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
       child: Material(
         color: Colors.grey.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
         clipBehavior: Clip.antiAlias,
         child: ListTile(
           onTap: () {}, 
-          leading: const Icon(Icons.account_balance, color: AppColors.accentTeal),
-          title: Text(bank.bankName, style: const TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text(bank.accountNumber),
+          leading: Icon(Icons.account_balance, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
+          title: Text(bank.bankName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+          subtitle: Text(bank.accountNumber, style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
           trailing: IconButton(
-            icon: const Icon(Icons.delete_outline_rounded, color: Colors.red, size: 20),
+            icon: Icon(Icons.delete_outline_rounded, color: Colors.red, size: 20 * context.fontSizeFactor),
             onPressed: () => state.removeBank(bank.id),
           ),
         ),
@@ -1132,32 +1157,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
       useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(32.0),
+              padding: EdgeInsets.all(32.0 * context.fontSizeFactor),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(child: Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)))),
-                  const SizedBox(height: 24),
-                  Text(state.translate("Link New Bank", "Ku xidh Banki Cusub", ar: "ربط بنك جديد", de: "Neues Bankkonto verknüpfen", et: "Seo uus pank"), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(state.translate("Link New Bank", "Ku xidh Banki Cusub", ar: "ربط بنك جديد", de: "Neues Bankkonto verknüpfen", et: "Seo uus pank"), style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   _buildEditorField(bankCtrl, state.translate("Bank Name", "Magaca Bangiga", ar: "اسم البنك", de: "Bankname", et: "Panga nimi"), Icons.account_balance_outlined, context: context),
                   _buildEditorField(accountCtrl, state.translate("Account Number", "Lambarka Akoonka", ar: "رقم الحساب", de: "Kontonummer", et: "Kontonumber"), Icons.numbers_rounded, context: context),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32 * context.fontSizeFactor),
                   SizedBox(
                     width: double.infinity,
-                    height: 56,
+                    height: 56 * context.fontSizeFactor,
                     child: ElevatedButton(
                       onPressed: () {
                         if (bankCtrl.text.isNotEmpty && accountCtrl.text.isNotEmpty) {
@@ -1173,7 +1196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.accentTeal : AppColors.primaryDark,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
-                      child: Text(state.translate("Link Account", "Ku xidh Akoonka", ar: "ربط الحساب", de: "Konto verknüpfen", et: "Seo konto"), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: Text(state.translate("Link Account", "Ku xidh Akoonka", ar: "ربط الحساب", de: "Konto verknüpfen", et: "Seo konto"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                     ),
                   ),
                 ],
@@ -1192,13 +1215,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
             child: SingleChildScrollView(

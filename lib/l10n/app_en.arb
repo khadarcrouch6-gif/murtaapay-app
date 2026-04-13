@@ -7,6 +7,8 @@
   "sendMoney": "Send Money",
   "receiveMoney": "Receive",
   "balance": "Balance",
+  "searchTransactions": "Search transactions...",
+  "noTransactionsFound": "No transactions found",
   "recentTransactions": "Recent Transactions",
   "settings": "Settings",
   "language": "Language",
@@ -88,7 +90,7 @@
   "backToHome": "Back to Home",
   "addMoney": "Add Money",
   "enterAmountToDeposit": "Enter Amount to Deposit",
-  "confirmDeposit": "Confirm Deposit",
+  "confirmTopUp": "Confirm Top-Up",
   "expiry": "Expiry",
   "cardholderName": "Cardholder Name",
   "fullNameOnCard": "Full name on card",
@@ -111,6 +113,8 @@
   "stepReceiver": "Receiver",
   "stepPayment": "Payment",
   "stepReview": "Review",
+  "refreshed": "Refreshed",
+  "ok": "OK",
   "feeInfoTitle": "Exchange Fee Info",
   "feeInfoContent": "The fee is 0.99%. For example: sending $100 will cost only $0.99 in fees.",
   "maxLabel": "MAX",
@@ -142,6 +146,9 @@
   "myCards": "My Cards",
   "addNewCard": "Add New Card",
   "cardNumberCopied": "Card number copied!",
+  "payWithCard": "Pay with Card",
+  "securePayment": "Secure Payment",
+  "cardDetails": "Card Details",
   "deposit": "Deposit",
   "withdraw": "Withdraw",
   "savings": "Savings",
@@ -180,6 +187,7 @@
   "cvv": "CVV",
   "secureProcessing": "Securely processing your payment...",
   "selectBank": "Select Bank",
+  "addBank": "Add Bank",
   "murtaaxWalletDesc": "Pay from your app balance",
   "visaMastercardDesc": "Pay using your card",
   "bankTransferDesc": "Direct bank transfer",
@@ -233,6 +241,32 @@
   "johnDoe": "John Doe",
   "verifyingIdentity": "Verifying Identity...",
   "pleaseFillAllFields": "Please fill in all fields",
+  "virtualCardTopUp": "Virtual Card Top-Up",
+  "cardTopUpSuccessful": "Card Top-Up Successful!",
+  "cardTopUpSuccessMessage": "{amount} has been added to your virtual card.",
+  "@cardTopUpSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "enterAmountToTopUp": "Enter amount to top up",
+  "topUp": "Top Up",
+  "topUpInstantlyVia": "Top up instantly via {method}",
+  "@topUpInstantlyVia": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "walletPin": "Wallet PIN",
+  "enterWalletPinMessage": "Enter your 4-digit wallet PIN to authorize top-up.",
+  "confirm": "Confirm",
+  "submit": "Submit",
+  "accountName": "Account Name",
+  "transferToAccountBelow": "Please transfer the amount to the account below and click continue.",
   "cardEndingIn": "Card ending in {lastFour}",
   "@cardEndingIn": {
     "placeholders": {
@@ -240,5 +274,498 @@
         "type": "String"
       }
     }
-  }
+  },
+  "withdrawMoney": "Withdraw Money",
+  "withdrawToStripe": "Withdraw to your Stripe account",
+  "withdrawalMethod": "Withdrawal Method",
+  "stripeEmail": "Stripe Email",
+  "mobileNumber": "Mobile Number",
+  "iban": "IBAN",
+  "reviewWithdrawal": "Review Withdrawal",
+  "details": "Details",
+  "free": "Free",
+  "totalDeducted": "Total Deducted",
+  "confirmWithdraw": "Confirm & Withdraw",
+  "withdrawalRequested": "Withdrawal Requested!",
+  "withdrawalSuccessMessage": "Your withdrawal of {amount} is being processed.",
+  "@withdrawalSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payBills": "Pay Bills",
+  "selectCategory": "Select Category",
+  "recentBills": "Recent Bills",
+  "amountToPay": "Amount to Pay ($)",
+  "confirmPayment": "Confirm Payment",
+  "paymentSuccessful": "Payment Successful!",
+  "paymentSuccessMessage": "Your payment of {amount} for {category} has been processed.",
+  "@paymentSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "billDetails": "Bill Details",
+  "serviceProvider": "Service Provider",
+  "category": "Category",
+  "accountId": "Account ID",
+  "amountPaid": "Amount Paid",
+  "paymentDate": "Payment Date",
+  "status": "Status",
+  "success": "Success",
+  "pending": "Pending",
+  "completed": "Completed",
+  "downloadReceipt": "Download Receipt",
+  "downloadPdf": "Download PDF",
+  "transactionSuccessful": "Transaction Successful!",
+  "topUpSuccessful": "Top-up Successful!",
+  "withdrawalSuccessful": "Withdrawal Successful!",
+  "cardPaymentSuccessful": "Card Payment Successful!",
+  "walletTransaction": "Wallet Transaction",
+  "merchant": "Merchant",
+  "sourceReceiver": "Source/Receiver",
+  "receiverSource": "Receiver/Source",
+  "transactionId": "Transaction ID",
+  "date": "Date",
+  "close": "Close",
+  "backToBills": "Back to Bills",
+  "electricity": "Electricity",
+  "water": "Water",
+  "internet": "Internet",
+  "tvCable": "TV Cable",
+  "education": "Education",
+  "govServices": "Gov Services",
+  "stripe": "Stripe",
+  "debitCreditCard": "Debit / Credit Card",
+  "justAMoment": "Just a moment",
+  "processing": "Processing...",
+  "copiedToClipboard": "Copied to clipboard",
+  "otherBank": "Other Bank",
+  "bankName": "Bank Name",
+  "enterBankName": "Enter Bank Name",
+  "enterAccountNumber": "Enter Account Number",
+  "enterAccountName": "Enter Account Name",
+  "noActiveCards": "No active cards",
+  "orderVirtualCard": "Order Virtual Card",
+  "instantlyIssueNewCard": "Instantly issue a new digital card",
+  "addToAppleWallet": "Add to Apple Wallet",
+  "addToGooglePay": "Add to Google Pay",
+  "terminateCardConfirm": "Are you sure you want to permanently delete this card? This action cannot be undone.",
+  "all": "All",
+  "subscriptions": "Subscriptions",
+  "cardTerminated": "Card Terminated",
+  "cardTerminatedSuccess": "Your virtual card has been permanently deleted.",
+  "topUpFromWallet": "Top-up from Wallet",
+  "withdrawToWallet": "Send to Wallet",
+  "withdrawToWalletDesc": "Transfer to your main wallet balance",
+  "withdrawToBankDesc": "Withdraw to local or international bank",
+  "withdrawToStripeDesc": "Withdraw to your Stripe account",
+  "enterVirtualCardPin": "Enter your 4-digit virtual card PIN to authorize withdrawal.",
+  "currentCardBalance": "CURRENT CARD BALANCE",
+  "welcomeBack": "Welcome Back",
+  "enterPhoneNumberToContinue": "Enter your phone number to continue",
+  "dontHaveAccountSignUp": "Don't have an account? Sign Up",
+  "createAccount": "Create Account",
+  "joinMurtaaxPayToday": "Join MurtaaxPay today and start sending money safely.",
+  "password": "Password",
+  "signUp": "Sign Up",
+  "alreadyHaveAccountLogin": "Already have an account? Login",
+  "confirmYourPin": "Confirm your PIN",
+  "enterSecurityPin": "Enter Security PIN",
+  "toKeepYourMoneySafe": "To keep your money safe",
+  "useFaceIdFingerprint": "Use FaceID / Fingerprint",
+  "virtualCardBalance": "VIRTUAL CARD BALANCE",
+  "messages": "Messages",
+  "startNewConversation": "Start new conversation",
+  "searchConversations": "Search conversations...",
+  "noMessages": "No messages",
+  "now": "now",
+  "minutesAgo": "{minutes}m ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{hours}h ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{days}d ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "online": "Online",
+  "viewInfo": "View Info",
+  "helpSupport": "Help & Support",
+  "clearChat": "Clear Chat",
+  "contactInformation": "Contact Information",
+  "nameLabel": "Name",
+  "phoneLabel": "Phone",
+  "emailLabel": "Email",
+  "messageTypes": "Message Types",
+  "messageTypesDesc": "Text, SMS, Audio, Images, Documents & Personal Info",
+  "shareInformation": "Share Information",
+  "shareInformationDesc": "Securely share your contact details and address",
+  "searchChats": "Search Chats",
+  "searchChatsDesc": "Find any conversation quickly",
+  "chatSettings": "Chat Settings",
+  "chatSettingsDesc": "Clear chat history and manage preferences",
+  "clearChatConfirm": "Are you sure you want to clear this chat?",
+  "clear": "Clear",
+  "location": "Location",
+  "youSentMoney": "You sent money",
+  "youReceivedMoney": "You received money",
+  "smsMessage": "SMS Message",
+  "audioMessage": "Audio Message",
+  "downloadingDocument": "Downloading document...",
+  "personalInformation": "Personal Information",
+  "sms": "SMS",
+  "gallery": "Gallery",
+  "file": "File",
+  "contact": "Contact",
+  "typeAMessage": "Type a message...",
+  "shareContent": "Share Content",
+  "smsSentSuccess": "SMS sent successfully!",
+  "audioSentSuccess": "Audio message sent!",
+  "imageSentSuccess": "Image sent!",
+  "documentSentSuccess": "Document sent!",
+  "personalInfoSharedSuccess": "Personal information shared!",
+  "sharePersonalInfo": "Share Personal Info",
+  "reviewInfoToShare": "Review information to share",
+  "infoSharedNotice": "This information will be shared with the current conversation.",
+  "address": "Address",
+  "postalCode": "Postal Code",
+  "country": "Country",
+  "pleaseEnter": "Please enter",
+  "help": "Help",
+  "returnToHome": "Return to Home",
+  "frontOfIdCard": "Front of ID Card",
+  "verification": "Verification",
+  "verifyYourFace": "Verify your face",
+  "positionFaceNotice": "Position your face well-lit and clearly",
+  "passport": "Passport",
+  "nationalIdCard": "National ID Card",
+  "driversLicense": "Driver's License",
+  "bankGradeEncryption": "Bank-grade encryption",
+  "dataDeletedNotice": "Your data is deleted after verification",
+  "personalDetails": "Personal Details",
+  "emailAddress": "Email Address",
+  "city": "City",
+  "residentialAddress": "Residential Address",
+  "required": "Required",
+  "chooseDocumentType": "Choose Document Type",
+  "verifyYourIdentity": "Verify Your Identity",
+  "verifyIdentityDesc": "We need to verify your identity to keep your account secure. This only takes 2 minutes.",
+  "prepareIdDoc": "Prepare your ID document",
+  "wellLitArea": "Make sure you're in a well-lit area",
+  "followInstructions": "Follow the on-screen instructions",
+  "letsGetStarted": "Let's Get Started",
+  "encryptedConnection": "ENCRYPTED & SECURE CONNECTION",
+  "identityVerification": "Identity Verification",
+  "verifyingIdentity": "Verifying Identity...",
+  "alignId": "Align your ID",
+  "capturing": "Capturing...",
+  "lookStraight": "Look Straight",
+  "lookLeft": "Look Left",
+  "lookRight": "Look Right",
+  "verificationPending": "Verification Pending",
+  "verificationPendingDesc": "Your documents are being reviewed. This usually takes 10-15 minutes. We'll notify you once it's complete.",
+  "documentCheck": "Document Check",
+  "scanningForClarity": "Scanning for clarity",
+  "biometricMatch": "Biometric Match",
+  "comparingSelfie": "Comparing selfie with ID",
+  "voucherCopied": "Voucher code copied! Ready to use.",
+  "howToUse": "How to use",
+  "stepRedeem": "Tap 'Redeem Now' to copy the code.",
+  "stepTransfer": "Start a new money transfer.",
+  "stepPaste": "Paste code in the 'Promo Code' field.",
+  "welcomeBonus": "Welcome Bonus",
+  "welcomeBonusDesc": "Get 5% cashback on your next transfer.",
+  "expires30Dec": "Expires: 30 Dec",
+  "familyFriday": "Family Friday",
+  "familyFridayDesc": "Zero fees for any transfer to Somalia today!",
+  "expiresTomorrow": "Expires: Tomorrow",
+  "eidSpecial": "Eid Special",
+  "eidSpecialDesc": "$10 bonus on transfers over $100.",
+  "expiresIn5Days": "Expires: in 5 days",
+  "reward": "REWARD",
+  "copied": "Copied!",
+  "redeemNow": "Redeem Now",
+  "referAndEarn": "Refer & Earn",
+  "referralCodeCopied": "Referral code copied to clipboard!",
+  "rewardsWaiting": "Rewards Waiting",
+  "inviteFriendsGet10": "Invite Friends, Get $10",
+  "referralDescription": "Share MurtaaxPay with your friends and you both get $10 when they make their first transfer of $50 or more.",
+  "yourReferralCode": "Your Referral Code",
+  "copy": "COPY",
+  "whatsApp": "WhatsApp",
+  "sadaqahCommunity": "Sadaqah & Community",
+  "medicalEmergency": "Medical Emergency",
+  "medicalEmergencyDesc": "Help Ahmed cover his heart surgery expenses in Turkey.",
+  "villageWaterWell": "Village Water Well",
+  "villageWaterWellDesc": "Building a permanent water source for a village in Gedo.",
+  "educationSupport": "Education Support",
+  "educationSupportDesc": "Scholarships for 10 orphans in Mogadishu.",
+  "verified": "Verified",
+  "by": "By",
+  "raised": "Raised",
+  "goal": "Goal",
+  "startAFundraiser": "Start a Fundraiser",
+  "totalInvestment": "Total Investment",
+  "yourPortfolio": "Your Portfolio",
+  "bitcoin": "Bitcoin",
+  "ethereum": "Ethereum",
+  "gold": "Gold",
+  "investmentOpportunities": "Investment Opportunities",
+  "realEstate": "Real Estate",
+  "realEstateDesc": "Investment in premium property projects.",
+  "agriculture": "Agriculture",
+  "agricultureDesc": "Support local sustainable farming.",
+  "savingsAndGoals": "Savings & Goals",
+  "activeGoals": "Active Goals",
+  "createNewGoal": "Create New Goal",
+  "totalSavings": "Total Savings",
+  "chooseWithdrawalMethod": "Choose Withdrawal Method",
+  "sendToWallet": "Send to Wallet",
+  "payFromSavingBalance": "Pay from your Saving balance",
+  "sendToCard": "Send to Card",
+  "withdrawToVirtualCard": "withdraw to your virtual card",
+  "savingsBalanceLabel": "SAVINGS BALANCE",
+  "cardPin": "Card PIN",
+  "withdrawalSuccessFromSavings": "You have successfully withdrawn {amount} from your savings.",
+  "@withdrawalSuccessFromSavings": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalName": "Goal Name",
+  "targetAmount": "Target Amount",
+  "deadline": "Deadline",
+  "selectIcon": "Select Icon",
+  "selectColor": "Select Color",
+  "create": "Create",
+  "creating": "Creating...",
+  "goalCreated": "Goal Created!",
+  "goalCreatedSuccess": "Your new goal '{title}' with a target of {amount} has been set up successfully.",
+  "@goalCreatedSuccess": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "backToSavings": "Back to Savings",
+  "sendFromWallet": "Send from Wallet",
+  "payFromWalletBalance": "Pay from your wallet balance",
+  "sendFromCard": "Send from Card",
+  "payFromVirtualCard": "Pay from your Virtual Card",
+  "paused": "Paused",
+  "targetWithColon": "Target: ",
+  "addFunds": "Add Funds",
+  "edit": "Edit",
+  "resume": "Resume",
+  "pause": "Pause",
+  "delete": "Delete",
+  "amountToAdd": "Amount to add",
+  "fundsAddedSuccess": "Successfully added funds!",
+  "deleteGoal": "Delete Goal?",
+  "deleteGoalConfirm": "Are you sure? This action cannot be undone.",
+  "editGoal": "Edit Goal",
+  "save": "Save",
+  "pinChangedSuccess": "Your PIN has been updated successfully. Use your new PIN for future transactions.",
+  "done": "Done",
+  "changePin": "Change PIN",
+  "createNewPin": "Create New PIN",
+  "newPinDescription": "Enter your current PIN and choose a new 4-digit security PIN.",
+  "currentPin": "Current PIN",
+  "pleaseEnterCurrentPin": "Please enter current PIN",
+  "pinMustBe4Digits": "PIN must be 4 digits",
+  "newPin": "New PIN",
+  "pleaseEnterNewPin": "Please enter new PIN",
+  "cannotBeSameAsOld": "Cannot be same as old PIN",
+  "confirmNewPin": "Confirm New PIN",
+  "pleaseConfirmNewPin": "Please confirm new PIN",
+  "pinsDoNotMatch": "PINs do not match",
+  "saveChanges": "Save Changes",
+  "termsConditions": "Terms & Conditions",
+  "lastUpdated": "Last Updated",
+  "acceptanceOfTerms": "1. Acceptance of Terms",
+  "acceptanceOfTermsDesc": "By accessing or using MurtaaxPay, you agree to be bound by these terms. If you do not agree to all of these terms, do not use our services.",
+  "userVerificationL10n": "2. User Verification",
+  "userVerificationDescL10n": "To comply with financial regulations, we require identity verification for certain transaction limits. You agree to provide accurate information.",
+  "transactionFees": "3. Transaction Fees",
+  "transactionFeesDesc": "Fees are clearly displayed before every transaction. By confirming a transaction, you agree to pay the specified fees.",
+  "privacyPolicyL10n": "4. Privacy Policy",
+  "privacyPolicyDescL10n": "Your privacy is important to us. We use bank-grade encryption to protect your data. Please review our full privacy policy for more details.",
+  "limitationOfLiability": "5. Limitation of Liability",
+  "limitationOfLiabilityDesc": "MurtaaxPay is not liable for indirect, incidental, or consequential damages resulting from the use or inability to use the service.",
+  "allRightsReserved": "All Rights Reserved",
+  "oct2023": "Oct 2023",
+  "copyrightMurtaaxPay": "© 2026 MurtaaxPay.",
+  "hagbad": "Hagbad",
+  "myGroups": "My Groups",
+  "createHagbad": "Create Hagbad",
+  "totalSavingsPot": "Total Savings Pot",
+  "activeGroups": "Active Groups",
+  "nextPayout": "Next Payout",
+  "days": "Days",
+  "nextInLine": "Next in line",
+  "rotation": "Rotation",
+  "groupChat": "Group Chat",
+  "payContribution": "Pay Contribution",
+  "createNewHagbad": "Create New Hagbad",
+  "groupName": "Group Name",
+  "contributionAmount": "Contribution Amount",
+  "frequency": "Frequency",
+  "addMembers": "Add Members (Phone or Name)",
+  "createGroup": "Create Group",
+  "received": "Received",
+  "currentBalance": "Current Balance",
+  "potWadar": "Total Fund",
+  "daily": "Daily",
+  "weekly": "Weekly",
+  "tenDays": "10 Days",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "hagbadCreatedSuccess": "Hagbad Group Created Successfully!",
+  "drawing": "Drawing...",
+  "qoriTuur": "Qori-tuur",
+  "noHagbadGroups": "No groups yet. Create one to start saving!",
+  "progress": "Progress",
+  "members": "Members",
+  "you": "You",
+  "youAdmin": "You (Admin)",
+  "payoutAfterFee": "Payout after {fee} fee",
+  "@payoutAfterFee": {
+    "placeholders": {
+      "fee": {
+        "type": "String"
+      }
+    }
+  },
+  "receiptDownloaded": "Receipt downloaded to your gallery",
+  "yourTurnInDays": "Your turn in {days} days",
+  "@yourTurnInDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "dayWithNumber": "Day {number}",
+  "@dayWithNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "weekWithNumber": "Week {number}",
+  "@weekWithNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "monthWithNumber": "Month {number}",
+  "@monthWithNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "turnWithNumber": "Turn {number}",
+  "@turnWithNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "cannotSwapReceived": "Cannot swap with members who already received their payout.",
+  "swapTurn": "Swap Turn",
+  "swapWith": "Swap with {name}",
+  "@swapWith": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trustedMember": "Trusted Member",
+  "yourTurnToday": "It's your turn today!",
+  "yourTurnTomorrow": "Your turn is tomorrow!",
+  "serviceFee": "Service Fee",
+  "payoutMethod": "Payout Method",
+  "payoutReady": "Payout Ready",
+  "totalPot": "Total Fund",
+  "hagbadPot": "Hagbad Pot (Escrow)",
+  "amountToReceive": "Amount to Receive",
+  "claimPayout": "Claim Payout",
+  "guarantor": "Guarantor (Uul)",
+  "guarantorNameLabel": "Guarantor Name",
+  "guarantorIdLabel": "Guarantor Wallet ID",
+  "requireGuarantor": "This member requires a guarantor (Uul)",
+  "guarantorDetails": "Guarantor Details",
+  "debtor": "Debtor",
+  "remaining": "Remaining",
+  "hagbadTerms": "6. Hagbad Social Trust",
+  "hagbadTermsDesc": "Hagbad is based on mutual trust (Aaminaad). By joining, you agree to make timely contributions. If a member fails to pay, the Guarantor (Uul) is responsible for covering the debt.",
+  "iAgreeToHagbadTerms": "I agree to the Hagbad Social Trust terms and conditions.",
+  "hagbadOath": "Religious Oath (Dhaar)",
+  "hagbadOathDesc": "Do you swear by Allah that you will be honest and fulfill your contributions on time?",
+  "iConfirmOath": "I swear by Allah to be honest.",
+  "remindAll": "Remind All",
+  "remindMember": "Remind Member",
+  "reminderSent": "Reminder sent to {name}",
+  "allRemindersSent": "Reminders sent to all pending members",
+  "replaceMember": "Replace Member",
+  "substituteMember": "Substitute Member",
+  "enterNewMemberDetails": "Enter new member details",
+  "memberReplaced": "Member has been successfully replaced",
+  "cannotReplaceReceived": "Cannot replace a member who has already received a payout",
+  "paymentHistory": "Payment History",
+  "paidOn": "Paid on {date}",
+  "noPaymentsYet": "No payments recorded yet",
+  "lateFee": "Late Fee",
+  "applyPenalty": "Apply Penalty",
+  "penaltyAmount": "Penalty Amount ($)",
+  "penaltyApplied": "Penalty of ${amount} applied to {name}",
+  "invitationReceived": "Invitation Received",
+  "invitationDesc": "{admin} invited you to join a ${amount} Hagbad group.",
+  "@invitationDesc": {
+    "placeholders": {
+      "admin": { "type": "String" },
+      "amount": { "type": "String" }
+    }
+  },
+  "acceptInvite": "Accept Invitation",
+  "religiousOathRequired": "Religious Oath Required",
+  "oathRequirementDesc": "To join the group officially, you must sign the religious oath (Dhaar).",
+  "signOathNow": "Sign Oath Now",
+  "apr2026": "Apr 2026"
 }

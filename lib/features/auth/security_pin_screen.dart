@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_state.dart';
 import '../../core/app_auth_helper.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -53,6 +53,7 @@ class _SecurityPinScreenState extends State<SecurityPinScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -70,12 +71,12 @@ class _SecurityPinScreenState extends State<SecurityPinScreen> {
                   const SizedBox(height: 24),
                   Text(
                     widget.isConfirming 
-                      ? AppState().translate("Confirm your PIN", "Hubi PIN-kaaga", ar: "تأكيد رقم PIN الخاص بك", de: "Bestätigen Sie Ihre PIN") 
-                      : AppState().translate("Enter Security PIN", "Gali PIN-ka Aminiga", ar: "أدخل رقم PIN الخاص بالأمان", de: "Sicherheits-PIN eingeben"),
+                      ? l10n.confirmYourPin 
+                      : l10n.enterSecurityPin,
                     style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, fontSize: 22 * context.fontSizeFactor),
                   ),
                   const SizedBox(height: 12),
-                  Text(AppState().translate("To keep your money safe", "Si lacagtaada loogu hayo si ammaan ah", ar: "للحفاظ على أموالك آمنة", de: "Um Ihr Geld sicher zu halten"), style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+                  Text(l10n.toKeepYourMoneySafe, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
                   const SizedBox(height: 60),
                   
                   // PIN Dots
@@ -103,7 +104,7 @@ class _SecurityPinScreenState extends State<SecurityPinScreen> {
                       child: TextButton.icon(
                         onPressed: _authenticate, // Hadda halkan ayuu ka bilaabanayaa marka la taabto
                         icon: Icon(Icons.fingerprint_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
-                        label: Text(AppState().translate("Use FaceID / Fingerprint", "Isticmaal FaceID / Faraha", ar: "استخدم FaceID / بصمة الإصبع", de: "FaceID / Fingerabdruck verwenden"), style: TextStyle(color: AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                        label: Text(l10n.useFaceIdFingerprint, style: TextStyle(color: AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                       ),
                     ),
                   const SizedBox(height: 20),

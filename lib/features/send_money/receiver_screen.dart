@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../l10n/app_localizations.dart';
-import 'review_screen.dart';
 import 'payment_screen.dart';
 
 class ReceiverScreen extends StatefulWidget {
@@ -19,39 +17,46 @@ class ReceiverScreen extends StatefulWidget {
 
 class _ReceiverScreenState extends State<ReceiverScreen> {
   final TextEditingController _idController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-  String _verifiedName = "";
-  bool _isSearching = false;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _bankNameController = TextEditingController();
+  final FocusNode _idFocus = FocusNode();
+  final FocusNode _nameFocus = FocusNode();
+  final FocusNode _bankNameFocus = FocusNode();
+  
+  String _selectedBank = "IBS Bank";
+  final List<Map<String, String>> _banks = [
+    {"name": "IBS Bank", "image": "assets/images/bank.png"},
+    {"name": "Premier Bank", "image": "assets/images/bank.png"},
+    {"name": "Salaam Bank", "image": "assets/images/bank.png"},
+    {"name": "Amal Bank", "image": "assets/images/bank.png"},
+    {"name": "Dahabshil Bank", "image": "assets/images/bank.png"},
+    {"name": "MyBank", "image": "assets/images/bank.png"},
+    {"name": "Amana Bank", "image": "assets/images/bank.png"},
+  ];
 
-  void _lookupName(String value) {
-    if (value.length >= 7) {
-      setState(() => _isSearching = true);
-      Future.delayed(const Duration(milliseconds: 800), () {
-        if (mounted) {
-          setState(() {
-            _isSearching = false;
-            _verifiedName = value.startsWith("61") || value.startsWith("061") ? "Mohamed Hassan Ali" : "Hassan Mohamed Abdi";
-          });
-        }
-      });
-    } else {
-      setState(() {
-        _verifiedName = "";
-        _isSearching = false;
-      });
-    }
+  @override
+  void dispose() {
+    _idController.dispose();
+    _nameController.dispose();
+    _bankNameController.dispose();
+    _idFocus.dispose();
+    _nameFocus.dispose();
+    _bankNameFocus.dispose();
+    super.dispose();
   }
 
   void _handleContinue(AppLocalizations l10n) {
     HapticFeedback.mediumImpact();
+    String bankInfo = _selectedBank == "Add Bank" ? _bankNameController.text : _selectedBank;
+    String finalMethod = widget.method == "Bank Transfer" ? "${widget.method} ($bankInfo)" : widget.method;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PaymentScreen(
           amount: widget.amount,
-          receiverName: _verifiedName.isNotEmpty ? _verifiedName : "Receiver",
+          receiverName: _nameController.text,
           receiverPhone: _idController.text,
-          payoutMethod: widget.method,
+          payoutMethod: finalMethod,
           currencyCode: widget.currencyCode,
         ),
       ),
@@ -84,157 +89,173 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // --- HEADER BACKGROUND ---
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // --- HEADER BACKGROUND ---
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
+                  borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                ),
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Center(
+                  child: MaxWidthBox(
+                    maxWidth: 500,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: [
+                          _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
+                          _buildStepLine(context, true, isHeader: true),
+                          _buildStepIndicator(context, 2, l10n.stepReceiver, true, false, isHeader: true),
+                          _buildStepLine(context, false, isHeader: true),
+                          _buildStepIndicator(context, 3, l10n.stepPayment, false, false, isHeader: true),
+                          _buildStepLine(context, false, isHeader: true),
+                          _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Center(
+              Center(
                 child: MaxWidthBox(
                   maxWidth: 500,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                        _buildStepLine(context, true, isHeader: true),
-                        _buildStepIndicator(context, 2, l10n.stepReceiver, true, false, isHeader: true),
-                        _buildStepLine(context, false, isHeader: true),
-                        _buildStepIndicator(context, 3, l10n.stepPayment, false, false, isHeader: true),
-                        _buildStepLine(context, false, isHeader: true),
-                        _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                        const SizedBox(height: 16),
+                        if (widget.method == "Bank Transfer") ...[
+                          Text(l10n.selectBank, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                          const SizedBox(height: 12),
+                          _buildBankDropdown(theme, l10n),
+
+                          if (_selectedBank == "Add Bank") ...[
+                            const SizedBox(height: 20),
+                            Text(l10n.bankName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                            const SizedBox(height: 12),
+                            _buildTextField(
+                              controller: _bankNameController,
+                              focusNode: _bankNameFocus,
+                              hint: l10n.enterBankName,
+                              icon: Icons.account_balance_rounded,
+                              type: TextInputType.text,
+                              theme: theme,
+                            ),
+                          ],
+                          const SizedBox(height: 20),
+                        ],
+                        
+                        Text(
+                          widget.method == "Bank Transfer" ? l10n.accountNumber : l10n.enterReceiverPhone,
+                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+                        ),
+                        const SizedBox(height: 12),
+                        
+                        _buildTextField(
+                          controller: _idController,
+                          focusNode: _idFocus,
+                          hint: widget.method == "Bank Transfer" ? l10n.accountNumber : l10n.phoneNumber,
+                          icon: widget.method == "Bank Transfer" ? Icons.account_balance_wallet_rounded : Icons.phone_android_rounded,
+                          type: TextInputType.number,
+                          theme: theme,
+                        ),
+
+                        const SizedBox(height: 20),
+                        Text(l10n.receiver, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                        const SizedBox(height: 12),
+                        _buildTextField(
+                          controller: _nameController,
+                          focusNode: _nameFocus,
+                          hint: l10n.receiver,
+                          icon: Icons.person_rounded,
+                          type: TextInputType.name,
+                          theme: theme,
+                        ),
+
+                        const SizedBox(height: 24),
+                        Text(l10n.recent, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17)),
+                        const SizedBox(height: 10),
+                        _buildRecentItem(theme, "Mohamed Ali", "615 123 456"),
+                        _buildRecentItem(theme, "Ahmed Hersi", "634 987 654"),
+                        
+                        const SizedBox(height: 30),
+                        
+                        // Action Button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: (_idController.text.isNotEmpty && _nameController.text.isNotEmpty && (widget.method != "Bank Transfer" || (_selectedBank != "Add Bank" || _bankNameController.text.isNotEmpty)))
+                                ? () => _handleContinue(l10n) : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.secondary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              elevation: 4,
+                              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
+                              disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
+                            ),
+                            child: Text(
+                              l10n.continueToReview,
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
                       ],
                     ),
                   ),
                 ),
               ),
-            ),
-            Center(
-              child: MaxWidthBox(
-                maxWidth: 500,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.enterReceiverPhone,
-                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
-                      ),
-                      const SizedBox(height: 12),
-                      
-                      // Input Field (High Visibility)
-                      Container(
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: _focusNode.hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1),
-                            width: 2,
-                          ),
-                          boxShadow: _focusNode.hasFocus 
-                            ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10)] 
-                            : null,
-                        ),
-                        child: TextField(
-                          controller: _idController,
-                          focusNode: _focusNode,
-                          onChanged: _lookupName,
-                          keyboardType: TextInputType.phone,
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 1),
-                          decoration: InputDecoration(
-                            hintText: l10n.phoneNumber,
-                            prefixIcon: Icon(Icons.phone_android_rounded, color: theme.colorScheme.secondary, size: 24),
-                            suffixIcon: _isSearching 
-                              ? Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child: SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(strokeWidth: 2.5, color: theme.colorScheme.secondary),
-                                  ),
-                                )
-                              : const Icon(Icons.search_rounded),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-                      
-                      if (_verifiedName.isNotEmpty)
-                        FadeIn(
-                          child: Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.secondary.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.2), width: 1.5),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.verified_user_rounded, color: theme.colorScheme.secondary, size: 24),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(l10n.receiver, style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.w900, fontSize: 11)),
-                                      Text(_verifiedName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                      const SizedBox(height: 24),
-                      Text(l10n.recent, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17)),
-                      const SizedBox(height: 10),
-                      _buildRecentItem(theme, "Mohamed Ali", "615 123 456"),
-                      _buildRecentItem(theme, "Ahmed Hersi", "634 987 654"),
-                      
-                      const SizedBox(height: 30),
-                      
-                      // Action Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: _idController.text.isNotEmpty && !_isSearching ? () => _handleContinue(l10n) : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.secondary,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            elevation: 4,
-                            shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
-                            disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
-                          ),
-                          child: Text(
-                            l10n.continueToReview,
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBankDropdown(ThemeData theme, AppLocalizations l10n) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: theme.dividerColor.withValues(alpha: 0.1),
+          width: 2,
+        ),
+      ),
+      child: DropdownButtonFormField<String>(
+        initialValue: _selectedBank,
+        dropdownColor: theme.colorScheme.surface,
+        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w900, fontSize: 16),
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.account_balance_rounded, color: theme.colorScheme.secondary),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        ),
+        icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.secondary),
+        items: [
+          ..._banks.map((bank) => DropdownMenuItem(
+            value: bank["name"],
+            child: Text(bank["name"]!),
+          )),
+          DropdownMenuItem(
+            value: "Add Bank",
+            child: Text(l10n.addBank),
+          ),
+        ],
+        onChanged: (value) {
+          if (value != null) {
+            setState(() => _selectedBank = value);
+          }
+        },
       ),
     );
   }
@@ -273,6 +294,46 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
     return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
   }
 
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required String hint,
+    required IconData icon,
+    required TextInputType type,
+    required ThemeData theme,
+  }) {
+    return ListenableBuilder(
+      listenable: focusNode,
+      builder: (context, child) {
+        bool hasFocus = focusNode.hasFocus;
+        return Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1),
+              width: 2,
+            ),
+            boxShadow: hasFocus ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10)] : null,
+          ),
+          child: TextField(
+            controller: controller,
+            focusNode: focusNode,
+            keyboardType: type,
+            onChanged: (v) => setState(() {}),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+            decoration: InputDecoration(
+              hintText: hint,
+              prefixIcon: Icon(icon, color: theme.colorScheme.secondary, size: 24),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildRecentItem(ThemeData theme, String name, String detail) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -289,7 +350,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
         onTap: () {
           setState(() {
             _idController.text = detail;
-            _lookupName(_idController.text);
+            _nameController.text = name;
           });
         },
       ),

@@ -3,11 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+
 import '../../core/app_colors.dart';
+
 import '../../core/widgets/adaptive_icon.dart';
+import 'dart:ui' as ui;
+import '../../core/responsive_utils.dart';
+import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'wallet_card_deposit_screen.dart';
 
 class DepositCardScreen extends StatefulWidget {
   final String amount;
@@ -26,22 +31,29 @@ class DepositCardScreen extends StatefulWidget {
 }
 
 class _DepositCardScreenState extends State<DepositCardScreen> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  late final TextEditingController _amountController;
+  final TextEditingController _amountController = TextEditingController();
+  final double _cardBalance = 850.50; // Mock card balance
   final TextEditingController _pinController = TextEditingController();
   final TextEditingController _accountNumberController = TextEditingController();
   final TextEditingController _accountNameController = TextEditingController();
-  final TextEditingController _cardNumberController = TextEditingController();
-  final TextEditingController _cardHolderController = TextEditingController();
-  final TextEditingController _expiryController = TextEditingController();
-  final TextEditingController _cvvController = TextEditingController();
+  final TextEditingController _bankNameController = TextEditingController();
 
-  String? _selectedMethod;
+  String _selectedBank = "IBS Bank";
+
+  final List<Map<String, String>> _banks = [
+    {"name": "IBS Bank", "image": "assets/images/bank.png"},
+    {"name": "Premier Bank", "image": "assets/images/bank.png"},
+    {"name": "Salaam Bank", "image": "assets/images/bank.png"},
+    {"name": "Amal Bank", "image": "assets/images/bank.png"},
+    {"name": "Dahabshil Bank", "image": "assets/images/bank.png"},
+    {"name": "MyBank", "image": "assets/images/bank.png"},
+    {"name": "Amana Bank", "image": "assets/images/bank.png"},
+  ];
 
   @override
   void initState() {
     super.initState();
-    _amountController = TextEditingController(text: widget.amount == "0" ? "" : widget.amount);
+    _amountController.text = widget.amount == "0" ? "" : widget.amount;
   }
 
   @override
@@ -50,143 +62,173 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
     _pinController.dispose();
     _accountNumberController.dispose();
     _accountNameController.dispose();
-    _cardNumberController.dispose();
-    _cardHolderController.dispose();
-    _expiryController.dispose();
-    _cvvController.dispose();
+    _bankNameController.dispose();
     super.dispose();
   }
 
   final List<Map<String, dynamic>> _methods = [
     {
       "id": "wallet",
-      "title": "TopUp from Wallet",
+      "title": "topUpFromWallet",
       "icon": Icons.account_balance_wallet_rounded,
       "color": AppColors.accentTeal,
     },
     {
       "id": "bank",
-      "title": "Bank Transfer",
+      "title": "bankTransfer",
       "icon": Icons.account_balance_rounded,
       "color": Colors.blue,
     },
     {
       "id": "card",
-      "title": "Visa / MasterCard",
+      "title": "visaMastercard",
       "icon": FontAwesomeIcons.ccVisa,
       "color": const Color(0xFF1A1F71),
     },
   ];
 
+  String _getMethodTitle(String id, AppLocalizations l10n) {
+    switch (id) {
+      case "wallet":
+        return l10n.topUpFromWallet;
+      case "bank":
+        return l10n.bankTransfer;
+      case "card":
+        return l10n.visaMastercard;
+      default:
+        return "";
+    }
+  }
+
   void _showSuccess(BuildContext context, AppLocalizations l10n) {
-    _audioPlayer.play(AssetSource('sounds/success.mp3'));
-    final theme = Theme.of(context);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          body: Center(
-            child: MaxWidthBox(
-              maxWidth: 500,
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FadeInDown(
-                      child: Container(
-                        height: 110, width: 110,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF11998E), Color(0xFF38EF7D)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          shape: BoxShape.circle,
-                          boxShadow: [BoxShadow(color: const Color(0xFF11998E).withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 10))],
+        builder: (context) => SuccessScreen(
+          title: l10n.cardTopUpSuccessful,
+          message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0)),
+          buttonText: l10n.backToHome,
+        ),
+      ),
+    );
+  }
+
+  void _processTransaction(BuildContext context, AppLocalizations l10n) async {
+    final theme = Theme.of(context);
+    final localContext = context;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (ctx) => BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Center(
+          child: ZoomIn(
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              width: 220 * context.fontSizeFactor,
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 65 * context.fontSizeFactor,
+                        height: 65 * context.fontSizeFactor,
+                        child: const CircularProgressIndicator(
+                          color: AppColors.accentTeal,
+                          strokeWidth: 3,
                         ),
-                        child: const Icon(Icons.check_rounded, color: Colors.white, size: 65),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                    Text(l10n.depositSuccessful, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
-                    const SizedBox(height: 12),
-                    Text(
-                      l10n.depositSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0)),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.grey, fontSize: 16, height: 1.5),
-                    ),
-                    const SizedBox(height: 48),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentTeal,
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 40),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      Icon(
+                        Icons.bolt_rounded,
+                        color: AppColors.accentTeal,
+                        size: 32 * context.fontSizeFactor,
                       ),
-                      child: Text(l10n.backToHome, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(
+                    l10n.processing, 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18 * context.fontSizeFactor,
+                      color: theme.textTheme.bodyLarge?.color,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                  SizedBox(height: 8 * context.fontSizeFactor),
+                  Text(
+                    l10n.justAMoment,
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13 * context.fontSizeFactor,
+                      color: AppColors.grey,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                ],
               ),
             ),
           ),
         ),
       ),
     );
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (!localContext.mounted) return;
+    Navigator.of(localContext, rootNavigator: true).pop();
+    _showSuccess(localContext, l10n);
   }
 
   void _showWalletPinDialog() {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
+    
+    _pinController.clear();
+
     showDialog(
       context: context,
+      barrierDismissible: true,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: const Text("Wallet PIN", style: TextStyle(fontWeight: FontWeight.w900)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
+          title: Row(
             children: [
-              const Text("Enter your 4-digit wallet PIN to authorize top-up.", textAlign: TextAlign.center),
-              const SizedBox(height: 24),
-              TextField(
-                controller: _pinController,
-                keyboardType: TextInputType.number,
-                obscureText: true,
-                maxLength: 4,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 15),
-                onChanged: (_) => setDialogState(() {}),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: theme.colorScheme.surface,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                  counterText: "",
-                ),
-              ),
+              Icon(Icons.account_balance_wallet_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
+              SizedBox(width: 12 * context.fontSizeFactor),
+              Text(l10n.topUpFromWallet, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
             ],
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey)),
-            ),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey))),
             ElevatedButton(
               onPressed: _pinController.text.length < 4
                   ? null
                   : () {
+                      final localContext = this.context;
                       Navigator.pop(context);
-                      _showSuccess(context, l10n);
+                      _processTransaction(localContext, l10n);
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.accentTeal,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text("Confirm", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -197,56 +239,67 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
   void _showBankTransferDialog() {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    String? selectedBank;
-    final List<String> banks = ["IBS Bank", "Premier Bank", "Salaam Bank", "Amal Bank", "Dahabshil Bank"];
     
+    _accountNumberController.clear();
+    _accountNameController.clear();
+    _bankNameController.clear();
+    _selectedBank = _banks[0]["name"]!; // Reset to first bank
+
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
+      builder: (dialogContext) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: const Text("Bank Transfer", style: TextStyle(fontWeight: FontWeight.w900)),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: "Select Bank",
-                    labelStyle: const TextStyle(color: AppColors.grey),
-                    filled: true,
-                    fillColor: theme.colorScheme.surface,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                  ),
-                  items: banks.map((bank) => DropdownMenuItem(value: bank, child: Text(bank))).toList(),
-                  onChanged: (val) => setDialogState(() => selectedBank = val),
-                ),
-                const SizedBox(height: 16),
-                _dialogInputField(context, "Account Number", Icons.numbers, _accountNumberController, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                const SizedBox(height: 16),
-                _dialogInputField(context, "Account Name", Icons.person, _accountNameController, onChanged: (_) => setDialogState(() {})),
-              ],
+          contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+          title: Row(
+            children: [
+              Icon(Icons.account_balance_rounded, color: Colors.blue, size: 24 * context.fontSizeFactor),
+              SizedBox(width: 12 * context.fontSizeFactor),
+              Text(l10n.bankTransfer, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.selectBank, style: TextStyle(fontSize: 13 * context.fontSizeFactor, color: AppColors.grey, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  
+                  _buildBankDropdown(theme, l10n, setDialogState),
+
+                  if (_selectedBank == "Add Bank") ...[
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    _dialogInputField(context, l10n.bankName, Icons.account_balance_rounded, _bankNameController, onChanged: (_) => setDialogState(() {})),
+                  ],
+
+                  SizedBox(height: 20 * context.fontSizeFactor),
+                  _dialogInputField(context, l10n.accountNumber, Icons.numbers_rounded, _accountNumberController, isNumber: true, onChanged: (_) => setDialogState(() {})),
+                  SizedBox(height: 16 * context.fontSizeFactor),
+                  _dialogInputField(context, l10n.accountName, Icons.person_rounded, _accountNameController, onChanged: (_) => setDialogState(() {})),
+                ],
+              ),
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey)),
-            ),
+            TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey))),
             ElevatedButton(
-              onPressed: (selectedBank == null || _accountNumberController.text.isEmpty || _accountNameController.text.isEmpty)
+              onPressed: (_accountNumberController.text.isEmpty || _accountNameController.text.isEmpty || (_selectedBank == "Add Bank" && _bankNameController.text.isEmpty))
                   ? null
                   : () {
-                      Navigator.pop(context);
-                      _showSuccess(context, l10n);
+                      final localContext = this.context;
+                      Navigator.pop(dialogContext);
+                      _processTransaction(localContext, l10n);
                     },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                backgroundColor: theme.colorScheme.secondary,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                elevation: 0,
               ),
-              child: const Text("Submit", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(l10n.submit, style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -254,90 +307,41 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
     );
   }
 
-  void _showCardFormDialog() {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: const Text("Card Details", style: TextStyle(fontWeight: FontWeight.w900)),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _dialogInputField(
-                  context,
-                  l10n.cardNumber,
-                  Icons.credit_card,
-                  _cardNumberController,
-                  isNumber: true,
-                  formatters: [CardNumberFormatter()],
-                  onChanged: (_) => setDialogState(() {}),
-                ),
-                const SizedBox(height: 16),
-                _dialogInputField(
-                  context,
-                  l10n.cardholderName,
-                  Icons.person,
-                  _cardHolderController,
-                  onChanged: (_) => setDialogState(() {}),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _dialogInputField(
-                        context,
-                        "MM/YY",
-                        Icons.calendar_today,
-                        _expiryController,
-                        isNumber: true,
-                        formatters: [ExpiryDateFormatter()],
-                        onChanged: (_) => setDialogState(() {}),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _dialogInputField(
-                        context,
-                        "CVV",
-                        Icons.lock,
-                        _cvvController,
-                        isNumber: true,
-                        isObscure: true,
-                        maxLength: 3,
-                        onChanged: (_) => setDialogState(() {}),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey)),
-            ),
-            ElevatedButton(
-              onPressed: (_cardNumberController.text.length < 19 || _cardHolderController.text.isEmpty || _expiryController.text.length < 5 || _cvvController.text.length < 3)
-                  ? null
-                  : () {
-                      Navigator.pop(context);
-                      _showSuccess(context, l10n);
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1A1F71),
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: const Text("Pay Now", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            ),
-          ],
+  Widget _buildBankDropdown(ThemeData theme, AppLocalizations l10n, StateSetter setDialogState) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: theme.dividerColor.withValues(alpha: 0.1),
+          width: 2,
         ),
+      ),
+      child: DropdownButtonFormField<String>(
+        initialValue: _selectedBank,
+        dropdownColor: theme.colorScheme.surface,
+        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.account_balance_rounded, color: Colors.blue),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        ),
+        icon: Icon(Icons.keyboard_arrow_down_rounded, color: Colors.blue),
+        items: [
+          ..._banks.map((bank) => DropdownMenuItem(
+            value: bank["name"],
+            child: Text(bank["name"]!),
+          )),
+          DropdownMenuItem(
+            value: "Add Bank",
+            child: Text(l10n.addBank),
+          ),
+        ],
+        onChanged: (value) {
+          if (value != null) {
+            setDialogState(() => _selectedBank = value);
+          }
+        },
       ),
     );
   }
@@ -351,16 +355,16 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       inputFormatters: formatters,
       maxLength: maxLength,
-      style: const TextStyle(fontWeight: FontWeight.bold),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppColors.grey, fontSize: 13),
-        prefixIcon: Icon(icon, color: AppColors.accentTeal, size: 20),
+        labelStyle: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor),
+        prefixIcon: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
         filled: true,
         fillColor: theme.colorScheme.surface,
         counterText: "",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 14 * context.fontSizeFactor),
       ),
     );
   }
@@ -376,189 +380,193 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
         backgroundColor: AppColors.accentTeal,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24 * context.fontSizeFactor),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "Virtual Card Top-Up",
-          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.white),
+        title: Text(
+          l10n.virtualCardTopUp,
+          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20 * context.fontSizeFactor, color: Colors.white),
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          FadeInDown(
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: AppColors.accentTeal,
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40), bottomRight: Radius.circular(40)),
-              ),
-              padding: const EdgeInsets.only(bottom: 40, left: 24, right: 24),
-              child: Column(
-                children: [
-                  Text(
-                    l10n.enterAmountToDeposit,
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14, fontWeight: FontWeight.w500),
+      body: Center(
+        child: MaxWidthBox(
+          maxWidth: 800,
+          child: ListView(
+            children: [
+              FadeInDown(
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: AppColors.accentTeal,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40), bottomRight: Radius.circular(40)),
                   ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text("\$", style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
-                        const SizedBox(width: 12),
-                        IntrinsicWidth(
-                          child: TextField(
-                            controller: _amountController,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
-                            style: const TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold, letterSpacing: -1),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "0.00",
-                              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
-                            ),
-                            onChanged: (_) => setState(() {}),
-                          ),
+                  padding: EdgeInsets.only(bottom: 40 * context.fontSizeFactor, left: 24 * context.fontSizeFactor, right: 24 * context.fontSizeFactor),
+                  child: Column(
+                    children: [
+                      Text(
+                        l10n.currentCardBalance,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 11 * context.fontSizeFactor,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // Quick amounts
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [10, 20, 50, 100].map((amt) => GestureDetector(
-                        onTap: () => setState(() => _amountController.text = amt.toString()),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          margin: const EdgeInsets.symmetric(horizontal: 6),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: _amountController.text == amt.toString() ? Colors.white : Colors.white.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            "\$$amt",
-                            style: TextStyle(
-                              color: _amountController.text == amt.toString() ? AppColors.accentTeal : Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      ),
+                      SizedBox(height: 4 * context.fontSizeFactor),
+                      Text(
+                        NumberFormat.simpleCurrency(name: 'USD').format(_cardBalance),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28 * context.fontSizeFactor,
+                          fontWeight: FontWeight.w900,
                         ),
-                      )).toList(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              itemCount: _methods.length,
-              itemBuilder: (context, index) {
-                final method = _methods[index];
-                final isAmountValid = (double.tryParse(_amountController.text) ?? 0) > 0;
-                return FadeInUp(
-                  delay: Duration(milliseconds: index * 100),
-                  child: Opacity(
-                    opacity: isAmountValid ? 1.0 : 0.6,
-                    child: GestureDetector(
-                      onTap: isAmountValid ? () {
-                        if (method["id"] == "wallet") _showWalletPinDialog();
-                        if (method["id"] == "bank") _showBankTransferDialog();
-                        if (method["id"] == "card") _showCardFormDialog();
-                      } : null,
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 20),
-                        padding: const EdgeInsets.all(24),
+                      ),
+                      SizedBox(height: 24 * context.fontSizeFactor),
+                      Text(
+                        l10n.enterAmountToTopUp,
+                        style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 12 * context.fontSizeFactor),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
+                          color: Colors.white.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, 10))
-                          ],
-                          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                         ),
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: method["color"].withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: AdaptiveIcon(method["icon"], color: method["color"], size: 28),
-                            ),
-                            const SizedBox(width: 20),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    method["title"],
-                                    style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "Top up instantly via ${method["id"]}",
-                                    style: const TextStyle(color: AppColors.grey, fontSize: 12),
-                                  ),
-                                ],
+                            Text(r"$", style: TextStyle(color: Colors.white, fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                            SizedBox(width: 12 * context.fontSizeFactor),
+                            IntrinsicWidth(
+                              child: TextField(
+                                controller: _amountController,
+                                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
+                                style: TextStyle(color: Colors.white, fontSize: 40 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: -1),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "0.00",
+                                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                                ),
+                                onChanged: (_) => setState(() {}),
                               ),
                             ),
-                            Icon(Icons.arrow_forward_ios_rounded, size: 18, color: AppColors.grey.withValues(alpha: 0.5)),
                           ],
                         ),
                       ),
-                    ),
+                      SizedBox(height: 24 * context.fontSizeFactor),
+                      // Quick amounts
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [10, 20, 50, 100].map((amt) => GestureDetector(
+                            onTap: () => setState(() => _amountController.text = amt.toString()),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              margin: const EdgeInsets.symmetric(horizontal: 6),
+                              padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 10 * context.fontSizeFactor),
+                              decoration: BoxDecoration(
+                                color: _amountController.text == amt.toString() ? Colors.white : Colors.white.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Text(
+                                "\$$amt",
+                                style: TextStyle(
+                                  color: _amountController.text == amt.toString() ? AppColors.accentTeal : Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14 * context.fontSizeFactor,
+                                ),
+                              ),
+                            ),
+                          )).toList(),
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor, vertical: 32 * context.fontSizeFactor),
+                child: Column(
+                  children: List.generate(_methods.length, (index) {
+                    final method = _methods[index];
+                    final isAmountValid = (double.tryParse(_amountController.text) ?? 0) > 0;
+                    return FadeInUp(
+                      delay: Duration(milliseconds: index * 100),
+                      child: Opacity(
+                        opacity: isAmountValid ? 1.0 : 0.6,
+                        child: GestureDetector(
+                          onTap: isAmountValid ? () {
+                            if (method["id"] == "wallet") _showWalletPinDialog();
+                            if (method["id"] == "bank") _showBankTransferDialog();
+                            if (method["id"] == "card") {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WalletCardDepositScreen(
+                                    amount: _amountController.text,
+                                    currencyCode: widget.currencyCode,
+                                  ),
+                                ),
+                              );
+                            }
+                          } : null,
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
+                            padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surface,
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [
+                                BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, 10))
+                              ],
+                              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                                  decoration: BoxDecoration(
+                                    color: method["color"].withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: AdaptiveIcon(method["icon"], color: method["color"], size: 28 * context.fontSizeFactor),
+                                ),
+                                SizedBox(width: 20 * context.fontSizeFactor),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _getMethodTitle(method["id"], l10n),
+                                        style: TextStyle(fontWeight: FontWeight.w900, fontSize: 17 * context.fontSizeFactor),
+                                      ),
+                                      SizedBox(height: 4 * context.fontSizeFactor),
+                                      Text(
+                                        l10n.topUpInstantlyVia(method["id"] == "wallet" ? "Wallet" : method["id"] == "bank" ? "Bank" : "Card"),
+                                        style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(Icons.arrow_forward_ios_rounded, size: 18 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.5)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
-  }
-}
-
-class CardNumberFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    String digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
-    if (digitsOnly.length > 16) digitsOnly = digitsOnly.substring(0, 16);
-    StringBuffer buffer = StringBuffer();
-    for (int i = 0; i < digitsOnly.length; i++) {
-      buffer.write(digitsOnly[i]);
-      if ((i + 1) % 4 == 0 && i + 1 != digitsOnly.length) buffer.write(' ');
-    }
-    String formattedString = buffer.toString();
-    return TextEditingValue(text: formattedString, selection: TextSelection.collapsed(offset: formattedString.length));
-  }
-}
-
-class ExpiryDateFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    String digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
-    if (digitsOnly.length > 4) digitsOnly = digitsOnly.substring(0, 4);
-    StringBuffer buffer = StringBuffer();
-    for (int i = 0; i < digitsOnly.length; i++) {
-      buffer.write(digitsOnly[i]);
-      if (i == 1 && i + 1 != digitsOnly.length) buffer.write('/');
-    }
-    String formattedString = buffer.toString();
-    return TextEditingValue(text: formattedString, selection: TextSelection.collapsed(offset: formattedString.length));
   }
 }

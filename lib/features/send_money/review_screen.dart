@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
-import '../navigation/main_navigation.dart';
+import '../../core/responsive_utils.dart';
+import '../../core/widgets/success_screen.dart';
 
 class ReviewScreen extends StatelessWidget {
   final String amount;
@@ -192,7 +194,7 @@ class ReviewScreen extends StatelessWidget {
                               child: ElevatedButton(
                                 onPressed: () {
                                   HapticFeedback.heavyImpact();
-                                  _showSuccessDialog(context);
+                                  _processTransaction(context);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: theme.colorScheme.secondary,
@@ -221,95 +223,99 @@ class ReviewScreen extends StatelessWidget {
     );
   }
 
-  void _showSuccessDialog(BuildContext context) {
+  void _processTransaction(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final transactionId = "TXN${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}";
-
+    
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: theme.colorScheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 20),
-            Icon(Icons.check_circle_rounded, color: theme.colorScheme.secondary, size: 80),
-            const SizedBox(height: 20),
-            Text(l10n.transferSuccessful, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900)),
-            const SizedBox(height: 10),
-            Text(l10n.moneyOnWay, textAlign: TextAlign.center, style: theme.textTheme.bodyMedium),
-            const SizedBox(height: 16),
-            
-            // Transaction ID Section
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      useRootNavigator: true,
+      builder: (ctx) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Center(
+          child: ZoomIn(
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              width: 220 * context.fontSizeFactor,
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
               decoration: BoxDecoration(
-                color: theme.dividerColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  )
+                ],
               ),
-              child: Row(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("${l10n.refId}: ", style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold)),
-                  Text(transactionId, style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w900)),
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: () {
-                      Clipboard.setData(ClipboardData(text: transactionId));
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.idCopied), duration: const Duration(seconds: 1)));
-                    },
-                    child: Icon(Icons.copy_rounded, size: 14, color: theme.colorScheme.secondary),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 65 * context.fontSizeFactor,
+                        height: 65 * context.fontSizeFactor,
+                        child: const CircularProgressIndicator(
+                          color: AppColors.accentTeal,
+                          strokeWidth: 3,
+                        ),
+                      ),
+                      Icon(
+                        Icons.bolt_rounded,
+                        color: AppColors.accentTeal,
+                        size: 32 * context.fontSizeFactor,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(
+                    "Processing...", 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18 * context.fontSizeFactor,
+                      color: theme.textTheme.bodyLarge?.color,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                  SizedBox(height: 8 * context.fontSizeFactor),
+                  Text(
+                    l10n.moneyOnWay, 
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13 * context.fontSizeFactor,
+                      color: AppColors.grey,
+                      decoration: TextDecoration.none,
+                    )
                   ),
                 ],
               ),
             ),
-            
-            const SizedBox(height: 30),
+          ),
+        ),
+      ),
+    );
 
-            // Share Receipt Button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  // Share logic here
-                },
-                icon: const Icon(Icons.share_rounded, size: 20),
-                label: Text(l10n.shareReceipt, style: const TextStyle(fontWeight: FontWeight.w900)),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: theme.colorScheme.secondary,
-                  side: BorderSide(color: theme.colorScheme.secondary, width: 2),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                ),
-              ),
-            ),
-            
-            const SizedBox(height: 12),
+    await Future.delayed(const Duration(seconds: 1));
 
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const MainNavigation()),
-                    (route) => false,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.secondary,
-                  foregroundColor: theme.colorScheme.onSecondary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 0,
-                ),
-                child: Text(l10n.backToHome, style: const TextStyle(fontWeight: FontWeight.w900)),
-              ),
-            ),
-          ],
+    if (!context.mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
+    _showSuccess(context);
+  }
+
+  void _showSuccess(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SuccessScreen(
+          title: l10n.transferSuccessful,
+          message: l10n.moneyOnWay,
+          buttonText: l10n.backToHome,
         ),
       ),
     );

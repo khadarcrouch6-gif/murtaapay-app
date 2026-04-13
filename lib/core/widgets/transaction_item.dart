@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../app_colors.dart';
-import '../app_state.dart';
+import '../../l10n/app_localizations.dart';
 import '../widgets/adaptive_icon.dart';
 import 'shimmer_loading.dart';
 
@@ -30,7 +30,7 @@ class TransactionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final state = AppState();
+    final l10n = AppLocalizations.of(context)!;
     
     return GestureDetector(
       onTap: onTap,
@@ -112,12 +112,16 @@ class TransactionItem extends StatelessWidget {
                       amount,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: (isSent == false || amount.startsWith('+')) ? AppColors.accentTeal : null,
+                        color: (isSent == false || amount.startsWith('+')) 
+                            ? AppColors.accentTeal 
+                            : (isSent == true || amount.startsWith('-')) 
+                                ? Colors.red 
+                                : null,
                       ),
                     ),
                   ),
                   Text(
-                    status == "Success" ? state.translate("Success", "Guul", ar: "ناجح", de: "Erfolgreich") : state.translate("Pending", "Sugayn", ar: "قيد الانتظار", de: "Ausstehend"),
+                    status == "Success" ? l10n.success : l10n.pending,
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: status == "Success" ? AppColors.accentTeal : Colors.orange,
                       fontWeight: FontWeight.bold,

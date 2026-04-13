@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
@@ -5,9 +6,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
+import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
+import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
-import 'payment_success_screen.dart';
 import 'credit_card_screen.dart';
 
 class StripeScreen extends StatefulWidget {
@@ -33,9 +35,11 @@ class _StripeScreenState extends State<StripeScreen> {
   final TextEditingController _cardController = TextEditingController();
   final TextEditingController _expiryMmyyController = TextEditingController();
   final TextEditingController _cvcController = TextEditingController();
-  bool _isProcessing = false;
 
   void _processPayment() async {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    
     if (_emailController.text.isEmpty || _cardController.text.isEmpty || _expiryMmyyController.text.isEmpty || _cvcController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please complete the Stripe form")),
@@ -43,17 +47,93 @@ class _StripeScreenState extends State<StripeScreen> {
       return;
     }
 
-    setState(() => _isProcessing = true);
+    // Standardized transaction loader
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (ctx) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Center(
+          child: ZoomIn(
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              width: 220 * context.fontSizeFactor,
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 65 * context.fontSizeFactor,
+                        height: 65 * context.fontSizeFactor,
+                        child: const CircularProgressIndicator(
+                          color: AppColors.accentTeal,
+                          strokeWidth: 3,
+                        ),
+                      ),
+                      Icon(
+                        Icons.bolt_rounded,
+                        color: AppColors.accentTeal,
+                        size: 32 * context.fontSizeFactor,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(
+                    "Processing...", 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18 * context.fontSizeFactor,
+                      color: theme.textTheme.bodyLarge?.color,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                  SizedBox(height: 8 * context.fontSizeFactor),
+                  Text(
+                    l10n.justAMoment, 
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13 * context.fontSizeFactor,
+                      color: AppColors.grey,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
     await Future.delayed(const Duration(seconds: 2));
 
     if (mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => PaymentSuccessScreen(
-            amount: widget.amount,
-            receiverName: widget.receiverName,
-            method: "Stripe",
-            currencyCode: widget.currencyCode,
+          builder: (context) => SuccessScreen(
+            title: l10n.transferSuccessful,
+            message: l10n.transferSentMessage(
+              NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0),
+              widget.receiverName,
+            ),
+            buttonText: l10n.backToHome,
           ),
         ),
       );
@@ -64,6 +144,7 @@ class _StripeScreenState extends State<StripeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final scale = context.fontSizeFactor;
     const Color stripeColor = Color(0xFF635BFF);
     
     return Scaffold(
@@ -72,13 +153,13 @@ class _StripeScreenState extends State<StripeScreen> {
         backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24 * scale),
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AdaptiveIcon(FontAwesomeIcons.stripe, color: Colors.white, size: 48),
+            AdaptiveIcon(FontAwesomeIcons.stripe, color: Colors.white, size: 48 * scale),
           ],
         ),
         centerTitle: true,
@@ -92,12 +173,12 @@ class _StripeScreenState extends State<StripeScreen> {
               color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
               borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
             ),
-            padding: const EdgeInsets.only(bottom: 20),
+            padding: EdgeInsets.only(bottom: 20 * scale),
             child: Center(
               child: MaxWidthBox(
-                maxWidth: 500,
+                maxWidth: 800,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20 * scale),
                   child: Row(
                     children: [
                       _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
@@ -117,9 +198,9 @@ class _StripeScreenState extends State<StripeScreen> {
           Expanded(
             child: Center(
               child: MaxWidthBox(
-                maxWidth: 500,
+                maxWidth: 800,
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: EdgeInsets.all(24.0 * scale),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -127,40 +208,40 @@ class _StripeScreenState extends State<StripeScreen> {
                         child: Center(
                           child: Column(
                             children: [
-                              const Text("Total Due", style: TextStyle(color: AppColors.grey, fontSize: 14)),
-                              const SizedBox(height: 8),
+                              Text("Total Due", style: TextStyle(color: AppColors.grey, fontSize: 14 * scale)),
+                              SizedBox(height: 8 * scale),
                               Text(
                                 NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0),
-                                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
+                                style: TextStyle(fontSize: 32 * scale, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
                               ),
-                              const SizedBox(height: 4),
-                              Text("To ${widget.receiverName}", style: const TextStyle(color: AppColors.grey, fontSize: 14)),
+                              SizedBox(height: 4 * scale),
+                              Text("To ${widget.receiverName}", style: TextStyle(color: AppColors.grey, fontSize: 14 * scale)),
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      SizedBox(height: 32 * scale),
                       FadeInUp(
-                        child: Text("Contact", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: theme.textTheme.titleMedium?.color)),
+                        child: Text("Contact", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * scale, color: theme.textTheme.titleMedium?.color)),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12 * scale),
                       FadeInUp(
                         delay: const Duration(milliseconds: 100),
                         child: TextField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
-                          style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+                          style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * scale),
                           decoration: InputDecoration(
                             hintText: "Email",
-                            hintStyle: TextStyle(color: theme.hintColor),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            hintStyle: TextStyle(color: theme.hintColor, fontSize: 16 * scale),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 16 * scale),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * scale)),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12 * scale),
                               borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12 * scale),
                               borderSide: const BorderSide(color: stripeColor, width: 2),
                             ),
                             filled: true,
@@ -168,17 +249,17 @@ class _StripeScreenState extends State<StripeScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24 * scale),
                       FadeInUp(
                          delay: const Duration(milliseconds: 150),
-                         child: Text(l10n.paymentMethod, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: theme.textTheme.titleMedium?.color)),
+                         child: Text(l10n.paymentMethod, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * scale, color: theme.textTheme.titleMedium?.color)),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12 * scale),
                       FadeInUp(
                         delay: const Duration(milliseconds: 200),
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12 * scale),
                             border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                             color: theme.colorScheme.surface,
                           ),
@@ -190,12 +271,12 @@ class _StripeScreenState extends State<StripeScreen> {
                                 inputFormatters: [
                                   CardNumberFormatter(),
                                 ],
-                                style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+                                style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * scale),
                                 decoration: InputDecoration(
                                   hintText: l10n.cardNumber,
-                                  hintStyle: TextStyle(color: theme.hintColor),
-                                  prefixIcon: const Icon(Icons.credit_card_rounded, color: AppColors.grey),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  hintStyle: TextStyle(color: theme.hintColor, fontSize: 16 * scale),
+                                  prefixIcon: Icon(Icons.credit_card_rounded, color: AppColors.grey, size: 24 * scale),
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 16 * scale),
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -209,16 +290,16 @@ class _StripeScreenState extends State<StripeScreen> {
                                       inputFormatters: [
                                         ExpiryDateFormatter(),
                                       ],
-                                      style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+                                      style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * scale),
                                       decoration: InputDecoration(
                                         hintText: "MM / YY",
-                                        hintStyle: TextStyle(color: theme.hintColor),
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                        hintStyle: TextStyle(color: theme.hintColor, fontSize: 16 * scale),
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 16 * scale),
                                         border: InputBorder.none,
                                       ),
                                     ),
                                   ),
-                                  Container(width: 1, height: 48, color: theme.dividerColor.withValues(alpha: 0.1)),
+                                  Container(width: 1, height: 48 * scale, color: theme.dividerColor.withValues(alpha: 0.1)),
                                   Expanded(
                                     child: TextField(
                                       controller: _cvcController,
@@ -227,11 +308,11 @@ class _StripeScreenState extends State<StripeScreen> {
                                         FilteringTextInputFormatter.digitsOnly,
                                         LengthLimitingTextInputFormatter(3),
                                       ],
-                                      style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+                                      style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * scale),
                                       decoration: InputDecoration(
                                         hintText: "CVC",
-                                        hintStyle: TextStyle(color: theme.hintColor),
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                        hintStyle: TextStyle(color: theme.hintColor, fontSize: 16 * scale),
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 16 * scale),
                                         border: InputBorder.none,
                                       ),
                                       obscureText: true,
@@ -243,7 +324,7 @@ class _StripeScreenState extends State<StripeScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      SizedBox(height: 32 * scale),
                       
                       // Pay Button
                       FadeInUp(
@@ -251,53 +332,36 @@ class _StripeScreenState extends State<StripeScreen> {
                         child: SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: _isProcessing ? null : _processPayment,
+                            onPressed: _processPayment,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: stripeColor,
                               foregroundColor: Colors.white,
                               disabledBackgroundColor: Colors.grey[300],
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              padding: EdgeInsets.symmetric(vertical: 16 * scale),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * scale)),
                               elevation: 0,
                             ),
-                            child: _isProcessing
-                                ? const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                        ),
-                                      ),
-                                      SizedBox(width: 12),
-                                      Text("Processing...", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                    ],
-                                  )
-                                : FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      "Pay ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)}",
-                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-                                    ),
-                                  ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                "Pay ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)}",
+                                style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                       
-                      const SizedBox(height: 24),
-                      if (_isProcessing)
-                        Center(
-                          child: FadeIn(
-                            child: const Text(
-                              "Processing via Stripe secure 3D secure...",
-                              style: TextStyle(color: AppColors.grey, fontSize: 13, fontStyle: FontStyle.italic),
-                            ),
+                      SizedBox(height: 24 * scale),
+                      Center(
+                        child: FadeIn(
+                          child: Text(
+                            "Processing via Stripe secure 3D secure...",
+                            style: TextStyle(color: AppColors.grey, fontSize: 13 * scale, fontStyle: FontStyle.italic),
                           ),
                         ),
-                      const SizedBox(height: 20),
+                      ),
+                      SizedBox(height: 20 * scale),
                     ],
                   ),
                 ),
@@ -311,6 +375,7 @@ class _StripeScreenState extends State<StripeScreen> {
 
   Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
     final theme = Theme.of(context);
+    final scale = context.fontSizeFactor;
     Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
     Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
     Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
@@ -318,16 +383,16 @@ class _StripeScreenState extends State<StripeScreen> {
     return Column(
       children: [
         Container(
-          width: 32, height: 32,
+          width: 32 * scale, height: 32 * scale,
           decoration: BoxDecoration(
             color: isActive || isCompleted ? activeColor : inactiveColor, 
             shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
+            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4 * scale) : null
           ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
+          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18 * scale) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14 * scale, fontWeight: FontWeight.w900))),
         ),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
+        SizedBox(height: 4 * scale),
+        Text(label, style: TextStyle(fontSize: 12 * scale, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
       ],
     );
   }
@@ -337,7 +402,7 @@ class _StripeScreenState extends State<StripeScreen> {
     Color color = isHeader 
       ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
       : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
-    return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
+    return Expanded(child: Container(height: 3, margin: EdgeInsets.symmetric(horizontal: 6 * context.fontSizeFactor), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
   }
 
   @override

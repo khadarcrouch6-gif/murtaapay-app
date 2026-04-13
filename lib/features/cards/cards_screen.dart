@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'dart:math';
 import 'dart:ui';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -11,13 +10,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/success_screen.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../more/investments_screen.dart';
 import '../more/savings_screen.dart';
-import '../deposit/deposit_screen.dart';
 import '../deposit/deposit_card_screen.dart';
+import '../../core/widgets/card_receipt_view.dart';
 import '../withdraw/withdraw_screen.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../l10n/app_localizations.dart';
 import 'models/card_model.dart';
 import 'widgets/elite_virtual_card.dart';
@@ -31,9 +30,39 @@ class CardsScreen extends StatefulWidget {
 
 class _CardsScreenState extends State<CardsScreen> {
   final PageController _pageController = PageController(viewportFraction: 0.9);
+  final TextEditingController _searchController = TextEditingController();
   int _currentIndex = 0;
   bool _showBack = false;
   bool _showNumber = false;
+  bool _isSearching = false;
+  String _searchQuery = "";
+  String _selectedFilter = "All";
+
+  final List<Map<String, dynamic>> _allTransactions = [
+    {"title": "Netflix", "date": "Oct 24", "amount": r"-$15.99", "isNegative": true, "category": "Subscriptions", "status": "Success", "type": "payment"},
+    {"title": "Amazon", "date": "Oct 22", "amount": r"-$124.50", "isNegative": true, "category": "Shopping", "status": "Success", "type": "payment"},
+    {"title": "Topup", "date": "Oct 20", "amount": r"+$500.00", "isNegative": false, "category": "All", "status": "Success", "type": "deposit", "method": "Wallet"},
+    {"title": "Starbucks", "date": "Oct 19", "amount": r"-$5.50", "isNegative": true, "category": "Food", "status": "Success", "type": "payment"},
+    {"title": "Apple Music", "date": "Oct 18", "amount": r"-$9.99", "isNegative": true, "category": "Subscriptions", "status": "Success", "type": "payment"},
+    {"title": "Uber", "date": "Oct 17", "amount": r"-$25.00", "isNegative": true, "category": "Transport", "status": "Success", "type": "payment"},
+    {"title": "Salary", "date": "Oct 15", "amount": r"+$2500.00", "isNegative": false, "category": "All", "status": "Success", "type": "deposit", "method": "Bank"},
+    {"title": "Bank Transfer", "date": "Oct 14", "amount": r"-$100.00", "isNegative": true, "category": "All", "status": "Success", "type": "withdraw"},
+  ];
+
+  List<Map<String, dynamic>> get _filteredTransactions {
+    return _allTransactions.where((tx) {
+      final matchesSearch = tx['title'].toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesFilter = _selectedFilter == "All" || tx['category'] == _selectedFilter;
+      return matchesSearch && matchesFilter;
+    }).toList();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
 
   final List<VirtualCard> _cards = [
     VirtualCard(
@@ -106,6 +135,16 @@ class _CardsScreenState extends State<CardsScreen> {
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: ResponsiveBreakpoints.of(context).equals(TABLET)
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: Icon(Icons.menu_rounded, color: theme.iconTheme.color),
+              ),
+            )
+          : null,
       body: SafeArea(
         child: Column(
           children: [
@@ -155,7 +194,7 @@ class _CardsScreenState extends State<CardsScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
                 child: ElevatedButton(
-                  onPressed: () => _showAddCardDialog(context, state),
+                  onPressed: () => _showNewCardDialog(context, state),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                     foregroundColor: AppColors.accentTeal,
@@ -191,9 +230,9 @@ class _CardsScreenState extends State<CardsScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.credit_card_off_rounded, size: 48, color: Colors.grey.withValues(alpha: 0.3)),
+                    Icon(Icons.credit_card_off_rounded, size: 48 * context.fontSizeFactor, color: Colors.grey.withValues(alpha: 0.3)),
                     const SizedBox(height: 16),
-                    const Text("No active cards", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                    Text(l10n.noActiveCards, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
                   ],
                 ),
               )
@@ -287,13 +326,13 @@ class _CardsScreenState extends State<CardsScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                _buildQuickAction(context, state, "Deposit", l10n.deposit, Icons.add_circle_outline_rounded, AppColors.accentTeal, const DepositCardScreen(amount: "0", currencyCode: "USD")),
+                                _buildQuickAction(context, state, "Deposit", l10n.deposit, Icons.add_circle_outline_rounded, AppColors.accentTeal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DepositCardScreen(amount: "0", currencyCode: "USD")))),
                                 const SizedBox(width: 8),
-                                _buildQuickAction(context, state, "Withdraw", l10n.withdraw, Icons.file_upload_outlined, Colors.orange, const WithdrawScreen()),
+                                _buildQuickAction(context, state, "Withdraw", l10n.withdraw, Icons.file_upload_outlined, Colors.orange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WithdrawScreen()))),
                                 const SizedBox(width: 8),
-                                _buildQuickAction(context, state, "Savings", l10n.savings, Icons.account_balance_outlined, Colors.blue, const SavingsScreen()),
+                                _buildQuickAction(context, state, "Savings", l10n.savings, Icons.account_balance_outlined, Colors.blue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SavingsScreen()))),
                                 const SizedBox(width: 8),
-                                _buildQuickAction(context, state, "Invest", l10n.invest, Icons.auto_graph_rounded, Colors.purple, const InvestmentsScreen()),
+                                _buildQuickAction(context, state, "Invest", l10n.invest, Icons.auto_graph_rounded, Colors.purple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InvestmentsScreen()))),
                               ],
                             ),
                           ),
@@ -306,8 +345,32 @@ class _CardsScreenState extends State<CardsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(l10n.transactions, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                        IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded)),
+                        if (!_isSearching)
+                          Text(l10n.transactions, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))
+                        else
+                          Expanded(
+                            child: TextField(
+                              controller: _searchController,
+                              autofocus: true,
+                              decoration: InputDecoration(
+                                hintText: l10n.searchTransactions,
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
+                              ),
+                              style: TextStyle(fontSize: 14 * context.fontSizeFactor),
+                              onChanged: (value) => setState(() => _searchQuery = value),
+                            ),
+                          ),
+                        IconButton(
+                          onPressed: () => setState(() {
+                            _isSearching = !_isSearching;
+                            if (!_isSearching) {
+                              _searchController.clear();
+                              _searchQuery = "";
+                            }
+                          }),
+                          icon: Icon(_isSearching ? Icons.close_rounded : Icons.search_rounded),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -315,17 +378,38 @@ class _CardsScreenState extends State<CardsScreen> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          _buildFilterChip("All", true),
-                          _buildFilterChip("Shopping", false),
-                          _buildFilterChip("Food", false),
-                          _buildFilterChip("Subscriptions", false),
+                          _buildFilterChip(l10n.all, _selectedFilter == "All", (sel) => setState(() => _selectedFilter = "All")),
+                          _buildFilterChip(l10n.shopping, _selectedFilter == "Shopping", (sel) => setState(() => _selectedFilter = "Shopping")),
+                          _buildFilterChip(l10n.food, _selectedFilter == "Food", (sel) => setState(() => _selectedFilter = "Food")),
+                          _buildFilterChip(l10n.subscriptions, _selectedFilter == "Subscriptions", (sel) => setState(() => _selectedFilter = "Subscriptions")),
                         ],
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildTxItem(context, state, "Netflix", "Oct 24", r"-$15.99", true),
-                    _buildTxItem(context, state, "Amazon", "Oct 22", r"-$124.50", true),
-                    _buildTxItem(context, state, "Topup", "Oct 20", r"+$500.00", false),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _filteredTransactions.length,
+                      itemBuilder: (context, index) {
+                        final tx = _filteredTransactions[index];
+                        return _buildTxItem(
+                          context, 
+                          state, 
+                          tx['title'], 
+                          tx['date'], 
+                          tx['amount'], 
+                          tx['isNegative'],
+                          onTap: () => CardReceiptView.show(context, tx),
+                        );
+                      },
+                    ),
+                    if (_filteredTransactions.isEmpty)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Text(l10n.noTransactionsFound, style: TextStyle(color: AppColors.grey)),
+                        ),
+                      ),
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -343,17 +427,17 @@ class _CardsScreenState extends State<CardsScreen> {
       child: Column(
         children: [
           SizedBox(
-            height: 150,
+            height: 150 * context.fontSizeFactor,
             child: Row(
               children: [
-                Expanded(child: PieChart(PieChartData(sectionsSpace: 4, centerSpaceRadius: 30, sections: [PieChartSectionData(color: AppColors.accentTeal, value: 30, title: '30%'), PieChartSectionData(color: Colors.orange, value: 20, title: '20%'), PieChartSectionData(color: Colors.blue, value: 50, title: '50%')]))),
+                Expanded(child: PieChart(PieChartData(sectionsSpace: 4, centerSpaceRadius: 30 * context.fontSizeFactor, sections: [PieChartSectionData(color: AppColors.accentTeal, value: 30, title: '30%', titleStyle: TextStyle(fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white)), PieChartSectionData(color: Colors.orange, value: 20, title: '20%', titleStyle: TextStyle(fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white)), PieChartSectionData(color: Colors.blue, value: 50, title: '50%', titleStyle: TextStyle(fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white))]))),
                 const SizedBox(width: 16),
-                Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [_legendItem(l10n.food, AppColors.accentTeal), _legendItem(l10n.shopping, Colors.orange), _legendItem(l10n.billsLabel, Colors.blue)]),
+                Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [_legendItem(context, l10n.food, AppColors.accentTeal), _legendItem(context, l10n.shopping, Colors.orange), _legendItem(context, l10n.billsLabel, Colors.blue)]),
               ],
             ),
           ),
           const Divider(height: 32),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(l10n.monthlyBudget, style: const TextStyle(fontWeight: FontWeight.bold)), Text(r"$850 / $1000", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor))]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(l10n.monthlyBudget, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)), Text(r"$850 / $1000", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor))]),
           const SizedBox(height: 8),
           ClipRRect(borderRadius: BorderRadius.circular(10), child: const LinearProgressIndicator(value: 0.85, minHeight: 8, backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation(Colors.redAccent))),
         ],
@@ -361,43 +445,46 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  Widget _legendItem(String label, Color color) => Row(children: [Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)), const SizedBox(width: 8), Text(label, style: const TextStyle(fontSize: 12))]);
+  Widget _legendItem(BuildContext context, String label, Color color) => Row(children: [Container(width: 8 * context.fontSizeFactor, height: 8 * context.fontSizeFactor, decoration: BoxDecoration(color: color, shape: BoxShape.circle)), const SizedBox(width: 8), Text(label, style: TextStyle(fontSize: 12 * context.fontSizeFactor))]);
 
-  Widget _buildQuickAction(BuildContext context, AppState state, String title, String translatedTitle, IconData icon, Color color, Widget screen) {
+  Widget _buildQuickAction(BuildContext context, AppState state, String title, String translatedTitle, IconData icon, Color color, {VoidCallback? onTap}) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => screen)),
+      onTap: onTap,
       child: Container(
         width: 90 * context.fontSizeFactor, padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
         decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(16)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(icon, color: color, size: 22)), 
+            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)), 
             const SizedBox(height: 8), 
-            Flexible(child: Text(translatedTitle, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis))
+            Flexible(child: Text(translatedTitle, style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis))
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTxItem(BuildContext context, AppState state, String title, String date, String amt, bool neg) {
+  Widget _buildTxItem(BuildContext context, AppState state, String title, String date, String amt, bool neg, {VoidCallback? onTap}) {
     final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12), padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20)),
-      child: Row(
-        children: [
-          Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: neg ? Colors.red.withValues(alpha: 0.1) : AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(neg ? Icons.shopping_bag_outlined : Icons.add_circle_outline, color: neg ? Colors.red : AppColors.accentTeal, size: 20)),
-          const SizedBox(width: 16),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: const TextStyle(fontWeight: FontWeight.bold)), Text(date, style: const TextStyle(color: AppColors.grey, fontSize: 12))])),
-          Text(amt, style: TextStyle(fontWeight: FontWeight.bold, color: neg ? null : AppColors.accentTeal)),
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12), padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20)),
+        child: Row(
+          children: [
+            Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: neg ? Colors.red.withValues(alpha: 0.1) : AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(neg ? Icons.shopping_bag_outlined : Icons.add_circle_outline, color: neg ? Colors.red : AppColors.accentTeal, size: 20 * context.fontSizeFactor)),
+            const SizedBox(width: 16),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)), Text(date, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor))])),
+            Text(amt, style: TextStyle(fontWeight: FontWeight.bold, color: neg ? null : AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFilterChip(String label, bool sel) => Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: (_) {}, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+  Widget _buildFilterChip(String label, bool sel, ValueChanged<bool> onSelected) => Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: onSelected, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), selectedColor: AppColors.accentTeal.withValues(alpha: 0.2), checkmarkColor: AppColors.accentTeal));
 
   void _showCardSettings(BuildContext context, AppState state) {
     final currentCard = _cards[_currentIndex];
@@ -441,7 +528,7 @@ class _CardsScreenState extends State<CardsScreen> {
                   children: [
                     Text(
                       l10n.cardSettings,
-                      style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -454,7 +541,7 @@ class _CardsScreenState extends State<CardsScreen> {
                         currentCard.isFrozen 
                           ? l10n.frozen
                           : l10n.active,
-                        style: TextStyle(color: currentCard.isFrozen ? Colors.orange : AppColors.accentTeal, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: currentCard.isFrozen ? Colors.orange : AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -469,8 +556,9 @@ class _CardsScreenState extends State<CardsScreen> {
                     children: [
                       _walletSection(context, state, currentCard),
                       const SizedBox(height: 24),
-                      _buildSectionTitle(l10n.security, isDark),
+                      _buildSectionTitle(context, l10n.security, isDark),
                       _buildSettingsTile(
+                        context: context,
                         isDark: isDark,
                         icon: Icons.ac_unit_rounded,
                         color: Colors.blue,
@@ -486,8 +574,9 @@ class _CardsScreenState extends State<CardsScreen> {
                         },
                       ),
                       const SizedBox(height: 24),
-                      _buildSectionTitle(l10n.cardControls, isDark),
+                      _buildSectionTitle(context, l10n.cardControls, isDark),
                       _buildSwitchTile(
+                        context: context,
                         isDark: isDark,
                         icon: Icons.shopping_basket_outlined,
                         color: Colors.teal,
@@ -499,6 +588,7 @@ class _CardsScreenState extends State<CardsScreen> {
                         },
                       ),
                       _buildSwitchTile(
+                        context: context,
                         isDark: isDark,
                         icon: Icons.public_rounded,
                         color: Colors.orange,
@@ -510,6 +600,7 @@ class _CardsScreenState extends State<CardsScreen> {
                         },
                       ),
                       _buildSwitchTile(
+                        context: context,
                         isDark: isDark,
                         icon: Icons.contactless_rounded,
                         color: Colors.purple,
@@ -522,6 +613,7 @@ class _CardsScreenState extends State<CardsScreen> {
                       ),
                       const SizedBox(height: 32),
                       _buildSettingsTile(
+                        context: context,
                         isDark: isDark,
                         icon: Icons.delete_forever_rounded,
                         color: Colors.redAccent,
@@ -544,33 +636,141 @@ class _CardsScreenState extends State<CardsScreen> {
   void _showTerminateConfirmation(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.primaryDark,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        title: Text(l10n.terminateCard, style: const TextStyle(color: Colors.white)),
-        content: Text(
-          "Are you sure you want to permanently delete this card? This action cannot be undone.",
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+      builder: (context) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: AlertDialog(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          title: Text(l10n.terminateCard, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+          content: Text(
+            l10n.terminateCardConfirm,
+            style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final localContext = context;
+                Navigator.pop(context); // Close dialog
+                _processTransaction(localContext, l10n);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                elevation: 0,
+              ),
+              child: Text(l10n.terminateCard, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel, style: const TextStyle(color: Colors.white54)),
+      ),
+    );
+  }
+
+  void _processTransaction(BuildContext context, AppLocalizations l10n) async {
+    final theme = Theme.of(context);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (ctx) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Center(
+          child: ZoomIn(
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              width: 220 * context.fontSizeFactor,
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 65 * context.fontSizeFactor,
+                        height: 65 * context.fontSizeFactor,
+                        child: const CircularProgressIndicator(
+                          color: AppColors.accentTeal,
+                          strokeWidth: 3,
+                        ),
+                      ),
+                      Icon(
+                        Icons.bolt_rounded,
+                        color: AppColors.accentTeal,
+                        size: 32 * context.fontSizeFactor,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(
+                    l10n.processing, 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18 * context.fontSizeFactor,
+                      color: theme.textTheme.bodyLarge?.color,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                  SizedBox(height: 8 * context.fontSizeFactor),
+                  Text(
+                    l10n.justAMoment,
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13 * context.fontSizeFactor,
+                      color: AppColors.grey,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                ],
+              ),
+            ),
           ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                _cards.removeAt(_currentIndex);
-                if (_currentIndex >= _cards.length && _cards.isNotEmpty) {
-                  _currentIndex = _cards.length - 1;
-                }
-              });
-              Navigator.pop(context); // Close dialog
-              Navigator.pop(context); // Close settings bottom sheet
-            },
-            child: Text(l10n.terminateCard, style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-          ),
-        ],
+        ),
+      ),
+    );
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!context.mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
+    
+    if (!context.mounted) return;
+    setState(() {
+      _cards.removeAt(_currentIndex);
+      if (_currentIndex >= _cards.length && _cards.isNotEmpty) {
+        _currentIndex = _cards.length - 1;
+      }
+    });
+    
+    if (!context.mounted) return;
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context); // Close settings bottom sheet
+    }
+
+    if (!context.mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SuccessScreen(
+          title: l10n.cardTerminated,
+          message: l10n.cardTerminatedSuccess,
+          buttonText: l10n.backToHome,
+        ),
       ),
     );
   }
@@ -578,6 +778,7 @@ class _CardsScreenState extends State<CardsScreen> {
   Widget _walletSection(BuildContext context, AppState state, VirtualCard card) {
     if (kIsWeb) return const SizedBox.shrink();
     final bool isIOS = Platform.isIOS;
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -593,54 +794,54 @@ class _CardsScreenState extends State<CardsScreen> {
           children: [
             Icon(isIOS ? Icons.apple : Icons.g_mobiledata_rounded, color: AppColors.accentTeal),
             const SizedBox(width: 12),
-            Text(isIOS ? "Add to Apple Wallet" : "Add to Google Pay", style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
+            Text(isIOS ? l10n.addToAppleWallet : l10n.addToGooglePay, style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title, bool isDark) {
+  Widget _buildSectionTitle(BuildContext context, String title, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(left: 12, bottom: 12),
       child: Text(
         title.toUpperCase(),
-        style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.4) : Colors.black45, fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.bold),
+        style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.4) : Colors.black45, fontSize: 10 * context.fontSizeFactor, letterSpacing: 1.5, fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  Widget _buildSettingsTile({required IconData icon, required Color color, required String title, required String subtitle, VoidCallback? onTap, bool isLast = false, bool isDark = true}) {
+  Widget _buildSettingsTile({required BuildContext context, required IconData icon, required Color color, required String title, required String subtitle, VoidCallback? onTap, bool isLast = false, bool isDark = true}) {
     return Column(
       children: [
         ListTile(
           onTap: onTap,
-          leading: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22)),
-          title: Text(title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.bold)),
-          subtitle: Text(subtitle, style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary, fontSize: 11)),
-          trailing: Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white.withValues(alpha: 0.2) : Colors.black26),
+          leading: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)),
+          title: Text(title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+          subtitle: Text(subtitle, style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary, fontSize: 11 * context.fontSizeFactor)),
+          trailing: Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white.withValues(alpha: 0.2) : Colors.black26, size: 24 * context.fontSizeFactor),
         ),
         if (!isLast) Divider(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05), indent: 64),
       ],
     );
   }
 
-  Widget _buildSwitchTile({required IconData icon, required Color color, required String title, required bool value, required ValueChanged<bool> onChanged, bool isDark = true}) {
+  Widget _buildSwitchTile({required BuildContext context, required IconData icon, required Color color, required String title, required bool value, required ValueChanged<bool> onChanged, bool isDark = true}) {
     return Column(
       children: [
         SwitchListTile(
           value: value,
           onChanged: onChanged,
-          secondary: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22)),
-          title: Text(title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.bold)),
-          activeColor: AppColors.accentTeal,
+          secondary: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)),
+          title: Text(title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+          activeTrackColor: AppColors.accentTeal,
         ),
         Divider(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05), indent: 64),
       ],
     );
   }
 
-  void _showAddCardDialog(BuildContext context, AppState state) {
+  void _showNewCardDialog(BuildContext context, AppState state) {
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
@@ -659,10 +860,10 @@ class _CardsScreenState extends State<CardsScreen> {
             const SizedBox(height: 12),
             Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(10))),
             const SizedBox(height: 24),
-            Text(l10n.addNewCard, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(l10n.addNewCard, style: TextStyle(color: Colors.white, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              child: _buildSettingsTile(icon: Icons.add_card_rounded, color: AppColors.accentTeal, title: "Order Virtual Card", subtitle: "Instantly issue a new digital card", onTap: () => Navigator.pop(context), isLast: true),
+              child: _buildSettingsTile(context: context, icon: Icons.add_card_rounded, color: AppColors.accentTeal, title: l10n.orderVirtualCard, subtitle: l10n.instantlyIssueNewCard, onTap: () => Navigator.pop(context), isLast: true),
             ),
           ],
         ),

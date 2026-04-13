@@ -4,7 +4,6 @@ import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../l10n/app_localizations.dart';
-import 'review_screen.dart';
 import 'payment_screen.dart';
 
 class WalletReceiverScreen extends StatefulWidget {

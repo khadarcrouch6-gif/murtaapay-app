@@ -3,17 +3,17 @@ import 'package:animate_do/animate_do.dart';
 import '../app_colors.dart';
 import '../../l10n/app_localizations.dart';
 
-class ReceiptView extends StatelessWidget {
+class WalletReceiptView extends StatelessWidget {
   final Map<String, dynamic> transaction;
 
-  const ReceiptView({super.key, required this.transaction});
+  const WalletReceiptView({super.key, required this.transaction});
 
   static void show(BuildContext context, Map<String, dynamic> transaction) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => ReceiptView(transaction: transaction),
+      builder: (context) => WalletReceiptView(transaction: transaction),
     );
   }
 
@@ -65,15 +65,8 @@ class ReceiptView extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context, ThemeData theme, AppLocalizations l10n) {
     final isSuccess = transaction['status'] == 'Success' || transaction['status'] == 'Completed';
-    final isNegative = transaction['isNegative'] ?? (transaction['type'] == 'withdraw' || transaction['type'] == 'payment');
+    final isNegative = transaction['isNegative'] ?? false;
     final amountColor = isNegative ? Colors.red : AppColors.accentTeal;
-    
-    String title = l10n.transactionSuccessful;
-    if (transaction['type'] == 'deposit' || !isNegative) {
-      title = l10n.topUpSuccessful;
-    } else if (transaction['type'] == 'withdraw') {
-      title = l10n.withdrawalSuccessful;
-    }
 
     return Stack(
       children: [
@@ -103,7 +96,7 @@ class ReceiptView extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                title,
+                l10n.walletTransaction,
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 textAlign: TextAlign.center,
               ),
@@ -138,25 +131,14 @@ class ReceiptView extends StatelessWidget {
   }
 
   Widget _buildDetails(ThemeData theme, AppLocalizations l10n) {
-    final isNegative = transaction['isNegative'] ?? (transaction['type'] == 'withdraw' || transaction['type'] == 'payment');
-    
-    String methodTitle = transaction['method'] ?? (isNegative ? l10n.virtualCard : l10n.walletBalance);
-    if (transaction['type'] == 'deposit') {
-      methodTitle = "TopUP from ${transaction['method'] ?? l10n.murtaaxWallet}";
-    } else if (transaction['type'] == 'withdraw') {
-      methodTitle = l10n.bankTransfer;
-    } else if (isNegative) {
-      methodTitle = "Payment method ${l10n.virtualCard}";
-    }
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         children: [
-          _buildDetailRow(theme, l10n.receiverSource, transaction['title'] ?? ""),
-          _buildDetailRow(theme, l10n.transactionId, "#MTX-98234-AX"),
+          _buildDetailRow(theme, l10n.sourceReceiver, transaction['title'] ?? ""),
+          _buildDetailRow(theme, l10n.transactionId, transaction['transactionId'] ?? "#MTX-WALL-12345"),
           _buildDetailRow(theme, l10n.date, transaction['date'] ?? ""),
-          _buildDetailRow(theme, l10n.paymentMethod, methodTitle),
+          _buildDetailRow(theme, l10n.paymentMethod, l10n.walletBalance),
         ],
       ),
     );
@@ -234,3 +216,4 @@ class ReceiptView extends StatelessWidget {
     );
   }
 }
+

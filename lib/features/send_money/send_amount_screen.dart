@@ -392,7 +392,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text("Refreshed: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 10, color: AppColors.grey.withValues(alpha: 0.7), fontWeight: FontWeight.bold)),
+                                          Text("${l10n.refreshed}: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 10, color: AppColors.grey.withValues(alpha: 0.7), fontWeight: FontWeight.bold)),
                                           const SizedBox(width: 4),
                                           _isRefreshing ? const SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1.5)) : Icon(Icons.auto_awesome, size: 10, color: theme.colorScheme.secondary),
                                         ],
@@ -518,7 +518,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(l10n.feeInfoTitle, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
       content: Text(l10n.feeInfoContent, style: const TextStyle(fontSize: 16, height: 1.6, fontWeight: FontWeight.w600)),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text("OK", style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.w900, fontSize: 18)))]
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.ok, style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.w900, fontSize: 18)))]
     ));
   }
 
@@ -585,6 +585,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     String? balance, required Function(String) onChanged, required VoidCallback onCurrencyTap,
     bool isReceiver = false, bool isError = false, bool isLoading = false, int decimals = 2, VoidCallback? onMaxTap,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     return ListenableBuilder(
       listenable: focusNode,
       builder: (context, child) {
@@ -647,9 +648,9 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                   ),
                                 ],
                               ),
-                              child: const Text(
-                                "MAX",
-                                style: TextStyle(
+                              child: Text(
+                                l10n.maxLabel,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
@@ -837,20 +838,44 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
-      decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.primaryDark : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+      ),
       child: Column(
         children: [
           const SizedBox(height: 12),
-          Container(width: 50, height: 6, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+          Container(
+            width: 50,
+            height: 6,
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300],
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: TextField(
               onChanged: _filterCurrencies,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-              decoration: InputDecoration(hintText: widget.searchHint, prefixIcon: const Icon(Icons.search, size: 28), filled: true, fillColor: Colors.grey[100], border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none), contentPadding: const EdgeInsets.symmetric(vertical: 16)),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+              decoration: InputDecoration(
+                hintText: widget.searchHint,
+                hintStyle: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.grey),
+                prefixIcon: Icon(Icons.search, size: 28, color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.grey),
+                filled: true,
+                fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[100],
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
+                contentPadding: const EdgeInsets.symmetric(vertical: 16),
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -861,10 +886,41 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                 final c = filteredCurrencies[index];
                 return ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-                  leading: ClipRRect(borderRadius: BorderRadius.circular(6), child: Image.network("https://flagcdn.com/w40/${c['flag']}.png", width: 40, height: 28, fit: BoxFit.cover)),
-                  title: Text(c['code']!, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                  subtitle: Text(c['name']!, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey)),
-                  onTap: () { widget.onSelected(c); Navigator.pop(context); },
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: Image.network(
+                      "https://flagcdn.com/w40/${c['flag']}.png",
+                      width: 40,
+                      height: 28,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 40,
+                        height: 28,
+                        color: isDark ? Colors.white10 : Colors.grey[200],
+                        child: const Icon(Icons.flag, size: 20),
+                      ),
+                    ),
+                  ),
+                  title: Text(
+                    c['code']!,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  subtitle: Text(
+                    c['name']!,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.grey,
+                    ),
+                  ),
+                  onTap: () {
+                    widget.onSelected(c);
+                    Navigator.pop(context);
+                  },
                 );
               },
             ),

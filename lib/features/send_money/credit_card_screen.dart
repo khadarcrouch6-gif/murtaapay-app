@@ -1,9 +1,11 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
+import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -37,7 +39,6 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
   final TextEditingController _cardHolderController = TextEditingController();
   final TextEditingController _expiryController = TextEditingController();
   final TextEditingController _cvvController = TextEditingController();
-  bool _isProcessing = false;
   late String _cardType;
 
   @override
@@ -75,22 +76,24 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
   }
 
   Widget _getCardIcon() {
+    final scale = context.fontSizeFactor;
     switch (_cardType) {
       case "visa":
-        return const AdaptiveIcon(FontAwesomeIcons.ccVisa, color: AppColors.primaryDark, size: 28);
+        return AdaptiveIcon(FontAwesomeIcons.ccVisa, color: AppColors.primaryDark, size: 28 * scale);
       case "mastercard":
-        return const AdaptiveIcon(FontAwesomeIcons.ccMastercard, color: AppColors.primaryDark, size: 28);
+        return AdaptiveIcon(FontAwesomeIcons.ccMastercard, color: AppColors.primaryDark, size: 28 * scale);
       case "amex":
-        return const AdaptiveIcon(FontAwesomeIcons.ccAmex, color: AppColors.primaryDark, size: 28);
+        return AdaptiveIcon(FontAwesomeIcons.ccAmex, color: AppColors.primaryDark, size: 28 * scale);
       case "discover":
-        return const AdaptiveIcon(FontAwesomeIcons.ccDiscover, color: AppColors.primaryDark, size: 28);
+        return AdaptiveIcon(FontAwesomeIcons.ccDiscover, color: AppColors.primaryDark, size: 28 * scale);
       default:
-        return const Icon(Icons.credit_card_rounded, color: AppColors.grey, size: 28);
+        return Icon(Icons.credit_card_rounded, color: AppColors.grey, size: 28 * scale);
     }
   }
 
   Widget _buildLiveCard() {
     final l10n = AppLocalizations.of(context)!;
+    final scale = context.fontSizeFactor;
     bool isVisa = _cardType == "visa";
     bool isMastercard = _cardType == "mastercard";
     
@@ -121,16 +124,16 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
         : _expiryController.text;
 
     return Container(
-      height: 200,
+      height: 200 * scale,
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24 * scale),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: cardGradient,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16 * scale),
         boxShadow: [
           BoxShadow(
             color: cardGradient[0].withValues(alpha: 0.4),
@@ -146,46 +149,46 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(Icons.contactless_rounded, color: Colors.white70, size: 32),
+              Icon(Icons.contactless_rounded, color: Colors.white70, size: 32 * scale),
               if (isVisa) 
-                   const AdaptiveIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 40)
+                   AdaptiveIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 40 * scale)
               else if (isMastercard)
-                   const AdaptiveIcon(FontAwesomeIcons.ccMastercard, color: Colors.amber, size: 40)
+                   AdaptiveIcon(FontAwesomeIcons.ccMastercard, color: Colors.amber, size: 40 * scale)
               else
-                   const AdaptiveIcon(FontAwesomeIcons.creditCard, color: Colors.white, size: 32)
+                   AdaptiveIcon(FontAwesomeIcons.creditCard, color: Colors.white, size: 32 * scale)
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * scale),
           Text(
             displayNum,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 22,
+              fontSize: 22 * scale,
               letterSpacing: 2.0,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * scale),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l10n.cardHolder, style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                  Text(l10n.cardHolder, style: TextStyle(color: Colors.white54, fontSize: 10 * scale)),
                   Text(
                     displayHolder,
-                    style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontSize: 14 * scale, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(l10n.expires, style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                  Text(l10n.expires, style: TextStyle(color: Colors.white54, fontSize: 10 * scale)),
                   Text(
                     displayExpiry,
-                    style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontSize: 14 * scale, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -198,6 +201,8 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
 
   void _processPayment() async {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
     if (_cardNumberController.text.isEmpty ||
         _cardHolderController.text.isEmpty ||
         _expiryController.text.isEmpty ||
@@ -208,12 +213,84 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
       return;
     }
 
-    setState(() => _isProcessing = true);
+    // Standardized transaction loader
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (ctx) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Center(
+          child: ZoomIn(
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              width: 220 * context.fontSizeFactor,
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 65 * context.fontSizeFactor,
+                        height: 65 * context.fontSizeFactor,
+                        child: const CircularProgressIndicator(
+                          color: AppColors.accentTeal,
+                          strokeWidth: 3,
+                        ),
+                      ),
+                      Icon(
+                        Icons.bolt_rounded,
+                        color: AppColors.accentTeal,
+                        size: 32 * context.fontSizeFactor,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(
+                    "Processing...", 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18 * context.fontSizeFactor,
+                      color: theme.textTheme.bodyLarge?.color,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                  SizedBox(height: 8 * context.fontSizeFactor),
+                  Text(
+                    l10n.justAMoment, 
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13 * context.fontSizeFactor,
+                      color: AppColors.grey,
+                      decoration: TextDecoration.none,
+                    )
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
     
     await Future.delayed(const Duration(seconds: 1));
     
     if (mounted) {
-      setState(() => _isProcessing = false);
+      Navigator.of(context, rootNavigator: true).pop();
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => ReviewScreen(
@@ -233,6 +310,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final scale = context.fontSizeFactor;
     String title = l10n.cardInformation;
     if (widget.initialCardType == "visa") title = l10n.visaDetails;
     if (widget.initialCardType == "mastercard") title = l10n.mastercardDetails;
@@ -248,12 +326,12 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
         backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24 * scale),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20 * scale, color: Colors.white),
         ),
         centerTitle: true,
       ),
@@ -267,12 +345,12 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                 color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
                 borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
               ),
-              padding: const EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.only(bottom: 20 * scale),
               child: Center(
                 child: MaxWidthBox(
-                  maxWidth: 500,
+                  maxWidth: 800,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 20 * scale),
                     child: Row(
                       children: [
                         _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
@@ -291,28 +369,28 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
             Expanded(
               child: Center(
                 child: MaxWidthBox(
-                  maxWidth: 500,
+                  maxWidth: 800,
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: EdgeInsets.all(24.0 * scale),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FadeInDown(
                           child: Container(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16 * scale),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.secondary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12 * scale),
                               border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.3)),
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.info_rounded, color: theme.colorScheme.secondary),
-                                const SizedBox(width: 12),
+                                Icon(Icons.info_rounded, color: theme.colorScheme.secondary, size: 24 * scale),
+                                SizedBox(width: 12 * scale),
                                 Expanded(
                                   child: Text(
                                     l10n.cardDetailsInfo(widget.amount),
-                                    style: const TextStyle(fontSize: 12, color: AppColors.grey),
+                                    style: TextStyle(fontSize: 12 * scale, color: AppColors.grey),
                                   ),
                                 ),
                               ],
@@ -320,23 +398,23 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24 * scale),
 
                         FadeInUp(
                            child: _buildLiveCard(),
                         ),
 
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32 * scale),
 
                         Text(
                           l10n.cardNumber,
                           style: TextStyle(
                             fontWeight: FontWeight.bold, 
-                            fontSize: 16,
+                            fontSize: 16 * scale,
                             color: theme.brightness == Brightness.dark ? Colors.white : AppColors.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16 * scale),
 
                         // Card Number
                         FadeInUp(
@@ -347,31 +425,34 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                 l10n.cardNumber, 
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 14 * scale,
                                   color: theme.brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8 * scale),
                               TextField(
                                 controller: _cardNumberController,
+                                style: TextStyle(fontSize: 16 * scale),
                                 inputFormatters: [
                                   CardNumberFormatter(),
                                 ],
                                 decoration: InputDecoration(
                                   hintText: "1234 5678 9012 3456",
+                                  hintStyle: TextStyle(fontSize: 16 * scale),
                                   suffixIcon: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    padding: EdgeInsets.symmetric(horizontal: 16 * scale),
                                     child: _getCardIcon(),
                                   ),
                                   suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                                  prefixIcon: Icon(Icons.payment_rounded, color: theme.colorScheme.secondary),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                                  prefixIcon: Icon(Icons.payment_rounded, color: theme.colorScheme.secondary, size: 24 * scale),
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 16 * scale),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale)),
                                   enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(16 * scale),
                                     borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(16 * scale),
                                     borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
                                   ),
                                   filled: true,
@@ -383,7 +464,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16 * scale),
 
                         // Card Holder Name
                         FadeInUp(
@@ -395,27 +476,30 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                 l10n.cardHolderName, 
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 14 * scale,
                                   color: theme.brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8 * scale),
                               TextField(
                                 controller: _cardHolderController,
+                                style: TextStyle(fontSize: 16 * scale),
                                 textCapitalization: TextCapitalization.words,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")),
                                 ],
                                 decoration: InputDecoration(
                                   hintText: "John Doe",
-                                  prefixIcon: Icon(Icons.person_outline_rounded, color: theme.colorScheme.secondary),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                                  hintStyle: TextStyle(fontSize: 16 * scale),
+                                  prefixIcon: Icon(Icons.person_outline_rounded, color: theme.colorScheme.secondary, size: 24 * scale),
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 16 * scale),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale)),
                                   enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(16 * scale),
                                     borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(16 * scale),
                                     borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
                                   ),
                                   filled: true,
@@ -426,7 +510,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16 * scale),
 
                         // Expiry and CVV Row
                         FadeInUp(
@@ -441,26 +525,29 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                       l10n.expiryDate, 
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 14 * scale,
                                         color: theme.brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
                                       ),
                                     ),
-                                    const SizedBox(height: 8),
+                                    SizedBox(height: 8 * scale),
                                     TextField(
                                       controller: _expiryController,
+                                      style: TextStyle(fontSize: 16 * scale),
                                       inputFormatters: [
                                         ExpiryDateFormatter(),
                                       ],
                                       decoration: InputDecoration(
                                         hintText: "MM/YY",
-                                        prefixIcon: Icon(Icons.calendar_today_rounded, color: theme.colorScheme.secondary),
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                                        hintStyle: TextStyle(fontSize: 16 * scale),
+                                        prefixIcon: Icon(Icons.calendar_today_rounded, color: theme.colorScheme.secondary, size: 24 * scale),
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 16 * scale),
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale)),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius: BorderRadius.circular(16 * scale),
                                           borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius: BorderRadius.circular(16 * scale),
                                           borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
                                         ),
                                         filled: true,
@@ -471,7 +558,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12 * scale),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -480,27 +567,30 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                       l10n.cvv, 
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 14 * scale,
                                         color: theme.brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
                                       ),
                                     ),
-                                    const SizedBox(height: 8),
+                                    SizedBox(height: 8 * scale),
                                     TextField(
                                       controller: _cvvController,
+                                      style: TextStyle(fontSize: 16 * scale),
                                       inputFormatters: [
                                         FilteringTextInputFormatter.digitsOnly,
                                         LengthLimitingTextInputFormatter(3),
                                       ],
                                       decoration: InputDecoration(
                                         hintText: "123",
-                                        prefixIcon: Icon(Icons.lock_outline_rounded, color: theme.colorScheme.secondary),
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                                        hintStyle: TextStyle(fontSize: 16 * scale),
+                                        prefixIcon: Icon(Icons.lock_outline_rounded, color: theme.colorScheme.secondary, size: 24 * scale),
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 16 * scale),
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale)),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius: BorderRadius.circular(16 * scale),
                                           borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius: BorderRadius.circular(16 * scale),
                                           borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
                                         ),
                                         filled: true,
@@ -516,54 +606,33 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 40),
+                        SizedBox(height: 40 * scale),
 
                         // Action Button moved back to body
                         SizedBox(
                           width: double.infinity,
-                          height: 56,
+                          height: 56 * scale,
                           child: ElevatedButton(
-                            onPressed: (_isProcessing || !isFormValid) ? null : _processPayment,
+                            onPressed: (!isFormValid) ? null : _processPayment,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.secondary,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * scale)),
                               elevation: 4,
                               shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
                               disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
                               disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
                             ),
-                            child: _isProcessing
-                                ? const SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 3,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
-                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-                                    ),
-                                  ),
-                          ),
-                        ),
-                        if (_isProcessing)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12),
-                            child: FadeIn(
-                              child: Center(
-                                child: Text(
-                                  l10n.secureProcessing,
-                                  style: const TextStyle(color: AppColors.grey, fontSize: 13, fontStyle: FontStyle.italic),
-                                ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
+                                style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                               ),
                             ),
                           ),
-                        const SizedBox(height: 24),
+                        ),
+                        SizedBox(height: 24 * scale),
                       ],
                     ),
                   ),
@@ -578,6 +647,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
 
   Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
     final theme = Theme.of(context);
+    final scale = context.fontSizeFactor;
     Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
     Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
     Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
@@ -585,16 +655,16 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
     return Column(
       children: [
         Container(
-          width: 32, height: 32,
+          width: 32 * scale, height: 32 * scale,
           decoration: BoxDecoration(
             color: isActive || isCompleted ? activeColor : inactiveColor, 
             shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
+            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4 * scale) : null
           ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
+          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18 * scale) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14 * scale, fontWeight: FontWeight.w900))),
         ),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
+        SizedBox(height: 4 * scale),
+        Text(label, style: TextStyle(fontSize: 12 * scale, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
       ],
     );
   }
@@ -604,7 +674,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
     Color color = isHeader 
       ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
       : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
-    return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
+    return Expanded(child: Container(height: 3, margin: EdgeInsets.symmetric(horizontal: 6 * context.fontSizeFactor), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
   }
 
 
@@ -673,3 +743,4 @@ class ExpiryDateFormatter extends TextInputFormatter {
     );
   }
 }
+
