@@ -190,7 +190,7 @@ class _VouchersScreenState extends State<VouchersScreen> {
                 // Left Ticket Stub
                 Container(
                   width: stubWidth,
-                  height: 160 * context.fontSizeFactor,
+                  height: 200 * context.fontSizeFactor,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(colors: [color, color.withValues(alpha: 0.8)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                   ),

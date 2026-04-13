@@ -194,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                           _buildProfileOption(
                                             context, 
-                                            state.translate("Vouchers", "Waatsharrada", ar: "قسائم", de: "Gutscheine", et: "Voucherid"), 
+                                            state.translate("Vouchers", "Vouchers", ar: "قسائم", de: "Gutscheine", et: "Voucherid"),
                                             Icons.confirmation_number_rounded, 
                                             () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()))
                                           ),
@@ -816,6 +816,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final theme = Theme.of(context);
     return Container(
       margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
+      padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface, 
         borderRadius: BorderRadius.circular(18),
@@ -827,10 +828,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           )
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: SwitchListTile.adaptive(
-          secondary: Container(
+      child: Row(
+        children: [
+          Container(
             padding: EdgeInsets.all(10 * context.fontSizeFactor),
             decoration: BoxDecoration(
               color: AppColors.accentTeal.withValues(alpha: 0.08),
@@ -838,12 +838,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             child: Icon(icon, color: AppColors.accentTeal, size: 18 * context.fontSizeFactor),
           ),
-          title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15 * context.fontSizeFactor)),
-          value: value,
-          onChanged: onChanged,
-          activeThumbColor: Colors.white,
-          activeTrackColor: AppColors.accentTeal,
-        ),
+          SizedBox(width: 16 * context.fontSizeFactor),
+          Expanded(
+            child: Text(
+              title, 
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15 * context.fontSizeFactor)
+            )
+          ),
+          Switch.adaptive(
+            value: value, 
+            onChanged: onChanged,
+            activeTrackColor: AppColors.accentTeal,
+          ),
+        ],
       ),
     );
   }

@@ -80,7 +80,42 @@ class ChatMessageWidget extends StatelessWidget {
         return _buildLocationMessage(isCurrentUser, context, theme, isDark);
       case MessageType.moneyTransfer:
         return _buildMoneyTransferMessage(isCurrentUser, context, theme, isDark);
+      case MessageType.hagbadSystem:
+        return _buildHagbadSystemMessage(context, theme, isDark);
     }
+  }
+
+  Widget _buildHagbadSystemMessage(BuildContext context, ThemeData theme, bool isDark) {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.blueGrey.withValues(alpha: 0.2) : Colors.blue.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.blue.withValues(alpha: 0.1)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.auto_awesome_rounded, size: 14, color: isDark ? Colors.blue[300] : Colors.blue),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                message.content,
+                style: TextStyle(
+                  color: isDark ? Colors.blue[100] : Colors.blue[800],
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildLocationMessage(bool isCurrentUser, BuildContext context, ThemeData theme, bool isDark) {

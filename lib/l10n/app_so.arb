@@ -18,7 +18,7 @@
   "bills": "Biilasha",
   "sadaqah": "Sadaqo",
   "exchange": "Sarif",
-  "vouchers": "Hagbad",
+  "vouchers": "Vouchers",
   "seeAll": "Arag dhammaan",
   "spendingAnalysis": "Falanqaynta kharashka",
   "walletBalance": "Haraaga boorsada",
@@ -640,5 +640,17 @@
   "applyPenalty": "Saar Ganaax",
   "penaltyAmount": "Cadadka Ganaaxa ($)",
   "penaltyApplied": "Ganaax dhan ${amount} ayaa la saaray {name}",
+  "invitationReceived": "Casuumad Cusub",
+  "invitationDesc": "{admin} ayaa kugu casuumay kooxda Hagbad ee ${amount}.",
+  "@invitationDesc": {
+    "placeholders": {
+      "admin": { "type": "String" },
+      "amount": { "type": "String" }
+    }
+  },
+  "acceptInvite": "Aqbal Casuumadda",
+  "religiousOathRequired": "Dhaar Diini ah ayaa loo baahan yahay",
+  "oathRequirementDesc": "Si aad si rasmi ah ugu biirto kooxda, waa inaad saxiixdaa dhaarta (Dhaarta).",
+  "signOathNow": "Hadda Dhaaro",
   "apr2026": "Abriil 2026"
 }

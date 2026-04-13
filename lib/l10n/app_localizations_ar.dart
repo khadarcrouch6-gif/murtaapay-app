@@ -1770,5 +1770,26 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get invitationReceived => 'Invitation Received';
+
+  @override
+  String invitationDesc(String admin, String amount) {
+    return '$admin invited you to join a \$$amount Hagbad group.';
+  }
+
+  @override
+  String get acceptInvite => 'Accept Invitation';
+
+  @override
+  String get religiousOathRequired => 'Religious Oath Required';
+
+  @override
+  String get oathRequirementDesc =>
+      'To join the group officially, you must sign the religious oath (Dhaar).';
+
+  @override
+  String get signOathNow => 'Sign Oath Now';
+
+  @override
   String get apr2026 => 'Apr 2026';
 }

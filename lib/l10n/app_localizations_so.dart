@@ -63,7 +63,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get exchange => 'Sarif';
 
   @override
-  String get vouchers => 'Hagbad';
+  String get vouchers => 'Vouchers';
 
   @override
   String get seeAll => 'Arag dhammaan';
@@ -1781,6 +1781,27 @@ class AppLocalizationsSo extends AppLocalizations {
   String penaltyApplied(Object amount, Object name) {
     return 'Ganaax dhan \$$amount ayaa la saaray $name';
   }
+
+  @override
+  String get invitationReceived => 'Casuumad Cusub';
+
+  @override
+  String invitationDesc(String admin, String amount) {
+    return '$admin ayaa kugu casuumay kooxda Hagbad ee \$$amount.';
+  }
+
+  @override
+  String get acceptInvite => 'Aqbal Casuumadda';
+
+  @override
+  String get religiousOathRequired => 'Dhaar Diini ah ayaa loo baahan yahay';
+
+  @override
+  String get oathRequirementDesc =>
+      'Si aad si rasmi ah ugu biirto kooxda, waa inaad saxiixdaa dhaarta (Dhaarta).';
+
+  @override
+  String get signOathNow => 'Hadda Dhaaro';
 
   @override
   String get apr2026 => 'Abriil 2026';

@@ -10,6 +10,7 @@ enum MessageType {
   moneyTransfer,
   sms,
   notification,
+  hagbadSystem, // Added for Hagbad Automated Notifications
 }
 
 enum DocumentType {

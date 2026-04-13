@@ -13,6 +13,7 @@ class HagbadGroup {
   final String adminName;
   final double amount;
   final double serviceFee;
+  final double penaltyPerDay; // Added: Daily penalty for late payment
   final HagbadFrequency frequency;
   final HagbadStatus status;
   final List<HagbadMember> members;
@@ -26,6 +27,7 @@ class HagbadGroup {
     required this.adminName,
     required this.amount,
     this.serviceFee = 0.0,
+    this.penaltyPerDay = 2.0, // Default $2 penalty
     required this.frequency,
     required this.status,
     required this.members,
@@ -48,8 +50,11 @@ class HagbadMember {
   final DateTime? lastPaymentDate; // Added for History
   final bool hasReceived;
   final bool isTrusted;
+  final bool isConfirmed; // Added for invitation acceptance
+  final bool hasSignedOath; // Added for Dhaar (Religious Oath)
   final String? guarantorName;
   final String? guarantorId; // Added Guarantor ID
+  final bool isGuarantorConfirmed; // Added for Uul acceptance
   final String avatar;
   final int payoutOrder;
 
@@ -61,8 +66,11 @@ class HagbadMember {
     this.lastPaymentDate,
     required this.hasReceived,
     required this.isTrusted,
+    this.isConfirmed = false,
+    this.hasSignedOath = false,
     this.guarantorName,
     this.guarantorId,
+    this.isGuarantorConfirmed = false,
     required this.avatar,
     required this.payoutOrder,
   });
@@ -90,10 +98,11 @@ class _HagbadScreenState extends State<HagbadScreen> {
       totalCycles: 12,
       currentCycle: 3,
       members: [
-        HagbadMember(name: "Khadar", paidAmount: 50.0, hasReceived: true, isTrusted: true, avatar: "K", payoutOrder: 1, guarantorName: "Abdirahman Ali"),
-        HagbadMember(name: "Ahmed", paidAmount: 50.0, hasReceived: false, isTrusted: true, avatar: "A", payoutOrder: 2),
-        HagbadMember(name: "Maryan", paidAmount: 20.0, hasReceived: false, isTrusted: false, avatar: "M", payoutOrder: 3),
-        HagbadMember(name: "Abdi", paidAmount: 50.0, hasReceived: false, isTrusted: false, avatar: "A", payoutOrder: 4),
+        HagbadMember(name: "Khadar", paidAmount: 50.0, hasReceived: true, isTrusted: true, avatar: "K", payoutOrder: 1, guarantorName: "Abdirahman Ali", isConfirmed: true, hasSignedOath: true, isGuarantorConfirmed: true),
+        HagbadMember(name: "Ahmed", paidAmount: 50.0, hasReceived: false, isTrusted: true, avatar: "A", payoutOrder: 2, isConfirmed: true, hasSignedOath: true, isGuarantorConfirmed: true),
+        HagbadMember(name: "You", paidAmount: 0.0, hasReceived: false, isTrusted: true, avatar: "Y", payoutOrder: 3, isConfirmed: false, hasSignedOath: false, isGuarantorConfirmed: true),
+        HagbadMember(name: "Maryan", paidAmount: 20.0, hasReceived: false, isTrusted: false, avatar: "M", payoutOrder: 4, isConfirmed: true, hasSignedOath: false, isGuarantorConfirmed: true),
+        HagbadMember(name: "Abdi", paidAmount: 50.0, hasReceived: false, isTrusted: false, avatar: "A", payoutOrder: 5, isConfirmed: false, hasSignedOath: false, isGuarantorConfirmed: true),
       ],
     ),
     HagbadGroup(
@@ -107,9 +116,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
       totalCycles: 8,
       currentCycle: 2,
       members: [
-        HagbadMember(name: "Warsame", paidAmount: 200.0, hasReceived: false, isTrusted: true, avatar: "W", payoutOrder: 1),
-        HagbadMember(name: "Khadar", paidAmount: 200.0, hasReceived: true, isTrusted: true, avatar: "K", payoutOrder: 2),
-        HagbadMember(name: "Sahra", paidAmount: 100.0, hasReceived: false, isTrusted: true, avatar: "S", payoutOrder: 3),
+        HagbadMember(name: "Warsame", paidAmount: 200.0, hasReceived: false, isTrusted: true, avatar: "W", payoutOrder: 1, isConfirmed: true, hasSignedOath: true, isGuarantorConfirmed: true),
+        HagbadMember(name: "Khadar", paidAmount: 200.0, hasReceived: true, isTrusted: true, avatar: "K", payoutOrder: 2, isConfirmed: true, hasSignedOath: true, isGuarantorConfirmed: true),
+        HagbadMember(name: "Sahra", paidAmount: 100.0, hasReceived: false, isTrusted: true, avatar: "S", payoutOrder: 3, isConfirmed: true, hasSignedOath: true, isGuarantorConfirmed: false, guarantorName: "You", guarantorId: "Admin-ID"),
       ],
     ),
   ];
@@ -183,6 +192,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
           guarantorName: details['guarantorName'],
           guarantorId: details['guarantorId'],
           isTrusted: details['name'] == "You",
+          isConfirmed: details['name'] == "You", // Admin is already confirmed
+          hasSignedOath: details['name'] == "You", // Admin already signed
         );
       }).toList();
 
@@ -211,7 +222,17 @@ class _HagbadScreenState extends State<HagbadScreen> {
     Navigator.pop(context);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.hagbadCreatedSuccess, style: const TextStyle(color: Colors.white)), backgroundColor: Colors.green),
+      SnackBar(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.hagbadCreatedSuccess, style: const TextStyle(fontWeight: FontWeight.bold)),
+            const Text("Ogeysiis iyo Dhaar ayaa loo diray xubnaha oo dhan.", style: TextStyle(fontSize: 12)),
+          ],
+        ),
+        backgroundColor: Colors.green,
+      ),
     );
   }
 
@@ -222,7 +243,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
       _isDrawing = true;
     });
 
-    // Simulate "shuffling" animation
+    // 1. Initial Shuffle Sound Simulation (Visual)
     for (int i = 0; i < 15; i++) {
       await Future.delayed(Duration(milliseconds: 50 + (i * 15)));
       setModalState(() {
@@ -230,22 +251,101 @@ class _HagbadScreenState extends State<HagbadScreen> {
       });
     }
 
+    // 2. Ensuring 'You' is not always last or first
     setModalState(() {
+      _newGroupMembersWithDetails.shuffle();
       _isDrawing = false;
     });
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Row(
             children: [
-              Icon(Icons.shuffle_rounded, color: Colors.white, size: 20),
-              SizedBox(width: 12),
-              Text("Qori-tuurka waa lagu guuleystay!"),
+              const Icon(Icons.shuffle_rounded, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+              const Text("Qori-tuurka waa lagu guuleystay! Kala horreyntu waa diyaar."),
             ],
           ),
           backgroundColor: AppColors.primaryDark,
-          duration: Duration(seconds: 1),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  void _performLiveQoriTuur(HagbadGroup group) async {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Check if all members are confirmed
+    bool allConfirmed = group.members.every((m) => m.isConfirmed && m.hasSignedOath);
+    if (!allConfirmed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Lama samayn karo Qori-tuur ilaa dhammaan xubnuhu aqbalaan dhaaranaana."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isDrawing = true);
+
+    // Visual animation in the list
+    for (int i = 0; i < 20; i++) {
+      await Future.delayed(Duration(milliseconds: 100 + (i * 10)));
+      setState(() {
+        group.members.shuffle();
+      });
+    }
+
+    setState(() {
+      // Finalize the order
+      for (int i = 0; i < group.members.length; i++) {
+        final m = group.members[i];
+        group.members[i] = HagbadMember(
+          name: m.name,
+          walletId: m.walletId,
+          avatar: m.avatar,
+          payoutOrder: i + 1, // New order
+          paidAmount: m.paidAmount,
+          hasReceived: m.hasReceived,
+          isTrusted: m.isTrusted,
+          isConfirmed: m.isConfirmed,
+          hasSignedOath: m.hasSignedOath,
+          guarantorName: m.guarantorName,
+          guarantorId: m.guarantorId,
+        );
+      }
+      _isDrawing = false;
+    });
+
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text("🎰 Qori-tuurku waa Dhammaaday!", textAlign: TextAlign.center),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("Kala horreynta cusub ee xubnaha waa tan:"),
+              const SizedBox(height: 16),
+              ...group.members.map((m) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    CircleAvatar(radius: 12, backgroundColor: AppColors.primaryDark, child: Text("${m.payoutOrder}", style: const TextStyle(fontSize: 10, color: Colors.white))),
+                    const SizedBox(width: 12),
+                    Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              )).toList(),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Hagaag")),
+          ],
         ),
       );
     }
@@ -567,6 +667,29 @@ class _HagbadScreenState extends State<HagbadScreen> {
     
     if (mounted) {
       Navigator.pop(context); // Close loading
+      
+      // NEW: Update state and Notify Group Chat
+      setState(() {
+        final youIndex = group.members.indexWhere((m) => m.name == "You");
+        if (youIndex != -1) {
+          final member = group.members[youIndex];
+          group.members[youIndex] = HagbadMember(
+            name: member.name,
+            walletId: member.walletId,
+            avatar: member.avatar,
+            payoutOrder: member.payoutOrder,
+            paidAmount: group.amount,
+            hasReceived: member.hasReceived,
+            isTrusted: member.isTrusted,
+            isConfirmed: member.isConfirmed,
+            hasSignedOath: member.hasSignedOath,
+            guarantorName: member.guarantorName,
+            guarantorId: member.guarantorId,
+            isGuarantorConfirmed: member.isGuarantorConfirmed,
+          );
+        }
+      });
+
       _showSuccessPage(group);
     }
   }
@@ -994,19 +1117,34 @@ class _HagbadScreenState extends State<HagbadScreen> {
           tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           iconColor: isDark ? Colors.white70 : AppColors.primaryDark,
           collapsedIconColor: isDark ? Colors.white30 : Colors.grey,
-          leading: Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: _getStatusColor(group.status).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Icon(
-                _getStatusIcon(group.status),
-                color: _getStatusColor(group.status),
+          leading: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: _getStatusColor(group.status).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Icon(
+                    _getStatusIcon(group.status),
+                    color: _getStatusColor(group.status),
+                  ),
+                ),
               ),
-            ),
+              if (group.members.any((m) => !m.isConfirmed))
+                Positioned(
+                  top: -5,
+                  right: -5,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
+                    child: const Icon(Icons.notifications_active, size: 10, color: Colors.white),
+                  ),
+                ),
+            ],
           ),
           title: Text(
             group.name,
@@ -1109,6 +1247,20 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       ),
                       Row(
                         children: [
+                          if (group.adminName == l10n.youAdmin)
+                            TextButton.icon(
+                              onPressed: () => _performLiveQoriTuur(group),
+                              icon: const Icon(Icons.shuffle_rounded, size: 14),
+                              label: const Text("Qori-tuurka Bilow", style: TextStyle(fontSize: 12)),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 8), 
+                                foregroundColor: Colors.purple,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8), 
+                                  side: BorderSide(color: Colors.purple.withValues(alpha: 0.2)),
+                                ),
+                              ),
+                            ),
                           if (group.adminName == l10n.youAdmin && group.members.any((m) => !m.isFullyPaid(group.amount)))
                             TextButton.icon(
                               onPressed: () => _remindAllPending(group),
@@ -1193,18 +1345,23 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       const SizedBox(width: 12),
                       IconButton.filled(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                children: [
-                                  const Icon(Icons.check_circle, color: Colors.white, size: 20),
-                                  const SizedBox(width: 12),
-                                  Text(l10n.receiptDownloaded),
-                                ],
+                          // NEW: Admin Manual Penalty Trigger (For testing/Simulation)
+                          if (group.adminName == "Khadar Abdi") {
+                             _showPenaltyDialog(group, group.members.indexWhere((m) => m.name == "Maryan"));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  children: [
+                                    const Icon(Icons.check_circle, color: Colors.white, size: 20),
+                                    const SizedBox(width: 12),
+                                    Text(l10n.receiptDownloaded),
+                                  ],
+                                ),
+                                backgroundColor: Colors.green,
                               ),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
+                            );
+                          }
                         },
                         icon: const Icon(Icons.download_rounded, size: 20),
                         tooltip: l10n.downloadReceipt,
@@ -1230,6 +1387,95 @@ class _HagbadScreenState extends State<HagbadScreen> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDhaarDialog(HagbadGroup group, HagbadMember member) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Column(
+          children: [
+            const Icon(Icons.mosque_rounded, color: Colors.purple, size: 48),
+            const SizedBox(height: 16),
+            Text(l10n.hagbadOath, style: const TextStyle(color: Colors.purple, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.hagbadOathDesc, 
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.purple.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.purple.withValues(alpha: 0.1)),
+              ),
+              child: const Text(
+                "Waxaan ku dhaaranayaa magaca Ilaaha Qaadirka ah inaan bixin doono qaaraanka Hagbad-ka waqtigiisa, si daacad ahna ugu adeegi doono kooxdan.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold, height: 1.5),
+              ),
+            ),
+          ],
+        ),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), 
+            child: Text(l10n.cancel, style: TextStyle(color: Colors.grey.shade600)),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                int idx = group.members.indexOf(member);
+                group.members[idx] = HagbadMember(
+                  name: member.name,
+                  walletId: member.walletId,
+                  avatar: member.avatar,
+                  payoutOrder: member.payoutOrder,
+                  paidAmount: member.paidAmount,
+                  hasReceived: member.hasReceived,
+                  isTrusted: member.isTrusted,
+                  isConfirmed: member.isConfirmed,
+                  hasSignedOath: true,
+                  guarantorName: member.guarantorName,
+                  guarantorId: member.guarantorId,
+                );
+              });
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(Icons.verified_user, color: Colors.white),
+                      const SizedBox(width: 12),
+                      const Text("Dhaarta waa la aqbalay! Hadda waxaad tahay xubin rasmi ah."),
+                    ],
+                  ),
+                  backgroundColor: Colors.purple,
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.purple,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: Text(l10n.iConfirmOath, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
     );
   }
@@ -1310,6 +1556,32 @@ class _HagbadScreenState extends State<HagbadScreen> {
       // Re-sort the list by payoutOrder to reflect the UI change
       group.members.sort((a, b) => a.payoutOrder.compareTo(b.payoutOrder));
     });
+  }
+
+  double calculateCurrentPenalty(HagbadGroup group, HagbadMember member) {
+    if (member.paidAmount >= group.amount) return member.penaltyAmount;
+
+    // Calculate due date for current cycle
+    DateTime dueDate;
+    switch (group.frequency) {
+      case HagbadFrequency.daily:
+        dueDate = group.startDate.add(Duration(days: group.currentCycle));
+      case HagbadFrequency.weekly:
+        dueDate = group.startDate.add(Duration(days: group.currentCycle * 7));
+      case HagbadFrequency.tenDays:
+        dueDate = group.startDate.add(Duration(days: group.currentCycle * 10));
+      case HagbadFrequency.monthly:
+        dueDate = DateTime(group.startDate.year, group.startDate.month + group.currentCycle, group.startDate.day);
+      case HagbadFrequency.yearly:
+        dueDate = DateTime(group.startDate.year + group.currentCycle, group.startDate.month, group.startDate.day);
+    }
+
+    final now = DateTime.now();
+    if (now.isAfter(dueDate)) {
+      final daysLate = now.difference(dueDate).inDays;
+      return member.penaltyAmount + (daysLate * group.penaltyPerDay);
+    }
+    return member.penaltyAmount;
   }
 
   void _showPenaltyDialog(HagbadGroup group, int index) {
@@ -1580,9 +1852,24 @@ class _HagbadScreenState extends State<HagbadScreen> {
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: Text(
-                "${member.payoutOrder}",
-                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Text(
+                    "${member.payoutOrder}",
+                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey),
+                  ),
+                  if (member.isConfirmed)
+                    Positioned(
+                      bottom: -2,
+                      right: -2,
+                      child: Container(
+                        padding: const EdgeInsets.all(1),
+                        decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                        child: const Icon(Icons.check, size: 8, color: Colors.white),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
@@ -1618,6 +1905,15 @@ class _HagbadScreenState extends State<HagbadScreen> {
                           child: const Icon(Icons.verified_rounded, size: 14, color: Colors.blue),
                         ),
                       ),
+                    if (member.isConfirmed)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                          decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
+                          child: const Text("Aqbalay", style: TextStyle(fontSize: 8, color: Colors.green, fontWeight: FontWeight.bold)),
+                        ),
+                      ),
                   ],
                 ),
                 if (member.guarantorName != null)
@@ -1638,6 +1934,181 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   _getTurnLabel(freq, member.payoutOrder, l10n),
                   style: TextStyle(fontSize: 11, color: isDark ? Colors.white54 : Colors.grey.shade600),
                 ),
+                if (member.name == "You" && (!member.isConfirmed || !member.hasSignedOath))
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (!member.isConfirmed)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withValues(alpha: 0.05),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.blue.withValues(alpha: 0.1)),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.mail_outline_rounded, size: 16, color: Colors.blue),
+                                      const SizedBox(width: 8),
+                                      Text(l10n.invitationReceived, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.blue)),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(l10n.invitationDesc(group.adminName, group.amount.toStringAsFixed(0)), style: const TextStyle(fontSize: 11)),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      setState(() {
+                                        int idx = group.members.indexOf(member);
+                                        group.members[idx] = HagbadMember(
+                                          name: member.name,
+                                          walletId: member.walletId,
+                                          avatar: member.avatar,
+                                          payoutOrder: member.payoutOrder,
+                                          paidAmount: member.paidAmount,
+                                          hasReceived: member.hasReceived,
+                                          isTrusted: member.isTrusted,
+                                          isConfirmed: true,
+                                          hasSignedOath: member.hasSignedOath,
+                                          guarantorName: member.guarantorName,
+                                          guarantorId: member.guarantorId,
+                                          isGuarantorConfirmed: member.isGuarantorConfirmed,
+                                        );
+                                      });
+                                    },
+                                    icon: const Icon(Icons.check_circle_outline, size: 14),
+                                    label: Text(l10n.acceptInvite, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                                      minimumSize: const Size(0, 32),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if (member.isConfirmed && !member.hasSignedOath)
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.purple.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.purple.withValues(alpha: 0.1)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.mosque_rounded, size: 16, color: Colors.purple),
+                                    const SizedBox(width: 8),
+                                    Text(l10n.religiousOathRequired, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.purple)),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(l10n.oathRequirementDesc, style: const TextStyle(fontSize: 11)),
+                                const SizedBox(height: 12),
+                                ElevatedButton.icon(
+                                  onPressed: () => _showDhaarDialog(group, member),
+                                  icon: const Icon(Icons.menu_book_rounded, size: 14),
+                                  label: Text(l10n.signOathNow, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.purple,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                                    minimumSize: const Size(0, 32),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                // NEW: Guarantor Invitation Logic for "You"
+                if (group.members.any((m) => m.guarantorName == "You" && !m.isGuarantorConfirmed))
+                  Builder(builder: (context) {
+                    final memberBeingGuaranteed = group.members.firstWhere((m) => m.guarantorName == "You" && !m.isGuarantorConfirmed);
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.orange.withValues(alpha: 0.1)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              children: [
+                                Icon(Icons.verified_user_outlined, size: 16, color: Colors.orange),
+                                SizedBox(width: 8),
+                                Text("Codsi Uulnimo (Guarantor)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.orange)),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text("${memberBeingGuaranteed.name} ayaa kaa codsaday inaad u noqoto Uul (Dammaanad) kooxdan.", style: const TextStyle(fontSize: 11)),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      int idx = group.members.indexOf(memberBeingGuaranteed);
+                                      group.members[idx] = HagbadMember(
+                                        name: memberBeingGuaranteed.name,
+                                        walletId: memberBeingGuaranteed.walletId,
+                                        avatar: memberBeingGuaranteed.avatar,
+                                        payoutOrder: memberBeingGuaranteed.payoutOrder,
+                                        paidAmount: memberBeingGuaranteed.paidAmount,
+                                        hasReceived: memberBeingGuaranteed.hasReceived,
+                                        isTrusted: memberBeingGuaranteed.isTrusted,
+                                        isConfirmed: memberBeingGuaranteed.isConfirmed,
+                                        hasSignedOath: memberBeingGuaranteed.hasSignedOath,
+                                        guarantorName: memberBeingGuaranteed.guarantorName,
+                                        guarantorId: memberBeingGuaranteed.guarantorId,
+                                        isGuarantorConfirmed: true, // YOU ACCEPTED
+                                      );
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("Waad aqbashay inaad u noqoto Uul ${memberBeingGuaranteed.name}."), backgroundColor: Colors.orange),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.check, size: 14),
+                                  label: const Text("Aqbal Uulnimada", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orange,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                                    minimumSize: const Size(0, 32),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                TextButton(
+                                  onPressed: () {}, // Handle rejection if needed
+                                  child: const Text("Diid", style: TextStyle(color: Colors.red, fontSize: 11)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
                 if (member.name == "You" && !member.hasReceived)
                   Builder(builder: (context) {
                     final days = _calculateDaysUntilTurn(group, member.payoutOrder);
@@ -1663,145 +2134,149 @@ class _HagbadScreenState extends State<HagbadScreen> {
               ],
             ),
           ),
-          if (!member.isFullyPaid(group.amount) && group.adminName == l10n.youAdmin && member.name != "You")
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.money_off_csred_rounded, size: 18, color: Colors.red),
-                    onPressed: () => _showPenaltyDialog(group, index),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    tooltip: l10n.applyPenalty,
-                  ),
-                  const SizedBox(width: 4),
-                  IconButton(
-                    icon: const Icon(Icons.notification_add_outlined, size: 18, color: Colors.orange),
-                    onPressed: () => _remindMember(member),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    tooltip: l10n.remindMember,
-                  ),
-                ],
-              ),
-            ),
-          if (!member.hasReceived && group.adminName == l10n.youAdmin)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.person_remove_outlined, size: 18, color: Colors.redAccent),
-                    onPressed: () => _showReplaceMemberDialog(group, index),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    tooltip: l10n.replaceMember,
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(Icons.swap_vert_rounded, size: 18, color: AppColors.primaryDark),
-                    onPressed: () => _showSwapOptions(group, index),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-            ),
-          if (member.isFullyPaid(group.amount))
-            const Padding(
-              padding: EdgeInsets.only(right: 8),
-              child: Icon(Icons.check_circle, color: Colors.green, size: 20),
-            )
-          else
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Icon(Icons.radio_button_unchecked, color: isDark ? Colors.white24 : Colors.grey, size: 20),
-                  if (member.penaltyAmount > 0)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        "+ \$${member.penaltyAmount.toStringAsFixed(0)} ${l10n.lateFee}",
-                        style: const TextStyle(fontSize: 8, color: Colors.red, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  if (member.paidAmount > 0)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        "${l10n.remaining}: \$${(group.amount + member.penaltyAmount - member.paidAmount).toStringAsFixed(0)}",
-                        style: const TextStyle(fontSize: 8, color: Colors.orange, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          if (member.hasReceived)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    l10n.received,
-                    style: const TextStyle(color: Colors.blue, fontSize: 10, fontWeight: FontWeight.bold),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              if (member.hasSignedOath)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.menu_book_rounded, size: 12, color: Colors.purple),
+                      SizedBox(width: 4),
+                      Text("Wuu Dhaartay", style: TextStyle(fontSize: 10, color: Colors.purple, fontWeight: FontWeight.bold)),
+                    ],
                   ),
                 ),
-                if (member.guarantorName != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.verified_user_outlined, size: 10, color: Colors.grey),
-                        const SizedBox(width: 2),
-                        Text(
-                          member.guarantorName!,
-                          style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.w500),
-                        ),
-                      ],
+              if (!member.isFullyPaid(group.amount) && group.adminName == l10n.youAdmin && member.name != "You")
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.money_off_csred_rounded, size: 18, color: Colors.red),
+                      onPressed: () => _showPenaltyDialog(group, index),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      tooltip: l10n.applyPenalty,
                     ),
-                  )
-                else
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.warning_amber_rounded, size: 10, color: Colors.orange),
-                        const SizedBox(width: 2),
-                        Text(
-                          l10n.guarantor,
-                          style: const TextStyle(fontSize: 9, color: Colors.orange, fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                    const SizedBox(width: 4),
+                    IconButton(
+                      icon: const Icon(Icons.notification_add_outlined, size: 18, color: Colors.orange),
+                      onPressed: () => _remindMember(member),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      tooltip: l10n.remindMember,
                     ),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.red.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      l10n.debtor.toUpperCase(),
-                      style: const TextStyle(color: Colors.red, fontSize: 8, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              if (!member.hasReceived && group.adminName == l10n.youAdmin)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.person_remove_outlined, size: 18, color: Colors.redAccent),
+                      onPressed: () => _showReplaceMemberDialog(group, index),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      tooltip: l10n.replaceMember,
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.swap_vert_rounded, size: 18, color: AppColors.primaryDark),
+                      onPressed: () => _showSwapOptions(group, index),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+              if (member.isFullyPaid(group.amount))
+                const Icon(Icons.check_circle, color: Colors.green, size: 20)
+              else
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Icon(Icons.radio_button_unchecked, color: isDark ? Colors.white24 : Colors.grey, size: 20),
+                    if (member.penaltyAmount > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          "+ \$${member.penaltyAmount.toStringAsFixed(0)} ${l10n.lateFee}",
+                          style: const TextStyle(fontSize: 8, color: Colors.red, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    if (member.paidAmount > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          "${l10n.remaining}: \$${(group.amount + member.penaltyAmount - member.paidAmount).toStringAsFixed(0)}",
+                          style: const TextStyle(fontSize: 8, color: Colors.orange, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                  ],
+                ),
+              if (member.hasReceived)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        l10n.received,
+                        style: const TextStyle(color: Colors.blue, fontSize: 10, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    if (member.guarantorName != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.verified_user_outlined, size: 10, color: Colors.grey),
+                            const SizedBox(width: 2),
+                            Text(
+                              member.guarantorName!,
+                              style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.warning_amber_rounded, size: 10, color: Colors.orange),
+                            const SizedBox(width: 2),
+                            Text(
+                              l10n.guarantor,
+                              style: const TextStyle(fontSize: 9, color: Colors.orange, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          l10n.debtor.toUpperCase(),
+                          style: const TextStyle(color: Colors.red, fontSize: 8, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
         ],
       ),
     );

@@ -3470,6 +3470,42 @@ abstract class AppLocalizations {
   /// **'Penalty of \${amount} applied to {name}'**
   String penaltyApplied(Object amount, Object name);
 
+  /// No description provided for @invitationReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation Received'**
+  String get invitationReceived;
+
+  /// No description provided for @invitationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'{admin} invited you to join a \${amount} Hagbad group.'**
+  String invitationDesc(String admin, String amount);
+
+  /// No description provided for @acceptInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept Invitation'**
+  String get acceptInvite;
+
+  /// No description provided for @religiousOathRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Religious Oath Required'**
+  String get religiousOathRequired;
+
+  /// No description provided for @oathRequirementDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'To join the group officially, you must sign the religious oath (Dhaar).'**
+  String get oathRequirementDesc;
+
+  /// No description provided for @signOathNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Oath Now'**
+  String get signOathNow;
+
   /// No description provided for @apr2026.
   ///
   /// In en, this message translates to:

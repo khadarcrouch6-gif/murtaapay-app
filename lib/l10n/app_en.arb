@@ -755,5 +755,17 @@
   "applyPenalty": "Apply Penalty",
   "penaltyAmount": "Penalty Amount ($)",
   "penaltyApplied": "Penalty of ${amount} applied to {name}",
+  "invitationReceived": "Invitation Received",
+  "invitationDesc": "{admin} invited you to join a ${amount} Hagbad group.",
+  "@invitationDesc": {
+    "placeholders": {
+      "admin": { "type": "String" },
+      "amount": { "type": "String" }
+    }
+  },
+  "acceptInvite": "Accept Invitation",
+  "religiousOathRequired": "Religious Oath Required",
+  "oathRequirementDesc": "To join the group officially, you must sign the religious oath (Dhaar).",
+  "signOathNow": "Sign Oath Now",
   "apr2026": "Apr 2026"
 }
