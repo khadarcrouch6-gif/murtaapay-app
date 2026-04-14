@@ -179,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (context.isDesktop || (MediaQuery.of(context).orientation == Orientation.landscape && !context.isMobile))
+            if (!context.isMobile)
               IconButton(
                 onPressed: () => Scaffold.of(context).openDrawer(),
                 icon: const Icon(Icons.menu_rounded, color: Colors.white),

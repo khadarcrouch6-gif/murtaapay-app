@@ -98,7 +98,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
         },
         child: Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
-          drawer: _buildSidebar(context, state, theme, isDrawer: true),
+          drawer: isMobile ? null : _buildSidebar(context, state, theme, isDrawer: true),
           body: Row(
             children: [
               if (isDesktop)
@@ -136,7 +136,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
 
   Widget _buildSidebar(BuildContext context, AppState state, ThemeData theme, {bool isDrawer = false}) {
     return Container(
-      width: 260,
+      width: 280,
       height: isDrawer ? double.infinity : null,
       margin: isDrawer ? EdgeInsets.zero : const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -155,65 +155,103 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
         child: Column(
           children: [
             const SizedBox(height: 32),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
-                    ),
-                    child: const CircleAvatar(
-                      radius: 18,
-                      backgroundColor: AppColors.primaryDark,
-                      backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=rayaale'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "MurtaaxPay",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          "Elite Member",
-                          style: TextStyle(color: AppColors.grey, fontSize: 10, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildSidebarHeader(context, state, theme),
             const SizedBox(height: 24),
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _buildSectionTitle(state.translate("MAIN", "WEYNAA")),
                     _buildSidebarItem(0, state.translate("Home", "Hoyga"), FontAwesomeIcons.house, state, isDrawer),
                     _buildSidebarItem(1, state.translate("History", "Taariikhda"), FontAwesomeIcons.clockRotateLeft, state, isDrawer),
-                    _buildSidebarItem(2, state.translate("Send", "Diris"), FontAwesomeIcons.paperPlane, state, isDrawer),
                     _buildSidebarItem(3, state.translate("Cards", "Kaadhadhka"), FontAwesomeIcons.creditCard, state, isDrawer),
                     _buildSidebarItem(4, state.translate("Profile", "Profile-ka"), FontAwesomeIcons.user, state, isDrawer),
+                    
+                    const SizedBox(height: 20),
+                    _buildSectionTitle(state.translate("PAYMENTS & SERVICES", "ADEEGYADA")),
+                    _buildSidebarItem(2, state.translate("Send Money", "Lacag Diris"), FontAwesomeIcons.paperPlane, state, isDrawer),
+                    _buildSidebarItem(-1, state.translate("Pay Bills", "Bixinta Biilasha"), FontAwesomeIcons.receipt, state, isDrawer, onTap: () {
+                      if (isDrawer) Navigator.pop(context);
+                      // Navigate to Bills screen if needed or handle center button logic
+                      state.setNavIndex(2);
+                    }),
+                    _buildSidebarItem(-1, "Hagbad", FontAwesomeIcons.peopleGroup, state, isDrawer),
+                    _buildSidebarItem(-1, "Sadaqah", FontAwesomeIcons.handHoldingHeart, state, isDrawer),
+
+                    const SizedBox(height: 20),
+                    _buildSectionTitle(state.translate("SYSTEM", "NIDAAMKA")),
+                    _buildSidebarItem(-1, state.translate("Settings", "Habaynta"), FontAwesomeIcons.gear, state, isDrawer),
+                    _buildSidebarItem(-1, state.translate("Support", "Caawimo"), FontAwesomeIcons.headset, state, isDrawer),
                   ],
                 ),
               ),
             ),
             const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: SwitchListTile.adaptive(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                title: const Text("Dark Mode", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                value: state.themeMode == ThemeMode.dark,
-                activeThumbColor: AppColors.accentTeal,
-                onChanged: (v) => state.toggleTheme(v),
+            _buildSidebarFooter(context, state, theme),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSidebarHeader(BuildContext context, AppState state, ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.primaryDark.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.4), width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.accentTeal.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                  )
+                ]
+              ),
+              child: const CircleAvatar(
+                radius: 20,
+                backgroundColor: AppColors.primaryDark,
+                backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=rayaale'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Khadar Abdi",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentTeal.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      "ELITE MEMBER",
+                      style: TextStyle(
+                        color: AppColors.accentTeal, 
+                        fontSize: 8, 
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -222,14 +260,127 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
     );
   }
 
-  Widget _buildSidebarItem(int index, String title, dynamic icon, AppState state, bool isDrawer) {
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          color: AppColors.grey.withValues(alpha: 0.6),
+          letterSpacing: 1.2,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSidebarFooter(BuildContext context, AppState state, ThemeData theme) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildLanguageToggle(state),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: theme.dividerColor.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  onPressed: () => state.toggleTheme(state.themeMode != ThemeMode.dark),
+                  icon: Icon(
+                    state.themeMode == ThemeMode.dark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                    size: 18,
+                    color: AppColors.accentTeal,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+        _buildSidebarItem(-2, state.translate("Sign Out", "Ka Bax"), FontAwesomeIcons.rightFromBracket, state, false, color: Colors.redAccent),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  Widget _buildLanguageToggle(AppState state) {
+    bool isSomali = state.locale.languageCode == 'so';
+    return Container(
+      height: 40,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.primaryDark.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => state.setLanguage('en'),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: !isSomali ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: !isSomali ? [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4)] : null,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "EN",
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: !isSomali ? AppColors.primaryDark : AppColors.grey,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => state.setLanguage('so'),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isSomali ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: isSomali ? [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4)] : null,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "SO",
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: isSomali ? AppColors.primaryDark : AppColors.grey,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSidebarItem(int index, String title, dynamic icon, AppState state, bool isDrawer, {VoidCallback? onTap, Color? color}) {
     bool isSelected = state.selectedNavIndex == index;
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: InkWell(
         onTap: () {
-          _onItemTapped(index, state);
+          if (onTap != null) {
+            onTap();
+          } else if (index >= 0) {
+            _onItemTapped(index, state);
+          }
           if (isDrawer) Navigator.pop(context);
         },
         borderRadius: BorderRadius.circular(12),
@@ -242,7 +393,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
           ),
           child: Row(
             children: [
-              AdaptiveIcon(icon, size: 16, color: isSelected ? AppColors.accentTeal : AppColors.grey),
+              AdaptiveIcon(icon, size: 16, color: color ?? (isSelected ? AppColors.accentTeal : AppColors.grey)),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -250,7 +401,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                    color: isSelected ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.7),
+                    color: color ?? (isSelected ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.7)),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
