@@ -33,6 +33,13 @@ import '../scan/qr_scanner_screen.dart';
 
 enum ChartType { bar, pie, line }
 
+class QuickContact {
+  final String name;
+  final String avatar;
+  final bool isOnline;
+  QuickContact({required this.name, required this.avatar, this.isOnline = false});
+}
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -52,6 +59,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   ChartType _selectedChartType = ChartType.bar;
   final List<double> _spendingData = [45, 80, 55, 95, 70, 40, 65];
   final List<String> _days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  final List<QuickContact> _quickContacts = [
+    QuickContact(name: "Abdi", avatar: "https://i.pravatar.cc/150?u=abdi", isOnline: true),
+    QuickContact(name: "Warsame", avatar: "https://i.pravatar.cc/150?u=warsame", isOnline: true),
+    QuickContact(name: "Leyla", avatar: "https://i.pravatar.cc/150?u=leyla", isOnline: false),
+    QuickContact(name: "Sahra", avatar: "https://i.pravatar.cc/150?u=sahra", isOnline: true),
+    QuickContact(name: "Farah", avatar: "https://i.pravatar.cc/150?u=farah", isOnline: false),
+    QuickContact(name: "Hassan", avatar: "https://i.pravatar.cc/150?u=hassan", isOnline: true),
+  ];
 
   late AnimationController _gradientController;
 
@@ -124,6 +140,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildRemainingHeader(context, state, l10n, theme),
+                        SizedBox(height: context.verticalPadding),
+                        _buildQuickSend(context, state, l10n, theme),
                         SizedBox(height: context.verticalPadding),
                         _buildSpendingAnalysis(context, state, l10n, theme),
                         SizedBox(height: context.verticalPadding),
@@ -881,6 +899,139 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           PieChartSectionData(color: AppColors.accentTeal, value: 25, title: '25%', radius: 50, titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
         ],
       ),
+    );
+  }
+
+  Widget _buildQuickSend(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l10n.quickSend,
+                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  l10n.seeAll,
+                  style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 100,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding - 8),
+            itemCount: _quickContacts.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                // Return "Add New" button
+                return FadeInRight(
+                  duration: const Duration(milliseconds: 500),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.translate("Search for a new contact", "Raadi xiriir cusub"))),
+                        );
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: AppColors.accentTeal.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
+                            ),
+                            child: const Icon(Icons.add_rounded, color: AppColors.accentTeal, size: 30),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            state.translate("New", "Cusub"),
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              final contact = _quickContacts[index - 1];
+              return FadeInRight(
+                duration: const Duration(milliseconds: 500),
+                delay: Duration(milliseconds: 100 * index),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SendAmountScreen(),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
+                              ),
+                              child: CircleAvatar(
+                                radius: 30,
+                                backgroundImage: NetworkImage(contact.avatar),
+                                backgroundColor: Colors.grey.shade200,
+                              ),
+                            ),
+                            if (contact.isOnline)
+                              Positioned(
+                                right: 2,
+                                bottom: 2,
+                                child: Container(
+                                  width: 14,
+                                  height: 14,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF10B981),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: theme.scaffoldBackgroundColor, width: 2.5),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          contact.name,
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 

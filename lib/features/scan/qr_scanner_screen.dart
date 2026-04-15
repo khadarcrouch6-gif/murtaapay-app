@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:image_picker/image_picker.dart';
 import 'dart:ui';
 import '../../core/app_colors.dart';
 import '../../l10n/app_localizations.dart';
@@ -50,6 +51,35 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     }
   }
 
+  Future<void> _pickAndAnalyzeImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      
+      if (image != null && !_isDisposed) {
+        // In mobile_scanner 3.x, analyzeImage returns Future<bool> 
+        // and detections are typically reported via the onDetect callback.
+        final bool found = await controller.analyzeImage(image.path);
+        
+        if (!found) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Naga raali ahoow, sawirkan ma laha QR code la aqoonsan karo."),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+        // If found == true, _onDetect will handle navigation automatically.
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -88,9 +118,18 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                     letterSpacing: 1,
                   ),
                 ),
-                _buildCircularButton(
-                  icon: Icons.flash_on_rounded,
-                  onTap: () => controller.toggleTorch(),
+                Row(
+                  children: [
+                    _buildCircularButton(
+                      icon: Icons.image_rounded,
+                      onTap: _pickAndAnalyzeImage,
+                    ),
+                    const SizedBox(width: 8),
+                    _buildCircularButton(
+                      icon: Icons.flash_on_rounded,
+                      onTap: () => controller.toggleTorch(),
+                    ),
+                  ],
                 ),
               ],
             ),

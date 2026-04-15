@@ -3535,6 +3535,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share my QR code to receive payments instantly.'**
   String get shareMyQrCode;
+
+  /// No description provided for @quickSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Send'**
+  String get quickSend;
 }
 
 class _AppLocalizationsDelegate

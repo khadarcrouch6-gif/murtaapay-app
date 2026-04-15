@@ -1825,4 +1825,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get shareMyQrCode => 'Share my QR code to receive payments instantly.';
+
+  @override
+  String get quickSend => 'Quick Send';
 }

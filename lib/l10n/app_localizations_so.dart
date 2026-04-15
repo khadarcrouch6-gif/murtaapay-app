@@ -1818,4 +1818,7 @@ class AppLocalizationsSo extends AppLocalizations {
   @override
   String get shareMyQrCode =>
       'La wadaag sawirkaaga QR-ka si aad lacag u hesho.';
+
+  @override
+  String get quickSend => 'Xiriirada Degdega';
 }

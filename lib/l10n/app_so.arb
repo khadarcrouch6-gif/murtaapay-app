@@ -656,5 +656,6 @@
   "scanQR": "Sawirka QR-ka",
   "alignQRCode": "QR Code-ka ku aadi sanduuqa si uu u scan-gareeyo",
   "myQrCode": "Sawirkayga QR-ka",
-  "shareMyQrCode": "La wadaag sawirkaaga QR-ka si aad lacag u hesho."
+  "shareMyQrCode": "La wadaag sawirkaaga QR-ka si aad lacag u hesho.",
+  "quickSend": "Xiriirada Degdega"
 }

@@ -771,5 +771,6 @@
   "scanQR": "Scan QR Code",
   "alignQRCode": "Align the QR code within the frame to scan",
   "myQrCode": "My QR Code",
-  "shareMyQrCode": "Share my QR code to receive payments instantly."
+  "shareMyQrCode": "Share my QR code to receive payments instantly.",
+  "quickSend": "Quick Send"
 }
