@@ -1801,4 +1801,16 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get apr2026 => 'Apr 2026';
+
+  @override
+  String get scanQR => 'Scan QR Code';
+
+  @override
+  String get alignQRCode => 'Align the QR code within the frame to scan';
+
+  @override
+  String get myQrCode => 'My QR Code';
+
+  @override
+  String get shareMyQrCode => 'Share my QR code to receive payments instantly.';
 }

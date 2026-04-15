@@ -4,6 +4,8 @@
 <dict>
 	<key>NSFaceIDUsageDescription</key>
 	<string>MurtaaxPay needs Face ID to authenticate you securely.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>MurtaaxPay needs camera access to scan QR codes for secure payments.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

@@ -3511,6 +3511,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Apr 2026'**
   String get apr2026;
+
+  /// No description provided for @scanQR.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get scanQR;
+
+  /// No description provided for @alignQRCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Align the QR code within the frame to scan'**
+  String get alignQRCode;
+
+  /// No description provided for @myQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'My QR Code'**
+  String get myQrCode;
+
+  /// No description provided for @shareMyQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Share my QR code to receive payments instantly.'**
+  String get shareMyQrCode;
 }
 
 class _AppLocalizationsDelegate

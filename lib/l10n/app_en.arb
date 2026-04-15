@@ -767,5 +767,9 @@
   "religiousOathRequired": "Religious Oath Required",
   "oathRequirementDesc": "To join the group officially, you must sign the religious oath (Dhaar).",
   "signOathNow": "Sign Oath Now",
-  "apr2026": "Apr 2026"
+  "apr2026": "Apr 2026",
+  "scanQR": "Scan QR Code",
+  "alignQRCode": "Align the QR code within the frame to scan",
+  "myQrCode": "My QR Code",
+  "shareMyQrCode": "Share my QR code to receive payments instantly."
 }

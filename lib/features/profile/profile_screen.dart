@@ -3,6 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
+import 'dart:typed_data';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -45,6 +53,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final String _profileImageUrl = 'https://i.pravatar.cc/300';
   final String _coverImageUrl = 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800';
+
+  // Key for QR sharing
+  final GlobalKey _qrKey = GlobalKey();
 
   // Stats Mock Data
   final int _loyaltyPoints = 1250;
@@ -134,6 +145,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             state.translate("Security & PIN", "Amniga & PIN", ar: "الأمان وكلمة السر", de: "Sicherheit & PIN", et: "Turvalisus ja PIN"), 
                                             FontAwesomeIcons.shieldHalved, 
                                             () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SecurityCenterScreen()))
+                                          ),
+                                          _buildProfileOption(
+                                            context, 
+                                            state.translate("My QR Code", "Sawirkayga QR-ka", ar: "رمزي الخاص", de: "Mein QR-Code", et: "Minu QR-kood"), 
+                                            Icons.qr_code_rounded, 
+                                            () => _showMyQRCode(context, state)
                                           ),
                                         ],
                                       ),
@@ -511,7 +528,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
           SizedBox(height: 4 * context.fontSizeFactor),
-          Text(_userEmail, style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6), fontSize: 14 * context.fontSizeFactor)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(_userEmail, style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6), fontSize: 14 * context.fontSizeFactor)),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () => _showMyQRCode(context, state),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: AppColors.accentTeal.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.qr_code_2_rounded, color: AppColors.accentTeal, size: 16 * context.fontSizeFactor),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -595,6 +629,138 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _captureAndShareQRCode(AppState state) async {
+    try {
+      RenderRepaintBoundary boundary = _qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) return;
+      
+      final Uint8List pngBytes = byteData.buffer.asUint8List();
+
+      final directory = await getTemporaryDirectory();
+      final imagePath = await File('${directory.path}/murtaaxpay_qr.png').create();
+      await imagePath.writeAsBytes(pngBytes);
+
+      await Share.shareXFiles(
+        [XFile(imagePath.path)],
+        text: state.translate(
+          "Scan my QR code on MurtaaxPay to send me money! ID: ${state.walletId}",
+          "Scan-gareey QR code-kayga MurtaaxPay si aad lacag iigu soo dirto! ID: ${state.walletId}",
+          ar: "امسح رمز الاستجابة السريعة الخاص بي على MurtaaxPay لإرسال الأموال إلي! المعرف: ${state.walletId}",
+          de: "Scannen Sie meinen QR-Code auf MurtaaxPay, um mir Geld zu senden! ID: ${state.walletId}",
+          et: "Skanni minu MurtaaxPay QR-koodi, et mulle raha saata! ID: ${state.walletId}"
+        ),
+      );
+    } catch (e) {
+      debugPrint("Error sharing QR code: $e");
+    }
+  }
+
+  void _showMyQRCode(BuildContext context, AppState state) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.7,
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+              border: Border.all(color: Colors.white.withOpacity(0.2)),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+                const SizedBox(height: 32),
+                Text(
+                  state.translate("My QR Code", "Sawirkayga QR-ka", ar: "رمزي الخاص", de: "Mein QR-Code", et: "Minu QR-kood"),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _userName,
+                  style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w600),
+                ),
+                const Spacer(),
+                // QR Container
+                RepaintBoundary(
+                  key: _qrKey,
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(32),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 30,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: QrImageView(
+                      data: state.walletId,
+                      version: QrVersions.auto,
+                      size: 200.0,
+                      foregroundColor: AppColors.primaryDark,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  "ID: ${state.walletId}",
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: 1.5),
+                ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _captureAndShareQRCode(state),
+                      icon: const Icon(Icons.share_rounded, color: Colors.white),
+                      label: Text(
+                        state.translate("Share QR Code", "Share gareey QR-ka", ar: "مشاركة الرمز", de: "QR-Code teilen", et: "Jaga QR-koodi"),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accentTeal,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Text(
+                    state.translate(
+                      "Share my QR code to receive payments instantly.", 
+                      "La wadaag sawirkaaga QR-ka si aad lacag u hesho.",
+                      ar: "شارك رمز الاستجابة السريعة الخاص بك لتلقi المدفوعات فورًا.",
+                      de: "Teile meinen QR-Code, um Zahlungen sofort zu erhalten.",
+                      et: "Jaga oma QR-koodi, et makseid kohe kätte saada."
+                    ),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

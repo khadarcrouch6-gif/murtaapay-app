@@ -652,5 +652,9 @@
   "religiousOathRequired": "Dhaar Diini ah ayaa loo baahan yahay",
   "oathRequirementDesc": "Si aad si rasmi ah ugu biirto kooxda, waa inaad saxiixdaa dhaarta (Dhaarta).",
   "signOathNow": "Hadda Dhaaro",
-  "apr2026": "Abriil 2026"
+  "apr2026": "Abriil 2026",
+  "scanQR": "Sawirka QR-ka",
+  "alignQRCode": "QR Code-ka ku aadi sanduuqa si uu u scan-gareeyo",
+  "myQrCode": "Sawirkayga QR-ka",
+  "shareMyQrCode": "La wadaag sawirkaaga QR-ka si aad lacag u hesho."
 }

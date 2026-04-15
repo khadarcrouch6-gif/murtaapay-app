@@ -1805,4 +1805,17 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get apr2026 => 'Abriil 2026';
+
+  @override
+  String get scanQR => 'Sawirka QR-ka';
+
+  @override
+  String get alignQRCode => 'QR Code-ka ku aadi sanduuqa si uu u scan-gareeyo';
+
+  @override
+  String get myQrCode => 'Sawirkayga QR-ka';
+
+  @override
+  String get shareMyQrCode =>
+      'La wadaag sawirkaaga QR-ka si aad lacag u hesho.';
 }

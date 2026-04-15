@@ -29,6 +29,7 @@ import '../analytics/analytics_screen.dart';
 import '../hagbad/hagbad_screen.dart';
 import '../../core/widgets/receipt_view.dart';
 import '../withdraw/withdraw_screen.dart';
+import '../scan/qr_scanner_screen.dart';
 
 enum ChartType { bar, pie, line }
 
@@ -359,7 +360,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   child: GestureDetector(
                     onTap: () {
                       HapticFeedback.mediumImpact();
-                      // Scan logic placeholder
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const QRScannerScreen()));
                     },
                     child: Container(
                       width: 130 * context.fontSizeFactor,

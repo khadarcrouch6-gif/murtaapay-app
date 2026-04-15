@@ -15,6 +15,9 @@ class AppState extends ChangeNotifier {
   double _balance = 12450.80;
   double get balance => _balance;
 
+  String _walletId = '102234';
+  String get walletId => _walletId;
+
   String _currencyCode = 'USD';
   String get currencyCode => _currencyCode;
 
