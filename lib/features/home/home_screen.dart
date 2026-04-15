@@ -27,6 +27,7 @@ import '../notifications/notifications_screen.dart';
 import '../analytics/analytics_screen.dart';
 import '../hagbad/hagbad_screen.dart';
 import '../../core/widgets/receipt_view.dart';
+import '../withdraw/withdraw_screen.dart';
 
 enum ChartType { bar, pie, line }
 
@@ -415,8 +416,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     child: _buildActionButton(context, l10n.send, FontAwesomeIcons.paperPlane, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SendAmountScreen()))),
                   ),
                   ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : double.infinity),
+                    constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
                     child: _buildActionButton(context, l10n.add, FontAwesomeIcons.plus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
+                  ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
+                    child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.moneyBillTransfer, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WithdrawScreen()))),
                   ),
                 ],
               ),
