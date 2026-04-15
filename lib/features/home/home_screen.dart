@@ -593,15 +593,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(l10n.getStarted, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-          const SizedBox(height: 16),
+          const SizedBox(height: 4),
           LayoutBuilder(
             builder: (context, constraints) {
               final crossAxisCount = constraints.maxWidth < 300 ? 2 : 4;
               return GridView.count(
+                padding: EdgeInsets.zero,
                 crossAxisCount: crossAxisCount, 
                 shrinkWrap: true, 
                 physics: const NeverScrollableScrollPhysics(), 
-                mainAxisSpacing: 8, 
+                mainAxisSpacing: 4, 
                 crossAxisSpacing: 8,
                 childAspectRatio: crossAxisCount == 2 ? 1.5 : 0.8,
                 children: [
