@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -351,16 +352,52 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           return Column(
             children: [
               const SizedBox(height: 16),
-              GlassmorphicContainer(
-                width: double.infinity, 
-                height: (isWide ? 120 : 160) * context.fontSizeFactor, 
-                borderRadius: 24, blur: 20, alignment: Alignment.center, border: 2,
-                linearGradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withValues(alpha: 0.15), Colors.white.withValues(alpha: 0.05)]),
-                borderGradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withValues(alpha: 0.5), Colors.white.withValues(alpha: 0.2)]),
+              NotchedWalletCard(
+                size: Size(double.infinity, (isWide ? 160 : 180) * context.fontSizeFactor),
+                action: Padding(
+                  padding: const EdgeInsets.only(right: 4, bottom: 4),
+                  child: GestureDetector(
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      // Scan logic placeholder
+                    },
+                    child: Container(
+                      width: 130 * context.fontSizeFactor,
+                      height: 52 * context.fontSizeFactor,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.accentGradient,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 20 * context.fontSizeFactor),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Scan & Pay", 
+                            style: TextStyle(
+                              color: Colors.white, 
+                              fontWeight: FontWeight.bold, 
+                              fontSize: 13 * context.fontSizeFactor
+                            )
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(isWide ? 20 : 24),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center, 
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween, 
@@ -384,20 +421,37 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       ),
                       const SizedBox(height: 8),
                       Expanded(
-                        child: Center(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: ShimmerLoading(
-                              isLoading: _isLoading,
-                              child: Text(
-                                _isBalanceVisible ? NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance) : "******",
-                                style: theme.textTheme.displayMedium?.copyWith(
-                                  color: Colors.white, 
-                                  fontWeight: FontWeight.bold, 
-                                  fontSize: 32 * context.fontSizeFactor
-                                )
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: ShimmerLoading(
+                                  isLoading: _isLoading,
+                                  child: Text(
+                                    _isBalanceVisible ? NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance) : "******",
+                                    style: theme.textTheme.displayMedium?.copyWith(
+                                      color: Colors.white, 
+                                      fontWeight: FontWeight.bold, 
+                                      fontSize: 32 * context.fontSizeFactor
+                                    )
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "${l10n.walletId}: 102234",
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.5),
+                                  fontSize: 11 * context.fontSizeFactor,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -413,15 +467,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 children: [
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : double.infinity),
-                    child: _buildActionButton(context, l10n.send, FontAwesomeIcons.paperPlane, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SendAmountScreen()))),
+                    child: _buildActionButton(context, l10n.send, FontAwesomeIcons.circleArrowRight, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SendAmountScreen()))),
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
-                    child: _buildActionButton(context, l10n.add, FontAwesomeIcons.plus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
+                    child: _buildActionButton(context, l10n.add, FontAwesomeIcons.circlePlus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
-                    child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.moneyBillTransfer, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WithdrawScreen()))),
+                    child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.circleArrowUp, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WithdrawScreen()))),
                   ),
                 ],
               ),
@@ -884,4 +938,115 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ],
     );
   }
+}
+
+class NotchedWalletCard extends StatelessWidget {
+  final Widget child;
+  final Widget action;
+  final Size size;
+  
+  const NotchedWalletCard({super.key, required this.child, required this.action, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        CustomPaint(
+          size: size,
+          painter: WalletCardPainter(),
+          child: ClipPath(
+            clipper: WalletCardClipper(),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                width: size.width,
+                height: size.height,
+                color: Colors.transparent,
+                child: child,
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: action,
+        ),
+      ],
+    );
+  }
+}
+
+class WalletCardClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    return _getCardPath(size);
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+class WalletCardPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = _getCardPath(size);
+    
+    // Fill
+    final paint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Colors.white.withValues(alpha: 0.15), Colors.white.withValues(alpha: 0.05)],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+    canvas.drawPath(path, paint);
+    
+    // Border
+    final borderPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Colors.white.withValues(alpha: 0.5), Colors.white.withValues(alpha: 0.2)],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    canvas.drawPath(path, borderPaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+Path _getCardPath(Size size) {
+  double notchWidth = 140.0;
+  double notchHeight = 60.0;
+  double radius = 24.0;
+  
+  Path path = Path();
+  path.moveTo(radius, 0);
+  path.lineTo(size.width - radius, 0);
+  path.quadraticBezierTo(size.width, 0, size.width, radius);
+  
+  // Down to notch
+  path.lineTo(size.width, size.height - notchHeight - radius);
+  path.quadraticBezierTo(size.width, size.height - notchHeight, size.width - radius, size.height - notchHeight);
+  
+  // Across notch
+  path.lineTo(size.width - notchWidth + (radius * 0.8), size.height - notchHeight);
+  path.quadraticBezierTo(size.width - notchWidth, size.height - notchHeight, size.width - notchWidth, size.height - notchHeight + (radius * 0.8));
+  
+  // Down to bottom
+  path.lineTo(size.width - notchWidth, size.height - radius);
+  path.quadraticBezierTo(size.width - notchWidth, size.height, size.width - notchWidth - radius, size.height);
+  
+  // Bottom across
+  path.lineTo(radius, size.height);
+  path.quadraticBezierTo(0, size.height, 0, size.height - radius);
+  
+  // Left side up
+  path.lineTo(0, radius);
+  path.quadraticBezierTo(0, 0, radius, 0);
+  
+  path.close();
+  return path;
 }
