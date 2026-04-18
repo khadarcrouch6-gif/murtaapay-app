@@ -170,7 +170,7 @@
   "contactlessPayments": "Lacag bixinta aan taabashada lahayn",
   "terminateCard": "Tirtir Kaarka",
   "permanentlyDeleteCard": "Si joogto ah u tirtir kaarkan virtual-ka ah",
-  "enterSecurityPin": "Fadlan geli 4-ta god ee PIN-kaaga sirta ah",
+  "enterSecurityPin": "Gali PIN-ka Aminiga",
   "accountName": "Magaca Koontada",
   "transferToAccountBelow": "Fadlan lacagta ugu wareeji koontada hoos ku qoran ka dibna taabo sii soco.",
   "withdrawMoney": "Kala Bax Lacag",
@@ -269,7 +269,6 @@
   "signUp": "Is qor",
   "alreadyHaveAccountLogin": "Miyaad hore u lahabd akoon? Soo gal",
   "confirmYourPin": "Hubi PIN-kaaga",
-  "enterSecurityPin": "Gali PIN-ka Aminiga",
   "toKeepYourMoneySafe": "Si lacagtaada loogu hayo si ammaan ah",
   "useFaceIdFingerprint": "Isticmaal FaceID / Faraha",
   "withdrawToStripeDesc": "Kala bax akoonkaaga Stripe",
@@ -644,8 +643,12 @@
   "invitationDesc": "{admin} ayaa kugu casuumay kooxda Hagbad ee ${amount}.",
   "@invitationDesc": {
     "placeholders": {
-      "admin": { "type": "String" },
-      "amount": { "type": "String" }
+      "admin": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "acceptInvite": "Aqbal Casuumadda",
@@ -657,5 +660,84 @@
   "alignQRCode": "QR Code-ka ku aadi sanduuqa si uu u scan-gareeyo",
   "myQrCode": "Sawirkayga QR-ka",
   "shareMyQrCode": "La wadaag sawirkaaga QR-ka si aad lacag u hesho.",
-  "quickSend": "Xiriirada Degdega"
+  "quickSend": "Xiriirada Degdega",
+  "murtaaxWallet": "Wallet-ka Murtaax",
+  "visaMastercard": "Visa / MasterCard",
+  "mobileMoney": "Lacagta Mobilka",
+  "confirmTopUp": "Xaqiiji Lacag Shubista",
+  "cardInformation": "Xogta Kaadhka",
+  "visaDetails": "Faahfaahinta Visa-ha",
+  "mastercardDetails": "Faahfaahinta Mastercard-ka",
+  "cardDetailsInfo": "Geli xogta kaadhkaaga si aad u dhammaystirto xawaaladda {amount}",
+  "cardHolderName": "Magaca Mulkiilaha Kaadhka",
+  "expiryDate": "Taariikhda Dhicitaanka",
+  "cvv": "CVV",
+  "secureProcessing": "Waxaa si ammaan ah loo socodsiinayaa lacag bixintaada...",
+  "selectBank": "Dooro Bangiga",
+  "murtaaxWalletDesc": "Ka bixi hadhaaga app-kaaga",
+  "visaMastercardDesc": "Ku bixi adoo isticmaalaya kaadhkaaga",
+  "bankTransferDesc": "Xawilaad toos ah oo bangi",
+  "mobileMoneyDesc": "EVC Plus, Sahal, ZAAD, e-Dahab",
+  "yourName": "MAGACAAGA",
+  "requiredField": "Waa lagama maarmaan",
+  "chooseProviderAndEnterPhone": "Dooro shirkadda oo geli lambarka telefoonka",
+  "enterNumberToCharge": "Geli lambarka lacagta laga jarayo",
+  "servicePin": "PIN-ka Adeegga",
+  "enterPin": "Geli PIN-ka",
+  "ibanHint": "tusaale: GB29 NWBK 6016 1331 9268 19",
+  "cardHolderNameLabel": "Magaca Mulkiilaha Kaadhka",
+  "johnDoe": "Maxamed Cali",
+  "pleaseFillAllFields": "Fadlan buuxi dhammaan meelaha banaan",
+  "virtualCardTopUp": "Ku Shubista Kaadhka Virtual-ka",
+  "cardTopUpSuccessful": "Lacag ku shubista kaadhku waa guul!",
+  "cardTopUpSuccessMessage": "{amount} ayaa lagu daray kaadhkaaga virtual-ka ah.",
+  "enterAmountToTopUp": "Geli cadadka aad ku shubayso",
+  "topUp": "Ku Shubo",
+  "topUpInstantlyVia": "Si degdeg ah ugu shubo {method}",
+  "walletPin": "PIN-ka Wallet-ka",
+  "enterWalletPinMessage": "Geli 4-digit PIN-kaaga wallet-ka si aad u xaqiijiso lacag ku shubista.",
+  "confirm": "Xaqiiji",
+  "submit": "Gudbi",
+  "cardEndingIn": "Kaadhka ku dhammaada {lastFour}",
+  "withdrawToStripe": "Kala bax akoonkaaga Stripe",
+  "withdrawToWallet": "U dir Wallet-ka",
+  "withdrawToWalletDesc": "U wareeji hadhaaga wallet-kaaga weyn",
+  "withdrawToBankDesc": "Kala bax bangi gudaha ama dibadda ah",
+  "enterVirtualCardPin": "Geli 4-digit PIN-kaaga kaadhka virtual-ka ah si aad u xaqiijiso kala bixitaanka.",
+  "currentCardBalance": "HADHAAGA KAADHKA EE HADDA",
+  "virtualCardBalance": "HADHAAGA KAADHKA VIRTUAL-KA AH",
+  "hagbadCreatedSuccess": "Kooxda Hagbad-da waa la abuuray si guul leh!",
+  "drawing": "Bakhti-nasiibka...",
+  "qoriTuur": "Qori-tuur",
+  "noHagbadGroups": "Weli ma jiraan kooxo. Abuur mid si aad u bilowdo kaydinta!",
+  "progress": "Heerka",
+  "members": "Xubnaha",
+  "@cardDetailsInfo": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "@cardTopUpSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@topUpInstantlyVia": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "@cardEndingIn": {
+    "placeholders": {
+      "lastFour": {
+        "type": "String"
+      }
+    }
+  }
 }

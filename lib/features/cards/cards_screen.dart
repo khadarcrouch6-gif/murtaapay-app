@@ -495,8 +495,8 @@ class _CardsScreenState extends State<CardsScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => GlassmorphicContainer(
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (stateCtx, setModalState) => GlassmorphicContainer(
           width: double.infinity,
           height: MediaQuery.of(context).size.height * 0.82,
           borderRadius: 24,
@@ -636,7 +636,7 @@ class _CardsScreenState extends State<CardsScreen> {
   void _showTerminateConfirmation(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
-      builder: (context) => BackdropFilter(
+      builder: (dialogCtx) => BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: AlertDialog(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -648,14 +648,13 @@ class _CardsScreenState extends State<CardsScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogCtx),
               child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
             ),
             ElevatedButton(
               onPressed: () {
-                final localContext = context;
-                Navigator.pop(context); // Close dialog
-                _processTransaction(localContext, l10n);
+                Navigator.pop(dialogCtx); // Close dialog
+                _processTransaction(context, l10n);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
@@ -846,7 +845,7 @@ class _CardsScreenState extends State<CardsScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => GlassmorphicContainer(
+      builder: (sheetCtx) => GlassmorphicContainer(
         width: double.infinity,
         height: 320,
         borderRadius: 24,
@@ -863,7 +862,7 @@ class _CardsScreenState extends State<CardsScreen> {
             Text(l10n.addNewCard, style: TextStyle(color: Colors.white, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              child: _buildSettingsTile(context: context, icon: Icons.add_card_rounded, color: AppColors.accentTeal, title: l10n.orderVirtualCard, subtitle: l10n.instantlyIssueNewCard, onTap: () => Navigator.pop(context), isLast: true),
+              child: _buildSettingsTile(context: context, icon: Icons.add_card_rounded, color: AppColors.accentTeal, title: l10n.orderVirtualCard, subtitle: l10n.instantlyIssueNewCard, onTap: () => Navigator.pop(sheetCtx), isLast: true),
             ),
           ],
         ),
