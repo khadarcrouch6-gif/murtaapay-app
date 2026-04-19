@@ -198,8 +198,8 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
-        border: isDark ? Border(top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))) : null,
+        boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
+        border: isDark ? Border(top: BorderSide(color: theme.dividerColor.withOpacity(0.1))) : null,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -210,13 +210,12 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
               child: _buildMediaOptions(context, theme, isDark)
             ),
           Padding(
-            padding: EdgeInsets.fromLTRB(
-              12 * context.fontSizeFactor, 
-              8 * context.fontSizeFactor, 
-              12 * context.fontSizeFactor, 
-              MediaQuery.of(context).padding.bottom + 8 * context.fontSizeFactor
+            padding: EdgeInsets.symmetric(
+              horizontal: 12 * context.fontSizeFactor, 
+              vertical: 8 * context.fontSizeFactor,
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -224,11 +223,12 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    width: 42 * context.fontSizeFactor,
-                    height: 42 * context.fontSizeFactor,
+                    width: 40 * context.fontSizeFactor,
+                    height: 40 * context.fontSizeFactor,
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: _showMediaOptions ? AppColors.accentTeal : AppColors.accentTeal.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(21),
+                      color: _showMediaOptions ? AppColors.accentTeal : AppColors.accentTeal.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: AdaptiveIcon(
                       _showMediaOptions ? FontAwesomeIcons.xmark : FontAwesomeIcons.plus,
@@ -269,6 +269,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+                    textAlignVertical: TextAlignVertical.center,
                   ),
                 ),
                 SizedBox(width: 12 * context.fontSizeFactor),
@@ -279,8 +280,9 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                           key: const ValueKey('audio'),
                           onTap: _sendAudio,
                           child: Container(
-                            width: 42 * context.fontSizeFactor,
-                            height: 42 * context.fontSizeFactor,
+                            width: 40 * context.fontSizeFactor,
+                            height: 40 * context.fontSizeFactor,
+                            alignment: Alignment.center,
                             decoration: const BoxDecoration(
                               color: AppColors.accentTeal,
                               shape: BoxShape.circle,
@@ -296,8 +298,9 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                           key: const ValueKey('send'),
                           onTap: _sendMessage,
                           child: Container(
-                            width: 42 * context.fontSizeFactor,
-                            height: 42 * context.fontSizeFactor,
+                            width: 40 * context.fontSizeFactor,
+                            height: 40 * context.fontSizeFactor,
+                            alignment: Alignment.center,
                             decoration: const BoxDecoration(
                               color: AppColors.accentTeal,
                               shape: BoxShape.circle,
@@ -320,10 +323,10 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
 
   Widget _buildMediaOptions(BuildContext context, ThemeData theme, bool isDark) {
     return Container(
-      padding: EdgeInsets.all(20 * context.fontSizeFactor),
+      padding: EdgeInsets.fromLTRB(20 * context.fontSizeFactor, 12 * context.fontSizeFactor, 20 * context.fontSizeFactor, 4 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        border: Border(bottom: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+        border: Border(bottom: BorderSide(color: theme.dividerColor.withOpacity(0.1))),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -409,8 +412,9 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
           Container(
             width: 56 * context.fontSizeFactor,
             height: 56 * context.fontSizeFactor,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: AdaptiveIcon(

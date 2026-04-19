@@ -312,11 +312,11 @@ class AppState extends ChangeNotifier {
     } else {
       // Mock initial profiles with Somali numbers
       _quickProfiles = [
-        QuickProfile(id: '1', name: 'Ayaanle', walletId: '252615123456', avatarUrl: 'assets/avatars/avatar1.png'),
-        QuickProfile(id: '2', name: 'Fartun', walletId: '252615654321', avatarUrl: 'assets/avatars/avatar2.png'),
-        QuickProfile(id: '3', name: 'Abdirahman', walletId: '252617788990', avatarUrl: 'assets/avatars/avatar3.png'),
-        QuickProfile(id: '4', name: 'Hodan', walletId: '252618877665', avatarUrl: 'assets/avatars/avatar4.png'),
-        QuickProfile(id: '5', name: 'Mustafe', walletId: '252619922334', avatarUrl: 'assets/avatars/avatar5.png'),
+        QuickProfile(id: '1', name: 'Abdi', walletId: '252615123456', avatarUrl: 'https://i.pravatar.cc/150?u=abdi'),
+        QuickProfile(id: '2', name: 'Warsame', walletId: '252615654321', avatarUrl: 'https://i.pravatar.cc/150?u=warsame'),
+        QuickProfile(id: '3', name: 'Leyla', walletId: '252617788990', avatarUrl: 'https://i.pravatar.cc/150?u=leyla'),
+        QuickProfile(id: '4', name: 'Sahra', walletId: '252618877665', avatarUrl: 'https://i.pravatar.cc/150?u=sahra'),
+        QuickProfile(id: '5', name: 'Fartun', walletId: '252619922334', avatarUrl: 'https://i.pravatar.cc/150?u=fartun'),
       ];
     }
   }

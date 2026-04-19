@@ -527,9 +527,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryDark.withValues(alpha: 0.05),
+                  color: AppColors.primaryDark.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.primaryDark.withValues(alpha: 0.1)),
+                  border: Border.all(color: AppColors.primaryDark.withOpacity(0.1)),
                 ),
                 child: Column(
                   children: [
@@ -789,10 +789,10 @@ class _HagbadScreenState extends State<HagbadScreen> {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.green.withValues(alpha: 0.1), Colors.blue.withValues(alpha: 0.1)],
+                  colors: [Colors.green.withOpacity(0.1), Colors.blue.withOpacity(0.1)],
                 ),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
+                border: Border.all(color: Colors.green.withOpacity(0.2)),
               ),
               child: Column(
                 children: [
@@ -1012,7 +1012,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryDark.withValues(alpha: isDark ? 0.5 : 0.3),
+            color: AppColors.primaryDark.withOpacity(isDark ? 0.5 : 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           )
@@ -1056,7 +1056,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: Colors.white.withOpacity(0.2),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: Colors.white, size: 16 * context.fontSizeFactor),
@@ -1084,7 +1084,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
         border: isDark ? Border.all(color: Colors.white10) : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -1106,7 +1106,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 width: 48 * context.fontSizeFactor,
                 height: 48 * context.fontSizeFactor,
                 decoration: BoxDecoration(
-                  color: _getStatusColor(group.status).withValues(alpha: 0.1),
+                  color: _getStatusColor(group.status).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
@@ -1145,7 +1145,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 spacing: 8,
                 children: [
-<<<<<<< HEAD
                   Text(
                     "\$${group.amount.toStringAsFixed(0)} / ${_getFrequencyText(group.frequency, l10n)}",
                     style: TextStyle(color: theme.hintColor, fontSize: 12 * context.fontSizeFactor),
@@ -1156,7 +1155,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       color: isDark ? Colors.greenAccent : Colors.green.shade700,
                       fontSize: 12 * context.fontSizeFactor,
                       fontWeight: FontWeight.bold,
-=======
+                    ),
+                  ),
                   Flexible(
                     child: Text(
                       "\$${group.amount.toStringAsFixed(0)} / ${_getFrequencyText(group.frequency, l10n)}",
@@ -1175,7 +1175,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       ),
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.right,
->>>>>>> 3c1539c38d50365477a915f750f3576a122df531
+
                     ),
                   ),
                 ],
@@ -1233,9 +1233,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withValues(alpha: 0.05),
+                          color: Colors.blue.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.blue.withValues(alpha: 0.1)),
+                          border: Border.all(color: Colors.blue.withOpacity(0.1)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1264,49 +1264,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
                           color: theme.colorScheme.onSurface
                         ),
                       ),
-<<<<<<< HEAD
-                      Wrap(
-                        spacing: 8,
-                        children: [
-                          if (group.adminName == l10n.youAdmin)
-                            TextButton.icon(
-                              onPressed: () => _performLiveQoriTuur(group),
-                              icon: Icon(Icons.shuffle_rounded, size: 14 * context.fontSizeFactor),
-                              label: Text("Qori-tuurka Bilow", style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
-                              style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 8), 
-                                foregroundColor: Colors.purple,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8), 
-                                  side: BorderSide(color: Colors.purple.withValues(alpha: 0.2)),
-                                ),
-                              ),
-                            ),
-                          if (group.adminName == l10n.youAdmin && group.members.any((m) => !m.isFullyPaid(group.amount)))
-                            TextButton.icon(
-                              onPressed: () => _remindAllPending(group),
-                              icon: Icon(Icons.notifications_active_outlined, size: 14 * context.fontSizeFactor),
-                              label: Text(l10n.remindAll, style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
-                              style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8), foregroundColor: Colors.orange),
-                            ),
-                          TextButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChatScreen(
-                                    userId: group.id,
-                                    userName: group.name,
-                                    userAvatar: group.name[0],
-                                    isGroup: true,
-                                  ),
-                                ),
-                              );
-                            },
-                            icon: Icon(Icons.chat_bubble_outline_rounded, size: 14 * context.fontSizeFactor),
-                            label: Text(l10n.groupChat, style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
-                            style: TextButton.styleFrom(padding: EdgeInsets.zero, foregroundColor: AppColors.primaryDark),
-=======
                       const SizedBox(width: 8),
                       Expanded(
                         child: SingleChildScrollView(
@@ -1325,7 +1282,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                                     foregroundColor: Colors.purple,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8), 
-                                      side: BorderSide(color: Colors.purple.withValues(alpha: 0.2)),
+                                      side: BorderSide(color: Colors.purple.withOpacity(0.2)),
                                     ),
                                   ),
                                 ),
@@ -1355,7 +1312,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                                 style: TextButton.styleFrom(padding: EdgeInsets.zero, foregroundColor: AppColors.primaryDark),
                               ),
                             ],
->>>>>>> 3c1539c38d50365477a915f750f3576a122df531
+
                           ),
                         ),
                       ),
@@ -1440,7 +1397,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                             icon: Icon(Icons.download_rounded, size: 20 * context.fontSizeFactor),
                             tooltip: l10n.downloadReceipt,
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.blue.withValues(alpha: 0.1),
+                              backgroundColor: Colors.blue.withOpacity(0.1),
                               foregroundColor: Colors.blue,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
@@ -1492,9 +1449,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.purple.withValues(alpha: 0.05),
+                color: Colors.purple.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.purple.withValues(alpha: 0.1)),
+                border: Border.all(color: Colors.purple.withOpacity(0.1)),
               ),
               child: const Text(
                 "Waxaan ku dhaaranayaa magaca Ilaaha Qaadirka ah inaan bixin doono qaaraanka Hagbad-ka waqtigiisa, si daacad ahna ugu adeegi doono kooxdan.",
@@ -1562,11 +1519,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-<<<<<<< HEAD
-        Text(label, style: TextStyle(color: Colors.grey, fontSize: 11 * context.fontSizeFactor)),
-=======
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 11), overflow: TextOverflow.ellipsis),
->>>>>>> 3c1539c38d50365477a915f750f3576a122df531
+        Text(label, style: TextStyle(color: Colors.grey, fontSize: 11 * context.fontSizeFactor), overflow: TextOverflow.ellipsis),
         Text(
           value, 
           style: TextStyle(
@@ -1844,7 +1797,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   return ListTile(
                     leading: CircleAvatar(
                       radius: 15,
-                      backgroundColor: AppColors.primaryDark.withValues(alpha: 0.1),
+                      backgroundColor: AppColors.primaryDark.withOpacity(0.1),
                       child: Text(m.avatar, style: const TextStyle(fontSize: 10, color: AppColors.primaryDark)),
                     ),
                     title: Text(l10n.swapWith(m.name)),
@@ -1895,7 +1848,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
           children: [
             CircleAvatar(
               radius: 10,
-              backgroundColor: Colors.green.withValues(alpha: 0.1),
+              backgroundColor: Colors.green.withOpacity(0.1),
               child: Text(m.avatar, style: const TextStyle(fontSize: 8, color: Colors.green, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(width: 10),
@@ -1959,7 +1912,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
           const SizedBox(width: 12),
           CircleAvatar(
             radius: 16 * context.fontSizeFactor,
-            backgroundColor: isDark ? Colors.blue.withValues(alpha: 0.2) : AppColors.primaryDark.withValues(alpha: 0.1),
+            backgroundColor: isDark ? Colors.blue.withOpacity(0.2) : AppColors.primaryDark.withOpacity(0.1),
             child: Text(
               member.avatar,
               style: TextStyle(
@@ -1978,18 +1931,13 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   spacing: 4,
                   children: [
-<<<<<<< HEAD
-                    Text(
-                      member.name == "You" ? l10n.you : member.name,
-                      style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: theme.colorScheme.onSurface, fontWeight: FontWeight.w500),
-=======
                     Flexible(
                       child: Text(
                         member.name == "You" ? l10n.you : member.name,
-                        style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface, fontWeight: FontWeight.w500),
+                        style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: theme.colorScheme.onSurface, fontWeight: FontWeight.w500),
                         overflow: TextOverflow.ellipsis,
                       ),
->>>>>>> 3c1539c38d50365477a915f750f3576a122df531
+
                     ),
                     if (member.isTrusted)
                       Tooltip(
@@ -1999,7 +1947,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     if (member.isConfirmed)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                        decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
+                        decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
                         child: Text("Aqbalay", style: TextStyle(fontSize: 8 * context.fontSizeFactor, color: Colors.green, fontWeight: FontWeight.bold)),
                       ),
                   ],
@@ -2035,9 +1983,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: Colors.blue.withValues(alpha: 0.05),
+                                color: Colors.blue.withOpacity(0.05),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.blue.withValues(alpha: 0.1)),
+                                border: Border.all(color: Colors.blue.withOpacity(0.1)),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2096,9 +2044,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.purple.withValues(alpha: 0.05),
+                              color: Colors.purple.withOpacity(0.05),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.purple.withValues(alpha: 0.1)),
+                              border: Border.all(color: Colors.purple.withOpacity(0.1)),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2146,9 +2094,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.05),
+                          color: Colors.orange.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.orange.withValues(alpha: 0.1)),
+                          border: Border.all(color: Colors.orange.withOpacity(0.1)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -2333,7 +2281,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.1),
+                        color: Colors.blue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -2376,7 +2324,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
+                          color: Colors.red.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -2470,9 +2418,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     margin: const EdgeInsets.only(bottom: 24),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.primaryDark.withValues(alpha: 0.05),
+                      color: isDark ? Colors.white.withOpacity(0.05) : AppColors.primaryDark.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: isDark ? Colors.white10 : AppColors.primaryDark.withValues(alpha: 0.1)),
+                      border: Border.all(color: isDark ? Colors.white10 : AppColors.primaryDark.withOpacity(0.1)),
                     ),
                     child: Column(
                       children: [
@@ -2591,16 +2539,16 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   const SizedBox(height: 8),
                   Container(
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+                      color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.primaryDark.withValues(alpha: 0.3)),
+                      border: Border.all(color: AppColors.primaryDark.withOpacity(0.3)),
                     ),
                     child: Column(
                       children: _suggestedUsers.map((user) => ListTile(
                         dense: true,
                         leading: CircleAvatar(
                           radius: 12,
-                          backgroundColor: AppColors.primaryDark.withValues(alpha: 0.1),
+                          backgroundColor: AppColors.primaryDark.withOpacity(0.1),
                           child: Text(user['name']![0], style: const TextStyle(fontSize: 10, color: AppColors.primaryDark)),
                         ),
                         title: Text(user['name']!, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
@@ -2620,9 +2568,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.red.withValues(alpha: 0.05),
+                      color: Colors.red.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.red.withValues(alpha: 0.1)),
+                      border: Border.all(color: Colors.red.withOpacity(0.1)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2645,9 +2593,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.05),
+                      color: Colors.green.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.green.withValues(alpha: 0.1)),
+                      border: Border.all(color: Colors.green.withOpacity(0.1)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2709,7 +2657,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
         labelStyle: TextStyle(color: isDark ? Colors.white60 : Colors.grey),
         prefixIcon: Icon(icon, color: isDark ? Colors.blue[300] : AppColors.primaryDark),
         filled: true,
-        fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade50,
+        fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade50,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300)),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: isDark ? Colors.blue : AppColors.primaryDark)),
@@ -2728,7 +2676,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
           _selectedFrequency = freq;
         });
       },
-      selectedColor: isDark ? Colors.blue.withValues(alpha: 0.2) : AppColors.primaryDark.withValues(alpha: 0.2),
+      selectedColor: isDark ? Colors.blue.withOpacity(0.2) : AppColors.primaryDark.withOpacity(0.2),
       checkmarkColor: isDark ? Colors.blue[300] : AppColors.primaryDark,
       labelStyle: TextStyle(
         color: isSelected 

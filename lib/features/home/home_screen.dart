@@ -51,10 +51,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   bool _isBalanceVisible = false;
   bool _isLoading = true;
   int _nameIndex = 0;
-  int _charIndex = 0;
-  String _displayedName = "";
+  String _displayedName = "Khadar";
+  int _charIndex = 6;
   Timer? _timer;
-  final List<String> _names = ["Khadar", "Abdi", "Warsame"];
+  final List<String> _names = ["Khadar", "Abdirahman", "Rayaale"];
   
   ChartType _selectedChartType = ChartType.bar;
   final List<double> _spendingData = [45, 80, 55, 95, 70, 40, 65];
@@ -242,10 +242,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 2),
+                        border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
+                            color: Colors.black.withOpacity(0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           )
@@ -254,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       child: const CircleAvatar(
                         radius: 20,
                         backgroundColor: AppColors.primaryDark,
-                        backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=rayaale'),
+                        backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=khadar'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -265,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         children: [
                           Text(
                             l10n.welcome,
-                            style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
+                            style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13 * context.fontSizeFactor),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
@@ -415,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
+                            color: Colors.black.withOpacity(0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           )
@@ -491,7 +491,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               Text(
                                 "${l10n.walletId}: 102234",
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
+                                  color: Colors.white.withOpacity(0.5),
                                   fontSize: 11 * context.fontSizeFactor,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.5
@@ -517,11 +517,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
-                    child: _buildActionButton(context, l10n.add, FontAwesomeIcons.circlePlus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
+                    child: _buildActionButton(context, l10n.add, FontAwesomeIcons.circlePlus, LinearGradient(colors: [Colors.white.withOpacity(0.2), Colors.white.withOpacity(0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
-                    child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.circleArrowUp, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletWithdrawScreen()))),
+                    child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.circleArrowUp, LinearGradient(colors: [Colors.white.withOpacity(0.2), Colors.white.withOpacity(0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletWithdrawScreen()))),
                   ),
                 ],
               ),
@@ -542,7 +542,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           decoration: BoxDecoration(
             color: theme.colorScheme.surface, 
             borderRadius: BorderRadius.circular(24), 
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 8))]
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15, offset: const Offset(0, 8))]
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -668,13 +668,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
+                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
                         child: Text("PREMIUM", style: TextStyle(color: Colors.white70, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 1)),
                       ),
                       const SizedBox(height: 12),
                       Text(l10n.virtualCard, style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
                       const SizedBox(height: 4),
-                      Text(l10n.virtualCardDesc, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
+                      Text(l10n.virtualCardDesc, style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 12 * context.fontSizeFactor)),
                     ],
                   ),
                 ),
@@ -758,7 +758,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       },
       child: Container(
         height: 56 * context.fontSizeFactor,
-        decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))]),
+        decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))]),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           AdaptiveIcon(icon, color: Colors.white, size: 18 * context.fontSizeFactor),
           const SizedBox(width: 8),
@@ -779,7 +779,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               child: FittedBox(
                 child: Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                  decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
                   child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor),
                 ),
               ),
@@ -805,7 +805,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: Container(
         padding: EdgeInsets.all(isSmall ? 4 : 6),
         margin: const EdgeInsets.only(left: 4),
-        decoration: BoxDecoration(color: isSelected ? AppColors.primaryDark.withValues(alpha: 0.1) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(color: isSelected ? AppColors.primaryDark.withOpacity(0.1) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
         child: AdaptiveIcon(icon, size: isSmall ? 14 : 16, color: isSelected ? AppColors.primaryDark : Colors.grey),
       ),
     );
@@ -890,7 +890,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             barWidth: 4,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(show: true, gradient: LinearGradient(colors: [AppColors.primaryDark.withValues(alpha: 0.2), AppColors.primaryDark.withValues(alpha: 0)])),
+            belowBarData: BarAreaData(show: true, gradient: LinearGradient(colors: [AppColors.primaryDark.withOpacity(0.2), AppColors.primaryDark.withOpacity(0)])),
           ),
         ],
       ),
@@ -976,9 +976,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             width: 60,
                             height: 60,
                             decoration: BoxDecoration(
-                              color: AppColors.accentTeal.withValues(alpha: 0.1),
+                              color: AppColors.accentTeal.withOpacity(0.1),
                               shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
+                              border: Border.all(color: AppColors.accentTeal.withOpacity(0.2), width: 2),
                             ),
                             child: const Icon(Icons.add_rounded, color: AppColors.accentTeal, size: 30),
                           ),
@@ -1009,7 +1009,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             Container(
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
+                                border: Border.all(color: AppColors.accentTeal.withOpacity(0.2), width: 2),
                               ),
                               child: CircleAvatar(
                                 radius: 30,
@@ -1144,22 +1144,39 @@ class WalletCardClipper extends CustomClipper<Path> {
   Path _getCardPath(Size size) {
     final path = Path();
     const radius = 24.0;
-    const notchWidth = 100.0;
-    const notchHeight = 40.0;
+    const notchWidth = 145.0;
+    const notchHeight = 62.0;
+    const curveRadius = 20.0;
 
     path.moveTo(radius, 0);
-    path.lineTo(size.width - notchWidth - radius, 0);
+    path.lineTo(size.width - radius, 0);
+    path.quadraticBezierTo(size.width, 0, size.width, radius);
     
-    // Notch
-    path.quadraticBezierTo(size.width - notchWidth, 0, size.width - notchWidth, notchHeight / 2);
-    path.lineTo(size.width - notchWidth, notchHeight - radius);
-    path.quadraticBezierTo(size.width - notchWidth, notchHeight, size.width - notchWidth + radius, notchHeight);
+    // Right side down to notch
+    path.lineTo(size.width, size.height - notchHeight - curveRadius);
     
-    path.lineTo(size.width - radius, notchHeight);
-    path.quadraticBezierTo(size.width, notchHeight, size.width, notchHeight + radius);
+    // Smooth concave transition into the notch
+    path.quadraticBezierTo(
+      size.width, size.height - notchHeight, 
+      size.width - curveRadius, size.height - notchHeight
+    );
     
-    path.lineTo(size.width, size.height - radius);
-    path.quadraticBezierTo(size.width, size.height, size.width - radius, size.height);
+    // Notch horizontal
+    path.lineTo(size.width - notchWidth + radius, size.height - notchHeight);
+    
+    // Smooth convex transition down
+    path.quadraticBezierTo(
+      size.width - notchWidth, size.height - notchHeight, 
+      size.width - notchWidth, size.height - notchHeight + radius
+    );
+    
+    // Notch vertical down to bottom
+    path.lineTo(size.width - notchWidth, size.height - radius);
+    path.quadraticBezierTo(
+      size.width - notchWidth, size.height, 
+      size.width - notchWidth - radius, size.height
+    );
+    
     path.lineTo(radius, size.height);
     path.quadraticBezierTo(0, size.height, 0, size.height - radius);
     path.lineTo(0, radius);
@@ -1175,24 +1192,34 @@ class WalletCardPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final path = _getCardPath(size);
     
-    // Fill
+    // Layered Shadow for depth
+    canvas.drawShadow(path.shift(const Offset(0, 8)), Colors.black.withOpacity(0.3), 15, true);
+    
+    // Fill with premium glass effect
     final paint = Paint()
       ..shader = LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Colors.white.withValues(alpha: 0.15), Colors.white.withValues(alpha: 0.05)],
+        colors: [
+          Colors.white.withOpacity(0.12), 
+          Colors.white.withOpacity(0.03),
+        ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     canvas.drawPath(path, paint);
     
-    // Border
+    // Integrated Border
     final borderPaint = Paint()
       ..shader = LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Colors.white.withValues(alpha: 0.5), Colors.white.withValues(alpha: 0.2)],
+        colors: [
+          Colors.white.withOpacity(0.4), 
+          Colors.white.withOpacity(0.1),
+          Colors.white.withOpacity(0.3),
+        ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+      ..strokeWidth = 1.5;
     canvas.drawPath(path, borderPaint);
   }
 
@@ -1201,5 +1228,5 @@ class WalletCardPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
