@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
@@ -60,6 +61,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   Widget _buildTotalSpendingCard(ThemeData theme, AppState state) {
+    final double monthlySpending = state.transactions
+        .where((tx) => tx.isNegative && tx.timestamp.month == DateTime.now().month)
+        .fold(0.0, (sum, tx) => sum + tx.numericAmount);
+
     return FadeInDown(
       child: Container(
         width: double.infinity,
@@ -85,9 +90,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             const SizedBox(height: 8),
             ShimmerLoading(
               isLoading: _isLoading,
-              child: const Text(
-                r"$5,820.45",
-                style: TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold),
+              child: Text(
+                NumberFormat.simpleCurrency(name: state.currencyCode).format(monthlySpending),
+                style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 16),
@@ -103,7 +108,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   const Icon(Icons.trending_up_rounded, color: Colors.redAccent, size: 16),
                   const SizedBox(width: 4),
                   Text(
-                    "12% ${state.translate("more than last month", "ka badan bishii hore", ar: "أكثر من الشهر الماضي", de: "mehr als im letzten Monat")}",
+                    "Calculated from ${state.transactions.length} txs",
                     style: const TextStyle(color: Colors.white, fontSize: 12),
                   ),
                 ],
@@ -116,6 +121,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   Widget _buildCategoryDistribution(ThemeData theme, AppState state) {
+    final Map<String, double> categorySpending = {};
+    for (var tx in state.transactions.where((t) => t.isNegative)) {
+      categorySpending[tx.category] = (categorySpending[tx.category] ?? 0.0) + tx.numericAmount;
+    }
+    
+    final sortedCategories = categorySpending.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
     return FadeInUp(
       delay: const Duration(milliseconds: 200),
       child: Container(
@@ -154,7 +167,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       borderData: FlBorderData(show: false),
                       sectionsSpace: 4,
                       centerSpaceRadius: 60,
-                      sections: _isLoading ? _buildDefaultSections() : _buildRealSections(),
+                      sections: _isLoading || sortedCategories.isEmpty 
+                        ? _buildDefaultSections() 
+                        : _buildRealSections(sortedCategories),
                     ),
                   ),
                   Center(
@@ -162,11 +177,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          _isLoading ? "--" : "86%",
+                          _isLoading ? "--" : "${sortedCategories.length}",
                           style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          state.translate("Analyzed", "La taxliiliyay", ar: "تم تحليلها", de: "Analysiert"),
+                          state.translate("Categories", "Qaybaha", ar: "الفئات", de: "Kategorien"),
                           style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey),
                         ),
                       ],
@@ -182,21 +197,20 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   List<PieChartSectionData> _buildDefaultSections() {
-    return List.generate(4, (i) {
-      return PieChartSectionData(color: Colors.grey.withValues(alpha: 0.1), value: 25, radius: 25, showTitle: false);
+    return List.generate(1, (i) {
+      return PieChartSectionData(color: Colors.grey.withValues(alpha: 0.1), value: 100, radius: 25, showTitle: false);
     });
   }
 
-  List<PieChartSectionData> _buildRealSections() {
-    final colors = [Colors.blue, Colors.orange, AppColors.accentTeal, Colors.purple];
-    final values = [40.0, 30.0, 20.0, 10.0];
+  List<PieChartSectionData> _buildRealSections(List<MapEntry<String, double>> categories) {
+    final colors = [Colors.blue, Colors.orange, AppColors.accentTeal, Colors.purple, Colors.red, Colors.green];
     
-    return List.generate(4, (i) {
+    return List.generate(categories.length.clamp(0, 6), (i) {
       final isTouched = i == _touchedIndex;
       final radius = isTouched ? 35.0 : 25.0;
       return PieChartSectionData(
-        color: colors[i],
-        value: values[i],
+        color: colors[i % colors.length],
+        value: categories[i].value,
         radius: radius,
         showTitle: false,
       );
@@ -224,7 +238,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               height: 180,
               child: BarChart(
                 BarChartData(
-                  barGroups: _isLoading ? _buildDefaultBars() : _buildRealBars(),
+                  barGroups: _isLoading ? _buildDefaultBars() : _buildRealBars(state),
                   borderData: FlBorderData(show: false),
                   gridData: const FlGridData(show: false),
                   titlesData: FlTitlesData(
@@ -234,6 +248,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
                           const labels = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                          if (value.toInt() < 0 || value.toInt() >= labels.length) return const SizedBox();
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(labels[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 10)),
@@ -260,14 +275,24 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     });
   }
 
-  List<BarChartGroupData> _buildRealBars() {
-    final values = [45.0, 60.0, 55.0, 80.0, 70.0, 95.0];
+  List<BarChartGroupData> _buildRealBars(AppState state) {
+    // Group transactions by month for the last 6 months
+    final now = DateTime.now();
+    final List<double> monthlyTotals = List.filled(6, 0.0);
+    
+    for (var tx in state.transactions.where((t) => t.isNegative)) {
+      final diff = (now.year - tx.timestamp.year) * 12 + now.month - tx.timestamp.month;
+      if (diff >= 0 && diff < 6) {
+        monthlyTotals[5 - diff] += tx.numericAmount;
+      }
+    }
+
     return List.generate(6, (i) {
       return BarChartGroupData(
         x: i,
         barRods: [
           BarChartRodData(
-            toY: values[i],
+            toY: monthlyTotals[i] > 0 ? monthlyTotals[i] : 5, // Show small bar if 0
             gradient: i == 5 ? AppColors.accentGradient : LinearGradient(colors: [Colors.grey.withValues(alpha: 0.2), Colors.grey.withValues(alpha: 0.3)]),
             width: 16,
             borderRadius: BorderRadius.circular(4),
@@ -278,6 +303,16 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   Widget _buildTopCategoriesList(ThemeData theme, AppState state) {
+    final Map<String, double> categorySpending = {};
+    for (var tx in state.transactions.where((t) => t.isNegative)) {
+      categorySpending[tx.category] = (categorySpending[tx.category] ?? 0.0) + tx.numericAmount;
+    }
+    
+    final sortedCategories = categorySpending.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    final totalSpent = categorySpending.values.fold(0.0, (sum, val) => sum + val);
+
     return FadeInUp(
       delay: const Duration(milliseconds: 600),
       child: Column(
@@ -288,15 +323,29 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildCategoryItem(context, "Shopping", r"$2,450.00", Colors.blue, FontAwesomeIcons.cartShopping),
-          _buildCategoryItem(context, "Food & Drinks", r"$1,200.00", Colors.orange, FontAwesomeIcons.utensils),
-          _buildCategoryItem(context, "Transfers", r"$850.50", AppColors.accentTeal, FontAwesomeIcons.arrowRightArrowLeft),
+          if (sortedCategories.isEmpty)
+             const Center(child: Text("No data yet"))
+          else
+            ...sortedCategories.take(4).map((entry) {
+              final color = _getCategoryColor(entry.key);
+              final icon = _getCategoryIcon(entry.key);
+              final percentage = totalSpent > 0 ? entry.value / totalSpent : 0.0;
+              
+              return _buildCategoryItem(
+                context, 
+                entry.key, 
+                NumberFormat.simpleCurrency(name: state.currencyCode).format(entry.value), 
+                color, 
+                icon,
+                percentage
+              );
+            }),
         ],
       ),
     );
   }
 
-  Widget _buildCategoryItem(BuildContext context, String title, String amount, Color color, dynamic icon) {
+  Widget _buildCategoryItem(BuildContext context, String title, String amount, Color color, dynamic icon, double percentage) {
     final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -322,7 +371,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
-                    value: 0.7,
+                    value: percentage,
                     backgroundColor: Colors.grey.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(color),
                     minHeight: 4,
@@ -336,5 +385,33 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         ],
       ),
     );
+  }
+
+  Color _getCategoryColor(String category) {
+    switch (category) {
+      case 'Shopping': return Colors.blue;
+      case 'Food':
+      case 'Food & Drinks': return Colors.orange;
+      case 'Transfer':
+      case 'Transfers': return AppColors.accentTeal;
+      case 'Subscriptions': return Colors.purple;
+      case 'Transport': return Colors.indigo;
+      case 'Savings': return Colors.green;
+      default: return Colors.grey;
+    }
+  }
+
+  dynamic _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Shopping': return FontAwesomeIcons.cartShopping;
+      case 'Food':
+      case 'Food & Drinks': return FontAwesomeIcons.utensils;
+      case 'Transfer':
+      case 'Transfers': return FontAwesomeIcons.arrowRightArrowLeft;
+      case 'Subscriptions': return FontAwesomeIcons.tv;
+      case 'Transport': return FontAwesomeIcons.car;
+      case 'Savings': return FontAwesomeIcons.piggyBank;
+      default: return FontAwesomeIcons.tag;
+    }
   }
 }

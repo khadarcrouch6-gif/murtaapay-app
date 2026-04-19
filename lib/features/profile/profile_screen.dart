@@ -1074,21 +1074,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildAccountLimits(BuildContext context, AppState state, ThemeData theme) {
+    final dailyUsed = AppState.dailyLimit - state.getDailyRemaining();
+    final monthlyUsed = AppState.monthlyLimit - state.getMonthlyRemaining();
+
     return Column(
       children: [
         _buildLimitItem(
           context,
           state.translate("Daily Transfer Limit", "Xadka Dirista Maalinlaha", ar: "حد التحويل اليومي", de: "Tägliches Überweisungslimit", et: "Päevane ülekandelimiit"),
-          1250.00,
-          5000.00,
+          dailyUsed,
+          AppState.dailyLimit,
           Icons.swap_horiz_rounded,
         ),
         const SizedBox(height: 12),
         _buildLimitItem(
           context,
           state.translate("Monthly Withdrawal Limit", "Xadka Bangiga ee Bishii", ar: "حد السحب الشهري", de: "Monatliches Auszahlungslimit", et: "Kuune väljamakselimiit"),
-          4500.00,
-          25000.00,
+          monthlyUsed,
+          AppState.monthlyLimit,
           Icons.account_balance_wallet_rounded,
         ),
       ],

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:provider/provider.dart';
+import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/responsive_utils.dart';
@@ -18,6 +20,7 @@ class PaymentScreen extends StatefulWidget {
   final String receiverPhone;
   final String payoutMethod;
   final String currencyCode;
+  final String purpose;
 
   const PaymentScreen({
     super.key,
@@ -26,6 +29,7 @@ class PaymentScreen extends StatefulWidget {
     required this.receiverPhone,
     required this.payoutMethod,
     required this.currencyCode,
+    required this.purpose,
   });
 
   @override
@@ -37,6 +41,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   void _handleContinue(AppLocalizations l10n) {
     HapticFeedback.mediumImpact();
+    final appState = Provider.of<AppState>(context, listen: false);
+    final amountVal = double.tryParse(widget.amount.replaceAll(',', '')) ?? 0;
+    final totalCost = appState.calculateTotal(amountVal);
+
+    if (_selectedPaymentMethod == "Murtaax Wallet" && !appState.hasSufficientBalance(amountVal)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(appState.translate("Insufficient balance in your Murtaax Wallet", "Haraagaagu kuguma filna Murtaax Wallet")),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     if (_selectedPaymentMethod == "Murtaax Wallet") {
       Navigator.push(
         context,
@@ -47,6 +65,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             receiverPhone: widget.receiverPhone,
             payoutMethod: widget.payoutMethod,
             currencyCode: widget.currencyCode,
+            purpose: widget.purpose,
           ),
         ),
       );
@@ -60,6 +79,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             receiverPhone: widget.receiverPhone,
             payoutMethod: widget.payoutMethod,
             currencyCode: widget.currencyCode,
+            purpose: widget.purpose,
           ),
         ),
       );
@@ -73,6 +93,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             receiverPhone: widget.receiverPhone,
             payoutMethod: widget.payoutMethod,
             currencyCode: widget.currencyCode,
+            purpose: widget.purpose,
           ),
         ),
       );
@@ -86,6 +107,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             receiverPhone: widget.receiverPhone,
             payoutMethod: widget.payoutMethod,
             currencyCode: widget.currencyCode,
+            purpose: widget.purpose,
           ),
         ),
       );
@@ -102,6 +124,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             method: widget.payoutMethod,
             paymentMethod: displayMethod,
             currencyCode: widget.currencyCode,
+            purpose: widget.purpose,
           ),
         ),
       );
@@ -112,6 +135,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final appState = Provider.of<AppState>(context);
 
     final List<Map<String, dynamic>> paymentMethods = [
       {"id": "Murtaax Wallet", "name": l10n.murtaaxWallet, "icon": Icons.account_balance_wallet_rounded, "desc": l10n.murtaaxWalletDesc},
@@ -197,6 +221,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       Text(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: theme.colorScheme.secondary)),
                                     ],
                                   ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(l10n.transactionFee, style: const TextStyle(color: AppColors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+                                      Text(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.calculateFee(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.grey)),
+                                    ],
+                                  ),
                                   const Divider(height: 30),
                                   _buildSummaryRow(l10n.receiver, widget.receiverName, Icons.person_outline),
                                   const SizedBox(height: 12),
@@ -227,7 +259,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           
                           ...paymentMethods.map((method) => FadeInLeft(
                             delay: Duration(milliseconds: paymentMethods.indexOf(method) * 100),
-                            child: _buildPaymentMethodTile(method, theme),
+                            child: _buildPaymentMethodTile(method, theme, l10n),
                           )),
                           
                           const SizedBox(height: 30),
@@ -290,8 +322,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  Widget _buildPaymentMethodTile(Map<String, dynamic> method, ThemeData theme) {
+  Widget _buildPaymentMethodTile(Map<String, dynamic> method, ThemeData theme, AppLocalizations l10n) {
     bool isSelected = _selectedPaymentMethod == method["id"];
+    final appState = Provider.of<AppState>(context, listen: false);
+    
+    final amountVal = double.tryParse(widget.amount.replaceAll(',', '')) ?? 0;
+    final hasEnough = appState.hasSufficientBalance(amountVal);
+    
     return GestureDetector(
       onTap: () => setState(() => _selectedPaymentMethod = method["id"]),
       child: AnimatedContainer(
@@ -302,20 +339,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1),
+            color: isSelected 
+              ? (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary) 
+              : theme.dividerColor.withValues(alpha: 0.1),
             width: 2,
           ),
-          boxShadow: isSelected ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.1), blurRadius: 10)] : null,
+          boxShadow: isSelected ? [BoxShadow(color: (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary).withValues(alpha: 0.1), blurRadius: 10)] : null,
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isSelected ? theme.colorScheme.secondary.withValues(alpha: 0.1) : theme.dividerColor.withValues(alpha: 0.05),
+                color: isSelected 
+                  ? (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red.withValues(alpha: 0.1) : theme.colorScheme.secondary.withValues(alpha: 0.1)) 
+                  : theme.dividerColor.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
-              child: Icon(method["icon"], color: isSelected ? theme.colorScheme.secondary : AppColors.grey, size: 24),
+              child: Icon(method["icon"], color: isSelected ? (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary) : AppColors.grey, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -327,15 +368,34 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     children: [
                       Text(method["name"], style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
                       if (method["id"] == "Murtaax Wallet")
-                        Text("Bal: ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(1250.00)}", style: TextStyle(color: theme.colorScheme.secondary, fontSize: 12, fontWeight: FontWeight.w900)),
+                        Text(
+                          "Bal: ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.balance)}", 
+                          style: TextStyle(
+                            color: hasEnough ? theme.colorScheme.secondary : Colors.red, 
+                            fontSize: 12, 
+                            fontWeight: FontWeight.w900
+                          )
+                        ),
                     ],
                   ),
                   Text(method["desc"], style: const TextStyle(color: AppColors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+                  if (method["id"] == "Murtaax Wallet" && !hasEnough)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        appState.translate("Insufficient balance", "Haraagaagu kuguma filna"),
+                        style: const TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                 ],
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle_rounded, color: theme.colorScheme.secondary, size: 24),
+              Icon(
+                method["id"] == "Murtaax Wallet" && !hasEnough ? Icons.error_outline_rounded : Icons.check_circle_rounded, 
+                color: method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary, 
+                size: 24
+              ),
           ],
         ),
       ),

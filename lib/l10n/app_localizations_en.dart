@@ -88,7 +88,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterAmount => 'Enter Amount';
 
   @override
-  String get transferLimit => 'Limit: \$5,000.00';
+  String get transferLimit => 'Limit: \$50,000.00';
 
   @override
   String get feeRate => 'Fee: \$0.99 per \$100';
@@ -140,6 +140,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseEnterDetails => 'Please enter receiver details';
+
+  @override
+  String get invalidAmount => 'Invalid amount';
 
   @override
   String get continueToReview => 'Continue to Review';
@@ -726,12 +729,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmWithdraw => 'Confirm & Withdraw';
 
   @override
+  String get confirmAndWithdraw => 'Confirm & Withdraw';
+
+  @override
+  String get transactionFailed => 'Transaction Failed';
+
+  @override
+  String get transactionFailedMessage =>
+      'Something went wrong. Please try again or contact support.';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String newBalance(String balance) {
+    return 'New Balance: $balance';
+  }
+
+  @override
   String get withdrawalRequested => 'Withdrawal Requested!';
 
   @override
   String withdrawalSuccessMessage(String amount) {
     return 'Your withdrawal of $amount is being processed.';
   }
+
+  @override
+  String get withdrawal => 'Withdrawal';
+
+  @override
+  String get feeLabel => 'Fee (0.99%):';
+
+  @override
+  String get totalDeduct => 'Total Deduct:';
+
+  @override
+  String minAmountError(String amount) {
+    return 'Minimum amount is $amount';
+  }
+
+  @override
+  String maxAmountError(String amount) {
+    return 'Maximum amount is $amount';
+  }
+
+  @override
+  String get insufficientBalanceWithFee => 'Insufficient balance (incl. fee)';
+
+  @override
+  String get phoneLengthError => 'Number must be 9 digits';
 
   @override
   String get payBills => 'Pay Bills';
@@ -791,6 +837,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get downloadPdf => 'Download PDF';
+
+  @override
+  String get viewReceipt => 'View Receipt';
 
   @override
   String get transactionSuccessful => 'Transaction Successful!';
@@ -1295,6 +1344,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get totalSavings => 'Total Savings';
+
+  @override
+  String get cardBalanceLabel => 'Card: ';
 
   @override
   String get chooseWithdrawalMethod => 'Choose Withdrawal Method';
@@ -1811,4 +1863,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quickSend => 'Quick Send';
+
+  @override
+  String get invalidWalletId => 'Invalid Wallet ID';
+
+  @override
+  String get cannotSendToSelf => 'You cannot send money to yourself';
+
+  @override
+  String get evcPlus => 'EVC Plus';
+
+  @override
+  String get edahab => 'e-Dahab';
+
+  @override
+  String get zaad => 'ZAAD';
+
+  @override
+  String get sahal => 'Sahal';
+
+  @override
+  String get purposeOfRemittance => 'Purpose of Remittance';
+
+  @override
+  String get purpose => 'Purpose';
+
+  @override
+  String get familySupport => 'Family Support';
+
+  @override
+  String get educationTuition => 'Education/Tuition';
+
+  @override
+  String get medicalExpenses => 'Medical Expenses';
+
+  @override
+  String get businessTransaction => 'Business Transaction';
+
+  @override
+  String get propertyRent => 'Property/Rent';
+
+  @override
+  String get gift => 'Gift';
+
+  @override
+  String get other => 'Other';
+
+  @override
+  String get contactPermissionRequired =>
+      'Contact permission is required to pick a contact.';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get dailyLimit => 'Daily Limit';
+
+  @override
+  String get monthlyLimit => 'Monthly Limit';
+
+  @override
+  String get recentSavingsActivity => 'Recent Savings Activity';
+
+  @override
+  String get noActivityYet => 'No activity yet';
 }

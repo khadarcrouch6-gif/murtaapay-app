@@ -588,5 +588,11 @@
   "weekly": "Iganädalane",
   "tenDays": "10 päeva",
   "monthly": "Igakuine",
-  "yearly": "Iga-aastane"
+  "yearly": "Iga-aastane",
+  "evcPlus": "EVC Plus",
+  "edahab": "e-Dahab",
+  "zaad": "ZAAD",
+  "sahal": "Sahal",
+  "recentSavingsActivity": "Viimased säästutegevused",
+  "noActivityYet": "Tegevusi veel pole"
 }

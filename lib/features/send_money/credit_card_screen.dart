@@ -5,10 +5,12 @@ import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'review_screen.dart';
 
 
@@ -18,6 +20,7 @@ class CreditCardScreen extends StatefulWidget {
   final String receiverPhone;
   final String payoutMethod;
   final String currencyCode;
+  final String purpose;
   final String initialCardType;
 
   const CreditCardScreen({
@@ -27,6 +30,7 @@ class CreditCardScreen extends StatefulWidget {
     required this.receiverPhone,
     required this.payoutMethod,
     required this.currencyCode,
+    required this.purpose,
     this.initialCardType = "unknown",
   });
 
@@ -289,6 +293,8 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
     
     await Future.delayed(const Duration(seconds: 1));
     
+    final appState = Provider.of<AppState>(context, listen: false);
+    
     if (mounted) {
       Navigator.of(context, rootNavigator: true).pop();
       Navigator.of(context).push(
@@ -300,6 +306,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
             method: widget.payoutMethod,
             paymentMethod: l10n.cardEndingIn(_cardNumberController.text.substring(_cardNumberController.text.length - 4)),
             currencyCode: widget.currencyCode,
+            purpose: widget.purpose,
           ),
         ),
       );
@@ -311,6 +318,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final scale = context.fontSizeFactor;
+    final appState = Provider.of<AppState>(context);
     String title = l10n.cardInformation;
     if (widget.initialCardType == "visa") title = l10n.visaDetails;
     if (widget.initialCardType == "mastercard") title = l10n.mastercardDetails;
@@ -626,7 +634,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
+                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.calculateTotal(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0))),
                                 style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                               ),
                             ),

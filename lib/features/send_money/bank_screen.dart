@@ -9,7 +9,15 @@ class BankScreen extends StatefulWidget {
   final String amount;
   final String method;
   final String currencyCode;
-  const BankScreen({super.key, required this.amount, required this.method, required this.currencyCode});
+  final String? prefilledName;
+
+  const BankScreen({
+    super.key, 
+    required this.amount, 
+    required this.method, 
+    required this.currencyCode,
+    this.prefilledName,
+  });
 
   @override
   State<BankScreen> createState() => _BankScreenState();
@@ -24,6 +32,15 @@ class _BankScreenState extends State<BankScreen> {
   final FocusNode _bankNameFocus = FocusNode();
   
   String _selectedBank = "IBS Bank";
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.prefilledName != null) {
+      _nameController.text = widget.prefilledName!;
+    }
+  }
+
   final List<Map<String, String>> _banks = [
     {"name": "IBS Bank", "image": "assets/images/bank.png"},
     {"name": "Premier Bank", "image": "assets/images/bank.png"},
@@ -57,6 +74,7 @@ class _BankScreenState extends State<BankScreen> {
           receiverPhone: _accountController.text, // Using as account number
           payoutMethod: "${widget.method} ($bankInfo)",
           currencyCode: widget.currencyCode,
+          purpose: l10n.familySupport, // Default purpose
         ),
       ),
     );

@@ -88,7 +88,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get enterAmount => 'Geli cadadka';
 
   @override
-  String get transferLimit => 'Xadadka: \$5,000.00';
+  String get transferLimit => 'Xadadka: \$50,000.00';
 
   @override
   String get feeRate => 'Kharashka: \$0.99 halkii \$100';
@@ -112,7 +112,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get visaMastercard => 'Visa / MasterCard';
 
   @override
-  String get mobileMoney => 'Mobile Money';
+  String get mobileMoney => 'Lacagta Moobaylka';
 
   @override
   String get transactionFee => 'Kharashka dirista';
@@ -140,6 +140,9 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get pleaseEnterDetails => 'Fadlan geli faahfaahinta qaataha';
+
+  @override
+  String get invalidAmount => 'Invalid amount';
 
   @override
   String get continueToReview => 'Sii soco si aad u eegto';
@@ -185,7 +188,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get payViaSomtel => 'Ku bixi Somtel e-Dahab';
 
   @override
-  String get bankTransfer => 'Xawaalad bangi';
+  String get bankTransfer => 'Xawaalad Bangi';
 
   @override
   String get localBankTransfer => 'Xawaalad bangi oo maxalli ah';
@@ -729,12 +732,56 @@ class AppLocalizationsSo extends AppLocalizations {
   String get confirmWithdraw => 'Xaqiiji oo Kala Bax';
 
   @override
+  String get confirmAndWithdraw => 'Xaqiiji oo Kala Bax';
+
+  @override
+  String get transactionFailed => 'Macaamilka Waa Fashilmay';
+
+  @override
+  String get transactionFailedMessage =>
+      'Wax baa qaldamay. Fadlan isku day markale ama la xiriir taageerada.';
+
+  @override
+  String get tryAgain => 'Isku day mar kale';
+
+  @override
+  String newBalance(String balance) {
+    return 'Haraaga Cusub: $balance';
+  }
+
+  @override
   String get withdrawalRequested => 'Kala bixista waa la codsaday!';
 
   @override
   String withdrawalSuccessMessage(String amount) {
     return 'Kala bixistaadi $amount aya lagu guda jiraa.';
   }
+
+  @override
+  String get withdrawal => 'Kala Bixid';
+
+  @override
+  String get feeLabel => 'Khidmadda (0.99%):';
+
+  @override
+  String get totalDeduct => 'Wadarta laga jarayo:';
+
+  @override
+  String minAmountError(String amount) {
+    return 'Cadadka ugu yar waa $amount';
+  }
+
+  @override
+  String maxAmountError(String amount) {
+    return 'Cadadka ugu badan waa $amount';
+  }
+
+  @override
+  String get insufficientBalanceWithFee =>
+      'Haraagu kuguma filna (khidmadda oo ku jirta)';
+
+  @override
+  String get phoneLengthError => 'Lambarku waa inuu ahaadaa 9 god';
 
   @override
   String get payBills => 'Bixi Biilasha';
@@ -794,6 +841,9 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get downloadPdf => 'Soo deji PDF';
+
+  @override
+  String get viewReceipt => 'View Receipt';
 
   @override
   String get transactionSuccessful => 'Dhaqdhaqaaqa waa lagu guuleystay';
@@ -1303,6 +1353,9 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get totalSavings => 'Kaydka Dhan';
+
+  @override
+  String get cardBalanceLabel => 'Kaarka: ';
 
   @override
   String get chooseWithdrawalMethod => 'Dooro Habka Lacag Bixinta';
@@ -1821,4 +1874,68 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get quickSend => 'Xiriirada Degdega';
+
+  @override
+  String get invalidWalletId => 'Nambarka Wallet-ka waa khalad';
+
+  @override
+  String get cannotSendToSelf => 'Isku diri kartid lacag';
+
+  @override
+  String get evcPlus => 'EVC Plus';
+
+  @override
+  String get edahab => 'e-Dahab';
+
+  @override
+  String get zaad => 'ZAAD';
+
+  @override
+  String get sahal => 'Sahal';
+
+  @override
+  String get purposeOfRemittance => 'Sababta Lacag Dirista';
+
+  @override
+  String get purpose => 'Ujeedada';
+
+  @override
+  String get familySupport => 'Taageerada Qoyska';
+
+  @override
+  String get educationTuition => 'Waxbarasho';
+
+  @override
+  String get medicalExpenses => 'Caafimaad';
+
+  @override
+  String get businessTransaction => 'Ganacsi';
+
+  @override
+  String get propertyRent => 'Guri/Kiira';
+
+  @override
+  String get gift => 'Hadiyad';
+
+  @override
+  String get other => 'Kale';
+
+  @override
+  String get contactPermissionRequired =>
+      'Fadlan oggolaaw inaan akhrino dadka kugu jira (contacts) si aad u doorto.';
+
+  @override
+  String get openSettings => 'Fur Settings';
+
+  @override
+  String get dailyLimit => 'Xadka Maalinlaha ah';
+
+  @override
+  String get monthlyLimit => 'Xadka Bisha';
+
+  @override
+  String get recentSavingsActivity => 'Dhaqdhaqaaqa Kaydka';
+
+  @override
+  String get noActivityYet => 'Weli ma jiraan dhaqdhaqaaqyo';
 }

@@ -1,29 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/models/transaction.dart' as model;
 
 import '../../core/widgets/transaction_item.dart';
 import '../../core/widgets/wallet_receipt_view.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-
-class Transaction {
-  final String name;
-  final String type;
-  final String amount;
-  final String date;
-  final String status;
-  final bool isSent;
-
-  Transaction({
-    required this.name,
-    required this.type,
-    required this.amount,
-    required this.date,
-    required this.status,
-    required this.isSent,
-  });
-}
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -36,27 +20,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String _selectedFilter = "All";
   final TextEditingController _searchController = TextEditingController();
   
-  final List<Transaction> _allTransactions = [
-    Transaction(name: "Mohamed Ali", type: "EVC Plus", amount: r"-$250.00", date: "Oct 24, 2023", status: "Success", isSent: true),
-    Transaction(name: "Ahmed Hersi", type: "ZAAD", amount: r"-$100.00", date: "Oct 24, 2023", status: "Pending", isSent: true),
-    Transaction(name: "Wallet Topup", type: "Bank Transfer", amount: r"+$1,000.00", date: "Oct 23, 2023", status: "Success", isSent: false),
-    Transaction(name: "Sahra Jama", type: "eDahab", amount: r"-$50.00", date: "Oct 22, 2023", status: "Success", isSent: true),
-    Transaction(name: "Abdi Rahman", type: "EVC Plus", amount: r"+$300.00", date: "Oct 21, 2023", status: "Success", isSent: false),
-    Transaction(name: "Somtel Bill", type: "Internet", amount: r"-$25.00", date: "Oct 20, 2023", status: "Success", isSent: true),
-    Transaction(name: "Netflix", type: "Subscription", amount: r"-$15.99", date: "Oct 19, 2023", status: "Success", isSent: true),
-    Transaction(name: "Salad Iid", type: "ZAAD", amount: r"+$150.00", date: "Oct 18, 2023", status: "Success", isSent: false),
-    Transaction(name: "BECO", type: "Electricity", amount: r"-$42.50", date: "Oct 17, 2023", status: "Success", isSent: true),
-    Transaction(name: "Hassan Nur", type: "Bank Transfer", amount: r"+$2,000.00", date: "Oct 16, 2023", status: "Success", isSent: false),
-    Transaction(name: "Amazon", type: "Shopping", amount: r"-$124.50", date: "Oct 15, 2023", status: "Success", isSent: true),
-    Transaction(name: "IBS Bank", type: "Savings", amount: r"+$500.00", date: "Oct 14, 2023", status: "Success", isSent: false),
-  ];
-
-  List<Transaction> _filteredTransactions = [];
-
   @override
   void initState() {
     super.initState();
-    _filteredTransactions = _allTransactions;
   }
 
   @override
@@ -66,22 +32,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   void _runFilter() {
-    String query = _searchController.text.toLowerCase();
-    setState(() {
-      _filteredTransactions = _allTransactions.where((tx) {
-        bool matchesSearch = tx.name.toLowerCase().contains(query) || tx.type.toLowerCase().contains(query);
-        bool matchesFilter = _selectedFilter == "All" || 
-                           (_selectedFilter == "Sent" && tx.isSent) || 
-                           (_selectedFilter == "Received" && !tx.isSent);
-        return matchesSearch && matchesFilter;
-      }).toList();
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final state = Provider.of<AppState>(context);
     final theme = Theme.of(context);
+
+    final query = _searchController.text.toLowerCase();
+    final filteredTransactions = state.transactions.where((tx) {
+      bool matchesSearch = tx.title.toLowerCase().contains(query) || tx.type.toLowerCase().contains(query);
+      bool matchesFilter = _selectedFilter == "All" || 
+                         (_selectedFilter == "Sent" && tx.isNegative) || 
+                         (_selectedFilter == "Received" && !tx.isNegative);
+      return matchesSearch && matchesFilter;
+    }).toList();
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -119,20 +85,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 const SizedBox(height: 8),
                 _buildSearchAndFilter(context, state, theme),
                 Expanded(
-                  child: _filteredTransactions.isEmpty
+                  child: filteredTransactions.isEmpty
                         ? _buildEmptyState(context, state)
                         : ListView.builder(
                             padding: EdgeInsets.fromLTRB(context.horizontalPadding, 8, context.horizontalPadding, 120),
-                            itemCount: _filteredTransactions.length,
+                            itemCount: filteredTransactions.length,
                             itemBuilder: (context, index) {
-                              final tx = _filteredTransactions[index];
+                              final tx = filteredTransactions[index];
                               return TransactionItem(
-                                title: tx.name,
-                                subtitle: tx.type,
+                                title: tx.title,
+                                subtitle: tx.purpose ?? tx.type,
                                 amount: tx.amount,
                                 status: tx.status,
                                 date: tx.date,
-                                isSent: tx.isSent,
+                                isSent: tx.isNegative,
                                 onTap: () => _showTransactionDetails(context, state, theme, tx),
                               );
                             },
@@ -198,13 +164,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  void _showTransactionDetails(BuildContext context, AppState state, ThemeData theme, Transaction tx) {
+  void _showTransactionDetails(BuildContext context, AppState state, ThemeData theme, model.Transaction tx) {
     WalletReceiptView.show(context, {
-      "title": tx.name,
+      "title": tx.title,
       "amount": tx.amount,
       "date": tx.date,
       "status": tx.status,
-      "isNegative": tx.isSent,
+      "isNegative": tx.isNegative,
+      "transactionId": tx.id,
+      "purpose": tx.purpose,
     });
   }
 

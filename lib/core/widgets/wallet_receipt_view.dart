@@ -23,39 +23,36 @@ class WalletReceiptView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final isDark = theme.brightness == Brightness.dark;
 
-    return ZoomIn(
-      duration: const Duration(milliseconds: 400),
-      child: Center(
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 340),
-            child: Container(
-              margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + 40,
-                top: 40,
-              ),
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                borderRadius: BorderRadius.circular(32),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 30,
-                    offset: const Offset(0, 15),
-                  )
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildHeader(context, theme, l10n),
-                  _buildDashedDivider(theme),
-                  _buildDetails(theme, l10n),
-                  const SizedBox(height: 32),
-                  _buildActions(context, l10n),
-                  const SizedBox(height: 24),
-                ],
-              ),
+    return Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          top: 20,
+        ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 340),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E293B) : Colors.white,
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 30,
+                  offset: const Offset(0, 15),
+                )
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildHeader(context, theme, l10n),
+                _buildDashedDivider(theme),
+                _buildDetails(theme, l10n),
+                const SizedBox(height: 32),
+                _buildActions(context, l10n),
+                const SizedBox(height: 24),
+              ],
             ),
           ),
         ),
@@ -139,6 +136,8 @@ class WalletReceiptView extends StatelessWidget {
           _buildDetailRow(theme, l10n.transactionId, transaction['transactionId'] ?? "#MTX-WALL-12345"),
           _buildDetailRow(theme, l10n.date, transaction['date'] ?? ""),
           _buildDetailRow(theme, l10n.paymentMethod, l10n.walletBalance),
+          if (transaction['purpose'] != null && transaction['purpose'].toString().isNotEmpty)
+            _buildDetailRow(theme, l10n.purpose, transaction['purpose']),
         ],
       ),
     );
@@ -216,4 +215,3 @@ class WalletReceiptView extends StatelessWidget {
     );
   }
 }
-

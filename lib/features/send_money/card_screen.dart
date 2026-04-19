@@ -51,6 +51,7 @@ class _CardScreenState extends State<CardScreen> {
             receiverPhone: "**** **** **** ${_cardNumberController.text.substring(_cardNumberController.text.length - 4)}",
             payoutMethod: widget.method,
             currencyCode: widget.currencyCode,
+            purpose: AppLocalizations.of(context)!.familySupport, // Default purpose
           ),
         ),
       );

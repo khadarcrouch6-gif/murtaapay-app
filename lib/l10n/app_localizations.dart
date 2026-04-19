@@ -263,7 +263,7 @@ abstract class AppLocalizations {
   /// No description provided for @transferLimit.
   ///
   /// In en, this message translates to:
-  /// **'Limit: \$5,000.00'**
+  /// **'Limit: \$50,000.00'**
   String get transferLimit;
 
   /// No description provided for @feeRate.
@@ -367,6 +367,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter receiver details'**
   String get pleaseEnterDetails;
+
+  /// No description provided for @invalidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid amount'**
+  String get invalidAmount;
 
   /// No description provided for @continueToReview.
   ///
@@ -1490,6 +1496,36 @@ abstract class AppLocalizations {
   /// **'Confirm & Withdraw'**
   String get confirmWithdraw;
 
+  /// No description provided for @confirmAndWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & Withdraw'**
+  String get confirmAndWithdraw;
+
+  /// No description provided for @transactionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Failed'**
+  String get transactionFailed;
+
+  /// No description provided for @transactionFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again or contact support.'**
+  String get transactionFailedMessage;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// No description provided for @newBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'New Balance: {balance}'**
+  String newBalance(String balance);
+
   /// No description provided for @withdrawalRequested.
   ///
   /// In en, this message translates to:
@@ -1501,6 +1537,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your withdrawal of {amount} is being processed.'**
   String withdrawalSuccessMessage(String amount);
+
+  /// No description provided for @withdrawal.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal'**
+  String get withdrawal;
+
+  /// No description provided for @feeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee (0.99%):'**
+  String get feeLabel;
+
+  /// No description provided for @totalDeduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Deduct:'**
+  String get totalDeduct;
+
+  /// No description provided for @minAmountError.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum amount is {amount}'**
+  String minAmountError(String amount);
+
+  /// No description provided for @maxAmountError.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum amount is {amount}'**
+  String maxAmountError(String amount);
+
+  /// No description provided for @insufficientBalanceWithFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient balance (incl. fee)'**
+  String get insufficientBalanceWithFee;
+
+  /// No description provided for @phoneLengthError.
+  ///
+  /// In en, this message translates to:
+  /// **'Number must be 9 digits'**
+  String get phoneLengthError;
 
   /// No description provided for @payBills.
   ///
@@ -1615,6 +1693,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download PDF'**
   String get downloadPdf;
+
+  /// No description provided for @viewReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'View Receipt'**
+  String get viewReceipt;
 
   /// No description provided for @transactionSuccessful.
   ///
@@ -2588,6 +2672,12 @@ abstract class AppLocalizations {
   /// **'Total Savings'**
   String get totalSavings;
 
+  /// No description provided for @cardBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Card: '**
+  String get cardBalanceLabel;
+
   /// No description provided for @chooseWithdrawalMethod.
   ///
   /// In en, this message translates to:
@@ -3541,6 +3631,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Quick Send'**
   String get quickSend;
+
+  /// No description provided for @invalidWalletId.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Wallet ID'**
+  String get invalidWalletId;
+
+  /// No description provided for @cannotSendToSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot send money to yourself'**
+  String get cannotSendToSelf;
+
+  /// No description provided for @evcPlus.
+  ///
+  /// In en, this message translates to:
+  /// **'EVC Plus'**
+  String get evcPlus;
+
+  /// No description provided for @edahab.
+  ///
+  /// In en, this message translates to:
+  /// **'e-Dahab'**
+  String get edahab;
+
+  /// No description provided for @zaad.
+  ///
+  /// In en, this message translates to:
+  /// **'ZAAD'**
+  String get zaad;
+
+  /// No description provided for @sahal.
+  ///
+  /// In en, this message translates to:
+  /// **'Sahal'**
+  String get sahal;
+
+  /// No description provided for @purposeOfRemittance.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose of Remittance'**
+  String get purposeOfRemittance;
+
+  /// No description provided for @purpose.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose'**
+  String get purpose;
+
+  /// No description provided for @familySupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Support'**
+  String get familySupport;
+
+  /// No description provided for @educationTuition.
+  ///
+  /// In en, this message translates to:
+  /// **'Education/Tuition'**
+  String get educationTuition;
+
+  /// No description provided for @medicalExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Expenses'**
+  String get medicalExpenses;
+
+  /// No description provided for @businessTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Transaction'**
+  String get businessTransaction;
+
+  /// No description provided for @propertyRent.
+  ///
+  /// In en, this message translates to:
+  /// **'Property/Rent'**
+  String get propertyRent;
+
+  /// No description provided for @gift.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift'**
+  String get gift;
+
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// No description provided for @contactPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact permission is required to pick a contact.'**
+  String get contactPermissionRequired;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
+
+  /// No description provided for @dailyLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Limit'**
+  String get dailyLimit;
+
+  /// No description provided for @monthlyLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Limit'**
+  String get monthlyLimit;
+
+  /// No description provided for @recentSavingsActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Savings Activity'**
+  String get recentSavingsActivity;
+
+  /// No description provided for @noActivityYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity yet'**
+  String get noActivityYet;
 }
 
 class _AppLocalizationsDelegate

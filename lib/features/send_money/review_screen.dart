@@ -4,10 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:provider/provider.dart';
+import '../../core/app_state.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
+import '../../core/models/transaction.dart' as model;
+import '../../core/models/quick_profile.dart' as model_quick;
 
 class ReviewScreen extends StatelessWidget {
   final String amount;
@@ -16,6 +20,7 @@ class ReviewScreen extends StatelessWidget {
   final String method;
   final String paymentMethod;
   final String currencyCode;
+  final String purpose;
 
   const ReviewScreen({
     super.key,
@@ -25,16 +30,18 @@ class ReviewScreen extends StatelessWidget {
     required this.method,
     required this.paymentMethod,
     required this.currencyCode,
+    required this.purpose,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final appState = Provider.of<AppState>(context);
     
     double amountVal = double.tryParse(amount.replaceAll(',', '')) ?? 0;
-    double fee = amountVal * 0.0099;
-    double total = amountVal + fee;
+    double fee = appState.calculateFee(amountVal);
+    double total = appState.calculateTotal(amountVal);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -44,9 +51,7 @@ class ReviewScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24), 
           onPressed: () {
-            // Go back two steps to PaymentScreen and clear the intermediate form state
-            int count = 0;
-            Navigator.popUntil(context, (route) => count++ == 2);
+            Navigator.pop(context);
           },
         ),
         title: Text(l10n.reviewTransfer, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white, letterSpacing: -0.5)),
@@ -127,9 +132,40 @@ class ReviewScreen extends StatelessWidget {
                               const SizedBox(height: 12),
                               _buildReviewRow(context, l10n.paidUsing, paymentMethod),
                               const SizedBox(height: 12),
+                              _buildReviewRow(context, l10n.purpose, purpose),
+                              if (paymentMethod == "Murtaax Wallet")
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 12),
+                                  child: _buildReviewRow(context, "Wallet Balance", NumberFormat.simpleCurrency(name: currencyCode).format(appState.balance)),
+                                ),
+                              const SizedBox(height: 12),
                               _buildReviewRow(context, l10n.transactionFee, NumberFormat.simpleCurrency(name: currencyCode).format(fee)),
+                              const SizedBox(height: 12),
+                              _buildReviewRow(
+                                context, 
+                                appState.translate("Estimated Arrival", "Xilliga la filayo"), 
+                                method.contains("Bank") ? "24 Hours" : "Instant",
+                                valueColor: method.contains("Bank") ? Colors.orange : AppColors.accentTeal
+                              ),
                               const Divider(height: 24),
                               _buildReviewRow(context, l10n.totalToPay, NumberFormat.simpleCurrency(name: currencyCode).format(total), isTotal: true),
+                              const SizedBox(height: 16),
+                              _buildLimitsHeadroom(context, appState),
+                              if (method.contains("Bank"))
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.access_time_filled_rounded, size: 16, color: Colors.orange),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        "Lacagtu waxay gaaraysaa muddo 24 saac gudahood ah",
+                                        style: TextStyle(fontSize: 12, color: Colors.orange.shade700, fontWeight: FontWeight.w900),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -140,6 +176,25 @@ class ReviewScreen extends StatelessWidget {
                       FadeInUp(
                         child: Column(
                           children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: true, 
+                                  onChanged: (v) {},
+                                  activeColor: theme.colorScheme.secondary,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    appState.translate(
+                                      "I agree to the Terms & Conditions and Privacy Policy",
+                                      "Waxaan ogolahay Shuruudaha & Adeegga iyo Qaanuunka Khaaska ah"
+                                    ),
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.grey),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                               decoration: BoxDecoration(
@@ -223,6 +278,47 @@ class ReviewScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildLimitsHeadroom(BuildContext context, AppState state) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      children: [
+        _limitItem(l10n.dailyLimit, state.getDailyRemaining(), AppState.dailyLimit, state.currencyCode),
+        const SizedBox(height: 8),
+        _limitItem(l10n.monthlyLimit, state.getMonthlyRemaining(), AppState.monthlyLimit, state.currencyCode),
+      ],
+    );
+  }
+
+  Widget _limitItem(String label, double remaining, double limit, String currency) {
+    final double percent = (remaining / limit).clamp(0.0, 1.0);
+    final bool isLow = percent < 0.2;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.grey)),
+            Text(
+              "${NumberFormat.simpleCurrency(name: currency).format(remaining)} left",
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isLow ? Colors.orange : AppColors.accentTeal),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(2),
+          child: LinearProgressIndicator(
+            value: percent,
+            backgroundColor: AppColors.grey.withValues(alpha: 0.1),
+            valueColor: AlwaysStoppedAnimation<Color>(isLow ? Colors.orange : AppColors.accentTeal),
+            minHeight: 3,
+          ),
+        ),
+      ],
+    );
+  }
+
   void _processTransaction(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
@@ -303,19 +399,101 @@ class ReviewScreen extends StatelessWidget {
     await Future.delayed(const Duration(seconds: 1));
 
     if (!context.mounted) return;
-    Navigator.of(context, rootNavigator: true).pop();
-    _showSuccess(context);
+    
+    final state = Provider.of<AppState>(context, listen: false);
+    double amountVal = double.tryParse(amount.replaceAll(',', '')) ?? 0;
+    
+    try {
+      if (paymentMethod == "Murtaax Wallet") {
+        await state.processP2PTransfer(
+          receiverId: receiverPhone,
+          amount: amountVal,
+          currencyCode: currencyCode,
+          purpose: purpose,
+        );
+      } else {
+        // For other methods, we still use the old logic for now 
+        // until we implement their specific atomic logic
+        double total = state.calculateTotal(amountVal);
+        state.addTransaction(model.Transaction(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          title: receiverName,
+          date: DateFormat('MMM dd').format(DateTime.now()),
+          amount: "-${NumberFormat.simpleCurrency(name: currencyCode).format(total)}",
+          isNegative: true,
+          category: "Transfer",
+          status: "Success",
+          type: "send",
+          method: method,
+          purpose: purpose,
+        ));
+      }
+
+      if (context.mounted) {
+        // Save/Update QuickProfile for shortcut system
+        state.saveQuickProfile(model_quick.QuickProfile(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          name: receiverName,
+          walletId: receiverPhone,
+          lastSenderMethod: paymentMethod,
+          lastReceiverMethod: method,
+          lastAmount: amountVal,
+          avatarUrl: "https://ui-avatars.com/api/?name=${Uri.encodeComponent(receiverName)}&background=random",
+        ));
+
+        Navigator.of(context, rootNavigator: true).pop();
+        _showSuccess(context);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+        String errorMsg = state.translate("Transaction failed. Please try again.", "Macaamilka waa fashilmay. Fadlan isku day mar kale.");
+        
+        if (e.toString().contains('daily_limit_exceeded')) {
+          errorMsg = state.translate("Daily transaction limit exceeded.", "Xadiga xawaaladda maalinlaha ah waa laga gudbay.");
+        } else if (e.toString().contains('monthly_limit_exceeded')) {
+          errorMsg = state.translate("Monthly transaction limit exceeded.", "Xadiga xawaaladda bishii waa laga gudbay.");
+        } else if (e.toString().contains('insufficient_funds')) {
+          errorMsg = l10n.insufficientBalance;
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMsg),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _showSuccess(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final state = Provider.of<AppState>(context, listen: false);
+    double amountVal = double.tryParse(amount.replaceAll(',', '')) ?? 0;
+    double total = state.calculateTotal(amountVal);
+    
+    // Create transaction data for receipt
+    final transactionData = {
+      'title': receiverName,
+      'amount': "-${NumberFormat.simpleCurrency(name: currencyCode).format(total)}",
+      'date': DateFormat('MMM dd, yyyy').format(DateTime.now()),
+      'status': 'Success',
+      'type': 'send',
+      'method': method,
+      'isNegative': true,
+      'id': 'TX${DateTime.now().millisecondsSinceEpoch}',
+    };
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.transferSuccessful,
           message: l10n.moneyOnWay,
+          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
+          transactionData: transactionData,
         ),
       ),
     );
@@ -355,7 +533,7 @@ class ReviewScreen extends StatelessWidget {
     return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
   }
 
-  Widget _buildReviewRow(BuildContext context, String label, String value, {bool isBold = false, bool isTotal = false}) {
+  Widget _buildReviewRow(BuildContext context, String label, String value, {bool isBold = false, bool isTotal = false, Color? valueColor}) {
     final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -383,7 +561,7 @@ class ReviewScreen extends StatelessWidget {
               value, 
               textAlign: TextAlign.right,
               style: TextStyle(
-                color: isTotal ? theme.colorScheme.secondary : theme.textTheme.bodyLarge?.color,
+                color: valueColor ?? (isTotal ? theme.colorScheme.secondary : theme.textTheme.bodyLarge?.color),
                 fontSize: isTotal ? 24 : (isBold ? 18 : 16), 
                 fontWeight: FontWeight.w900,
                 letterSpacing: -0.5,

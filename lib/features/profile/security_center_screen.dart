@@ -3,6 +3,7 @@ import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import 'account_limits_screen.dart';
 
 class SecurityCenterScreen extends StatefulWidget {
   const SecurityCenterScreen({super.key});
@@ -54,6 +55,12 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
             const SizedBox(height: 32),
             _buildSectionTitle(theme, state.translate("Advanced Security", "Ammaanka Sare", ar: "الأمان المتقدم", de: "Erweiterte Sicherheit", et: "Täpsem turvalisus")),
             const SizedBox(height: 16),
+            _buildSecurityTile(
+              context,
+              state.translate("Account Limits", "Xadka Akooonka", ar: "حدود الحساب", de: "Kontolimits", et: "Konto piirangud"),
+              Icons.speed_rounded,
+              () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountLimitsScreen())),
+            ),
             _buildSecurityToggle(
               context,
               state.translate("Two-Factor Authentication", "Xaqiijinta Labada-Talaabo", ar: "المصادقة الثنائية", de: "Zwei-Faktor-Authentifizierung", et: "Kaheastmeline kinnitamine"),

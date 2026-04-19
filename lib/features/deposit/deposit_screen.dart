@@ -3,8 +3,11 @@ import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/app_state.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
@@ -420,10 +423,10 @@ class _DepositScreenState extends State<DepositScreen> {
               crossAxisSpacing: 12,
               childAspectRatio: 2.5,
               children: [
-                _buildProviderOption("EVC Plus", const Color(0xFF1B5E20), l10n),
-                _buildProviderOption("e-Dahab", const Color(0xFFFBC02D), l10n),
-                _buildProviderOption("Sahal", const Color(0xFF0D47A1), l10n),
-                _buildProviderOption("ZAAD", const Color(0xFFB71C1C), l10n),
+                _buildProviderOption(l10n.evcPlus, const Color(0xFF1B5E20), l10n),
+                _buildProviderOption(l10n.edahab, const Color(0xFFFBC02D), l10n),
+                _buildProviderOption(l10n.sahal, const Color(0xFF0D47A1), l10n),
+                _buildProviderOption(l10n.zaad, const Color(0xFFB71C1C), l10n),
               ],
             ),
           ],
@@ -712,11 +715,12 @@ class _DepositScreenState extends State<DepositScreen> {
   void _showMobileMoneyDialog(String provider, Color color, AppLocalizations l10n) {
     _field1Controller.clear();
     _field4Controller.clear();
+    String? currentProvider = provider;
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) {
-          bool isValid = _field1Controller.text.length >= 7 && _field4Controller.text.length >= 4;
+          bool isValid = _field1Controller.text.length == 9 && _field4Controller.text.length >= 4;
           return AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             title: Row(
@@ -727,13 +731,43 @@ class _DepositScreenState extends State<DepositScreen> {
                   child: Icon(Icons.phone_android_rounded, color: color, size: 20 * context.fontSizeFactor),
                 ),
                 SizedBox(width: 12 * context.fontSizeFactor),
-                Text(provider, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor)),
+                Text(currentProvider ?? provider, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor)),
               ],
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _inputField(context, l10n.phoneNumber, Icons.phone_iphone_rounded, "61XXXXXXX", _field1Controller, isNumber: true, onChanged: (_) => setDialogState((){})),
+                _inputField(
+                  context, 
+                  l10n.phoneNumber, 
+                  Icons.phone_iphone_rounded, 
+                  "61XXXXXXX", 
+                  _field1Controller, 
+                  isNumber: true, 
+                  prefix: "+252 ",
+                  maxLength: 9,
+                  onChanged: (val) {
+                    if (val.startsWith('61')) {
+                      currentProvider = l10n.evcPlus;
+                    } else if (val.startsWith('65')) {
+                      currentProvider = l10n.edahab;
+                    } else if (val.startsWith('63')) {
+                      currentProvider = l10n.zaad;
+                    } else if (val.startsWith('90')) {
+                      currentProvider = l10n.sahal;
+                    } else {
+                      currentProvider = provider;
+                    }
+                    _selectedProvider = currentProvider;
+                    setDialogState((){});
+                  }
+                ),
+                if (_field1Controller.text.isNotEmpty && _field1Controller.text.length < 9)
+                   Padding(
+                     padding: const EdgeInsets.only(top: 8, left: 4),
+                     child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
+                   ),
                 SizedBox(height: 16 * context.fontSizeFactor),
                 _inputField(context, l10n.servicePin, Icons.lock_outline_rounded, "••••", _field4Controller, isNumber: true, isObscure: true, onChanged: (_) => setDialogState((){})),
               ],
@@ -761,7 +795,7 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   Widget _inputField(BuildContext context, String label, IconData icon, String hint, TextEditingController controller,
-      {bool isNumber = false, bool isEmail = false, bool isObscure = false, List<TextInputFormatter>? formatters, Function(String)? onChanged}) {
+      {bool isNumber = false, bool isEmail = false, bool isObscure = false, List<TextInputFormatter>? formatters, String? prefix, int? maxLength, Function(String)? onChanged}) {
     final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
@@ -779,6 +813,7 @@ class _DepositScreenState extends State<DepositScreen> {
         controller: controller,
         obscureText: isObscure,
         onChanged: onChanged,
+        maxLength: maxLength,
         keyboardType: isNumber ? TextInputType.number : isEmail ? TextInputType.emailAddress : TextInputType.text,
         inputFormatters: formatters,
         style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w600),
@@ -786,13 +821,19 @@ class _DepositScreenState extends State<DepositScreen> {
           labelText: label,
           labelStyle: TextStyle(fontSize: 14 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.6), fontWeight: FontWeight.w500),
           hintText: hint,
+          counterText: "",
           hintStyle: TextStyle(color: AppColors.grey.withValues(alpha: 0.3)),
-          prefixIcon: Container(
-            margin: const EdgeInsets.all(12),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-            child: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
-          ),
+          prefixIcon: prefix != null
+            ? Padding(
+                padding: const EdgeInsets.only(left: 12, top: 14),
+                child: Text(prefix, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: AppColors.accentTeal)),
+              )
+            : Container(
+                margin: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+                child: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+              ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.05)),
@@ -852,7 +893,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       children: [
                         _reviewRow(context, l10n.amount, "\$${_amountController.text}"),
                         Divider(height: 32, color: theme.dividerColor.withValues(alpha: 0.1)),
-                        _reviewRow(context, l10n.method, _getMethodTitle(method["titleKey"], l10n)),
+                        _reviewRow(context, l10n.method, _selectedMethod == "mobile" ? (_selectedProvider ?? _getMethodTitle(method["titleKey"], l10n)) : _getMethodTitle(method["titleKey"], l10n)),
                         Divider(height: 32, color: theme.dividerColor.withValues(alpha: 0.1)),
                         _reviewRow(context, l10n.fee, "\$0.00", isFree: true),
                         Divider(height: 32, color: theme.dividerColor.withValues(alpha: 0.1)),
@@ -865,10 +906,13 @@ class _DepositScreenState extends State<DepositScreen> {
                     width: double.infinity,
                     height: 60 * context.fontSizeFactor,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _processTransaction(this.context, l10n);
-                      },
+                        onPressed: () {
+                          final state = Provider.of<AppState>(context, listen: false);
+                          double amount = double.tryParse(_amountController.text) ?? 0;
+                          state.addBalance(amount);
+                          Navigator.pop(context);
+                          _processTransaction(this.context, l10n);
+                        },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryDark,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
@@ -1008,12 +1052,14 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   void _showSuccess(BuildContext context, AppLocalizations l10n) {
+    final state = Provider.of<AppState>(context, listen: false);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.depositSuccessful,
           message: l10n.depositSuccessMessage("\$${_amountController.text}"),
+          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
         ),
       ),

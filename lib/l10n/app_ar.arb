@@ -26,7 +26,7 @@
   "virtualCard": "بطاقة افتراضية",
   "virtualCardDesc": "احصل على بطاقتك الافتراضية الآمنة وتسوق عالمياً.",
   "enterAmount": "أدخل المبلغ",
-  "transferLimit": "الحد الأقصى: 5,000.00 دولار",
+  "transferLimit": "الحد الأقصى: 50,000.00 دولار",
   "feeRate": "الرسوم: 0.99 دولار لكل 100 دولار",
   "youSend": "أنت ترسل",
   "searchCurrency": "بحث عن عملة",
@@ -536,5 +536,11 @@
   "weekly": "أسبوعي",
   "tenDays": "10 أيام",
   "monthly": "شهري",
-  "yearly": "سنوي"
+  "yearly": "سنوي",
+  "evcPlus": "EVC Plus",
+  "edahab": "e-Dahab",
+  "zaad": "ZAAD",
+  "sahal": "Sahal",
+  "recentSavingsActivity": "نشاط الادخار الأخير",
+  "noActivityYet": "لا يوجد نشاط بعد"
 }

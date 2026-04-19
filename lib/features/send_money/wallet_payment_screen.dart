@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:provider/provider.dart';
+import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import '../../l10n/app_localizations.dart';
@@ -15,6 +17,7 @@ class WalletPaymentScreen extends StatefulWidget {
   final String receiverPhone;
   final String payoutMethod;
   final String currencyCode;
+  final String purpose;
 
   const WalletPaymentScreen({
     super.key,
@@ -23,6 +26,7 @@ class WalletPaymentScreen extends StatefulWidget {
     required this.receiverPhone,
     required this.payoutMethod,
     required this.currencyCode,
+    required this.purpose,
   });
 
   @override
@@ -35,10 +39,21 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
   void _processWalletPayment() async {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final appState = Provider.of<AppState>(context, listen: false);
     
     if (_pinController.text.length < 4) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.enterSecurityPin)),
+      );
+      return;
+    }
+
+    if (!appState.verifyPin(_pinController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("PIN-kaagu waa khalad. Fadlan isku day markale."),
+          backgroundColor: Colors.redAccent,
+        ),
       );
       return;
     }
@@ -131,6 +146,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
             method: widget.payoutMethod,
             paymentMethod: "Murtaax Wallet",
             currencyCode: widget.currencyCode,
+            purpose: widget.purpose,
           ),
         ),
       );
@@ -143,6 +159,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final scale = context.fontSizeFactor;
+    final appState = Provider.of<AppState>(context);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -216,7 +233,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                                     Text(l10n.walletBalance, style: TextStyle(color: AppColors.grey, fontSize: 12 * scale, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
                                     FittedBox(
                                       fit: BoxFit.scaleDown,
-                                      child: Text(NumberFormat.simpleCurrency(name: widget.currencyCode).format(2450.00), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * scale, color: theme.textTheme.bodyLarge?.color)),
+                                      child: Text(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.balance), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * scale, color: theme.textTheme.bodyLarge?.color)),
                                     ),
                                   ],
                                 ),
@@ -266,7 +283,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                                   Text(l10n.availableBalance, style: TextStyle(color: Colors.white54, fontSize: 10 * scale, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
                                   FittedBox(
                                     fit: BoxFit.scaleDown,
-                                    child: Text(NumberFormat.simpleCurrency(name: widget.currencyCode).format(2450.00), style: TextStyle(color: Colors.white, fontSize: 24 * scale, fontWeight: FontWeight.bold)),
+                                    child: Text(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.balance), style: TextStyle(color: Colors.white, fontSize: 24 * scale, fontWeight: FontWeight.bold)),
                                   ),
                                 ],
                               ),
@@ -330,7 +347,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
+                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.calculateTotal(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0))),
                                 style: TextStyle(fontSize: 16 * scale, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                             ),

@@ -142,6 +142,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get pleaseEnterDetails => 'Palun sisesta saaja andmed';
 
   @override
+  String get invalidAmount => 'Invalid amount';
+
+  @override
   String get continueToReview => 'Jätka ülevaatamisega';
 
   @override
@@ -727,12 +730,55 @@ class AppLocalizationsEt extends AppLocalizations {
   String get confirmWithdraw => 'Kinnita ja võta välja';
 
   @override
+  String get confirmAndWithdraw => 'Confirm & Withdraw';
+
+  @override
+  String get transactionFailed => 'Transaction Failed';
+
+  @override
+  String get transactionFailedMessage =>
+      'Something went wrong. Please try again or contact support.';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String newBalance(String balance) {
+    return 'New Balance: $balance';
+  }
+
+  @override
   String get withdrawalRequested => 'Väljamakse taotletud!';
 
   @override
   String withdrawalSuccessMessage(String amount) {
     return 'Teie väljamakset summas $amount töödeldakse.';
   }
+
+  @override
+  String get withdrawal => 'Withdrawal';
+
+  @override
+  String get feeLabel => 'Fee (0.99%):';
+
+  @override
+  String get totalDeduct => 'Total Deduct:';
+
+  @override
+  String minAmountError(String amount) {
+    return 'Minimum amount is $amount';
+  }
+
+  @override
+  String maxAmountError(String amount) {
+    return 'Maximum amount is $amount';
+  }
+
+  @override
+  String get insufficientBalanceWithFee => 'Insufficient balance (incl. fee)';
+
+  @override
+  String get phoneLengthError => 'Number must be 9 digits';
 
   @override
   String get payBills => 'Maksa arveid';
@@ -792,6 +838,9 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get downloadPdf => 'Download PDF';
+
+  @override
+  String get viewReceipt => 'View Receipt';
 
   @override
   String get transactionSuccessful => 'Transaction Successful!';
@@ -1299,6 +1348,9 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get totalSavings => 'Kogu säästud';
+
+  @override
+  String get cardBalanceLabel => 'Card: ';
 
   @override
   String get chooseWithdrawalMethod => 'Vali väljamakse meetod';
@@ -1816,4 +1868,68 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get quickSend => 'Quick Send';
+
+  @override
+  String get invalidWalletId => 'Invalid Wallet ID';
+
+  @override
+  String get cannotSendToSelf => 'You cannot send money to yourself';
+
+  @override
+  String get evcPlus => 'EVC Plus';
+
+  @override
+  String get edahab => 'e-Dahab';
+
+  @override
+  String get zaad => 'ZAAD';
+
+  @override
+  String get sahal => 'Sahal';
+
+  @override
+  String get purposeOfRemittance => 'Purpose of Remittance';
+
+  @override
+  String get purpose => 'Purpose';
+
+  @override
+  String get familySupport => 'Family Support';
+
+  @override
+  String get educationTuition => 'Education/Tuition';
+
+  @override
+  String get medicalExpenses => 'Medical Expenses';
+
+  @override
+  String get businessTransaction => 'Business Transaction';
+
+  @override
+  String get propertyRent => 'Property/Rent';
+
+  @override
+  String get gift => 'Gift';
+
+  @override
+  String get other => 'Other';
+
+  @override
+  String get contactPermissionRequired =>
+      'Contact permission is required to pick a contact.';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get dailyLimit => 'Daily Limit';
+
+  @override
+  String get monthlyLimit => 'Monthly Limit';
+
+  @override
+  String get recentSavingsActivity => 'Viimased säästutegevused';
+
+  @override
+  String get noActivityYet => 'Tegevusi veel pole';
 }

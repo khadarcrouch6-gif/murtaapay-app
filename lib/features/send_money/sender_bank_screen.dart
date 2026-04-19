@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'review_screen.dart';
 
 class SenderBankScreen extends StatefulWidget {
@@ -12,6 +14,7 @@ class SenderBankScreen extends StatefulWidget {
   final String receiverPhone;
   final String payoutMethod;
   final String currencyCode;
+  final String purpose;
 
   const SenderBankScreen({
     super.key,
@@ -20,6 +23,7 @@ class SenderBankScreen extends StatefulWidget {
     required this.receiverPhone,
     required this.payoutMethod,
     required this.currencyCode,
+    required this.purpose,
   });
 
   @override
@@ -68,6 +72,7 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
           method: widget.payoutMethod,
           paymentMethod: "Bank Transfer (${_selectedBank == "Add Bank" ? _bankNameController.text : _selectedBank} - ${_nameController.text})",
           currencyCode: widget.currencyCode,
+          purpose: widget.purpose,
         ),
       ),
     );
@@ -197,7 +202,7 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
-                                  l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
+                                  l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotal(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0))),
                                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                                 ),
                               ),

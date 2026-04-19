@@ -4,13 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
-import 'package:responsive_framework/responsive_framework.dart';
+import '../../core/models/transaction.dart' as model;
 
 class WithdrawScreen extends StatefulWidget {
   final bool isTab;
@@ -25,6 +26,17 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   final TextEditingController _field1Controller = TextEditingController();
   final TextEditingController _field2Controller = TextEditingController();
   final double _cardBalance = 850.50; // Mock card balance
+  String? _selectedPurpose;
+
+  List<String> _getPurposes(AppLocalizations l10n) => [
+    l10n.familySupport,
+    l10n.educationTuition,
+    l10n.medicalExpenses,
+    l10n.businessTransaction,
+    l10n.propertyRent,
+    l10n.gift,
+    l10n.other,
+  ];
 
   final List<Map<String, dynamic>> _methods = [
     {
@@ -55,6 +67,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final state = Provider.of<AppState>(context);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: widget.isTab ? null : AppBar(
@@ -97,7 +110,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                             const SizedBox(height: 8),
                             FittedBox(
                               fit: BoxFit.scaleDown,
-                              child: Text(NumberFormat.simpleCurrency(name: 'USD').format(_cardBalance), style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                              child: Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(_cardBalance), style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                             ),
                             const SizedBox(height: 20),
                             // Amount Input
@@ -126,6 +139,18 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                     ),
                                   ),
                                 ],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              child: Text(
+                                "Limit: \$10.00 - \$2,500.00",
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  fontSize: 12 * context.fontSizeFactor,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -238,6 +263,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     final theme = Theme.of(context);
     final state = Provider.of<AppState>(context, listen: false);
     _field1Controller.clear(); // Using field1 as PIN controller
+    final purposes = _getPurposes(l10n);
+    _selectedPurpose ??= purposes.first;
 
     showDialog(
       context: context,
@@ -287,7 +314,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          NumberFormat.simpleCurrency(name: 'USD').format(_cardBalance), // Mock card balance
+                          NumberFormat.simpleCurrency(name: state.currencyCode).format(_cardBalance), // Mock card balance
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 32 * context.fontSizeFactor,
@@ -320,7 +347,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                               ),
                             ),
                             Text(
-                              NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(_amountController.text) ?? 0),
+                              NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
                               style: TextStyle(
                                 color: AppColors.accentTeal,
                                 fontWeight: FontWeight.w800,
@@ -330,6 +357,13 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                           ],
                         ),
                       ),
+                      SizedBox(height: 24 * context.fontSizeFactor),
+                      Text(
+                        l10n.purposeOfRemittance,
+                        style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 12 * context.fontSizeFactor),
+                      _buildPurposeDropdown(theme, l10n, setDialogState),
                       SizedBox(height: 24 * context.fontSizeFactor),
                       Text(
                         l10n.enterVirtualCardPin,
@@ -386,7 +420,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                     : () {
                         final localContext = this.context;
                         Navigator.pop(context);
-                        _processTransaction(localContext, l10n, state);
+                        _processTransaction(localContext, l10n, state, type: "bank");
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.accentTeal,
@@ -465,7 +499,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          NumberFormat.simpleCurrency(name: 'USD').format(_cardBalance),
+                          NumberFormat.simpleCurrency(name: state.currencyCode).format(_cardBalance),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 32 * context.fontSizeFactor,
@@ -497,7 +531,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                               ),
                             ),
                             Text(
-                              NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(_amountController.text) ?? 0),
+                              NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
                               style: TextStyle(
                                 color: Colors.blue,
                                 fontWeight: FontWeight.w800,
@@ -535,6 +569,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       _withdrawInputField(context, l10n.accountNumber, Icons.numbers, _field1Controller, isNumber: true, onChanged: (_) => setDialogState(() {})),
                       SizedBox(height: 16 * context.fontSizeFactor),
                       _withdrawInputField(context, l10n.accountName, Icons.person, _field2Controller, onChanged: (_) => setDialogState(() {})),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      _buildPurposeDropdown(theme, l10n, setDialogState),
                     ],
                   ),
                 ),
@@ -554,7 +590,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                     : () {
                         final localContext = this.context;
                         Navigator.pop(context);
-                        _processTransaction(localContext, l10n, state);
+                        _processTransaction(localContext, l10n, state, type: "bank");
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -573,8 +609,13 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     );
   }
 
-  void _processTransaction(BuildContext context, AppLocalizations l10n, AppState state) async {
+  void _processTransaction(BuildContext context, AppLocalizations l10n, AppState state, {required String type}) async {
     final theme = Theme.of(context);
+    final amountVal = double.tryParse(_amountController.text) ?? 0;
+    
+    // We are withdrawing FROM the Virtual Card.
+    // In this simulation, the Card Balance is external.
+    
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -651,6 +692,41 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
     if (!context.mounted) return;
     Navigator.of(context, rootNavigator: true).pop();
+
+    if (type == "wallet") {
+      // Card -> Wallet: Increase Wallet Balance
+      state.addBalance(amountVal);
+      state.addTransaction(model.Transaction(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: "Card to Wallet",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal)}",
+        isNegative: false,
+        category: "Transfer",
+        status: "Success",
+        type: "deposit",
+        method: "Virtual Card",
+        purpose: _selectedPurpose ?? l10n.familySupport,
+      ));
+    } else if (type == "bank") {
+      // Card -> Bank: No change to Wallet Balance, just a transaction log
+      final String receiverName = _field2Controller.text.isNotEmpty ? _field2Controller.text : "Bank Transfer";
+      final String purpose = _selectedPurpose ?? l10n.familySupport;
+      
+      state.addTransaction(model.Transaction(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: "$receiverName ($purpose)",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal),
+        isNegative: false, // It's neutral relative to the wallet
+        category: "Withdraw",
+        status: "Success",
+        type: "withdraw",
+        method: "Bank Transfer",
+        purpose: purpose,
+      ));
+    }
+
     _showSuccess(context, l10n, state);
   }
 
@@ -660,7 +736,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.withdrawalRequested,
-          message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: 'USD').format(double.tryParse(_amountController.text) ?? 0)),
+          message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0)),
+          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
         ),
       ),
@@ -705,6 +782,39 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.brightness == Brightness.dark ? Colors.white24 : Colors.black12, width: 2)),
+      ),
+    );
+  }
+
+  Widget _buildPurposeDropdown(ThemeData theme, AppLocalizations l10n, StateSetter setDialogState) {
+    final purposes = _getPurposes(l10n);
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+      ),
+      child: DropdownButtonFormField<String>(
+        initialValue: _selectedPurpose ?? purposes.first,
+        dropdownColor: theme.colorScheme.surface,
+        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w600, fontSize: 15),
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.info_outline_rounded, color: AppColors.grey, size: 20),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        ),
+        icon: Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey),
+        items: purposes.map((p) => DropdownMenuItem(
+          value: p,
+          child: Text(p),
+        )).toList(),
+        onChanged: (value) {
+          if (value != null) {
+            setDialogState(() {
+              _selectedPurpose = value;
+            });
+          }
+        },
       ),
     );
   }

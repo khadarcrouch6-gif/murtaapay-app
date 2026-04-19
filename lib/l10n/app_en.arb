@@ -26,7 +26,7 @@
   "virtualCard": "Virtual Card",
   "virtualCardDesc": "Get your secure virtual card and shop globally.",
   "enterAmount": "Enter Amount",
-  "transferLimit": "Limit: $5,000.00",
+  "transferLimit": "Limit: $50,000.00",
   "feeRate": "Fee: $0.99 per $100",
   "youSend": "You Send",
   "searchCurrency": "Search currency",
@@ -44,6 +44,7 @@
   "receiver": "Receiver",
   "recent": "Recent",
   "pleaseEnterDetails": "Please enter receiver details",
+  "invalidAmount": "Invalid amount",
   "continueToReview": "Continue to Review",
   "reviewTransfer": "Review Transfer",
   "paymentMethod": "Payment Method",
@@ -286,6 +287,18 @@
   "free": "Free",
   "totalDeducted": "Total Deducted",
   "confirmWithdraw": "Confirm & Withdraw",
+  "confirmAndWithdraw": "Confirm & Withdraw",
+  "transactionFailed": "Transaction Failed",
+  "transactionFailedMessage": "Something went wrong. Please try again or contact support.",
+  "tryAgain": "Try Again",
+  "newBalance": "New Balance: {balance}",
+  "@newBalance": {
+    "placeholders": {
+      "balance": {
+        "type": "String"
+      }
+    }
+  },
   "withdrawalRequested": "Withdrawal Requested!",
   "withdrawalSuccessMessage": "Your withdrawal of {amount} is being processed.",
   "@withdrawalSuccessMessage": {
@@ -295,6 +308,23 @@
       }
     }
   },
+  "withdrawal": "Withdrawal",
+  "feeLabel": "Fee (0.99%):",
+  "totalDeduct": "Total Deduct:",
+  "minAmountError": "Minimum amount is {amount}",
+  "@minAmountError": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "maxAmountError": "Maximum amount is {amount}",
+  "@maxAmountError": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "insufficientBalanceWithFee": "Insufficient balance (incl. fee)",
+  "phoneLengthError": "Number must be 9 digits",
   "payBills": "Pay Bills",
   "selectCategory": "Select Category",
   "recentBills": "Recent Bills",
@@ -324,6 +354,7 @@
   "completed": "Completed",
   "downloadReceipt": "Download Receipt",
   "downloadPdf": "Download PDF",
+  "viewReceipt": "View Receipt",
   "transactionSuccessful": "Transaction Successful!",
   "topUpSuccessful": "Top-up Successful!",
   "withdrawalSuccessful": "Withdrawal Successful!",
@@ -542,6 +573,7 @@
   "activeGoals": "Active Goals",
   "createNewGoal": "Create New Goal",
   "totalSavings": "Total Savings",
+  "cardBalanceLabel": "Card: ",
   "chooseWithdrawalMethod": "Choose Withdrawal Method",
   "sendToWallet": "Send to Wallet",
   "payFromSavingBalance": "Pay from your Saving balance",
@@ -772,5 +804,26 @@
   "alignQRCode": "Align the QR code within the frame to scan",
   "myQrCode": "My QR Code",
   "shareMyQrCode": "Share my QR code to receive payments instantly.",
-  "quickSend": "Quick Send"
+  "quickSend": "Quick Send",
+  "invalidWalletId": "Invalid Wallet ID",
+  "cannotSendToSelf": "You cannot send money to yourself",
+  "evcPlus": "EVC Plus",
+  "edahab": "e-Dahab",
+  "zaad": "ZAAD",
+  "sahal": "Sahal",
+  "purposeOfRemittance": "Purpose of Remittance",
+  "purpose": "Purpose",
+  "familySupport": "Family Support",
+  "educationTuition": "Education/Tuition",
+  "medicalExpenses": "Medical Expenses",
+  "businessTransaction": "Business Transaction",
+  "propertyRent": "Property/Rent",
+  "gift": "Gift",
+  "other": "Other",
+  "contactPermissionRequired": "Contact permission is required to pick a contact.",
+  "openSettings": "Open Settings",
+  "dailyLimit": "Daily Limit",
+  "monthlyLimit": "Monthly Limit",
+  "recentSavingsActivity": "Recent Savings Activity",
+  "noActivityYet": "No activity yet"
 }

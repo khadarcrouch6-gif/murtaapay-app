@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:intl/intl.dart';
 import 'dart:ui';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/shimmer_loading.dart';
+import '../../core/widgets/detail_row.dart';
+import '../../core/widgets/success_screen.dart';
+import '../../core/models/transaction.dart';
+import 'package:provider/provider.dart';
 
 class ScanResultScreen extends StatefulWidget {
   final String data;
@@ -136,11 +142,80 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
               height: 56,
               child: ElevatedButton(
                 onPressed: () {
-                  // Final payment logic placeholder
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.instantPaymentFromWallet)),
-                  );
-                  Navigator.pop(context); // Go back to scanner
+                  final state = Provider.of<AppState>(context, listen: false);
+                  final double? amountValue = double.tryParse(_amount);
+                  
+                  if (amountValue != null && amountValue > 0) {
+                    if (state.hasSufficientBalance(amountValue)) {
+                      state.deductBalance(amountValue);
+
+                      state.addTransaction(Transaction(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        title: _receiverName,
+                        date: DateFormat('MMM dd').format(DateTime.now()),
+                        amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(amountValue)}",
+                        isNegative: true,
+                        category: "Payment",
+                        status: "Success",
+                        type: "payment",
+                        method: "Scan & Pay",
+                      ));
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SuccessScreen(
+                            title: l10n.paymentSuccessful,
+                            message: l10n.paymentSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(amountValue), _receiverName),
+                            subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
+                            buttonText: l10n.backToHome,
+                          ),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.insufficientBalance)),
+                      );
+                    }
+                  } else if (_amount == "0.00" || _amount == "Flexible") {
+                    // If flexible, we might need an amount input, but for now let's just mock a $10 payment if it's "Flexible"
+                    const flexibleAmount = 10.0;
+                    if (state.hasSufficientBalance(flexibleAmount)) {
+                       state.deductBalance(flexibleAmount);
+
+                       state.addTransaction(Transaction(
+                         id: DateTime.now().millisecondsSinceEpoch.toString(),
+                         title: _receiverName,
+                         date: DateFormat('MMM dd').format(DateTime.now()),
+                         amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(flexibleAmount)}",
+                         isNegative: true,
+                         category: "Payment",
+                         status: "Success",
+                         type: "payment",
+                         method: "Scan & Pay",
+                       ));
+
+                       Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SuccessScreen(
+                            title: l10n.paymentSuccessful,
+                            message: l10n.paymentSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(flexibleAmount), _receiverName),
+                            subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
+                            buttonText: l10n.backToHome,
+                          ),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.insufficientBalance)),
+                      );
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.invalidAmount)),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.accentTeal,
@@ -177,34 +252,17 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
       ),
       child: Column(
         children: [
-          _buildInfoRow(l10n.receiver, _receiverName),
-          const Divider(height: 32),
-          _buildInfoRow(l10n.walletId, _receiverId),
-          const Divider(height: 32),
-          _buildInfoRow(
-            l10n.amount, 
-            _amount == "0.00" ? "Flexible" : "\$$_amount",
-            isHighlight: true,
+          DetailRow(label: l10n.receiver, value: _receiverName),
+          DetailRow(label: l10n.walletId, value: _receiverId),
+          DetailRow(
+            label: l10n.amount, 
+            value: _amount == "0.00" ? "Flexible" : "\$$_amount",
+            valueColor: AppColors.accentTeal,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInfoRow(String label, String value, {bool isHighlight = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 16)),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: isHighlight ? FontWeight.bold : FontWeight.w600,
-            color: isHighlight ? AppColors.accentTeal : Colors.black,
-          ),
-        ),
-      ],
-    );
-  }
+  // _buildInfoRow removed as it's replaced by DetailRow
 }

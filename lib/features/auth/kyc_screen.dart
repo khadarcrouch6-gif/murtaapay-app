@@ -234,7 +234,21 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
               const SizedBox(height: 32),
               _buildField(_nameController, l10n.fullName, l10n),
               _buildField(_emailController, l10n.emailAddress, l10n),
-              Row(children: [Expanded(child: _buildField(_phoneController, l10n.phoneLabel, l10n)), const SizedBox(width: 16), Expanded(child: _buildField(_streetController, l10n.city, l10n))]),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildField(
+                      _phoneController, 
+                      l10n.phoneLabel, 
+                      l10n, 
+                      isPhone: true, 
+                      prefix: "+252 ",
+                    ),
+                  ), 
+                  const SizedBox(width: 16), 
+                  Expanded(child: _buildField(_streetController, l10n.city, l10n))
+                ]
+              ),
               _buildField(_addressController, l10n.residentialAddress, l10n),
               const SizedBox(height: 40),
               SizedBox(width: double.infinity, height: 56, child: ElevatedButton(onPressed: () { if(_formKey.currentState!.validate()) setState(() => _currentStep = 1); }, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: Text(l10n.continueLabel, style: const TextStyle(fontWeight: FontWeight.bold)))),
@@ -245,8 +259,31 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
     );
   }
 
-  Widget _buildField(TextEditingController ctrl, String label, AppLocalizations l10n) {
-    return Padding(padding: const EdgeInsets.only(bottom: 16), child: TextFormField(controller: ctrl, decoration: InputDecoration(labelText: label, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))), validator: (v) => v!.isEmpty ? l10n.required : null));
+  Widget _buildField(TextEditingController ctrl, String label, AppLocalizations l10n, {bool isPhone = false, String? prefix}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16), 
+      child: TextFormField(
+        controller: ctrl, 
+        maxLength: isPhone ? 9 : null,
+        keyboardType: isPhone ? TextInputType.phone : TextInputType.text,
+        decoration: InputDecoration(
+          labelText: label, 
+          counterText: "",
+          prefixIcon: prefix != null 
+            ? Padding(
+                padding: const EdgeInsets.only(left: 12, top: 14),
+                child: Text(prefix, style: const TextStyle(fontWeight: FontWeight.bold)),
+              )
+            : null,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))
+        ), 
+        validator: (v) {
+          if (v == null || v.isEmpty) return l10n.required;
+          if (isPhone && v.length != 9) return l10n.phoneLengthError;
+          return null;
+        }
+      )
+    );
   }
 
   Widget _buildDocSelection(AppLocalizations l10n) {

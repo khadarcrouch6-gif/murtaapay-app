@@ -46,6 +46,7 @@ class MurtaaxPayApp extends StatelessWidget {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             builder: (context, child) {
+              appState.contextForL10n = context;
               return GestureDetector(
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
                 child: ResponsiveBreakpoints.builder(

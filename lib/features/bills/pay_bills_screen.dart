@@ -1,12 +1,16 @@
 import 'dart:ui';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/detail_row.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
-import 'package:responsive_framework/responsive_framework.dart';
+import 'package:provider/provider.dart';
+import '../../core/models/transaction.dart' as model;
 
 class PayBillsScreen extends StatefulWidget {
   const PayBillsScreen({super.key});
@@ -260,9 +264,21 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
     );
   }
 
-  void _processTransaction(BuildContext context, String l10nKey, String amount) async {
+  void _processTransaction(BuildContext context, String l10nKey, String amountStr) async {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final state = AppState();
+    
+    final double? amount = double.tryParse(amountStr.replaceAll(RegExp(r'[^0-9.]'), ''));
+    if (amount == null || amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.invalidAmount)));
+      return;
+    }
+
+    if (!state.hasSufficientBalance(amount)) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance)));
+      return;
+    }
     
     showDialog(
       context: context,
@@ -340,11 +356,24 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
 
     if (!context.mounted) return;
     Navigator.of(context, rootNavigator: true).pop();
+
+    state.deductBalance(amount);
     
-    _showSuccess(context, l10nKey, amount);
+    state.addTransaction(model.Transaction(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: _getTranslatedCategory(l10n, l10nKey),
+      date: DateFormat('MMM dd').format(DateTime.now()),
+      amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(amount)}",
+      isNegative: true,
+      category: "All",
+      status: "Success",
+      type: "payment",
+    ));
+    
+    _showSuccess(context, l10nKey, amountStr, state);
   }
 
-  void _showSuccess(BuildContext context, String l10nKey, String amount) {
+  void _showSuccess(BuildContext context, String l10nKey, String amount, AppState state) {
     final l10n = AppLocalizations.of(context)!;
     final translatedCategory = _getTranslatedCategory(l10n, l10nKey);
     Navigator.push(
@@ -353,6 +382,7 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
         builder: (context) => SuccessScreen(
           title: l10n.paymentSuccessful,
           message: l10n.paymentSuccessMessage(amount, translatedCategory),
+          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToBills,
         ),
       ),

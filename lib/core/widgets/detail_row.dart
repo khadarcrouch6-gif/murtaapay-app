@@ -4,6 +4,7 @@ import '../app_colors.dart';
 class DetailRow extends StatelessWidget {
   final String label;
   final String value;
+  final Color? labelColor;
   final Color? valueColor;
   final bool isBold;
 
@@ -11,6 +12,7 @@ class DetailRow extends StatelessWidget {
     super.key,
     required this.label,
     required this.value,
+    this.labelColor,
     this.valueColor,
     this.isBold = true,
   });
@@ -26,7 +28,7 @@ class DetailRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(color: AppColors.grey),
+              style: TextStyle(color: labelColor ?? AppColors.grey),
             ),
           ),
           const SizedBox(width: 16),

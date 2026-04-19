@@ -4,11 +4,14 @@ import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
-import '../../core/widgets/adaptive_icon.dart';
+import 'package:provider/provider.dart';
+import '../../core/app_state.dart';
+import '../../core/widgets/detail_row.dart';
 import 'dart:ui';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/widgets/adaptive_icon.dart';
 import 'package:intl/intl.dart';
 
 class WalletCardDepositScreen extends StatefulWidget {
@@ -268,12 +271,14 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
   }
 
   void _showSuccess(BuildContext context, AppLocalizations l10n) {
+    final state = Provider.of<AppState>(context, listen: false);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.cardTopUpSuccessful,
           message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
+          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
         ),
       ),

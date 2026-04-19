@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:permission_handler/permission_handler.dart';
+import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 import 'payment_screen.dart';
@@ -10,7 +14,17 @@ class WalletReceiverScreen extends StatefulWidget {
   final String amount;
   final String method;
   final String currencyCode;
-  const WalletReceiverScreen({super.key, required this.amount, required this.method, required this.currencyCode});
+  final String? prefilledName;
+  final String? prefilledPhone;
+
+  const WalletReceiverScreen({
+    super.key, 
+    required this.amount, 
+    required this.method, 
+    required this.currencyCode,
+    this.prefilledName,
+    this.prefilledPhone,
+  });
 
   @override
   State<WalletReceiverScreen> createState() => _WalletReceiverScreenState();
@@ -20,16 +34,64 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
   final TextEditingController _walletIdController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   String _verifiedReceiverName = "";
+  String? _errorMessage;
+  String? _selectedPurpose;
   bool _isSearching = false;
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.prefilledName != null) {
+      _verifiedReceiverName = widget.prefilledName!;
+    }
+    if (widget.prefilledPhone != null) {
+      String phone = widget.prefilledPhone!.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+      if (phone.startsWith('+252')) phone = phone.substring(4);
+      else if (phone.startsWith('252')) phone = phone.substring(3);
+      _walletIdController.text = phone;
+    }
+  }
+
+  List<String> _getPurposes(AppLocalizations l10n) => [
+    l10n.familySupport,
+    l10n.educationTuition,
+    l10n.medicalExpenses,
+    l10n.businessTransaction,
+    l10n.propertyRent,
+    l10n.gift,
+    l10n.other,
+  ];
+
   void _lookupWalletId(String value) {
-    if (value.length >= 4) {
-      setState(() => _isSearching = true);
-      Future.delayed(const Duration(milliseconds: 1000), () {
+    if (value.length >= 6) {
+      final l10n = AppLocalizations.of(context)!;
+      setState(() {
+        _isSearching = true;
+        _errorMessage = null;
+        _verifiedReceiverName = "";
+      });
+
+      final appState = Provider.of<AppState>(context, listen: false);
+      appState.verifyWalletId(value).then((name) {
         if (mounted) {
           setState(() {
             _isSearching = false;
-            _verifiedReceiverName = _mockLookup(value);
+            if (name != null) {
+              _verifiedReceiverName = name;
+            } else {
+              _errorMessage = l10n.invalidWalletId;
+            }
+          });
+        }
+      }).catchError((error) {
+        if (mounted) {
+          setState(() {
+            _isSearching = false;
+            if (error.toString().contains('self_transfer_error')) {
+              _errorMessage = l10n.cannotSendToSelf;
+            } else {
+              _errorMessage = l10n.invalidWalletId;
+            }
           });
         }
       });
@@ -37,18 +99,12 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
       setState(() {
         _isSearching = false;
         _verifiedReceiverName = "";
+        _errorMessage = null;
       });
     }
   }
 
-  String _mockLookup(String id) {
-    if (id.startsWith("10")) return "Ayaanle Rayaale";
-    if (id.startsWith("20")) return "Mohamed Abdi Ali";
-    if (id.startsWith("30")) return "Sahra Hassan Duale";
-    return "Murtaax User #$id";
-  }
-
-  void _handleContinue() {
+  void _handleContinue(AppLocalizations l10n) {
     HapticFeedback.mediumImpact();
     Navigator.push(
       context,
@@ -59,15 +115,75 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
           receiverPhone: _walletIdController.text,
           payoutMethod: widget.method,
           currencyCode: widget.currencyCode,
+          purpose: _selectedPurpose ?? _getPurposes(l10n).first,
         ),
       ),
     );
+  }
+
+  Future<void> _pickContact() async {
+    final l10n = AppLocalizations.of(context)!;
+    final status = await Permission.contacts.request();
+    
+    if (status.isGranted) {
+      final contactId = await FlutterContacts.native.showPicker();
+      if (contactId != null) {
+        final fullContact = await FlutterContacts.get(contactId);
+        if (fullContact != null) {
+          // In Wallet transfer, we might use phone number to find Wallet ID 
+          // or if the contact has a custom field for Wallet ID.
+          // For now, let's extract the phone and try to use it.
+          if (fullContact.phones.isNotEmpty) {
+            String phone = fullContact.phones.first.number.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+            // Strip common country codes if present to get local number which might be the ID
+            if (phone.startsWith('+252')) phone = phone.substring(4);
+            else if (phone.startsWith('252')) phone = phone.substring(3);
+            
+            setState(() {
+              _walletIdController.text = phone;
+            });
+            _lookupWalletId(phone);
+          }
+        }
+      }
+    } else if (status.isPermanentlyDenied) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.contact),
+            content: Text(l10n.contactPermissionRequired),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(l10n.cancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  openAppSettings();
+                  Navigator.pop(context);
+                },
+                child: Text(l10n.openSettings),
+              ),
+            ],
+          ),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.contactPermissionRequired)),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final purposes = _getPurposes(l10n);
+    _selectedPurpose ??= purposes.first;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -137,7 +253,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                           decoration: BoxDecoration(
                             color: theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: _focusNode.hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1), width: 2),
+                            border: Border.all(color: _errorMessage != null ? Colors.red : (_focusNode.hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1)), width: 2),
                             boxShadow: _focusNode.hasFocus ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10)] : null,
                           ),
                           child: TextField(
@@ -148,19 +264,40 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                             decoration: InputDecoration(
                               hintText: l10n.enterWalletIdHint,
-                              prefixIcon: Icon(Icons.account_circle_outlined, color: theme.colorScheme.secondary, size: 24),
-                              suffixIcon: _isSearching 
-                                ? Padding(padding: const EdgeInsets.all(12), child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2.5, color: theme.colorScheme.secondary)))
-                                : const Icon(Icons.search_rounded),
+                              prefixIcon: Icon(Icons.account_circle_outlined, color: _errorMessage != null ? Colors.red : theme.colorScheme.secondary, size: 24),
+                              suffixIcon: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (_isSearching)
+                                    Padding(padding: const EdgeInsets.all(12), child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2.5, color: theme.colorScheme.secondary)))
+                                  else
+                                    const Icon(Icons.search_rounded),
+                                  IconButton(
+                                    icon: Icon(Icons.contact_phone_rounded, color: theme.colorScheme.secondary),
+                                    onPressed: _pickContact,
+                                  ),
+                                ],
+                              ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                           ),
                         ),
 
+                        if (_errorMessage != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0, left: 12.0),
+                            child: FadeIn(
+                              child: Text(
+                                _errorMessage!,
+                                style: const TextStyle(color: Colors.red, fontSize: 13, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+
                         const SizedBox(height: 16),
 
-                        if (_verifiedReceiverName.isNotEmpty)
+                        if (_verifiedReceiverName.isNotEmpty) ...[
                           FadeIn(
                             child: Container(
                               padding: const EdgeInsets.all(14),
@@ -190,6 +327,11 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 20),
+                          Text(l10n.purposeOfRemittance, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                          const SizedBox(height: 12),
+                          _buildPurposeDropdown(theme, l10n),
+                        ],
 
                         const SizedBox(height: 24),
                         Row(
@@ -222,7 +364,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
-                            onPressed: _verifiedReceiverName.isNotEmpty ? () => _handleContinue() : null,
+                            onPressed: _verifiedReceiverName.isNotEmpty ? () => _handleContinue(l10n) : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.secondary,
                               foregroundColor: Colors.white,
@@ -310,5 +452,39 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
     _walletIdController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  Widget _buildPurposeDropdown(ThemeData theme, AppLocalizations l10n) {
+    final purposes = _getPurposes(l10n);
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: theme.dividerColor.withValues(alpha: 0.1),
+          width: 2,
+        ),
+      ),
+      child: DropdownButtonFormField<String>(
+        initialValue: _selectedPurpose ?? purposes.first,
+        dropdownColor: theme.colorScheme.surface,
+        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w900, fontSize: 16),
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.info_outline_rounded, color: theme.colorScheme.secondary),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        ),
+        icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.secondary),
+        items: purposes.map((p) => DropdownMenuItem(
+          value: p,
+          child: Text(p),
+        )).toList(),
+        onChanged: (value) {
+          if (value != null) {
+            setState(() => _selectedPurpose = value);
+          }
+        },
+      ),
+    );
   }
 }

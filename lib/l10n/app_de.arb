@@ -536,5 +536,11 @@
   "weekly": "Wöchentlich",
   "tenDays": "10 Tage",
   "monthly": "Monatlich",
-  "yearly": "Jährlich"
+  "yearly": "Jährlich",
+  "evcPlus": "EVC Plus",
+  "edahab": "e-Dahab",
+  "zaad": "ZAAD",
+  "sahal": "Sahal",
+  "recentSavingsActivity": "Letzte Sparaktivität",
+  "noActivityYet": "Noch keine Aktivität"
 }

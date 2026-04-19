@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'review_screen.dart';
 
 class MobileMoneyScreen extends StatefulWidget {
@@ -13,6 +15,7 @@ class MobileMoneyScreen extends StatefulWidget {
   final String receiverPhone;
   final String payoutMethod;
   final String currencyCode;
+  final String purpose;
 
   const MobileMoneyScreen({
     super.key,
@@ -21,6 +24,7 @@ class MobileMoneyScreen extends StatefulWidget {
     required this.receiverPhone,
     required this.payoutMethod,
     required this.currencyCode,
+    required this.purpose,
   });
 
   @override
@@ -64,6 +68,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
           method: widget.payoutMethod,
           paymentMethod: "Mobile Money ($_selectedProvider - ${_phoneController.text})",
           currencyCode: widget.currencyCode,
+          purpose: widget.purpose,
         ),
       ),
     );
@@ -73,6 +78,13 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+
+    final providerList = [
+      {"id": l10n.evcPlus, "name": l10n.evcPlus, "desc": "Hormuud Telecom", "color": const Color(0xFF1B5E20), "icon": Icons.phone_android_rounded},
+      {"id": l10n.edahab, "name": l10n.edahab, "desc": "Dahabshiil", "color": const Color(0xFFFBC02D), "icon": Icons.account_balance_wallet_rounded},
+      {"id": l10n.sahal, "name": l10n.sahal, "desc": "Golis Telecom", "color": const Color(0xFF0D47A1), "icon": Icons.phonelink_ring_rounded},
+      {"id": l10n.zaad, "name": l10n.zaad, "desc": "Telesom", "color": const Color(0xFFB71C1C), "icon": Icons.flash_on_rounded},
+    ];
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -141,34 +153,34 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                             mainAxisSpacing: 12,
                             childAspectRatio: 1.4,
                           ),
-                          itemCount: _providers.length,
+                          itemCount: providerList.length,
                           itemBuilder: (context, index) {
-                            final provider = _providers[index];
+                            final provider = providerList[index];
                             bool isSelected = _selectedProvider == provider["id"];
                             return FadeInUp(
                               delay: Duration(milliseconds: index * 100),
                               child: GestureDetector(
-                                onTap: () => setState(() => _selectedProvider = provider["id"]),
+                                onTap: () => setState(() => _selectedProvider = provider["id"] as String),
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 200),
                                   decoration: BoxDecoration(
                                     color: theme.colorScheme.surface,
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                      color: isSelected ? provider["color"] : theme.dividerColor.withValues(alpha: 0.1),
+                                      color: isSelected ? provider["color"] as Color : theme.dividerColor.withValues(alpha: 0.1),
                                       width: 2.5,
                                     ),
                                     boxShadow: isSelected 
-                                      ? [BoxShadow(color: provider["color"].withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 4))]
+                                      ? [BoxShadow(color: (provider["color"] as Color).withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 4))]
                                       : null,
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(provider["icon"], color: isSelected ? provider["color"] : AppColors.grey, size: 30),
+                                      Icon(provider["icon"] as IconData, color: isSelected ? provider["color"] as Color : AppColors.grey, size: 30),
                                       const SizedBox(height: 8),
-                                      Text(provider["name"], style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-                                      Text(provider["desc"], style: const TextStyle(color: AppColors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+                                      Text(provider["name"] as String, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+                                      Text(provider["desc"] as String, style: const TextStyle(color: AppColors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
                                     ],
                                   ),
                                 ),
@@ -184,10 +196,31 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                         _buildTextField(
                           controller: _phoneController,
                           focusNode: _phoneFocus,
-                          hint: l10n.enterNumberToCharge,
+                          hint: "61xxxxxxx",
                           icon: Icons.phone_android_rounded,
                           theme: theme,
+                          prefix: "+252 ",
+                          maxLength: 9,
+                          onChanged: (val) {
+                            if (val.length >= 2) {
+                              if (val.startsWith('61')) {
+                                _selectedProvider = l10n.evcPlus;
+                              } else if (val.startsWith('65')) {
+                                _selectedProvider = l10n.edahab;
+                              } else if (val.startsWith('63')) {
+                                _selectedProvider = l10n.zaad;
+                              } else if (val.startsWith('90')) {
+                                _selectedProvider = l10n.sahal;
+                              }
+                            }
+                            setState(() {});
+                          },
                         ),
+                        if (_phoneController.text.isNotEmpty && _phoneController.text.length < 9)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 16),
+                            child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
+                          ),
 
                         const SizedBox(height: 20),
                         Text(l10n.servicePin, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
@@ -208,7 +241,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
-                            onPressed: (_selectedProvider != null && _phoneController.text.isNotEmpty && _pinController.text.isNotEmpty) ? _handleContinue : null,
+                            onPressed: (_selectedProvider != null && _phoneController.text.length == 9 && _pinController.text.isNotEmpty) ? _handleContinue : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.secondary,
                               foregroundColor: Colors.white,
@@ -219,7 +252,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
+                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotal(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0))),
                                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                               ),
                             ),
@@ -244,6 +277,9 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
     required IconData icon, 
     required ThemeData theme,
     bool isPin = false,
+    String? prefix,
+    int? maxLength,
+    void Function(String)? onChanged,
   }) {
     return ListenableBuilder(
       listenable: focusNode,
@@ -261,11 +297,21 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
             focusNode: focusNode,
             keyboardType: TextInputType.number,
             obscureText: isPin,
-            onChanged: (v) => setState(() {}),
+            maxLength: maxLength,
+            onChanged: (v) {
+              if (onChanged != null) onChanged(v);
+              setState(() {});
+            },
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
             decoration: InputDecoration(
               hintText: hint,
-              prefixIcon: Icon(icon, color: theme.colorScheme.secondary, size: 24),
+              counterText: "",
+              prefixIcon: prefix != null
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 16, top: 15),
+                    child: Text(prefix, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                  )
+                : Icon(icon, color: theme.colorScheme.secondary, size: 24),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(vertical: 16),
             ),

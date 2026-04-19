@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:provider/provider.dart';
+import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 import 'onboarding_screen.dart';
@@ -21,7 +23,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateToOnboarding() async {
-    await Future.delayed(const Duration(seconds: 3));
+    // Ensure AppState is initialized
+    final state = Provider.of<AppState>(context, listen: false);
+    await state.init();
+    
+    await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
     Navigator.pushReplacement(
       context,

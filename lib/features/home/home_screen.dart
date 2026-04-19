@@ -22,6 +22,7 @@ import '../bills/pay_bills_screen.dart';
 import '../chat/chat_screen.dart';
 import '../more/sadaqah_screen.dart';
 import '../more/exchange_rates_screen.dart';
+import '../profile/account_limits_screen.dart';
 
 import '../deposit/deposit_screen.dart';
 import '../notifications/notifications_screen.dart';
@@ -29,16 +30,15 @@ import '../analytics/analytics_screen.dart';
 import '../hagbad/hagbad_screen.dart';
 import '../../core/widgets/receipt_view.dart';
 import '../withdraw/withdraw_screen.dart';
+import '../withdraw/wallet_withdraw_screen.dart';
 import '../scan/qr_scanner_screen.dart';
+import 'package:provider/provider.dart';
+import '../../core/widgets/success_screen.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:permission_handler/permission_handler.dart';
+import '../../core/models/quick_profile.dart';
 
 enum ChartType { bar, pie, line }
-
-class QuickContact {
-  final String name;
-  final String avatar;
-  final bool isOnline;
-  QuickContact({required this.name, required this.avatar, this.isOnline = false});
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -59,15 +59,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   ChartType _selectedChartType = ChartType.bar;
   final List<double> _spendingData = [45, 80, 55, 95, 70, 40, 65];
   final List<String> _days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-  final List<QuickContact> _quickContacts = [
-    QuickContact(name: "Abdi", avatar: "https://i.pravatar.cc/150?u=abdi", isOnline: true),
-    QuickContact(name: "Warsame", avatar: "https://i.pravatar.cc/150?u=warsame", isOnline: true),
-    QuickContact(name: "Leyla", avatar: "https://i.pravatar.cc/150?u=leyla", isOnline: false),
-    QuickContact(name: "Sahra", avatar: "https://i.pravatar.cc/150?u=sahra", isOnline: true),
-    QuickContact(name: "Farah", avatar: "https://i.pravatar.cc/150?u=farah", isOnline: false),
-    QuickContact(name: "Hassan", avatar: "https://i.pravatar.cc/150?u=hassan", isOnline: true),
-  ];
 
   late AnimationController _gradientController;
 
@@ -115,6 +106,42 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     _timer?.cancel();
     _gradientController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickAndAddContact(AppState state) async {
+    final status = await Permission.contacts.request();
+    if (status.isGranted) {
+      final contactId = await FlutterContacts.native.showPicker();
+      if (contactId != null) {
+        final contact = await FlutterContacts.get(contactId);
+        if (contact != null && contact.phones.isNotEmpty) {
+          // Verify if the contact is a wallet user
+          final phoneNumber = contact.phones.first.number.replaceAll(RegExp(r'\D'), '');
+          final verifiedName = await state.verifyWalletId(phoneNumber).catchError((_) => null);
+
+          if (verifiedName != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SendAmountScreen(
+                  prefilledWalletId: phoneNumber,
+                  prefilledName: verifiedName.split(' ').first,
+                ),
+              ),
+            );
+          } else {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.translate("This contact is not a Murtaax Wallet user", "Qofkan ma laha boorsada Murtaax")),
+                  backgroundColor: Colors.redAccent,
+                ),
+              );
+            }
+          }
+        }
+      }
+    }
   }
 
   @override
@@ -494,7 +521,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
-                    child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.circleArrowUp, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WithdrawScreen()))),
+                    child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.circleArrowUp, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletWithdrawScreen()))),
                   ),
                 ],
               ),
@@ -693,49 +720,30 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             TransactionItem.skeleton(context),
             TransactionItem.skeleton(context),
             TransactionItem.skeleton(context),
+          ] else if (state.transactions.isEmpty) ...[
+             Center(
+               child: Padding(
+                 padding: const EdgeInsets.all(20.0),
+                 child: Text(l10n.noTransactionsFound),
+               ),
+             )
           ] else ...[
-            TransactionItem(
-              title: "Amazon.com", 
-              subtitle: "Shopping", 
-              amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(124.50)}", 
-              date: "Today, 2:45 PM", 
-              status: "Success", 
-              icon: FontAwesomeIcons.amazon,
+            ...state.transactions.take(5).map((tx) => TransactionItem(
+              title: tx.title, 
+              subtitle: tx.category, 
+              amount: tx.amount, 
+              date: tx.date, 
+              status: tx.status, 
+              isSent: tx.isNegative,
               onTap: () => ReceiptView.show(context, {
-                'title': 'Amazon.com',
-                'amount': "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(124.50)}",
-                'date': 'Today, 2:45 PM',
-                'status': 'Success'
+                'title': tx.title,
+                'amount': tx.amount,
+                'date': tx.date,
+                'status': tx.status,
+                'transactionId': tx.id,
+                'isNegative': tx.isNegative,
               }),
-            ),
-            TransactionItem(
-              title: "Ahmed Warsame", 
-              subtitle: "Transfer", 
-              amount: "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(2500.00)}", 
-              date: "Yesterday, 10:20 AM", 
-              status: "Success", 
-              icon: FontAwesomeIcons.user,
-              onTap: () => ReceiptView.show(context, {
-                'title': 'Ahmed Warsame',
-                'amount': "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(2500.00)}",
-                'date': 'Yesterday, 10:20 AM',
-                'status': 'Success'
-              }),
-            ),
-            TransactionItem(
-              title: "Somnet Bill", 
-              subtitle: "Utilities", 
-              amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(35.00)}", 
-              date: "24 Oct, 4:15 PM", 
-              status: "Pending", 
-              icon: Icons.wifi_rounded,
-              onTap: () => ReceiptView.show(context, {
-                'title': 'Somnet Bill',
-                'amount': "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(35.00)}",
-                'date': '24 Oct, 4:15 PM',
-                'status': 'Pending'
-              }),
-            ),
+            )),
           ],
         ],
       ),
@@ -903,6 +911,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
+  void _handleQuickSend(QuickProfile profile, AppState state, AppLocalizations l10n) {
+    HapticFeedback.mediumImpact();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SendAmountScreen(
+          prefilledWalletId: profile.walletId,
+          prefilledName: profile.name,
+          prefilledAmount: profile.lastAmount,
+          prefilledSenderMethod: profile.lastSenderMethod,
+          prefilledReceiverMethod: profile.lastReceiverMethod,
+        ),
+      ),
+    );
+  }
+
   Widget _buildQuickSend(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -917,7 +941,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountLimitsScreen())),
                 child: Text(
                   l10n.seeAll,
                   style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold),
@@ -933,7 +957,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding - 8),
-            itemCount: _quickContacts.length + 1,
+            itemCount: state.quickProfiles.length + 1,
             itemBuilder: (context, index) {
               if (index == 0) {
                 // Return "Add New" button
@@ -944,9 +968,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     child: GestureDetector(
                       onTap: () {
                         HapticFeedback.lightImpact();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.translate("Search for a new contact", "Raadi xiriir cusub"))),
-                        );
+                        _pickAndAddContact(state);
                       },
                       child: Column(
                         children: [
@@ -972,22 +994,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 );
               }
 
-              final contact = _quickContacts[index - 1];
+              final profile = state.quickProfiles[index - 1];
               return FadeInRight(
                 duration: const Duration(milliseconds: 500),
                 delay: Duration(milliseconds: 100 * index),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: GestureDetector(
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SendAmountScreen(),
-                        ),
-                      );
-                    },
+                    onTap: () => _handleQuickSend(profile, state, l10n),
                     child: Column(
                       children: [
                         Stack(
@@ -999,29 +1013,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                               child: CircleAvatar(
                                 radius: 30,
-                                backgroundImage: NetworkImage(contact.avatar),
+                                backgroundImage: profile.avatarUrl != null && profile.avatarUrl!.startsWith('http') 
+                                  ? NetworkImage(profile.avatarUrl!) 
+                                  : AssetImage(profile.avatarUrl ?? 'assets/avatars/avatar1.png') as ImageProvider,
                                 backgroundColor: Colors.grey.shade200,
                               ),
                             ),
-                            if (contact.isOnline)
-                              Positioned(
-                                right: 2,
-                                bottom: 2,
-                                child: Container(
-                                  width: 14,
-                                  height: 14,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF10B981),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: theme.scaffoldBackgroundColor, width: 2.5),
-                                  ),
-                                ),
-                              ),
                           ],
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          contact.name,
+                          profile.name,
                           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
                         ),
                       ],
@@ -1138,6 +1140,34 @@ class WalletCardClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+
+  Path _getCardPath(Size size) {
+    final path = Path();
+    const radius = 24.0;
+    const notchWidth = 100.0;
+    const notchHeight = 40.0;
+
+    path.moveTo(radius, 0);
+    path.lineTo(size.width - notchWidth - radius, 0);
+    
+    // Notch
+    path.quadraticBezierTo(size.width - notchWidth, 0, size.width - notchWidth, notchHeight / 2);
+    path.lineTo(size.width - notchWidth, notchHeight - radius);
+    path.quadraticBezierTo(size.width - notchWidth, notchHeight, size.width - notchWidth + radius, notchHeight);
+    
+    path.lineTo(size.width - radius, notchHeight);
+    path.quadraticBezierTo(size.width, notchHeight, size.width, notchHeight + radius);
+    
+    path.lineTo(size.width, size.height - radius);
+    path.quadraticBezierTo(size.width, size.height, size.width - radius, size.height);
+    path.lineTo(radius, size.height);
+    path.quadraticBezierTo(0, size.height, 0, size.height - radius);
+    path.lineTo(0, radius);
+    path.quadraticBezierTo(0, 0, radius, 0);
+    path.close();
+    
+    return path;
+  }
 }
 
 class WalletCardPainter extends CustomPainter {
@@ -1166,40 +1196,10 @@ class WalletCardPainter extends CustomPainter {
     canvas.drawPath(path, borderPaint);
   }
 
+  Path _getCardPath(Size size) {
+    return WalletCardClipper()._getCardPath(size);
+  }
+
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
-
-Path _getCardPath(Size size) {
-  double notchWidth = 140.0;
-  double notchHeight = 60.0;
-  double radius = 24.0;
-  
-  Path path = Path();
-  path.moveTo(radius, 0);
-  path.lineTo(size.width - radius, 0);
-  path.quadraticBezierTo(size.width, 0, size.width, radius);
-  
-  // Down to notch
-  path.lineTo(size.width, size.height - notchHeight - radius);
-  path.quadraticBezierTo(size.width, size.height - notchHeight, size.width - radius, size.height - notchHeight);
-  
-  // Across notch
-  path.lineTo(size.width - notchWidth + (radius * 0.8), size.height - notchHeight);
-  path.quadraticBezierTo(size.width - notchWidth, size.height - notchHeight, size.width - notchWidth, size.height - notchHeight + (radius * 0.8));
-  
-  // Down to bottom
-  path.lineTo(size.width - notchWidth, size.height - radius);
-  path.quadraticBezierTo(size.width - notchWidth, size.height, size.width - notchWidth - radius, size.height);
-  
-  // Bottom across
-  path.lineTo(radius, size.height);
-  path.quadraticBezierTo(0, size.height, 0, size.height - radius);
-  
-  // Left side up
-  path.lineTo(0, radius);
-  path.quadraticBezierTo(0, 0, radius, 0);
-  
-  path.close();
-  return path;
 }

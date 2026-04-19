@@ -3,16 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/app_colors.dart';
 
-import '../../core/widgets/adaptive_icon.dart';
+import 'package:provider/provider.dart';
+import '../../core/app_state.dart';
+import '../../core/widgets/detail_row.dart';
 import 'dart:ui' as ui;
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
-import 'package:intl/intl.dart';
+import '../../core/models/transaction.dart' as model;
 import 'wallet_card_deposit_screen.dart';
+import '../../core/widgets/adaptive_icon.dart';
 
 class DepositCardScreen extends StatefulWidget {
   final String amount;
@@ -101,21 +105,25 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
   }
 
   void _showSuccess(BuildContext context, AppLocalizations l10n) {
+    final state = Provider.of<AppState>(context, listen: false);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.cardTopUpSuccessful,
           message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0)),
+          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
         ),
       ),
     );
   }
 
-  void _processTransaction(BuildContext context, AppLocalizations l10n) async {
+  void _processTransaction(BuildContext context, AppLocalizations l10n, {bool isWalletDeduction = false}) async {
     final theme = Theme.of(context);
     final localContext = context;
+    final amount = double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -191,6 +199,36 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
     await Future.delayed(const Duration(seconds: 1));
 
     if (!localContext.mounted) return;
+
+    if (isWalletDeduction) {
+      final appState = Provider.of<AppState>(localContext, listen: false);
+      appState.deductBalance(amount);
+      
+      appState.addTransaction(model.Transaction(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: "Card Top-up",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "-${NumberFormat.simpleCurrency(name: appState.currencyCode).format(amount)}",
+        isNegative: true,
+        category: "All",
+        status: "Success",
+        type: "payment",
+      ));
+    } else {
+       final appState = Provider.of<AppState>(localContext, listen: false);
+       appState.addTransaction(model.Transaction(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: "Card Top-up",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "+${NumberFormat.simpleCurrency(name: appState.currencyCode).format(amount)}",
+        isNegative: false,
+        category: "All",
+        status: "Success",
+        type: "deposit",
+        method: "Bank",
+      ));
+    }
+
     Navigator.of(localContext, rootNavigator: true).pop();
     _showSuccess(localContext, l10n);
   }
@@ -221,7 +259,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                   : () {
                       final localContext = this.context;
                       Navigator.pop(context);
-                      _processTransaction(localContext, l10n);
+                      _processTransaction(localContext, l10n, isWalletDeduction: true);
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.accentTeal,
@@ -373,6 +411,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final state = AppState();
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -415,7 +454,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                       ),
                       SizedBox(height: 4 * context.fontSizeFactor),
                       Text(
-                        NumberFormat.simpleCurrency(name: 'USD').format(_cardBalance),
+                        NumberFormat.simpleCurrency(name: state.currencyCode).format(_cardBalance),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 28 * context.fontSizeFactor,

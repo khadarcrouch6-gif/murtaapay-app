@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:intl/intl.dart';
 import '../chat/chat_screen.dart';
 import '../../core/app_colors.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/responsive_utils.dart';
+import 'package:provider/provider.dart';
+import '../../core/widgets/detail_row.dart';
+import '../../core/app_state.dart';
+import '../../core/widgets/success_screen.dart';
+import '../../core/models/transaction.dart' as model;
 
 enum HagbadStatus { active, inactive, failed }
 enum HagbadFrequency { daily, weekly, tenDays, monthly, yearly }
@@ -140,24 +147,15 @@ class _HagbadScreenState extends State<HagbadScreen> {
     '615123456': {'name': 'Abdirahman Ali', 'id': 'MX-9021', 'phone': '615123456'},
     '615998877': {'name': 'Sahra Hassan', 'id': 'MX-4432', 'phone': '615998877'},
     '612000111': {'name': 'Mohamed Ghedi', 'id': 'MX-1120', 'phone': '612000111'},
-    '6391234567': {'name': 'Juan Dela Cruz', 'id': 'MX-6301', 'phone': '6391234567'},
-    '9051234567': {'name': 'Emre Yilmaz', 'id': 'MX-9005', 'phone': '9051234567'},
-    '260971234567': {'name': 'Chanda Mwansa', 'id': 'MX-2601', 'phone': '260971234567'},
-    '254712345678': {'name': 'John Kamau', 'id': 'MX-2541', 'phone': '254712345678'},
-    '254722998877': {'name': 'Achieng Odhiambo', 'id': 'MX-2542', 'phone': '254722998877'},
-    // Germany (49)
-    '49151234567': {'name': 'Lukas Müller', 'id': 'MX-4901', 'phone': '49151234567'},
-    '49170987654': {'name': 'Sarah Schmidt', 'id': 'MX-4902', 'phone': '49170987654'},
-    // UK (44)
-    '447700900123': {'name': 'James Wilson', 'id': 'MX-4401', 'phone': '447700900123'},
-    '447412345678': {'name': 'Olivia Brown', 'id': 'MX-4402', 'phone': '447412345678'},
-    // Uganda (256)
-    '256701234567': {'name': 'Mukasa Kato', 'id': 'MX-2561', 'phone': '256701234567'},
-    '256782345678': {'name': 'Nantongo Sarah', 'id': 'MX-2562', 'phone': '256782345678'},
+    '639123456': {'name': 'Ahmed Cali', 'id': 'MX-6301', 'phone': '639123456'},
+    '905123456': {'name': 'Mustaf Golis', 'id': 'MX-9005', 'phone': '905123456'},
+    '619712345': {'name': 'Aisha Omar', 'id': 'MX-6101', 'phone': '619712345'},
+    '617123456': {'name': 'Ibrahim Warsame', 'id': 'MX-2523', 'phone': '617123456'},
+    '612299887': {'name': 'Hodan Abdi', 'id': 'MX-2524', 'phone': '612299887'},
     // Somalia - Puntland (252-90)
-    '252907712345': {'name': 'Jaamac Boqor', 'id': 'MX-2521', 'phone': '252907712345'},
-    '252906655443': {'name': 'Fadumo Puntland', 'id': 'MX-2522', 'phone': '252906655443'},
-    '907712345': {'name': 'Warsame Garowe', 'id': 'MX-9091', 'phone': '907712345'},
+    '907712345': {'name': 'Jaamac Boqor', 'id': 'MX-2521', 'phone': '907712345'},
+    '906655443': {'name': 'Fadumo Puntland', 'id': 'MX-2522', 'phone': '906655443'},
+    '907712346': {'name': 'Warsame Garowe', 'id': 'MX-9091', 'phone': '907712346'},
   };
 
   @override
@@ -227,8 +225,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.hagbadCreatedSuccess, style: const TextStyle(fontWeight: FontWeight.bold)),
-            const Text("Ogeysiis iyo Dhaar ayaa loo diray xubnaha oo dhan.", style: TextStyle(fontSize: 12)),
+            Flexible(child: Text(l10n.hagbadCreatedSuccess, style: const TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)),
+            const Flexible(child: Text("Ogeysiis iyo Dhaar ayaa loo diray xubnaha oo dhan.", style: TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis)),
           ],
         ),
         backgroundColor: Colors.green,
@@ -353,8 +351,21 @@ class _HagbadScreenState extends State<HagbadScreen> {
 
   // Simulation logic for searching a MurtaaxPay User
   void _lookupAndAddMember(StateSetter setModalState, {Map<String, String>? selectedUser}) async {
-    final phone = selectedUser != null ? selectedUser['phone']! : _memberController.text.trim();
+    String phone = selectedUser != null ? selectedUser['phone']! : _memberController.text.trim();
     if (phone.isEmpty) return;
+
+    // Normalize input to 9 digits by stripping common prefixes
+    phone = phone.replaceAll(RegExp(r'\D'), ''); // Strip non-digits
+    if (phone.startsWith('252') && phone.length > 9) {
+      phone = phone.substring(3);
+    } else if (phone.startsWith('0') && phone.length == 10) {
+      phone = phone.substring(1);
+    }
+    
+    // Ensure we are looking for the last 9 digits if it's too long
+    if (phone.length > 9) {
+      phone = phone.substring(phone.length - 9);
+    }
 
     setModalState(() {
       _isSearchingUser = true;
@@ -457,8 +468,14 @@ class _HagbadScreenState extends State<HagbadScreen> {
       return;
     }
 
+    // Normalize query for better matching
+    String normalizedQuery = query.replaceAll(RegExp(r'\D'), '');
+    if (normalizedQuery.startsWith('252') && normalizedQuery.length > 9) {
+      normalizedQuery = normalizedQuery.substring(3);
+    }
+
     final matches = _mockUsers.values.where((user) {
-      final phoneMatch = user['phone']!.contains(query);
+      final phoneMatch = user['phone']!.contains(normalizedQuery.isNotEmpty ? normalizedQuery : query);
       final nameMatch = user['name']!.toLowerCase().contains(query.toLowerCase());
       
       // Filter out users who are already in the group members list
@@ -507,22 +524,22 @@ class _HagbadScreenState extends State<HagbadScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
             ),
             const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.primaryDark.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.primaryDark.withValues(alpha: 0.1)),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryDark.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.primaryDark.withValues(alpha: 0.1)),
+                ),
+                child: Column(
+                  children: [
+                    DetailRow(label: l10n.groupName, value: group.name),
+                    const Divider(height: 24),
+                    DetailRow(label: l10n.contributionAmount, value: "\$${group.amount.toStringAsFixed(0)}", isBold: true),
+                    DetailRow(label: l10n.payoutMethod, value: l10n.hagbadPot),
+                  ],
+                ),
               ),
-              child: Column(
-                children: [
-                  _buildPaymentRow(l10n.groupName, group.name, theme),
-                  const Divider(height: 24),
-                  _buildPaymentRow(l10n.contributionAmount, "\$${group.amount.toStringAsFixed(0)}", theme, isBold: true),
-                  _buildPaymentRow(l10n.payoutMethod, l10n.hagbadPot, theme),
-                ],
-              ),
-            ),
             const SizedBox(height: 24),
             Row(
               children: [
@@ -585,7 +602,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
 
   void _processHagbadPayment(HagbadGroup group) async {
     final l10n = AppLocalizations.of(context)!;
-    
+    final appState = Provider.of<AppState>(context, listen: false);
+    final currencyFormatter = NumberFormat.currency(symbol: '\$');
+
     // 1. Show PIN/Wallet Confirmation Dialog
     final confirmed = await showDialog<bool>(
       context: context,
@@ -605,7 +624,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
               const SizedBox(height: 16),
               Text(l10n.murtaaxWallet, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               const SizedBox(height: 8),
-              Text("${l10n.balance}: \$1,240.50", style: const TextStyle(color: Colors.grey)), // Mock balance
+              Text("${l10n.balance}: ${currencyFormatter.format(appState.balance)}", style: const TextStyle(color: Colors.grey)),
               const SizedBox(height: 24),
               const Divider(),
               const SizedBox(height: 16),
@@ -668,7 +687,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
     if (mounted) {
       Navigator.pop(context); // Close loading
       
-      // NEW: Update state and Notify Group Chat
+      // Update state and Notify Group Chat
       setState(() {
         final youIndex = group.members.indexWhere((m) => m.name == "You");
         if (youIndex != -1) {
@@ -679,6 +698,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
             avatar: member.avatar,
             payoutOrder: member.payoutOrder,
             paidAmount: group.amount,
+            penaltyAmount: member.penaltyAmount,
+            lastPaymentDate: DateTime.now(),
             hasReceived: member.hasReceived,
             isTrusted: member.isTrusted,
             isConfirmed: member.isConfirmed,
@@ -689,84 +710,38 @@ class _HagbadScreenState extends State<HagbadScreen> {
           );
         }
       });
+      
+      // Deduct from real AppState
+      appState.deductBalance(group.amount);
 
-      _showSuccessPage(group);
+      // Add to global transaction history
+      appState.addTransaction(model.Transaction(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: "Hagbad: ${group.name}",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "-${currencyFormatter.format(group.amount)}",
+        isNegative: true,
+        category: "Savings",
+        status: "Success",
+        type: "payment",
+      ));
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SuccessScreen(
+            title: l10n.paymentSuccessful,
+            message: "Qaaraankaaga dhan \$${group.amount.toStringAsFixed(0)} si guul leh ayaa loogu shubay Sanduuqa (Pot).",
+            subMessage: l10n.newBalance(currencyFormatter.format(appState.balance)),
+            buttonText: l10n.backToHome,
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+      );
     }
   }
 
-  void _showSuccessPage(HagbadGroup group) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          body: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FadeInDown(
-                    child: const Icon(Icons.check_circle, color: Colors.green, size: 100),
-                  ),
-                  const SizedBox(height: 24),
-                  FadeInUp(
-                    child: Text(
-                      AppLocalizations.of(context)!.transferSuccessful,
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  FadeInUp(
-                    delay: const Duration(milliseconds: 200),
-                    child: Text(
-                      "Qaaraankaaga dhan \$${group.amount.toStringAsFixed(0)} si guul leh ayaa loogu shubay Sanduuqa (Pot).",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Mark current user as paid
-                        setState(() {
-                          for (int i = 0; i < group.members.length; i++) {
-                            if (group.members[i].name == "You") {
-                              group.members[i] = HagbadMember(
-                                name: group.members[i].name,
-                                avatar: group.members[i].avatar,
-                                payoutOrder: group.members[i].payoutOrder,
-                                paidAmount: group.amount + group.members[i].penaltyAmount,
-                                penaltyAmount: group.members[i].penaltyAmount,
-                                lastPaymentDate: DateTime.now(),
-                                hasReceived: group.members[i].hasReceived,
-                                isTrusted: group.members[i].isTrusted,
-                                guarantorName: group.members[i].guarantorName,
-                                guarantorId: group.members[i].guarantorId,
-                                walletId: group.members[i].walletId,
-                              );
-                            }
-                          }
-                        });
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryDark,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
-                      child: Text(AppLocalizations.of(context)!.backToHome, style: const TextStyle(color: Colors.white)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Remove the old _showSuccessPage as it's no longer used
 
   void _showWithdrawalSheet(HagbadGroup group) {
     final theme = Theme.of(context);
@@ -821,23 +796,15 @@ class _HagbadScreenState extends State<HagbadScreen> {
               ),
               child: Column(
                 children: [
-                  _buildPaymentRow(l10n.totalPot, "\$${group.totalPayout.toStringAsFixed(0)}", theme),
+                  DetailRow(label: l10n.totalPot, value: "\$${group.totalPayout.toStringAsFixed(0)}"),
                   if (group.serviceFee > 0)
-                    _buildPaymentRow(l10n.serviceFee, "-\$${group.serviceFee.toStringAsFixed(0)}", theme),
+                    DetailRow(label: l10n.serviceFee, value: "-\$${group.serviceFee.toStringAsFixed(0)}"),
                   const Divider(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(l10n.amountToReceive, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text(
-                        "\$${totalPayout.toStringAsFixed(0)}",
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  DetailRow(
+                    label: l10n.amountToReceive,
+                    value: "\$${totalPayout.toStringAsFixed(0)}",
+                    isBold: true,
+                    valueColor: Colors.green,
                   ),
                 ],
               ),
@@ -882,6 +849,11 @@ class _HagbadScreenState extends State<HagbadScreen> {
   }
 
   void _processHagbadWithdrawal(HagbadGroup group) async {
+    final l10n = AppLocalizations.of(context)!;
+    final appState = Provider.of<AppState>(context, listen: false);
+    final currencyFormatter = NumberFormat.currency(symbol: '\$');
+    final payoutAmount = group.totalPayout - group.serviceFee;
+
     // Show Loading
     showDialog(
       context: context,
@@ -895,6 +867,21 @@ class _HagbadScreenState extends State<HagbadScreen> {
     if (mounted) {
       Navigator.pop(context); // Close loading
       
+      // Update real AppState balance
+      appState.addBalance(payoutAmount);
+
+      // Add to global transaction history
+      appState.addTransaction(model.Transaction(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: "Hagbad Payout: ${group.name}",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "+${currencyFormatter.format(payoutAmount)}",
+        isNegative: false,
+        category: "Income",
+        status: "Success",
+        type: "deposit",
+      ));
+
       setState(() {
         // Mark "You" as received
         for (int i = 0; i < group.members.length; i++) {
@@ -912,35 +899,15 @@ class _HagbadScreenState extends State<HagbadScreen> {
         }
       });
 
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.check_circle_rounded, color: Colors.green, size: 64),
-              const SizedBox(height: 16),
-              const Text("Hambalyo!", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Text(
-                "Waxaad si guul leh ula baxday \$${(group.totalPayout - group.serviceFee).toStringAsFixed(0)}. Lacagtu waxay hadda ku jirtaa Wallet-kaaga.",
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryDark,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text("OK", style: TextStyle(color: Colors.white)),
-                ),
-              ),
-            ],
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SuccessScreen(
+            title: "Hambalyo!",
+            message: "Waxaad si guul leh ula baxday \$${payoutAmount.toStringAsFixed(0)}. Lacagtu waxay hadda ku jirtaa Wallet-kaaga.",
+            subMessage: l10n.newBalance(currencyFormatter.format(appState.balance)),
+            buttonText: l10n.ok,
+            onPressed: () => Navigator.pop(context),
           ),
         ),
       );
@@ -967,55 +934,61 @@ class _HagbadScreenState extends State<HagbadScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FadeInDown(
-              child: _buildSummaryCard(isDark, l10n),
-            ),
-            const SizedBox(height: 32),
-            FadeInLeft(
-              delay: const Duration(milliseconds: 200),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    l10n.myGroups,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
+      body: context.responsiveBody(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.horizontalPadding,
+            vertical: context.verticalPadding,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FadeInDown(
+                child: _buildSummaryCard(isDark, l10n),
+              ),
+              const SizedBox(height: 32),
+              FadeInLeft(
+                delay: const Duration(milliseconds: 200),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      l10n.myGroups,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
+                        fontSize: (theme.textTheme.titleLarge?.fontSize ?? 20) * context.fontSizeFactor,
+                      ),
                     ),
-                  ),
-                  Text(
-                    "${_groups.length} ${l10n.activeGroups}",
-                    style: TextStyle(color: theme.hintColor, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (_groups.isEmpty)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Text(l10n.noHagbadGroups, style: TextStyle(color: theme.hintColor)),
+                    Text(
+                      "${_groups.length} ${l10n.activeGroups}",
+                      style: TextStyle(color: theme.hintColor, fontSize: 14 * context.fontSizeFactor),
+                    ),
+                  ],
                 ),
-              )
-            else
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _groups.length,
-                itemBuilder: (context, index) {
-                  return FadeInUp(
-                    delay: Duration(milliseconds: 300 + (index * 100)),
-                    child: _buildGroupCard(_groups[index], theme, isDark, l10n),
-                  );
-                },
               ),
-          ],
+              const SizedBox(height: 16),
+              if (_groups.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(40.0),
+                    child: Text(l10n.noHagbadGroups, style: TextStyle(color: theme.hintColor)),
+                  ),
+                )
+              else
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _groups.length,
+                  itemBuilder: (context, index) {
+                    return FadeInUp(
+                      delay: Duration(milliseconds: 300 + (index * 100)),
+                      child: _buildGroupCard(_groups[index], theme, isDark, l10n),
+                    );
+                  },
+                ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -1028,9 +1001,12 @@ class _HagbadScreenState extends State<HagbadScreen> {
   }
 
   Widget _buildSummaryCard(bool isDark, AppLocalizations l10n) {
+    final appState = Provider.of<AppState>(context);
+    final currencyFormatter = NumberFormat.currency(symbol: '\$');
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(context.responsiveValue(mobile: 20.0, tablet: 32.0)),
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(24),
@@ -1047,20 +1023,22 @@ class _HagbadScreenState extends State<HagbadScreen> {
         children: [
           Text(
             l10n.totalSavingsPot,
-            style: const TextStyle(color: Colors.white70, fontSize: 14),
+            style: TextStyle(color: Colors.white70, fontSize: 14 * context.fontSizeFactor),
           ),
           const SizedBox(height: 8),
-          const Text(
-            "\$1,250.00",
+          Text(
+            currencyFormatter.format(appState.balance),
             style: TextStyle(
               color: Colors.white,
-              fontSize: 32,
+              fontSize: 32 * context.fontSizeFactor,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            spacing: 24,
+            runSpacing: 16,
+            alignment: WrapAlignment.spaceBetween,
             children: [
               _buildSummaryStat(l10n.activeGroups, "${_groups.where((g) => g.status == HagbadStatus.active).length}", Icons.groups_rounded),
               _buildSummaryStat(l10n.nextPayout, "12 ${l10n.days}", Icons.event_repeat_rounded),
@@ -1073,6 +1051,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
 
   Widget _buildSummaryStat(String label, String value, IconData icon) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           padding: const EdgeInsets.all(8),
@@ -1080,14 +1059,14 @@ class _HagbadScreenState extends State<HagbadScreen> {
             color: Colors.white.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: Colors.white, size: 16),
+          child: Icon(icon, color: Colors.white, size: 16 * context.fontSizeFactor),
         ),
         const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
-            Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(label, style: TextStyle(color: Colors.white70, fontSize: 12 * context.fontSizeFactor)),
+            Text(value, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
           ],
         )
       ],
@@ -1114,15 +1093,18 @@ class _HagbadScreenState extends State<HagbadScreen> {
       child: Theme(
         data: theme.copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
-          tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          tilePadding: EdgeInsets.symmetric(
+            horizontal: context.responsiveValue(mobile: 16.0, tablet: 24.0),
+            vertical: 8,
+          ),
           iconColor: isDark ? Colors.white70 : AppColors.primaryDark,
           collapsedIconColor: isDark ? Colors.white30 : Colors.grey,
           leading: Stack(
             clipBehavior: Clip.none,
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 48 * context.fontSizeFactor,
+                height: 48 * context.fontSizeFactor,
                 decoration: BoxDecoration(
                   color: _getStatusColor(group.status).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -1131,6 +1113,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   child: Icon(
                     _getStatusIcon(group.status),
                     color: _getStatusColor(group.status),
+                    size: 24 * context.fontSizeFactor,
                   ),
                 ),
               ),
@@ -1148,23 +1131,29 @@ class _HagbadScreenState extends State<HagbadScreen> {
           ),
           title: Text(
             group.name,
-            style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onSurface,
+              fontSize: 16 * context.fontSizeFactor,
+            ),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
                 children: [
                   Text(
                     "\$${group.amount.toStringAsFixed(0)} / ${_getFrequencyText(group.frequency, l10n)}",
-                    style: TextStyle(color: theme.hintColor, fontSize: 12),
+                    style: TextStyle(color: theme.hintColor, fontSize: 12 * context.fontSizeFactor),
                   ),
                   Text(
                     "${l10n.currentBalance}: \$${group.currentBalance.toStringAsFixed(0)}",
                     style: TextStyle(
                       color: isDark ? Colors.greenAccent : Colors.green.shade700,
-                      fontSize: 12,
+                      fontSize: 12 * context.fontSizeFactor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -1179,14 +1168,14 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       value: group.progress,
                       backgroundColor: isDark ? Colors.white10 : Colors.grey.shade100,
                       valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryDark),
-                      minHeight: 12,
+                      minHeight: 12 * context.fontSizeFactor,
                     ),
                   ),
                   Positioned.fill(
                     child: Center(
                       child: Text(
                         "${(group.progress * 10).toStringAsFixed(0)}/10 ${l10n.members} ${l10n.received.toLowerCase()}",
-                        style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(fontSize: 8 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                   ),
@@ -1195,7 +1184,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
               const SizedBox(height: 4),
               Text(
                 "\$${group.currentBalance.toStringAsFixed(0)} / \$${group.totalPayout.toStringAsFixed(0)} ${l10n.hagbadPot}",
-                style: TextStyle(fontSize: 10, color: theme.hintColor, fontStyle: FontStyle.italic),
+                style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: theme.hintColor, fontStyle: FontStyle.italic),
               ),
             ],
           ),
@@ -1207,8 +1196,10 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 children: [
                   Divider(color: isDark ? Colors.white10 : Colors.grey.shade200),
                   const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    spacing: 12,
+                    runSpacing: 12,
                     children: [
                       _buildInfoItem(l10n.nextInLine, nextReceiver.name, theme, isHighlight: true),
                       _buildInfoItem(l10n.potWadar, "\$${group.totalPayout.toStringAsFixed(0)}", theme),
@@ -1238,20 +1229,28 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       ),
                     ),
                   const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       Text(
                         l10n.rotation,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: theme.colorScheme.onSurface),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold, 
+                          fontSize: 14 * context.fontSizeFactor, 
+                          color: theme.colorScheme.onSurface
+                        ),
                       ),
-                      Row(
+                      Wrap(
+                        spacing: 8,
                         children: [
                           if (group.adminName == l10n.youAdmin)
                             TextButton.icon(
                               onPressed: () => _performLiveQoriTuur(group),
-                              icon: const Icon(Icons.shuffle_rounded, size: 14),
-                              label: const Text("Qori-tuurka Bilow", style: TextStyle(fontSize: 12)),
+                              icon: Icon(Icons.shuffle_rounded, size: 14 * context.fontSizeFactor),
+                              label: Text("Qori-tuurka Bilow", style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
                               style: TextButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(horizontal: 8), 
                                 foregroundColor: Colors.purple,
@@ -1264,8 +1263,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
                           if (group.adminName == l10n.youAdmin && group.members.any((m) => !m.isFullyPaid(group.amount)))
                             TextButton.icon(
                               onPressed: () => _remindAllPending(group),
-                              icon: const Icon(Icons.notifications_active_outlined, size: 14),
-                              label: Text(l10n.remindAll, style: const TextStyle(fontSize: 12)),
+                              icon: Icon(Icons.notifications_active_outlined, size: 14 * context.fontSizeFactor),
+                              label: Text(l10n.remindAll, style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
                               style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8), foregroundColor: Colors.orange),
                             ),
                           TextButton.icon(
@@ -1282,8 +1281,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
                                 ),
                               );
                             },
-                            icon: const Icon(Icons.chat_bubble_outline_rounded, size: 14),
-                            label: Text(l10n.groupChat, style: const TextStyle(fontSize: 12)),
+                            icon: Icon(Icons.chat_bubble_outline_rounded, size: 14 * context.fontSizeFactor),
+                            label: Text(l10n.groupChat, style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
                             style: TextButton.styleFrom(padding: EdgeInsets.zero, foregroundColor: AppColors.primaryDark),
                           ),
                         ],
@@ -1309,76 +1308,81 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   _buildPaymentHistory(group, l10n, isDark),
                   
                   const SizedBox(height: 16),
-                  Row(
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
                     children: [
                       if (nextReceiver.name == "You" && !nextReceiver.hasReceived)
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => _showWithdrawalSheet(group),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.account_balance_wallet_rounded, size: 18),
-                                const SizedBox(width: 8),
-                                Text(l10n.claimPayout),
-                              ],
-                            ),
+                        ElevatedButton(
+                          onPressed: () => _showWithdrawalSheet(group),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.account_balance_wallet_rounded, size: 18 * context.fontSizeFactor),
+                              const SizedBox(width: 8),
+                              Text(l10n.claimPayout),
+                            ],
                           ),
                         )
                       else
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => _showPaymentSheet(group),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryDark,
-                              foregroundColor: Colors.white,
+                        ElevatedButton(
+                          onPressed: () => _showPaymentSheet(group),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryDark,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          ),
+                          child: Text(l10n.payContribution),
+                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton.filled(
+                            onPressed: () {
+                              // NEW: Admin Manual Penalty Trigger (For testing/Simulation)
+                              if (group.adminName == "Khadar Abdi") {
+                                 _showPenaltyDialog(group, group.members.indexWhere((m) => m.name == "Maryan"));
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        const Icon(Icons.check_circle, color: Colors.white, size: 20),
+                                        const SizedBox(width: 12),
+                                        Text(l10n.receiptDownloaded),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              }
+                            },
+                            icon: Icon(Icons.download_rounded, size: 20 * context.fontSizeFactor),
+                            tooltip: l10n.downloadReceipt,
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.blue.withValues(alpha: 0.1),
+                              foregroundColor: Colors.blue,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
-                            child: Text(l10n.payContribution),
                           ),
-                        ),
-                      const SizedBox(width: 12),
-                      IconButton.filled(
-                        onPressed: () {
-                          // NEW: Admin Manual Penalty Trigger (For testing/Simulation)
-                          if (group.adminName == "Khadar Abdi") {
-                             _showPenaltyDialog(group, group.members.indexWhere((m) => m.name == "Maryan"));
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Row(
-                                  children: [
-                                    const Icon(Icons.check_circle, color: Colors.white, size: 20),
-                                    const SizedBox(width: 12),
-                                    Text(l10n.receiptDownloaded),
-                                  ],
-                                ),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          }
-                        },
-                        icon: const Icon(Icons.download_rounded, size: 20),
-                        tooltip: l10n.downloadReceipt,
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.blue.withValues(alpha: 0.1),
-                          foregroundColor: Colors.blue,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton.outlined(
-                        onPressed: () {},
-                        icon: const Icon(Icons.share_outlined),
-                        style: IconButton.styleFrom(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          side: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
-                        ),
+                          const SizedBox(width: 8),
+                          IconButton.outlined(
+                            onPressed: () {},
+                            icon: Icon(Icons.share_outlined, size: 20 * context.fontSizeFactor),
+                            style: IconButton.styleFrom(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              side: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   )
@@ -1484,13 +1488,14 @@ class _HagbadScreenState extends State<HagbadScreen> {
     final isDark = theme.brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 11)),
+        Text(label, style: TextStyle(color: Colors.grey, fontSize: 11 * context.fontSizeFactor)),
         Text(
           value, 
           style: TextStyle(
             fontWeight: FontWeight.w600, 
-            fontSize: 13, 
+            fontSize: 13 * context.fontSizeFactor,
             color: isHighlight 
               ? (isDark ? Colors.blue[300] : AppColors.primaryDark) 
               : theme.colorScheme.onSurface
@@ -1843,10 +1848,11 @@ class _HagbadScreenState extends State<HagbadScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 28,
-            height: 28,
+            width: 28 * context.fontSizeFactor,
+            height: 28 * context.fontSizeFactor,
             decoration: BoxDecoration(
               color: isDark ? Colors.white10 : Colors.grey.shade100,
               shape: BoxShape.circle,
@@ -1857,7 +1863,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 children: [
                   Text(
                     "${member.payoutOrder}",
-                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey),
+                    style: TextStyle(fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.grey),
                   ),
                   if (member.isConfirmed)
                     Positioned(
@@ -1866,7 +1872,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(1),
                         decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
-                        child: const Icon(Icons.check, size: 8, color: Colors.white),
+                        child: Icon(Icons.check, size: 8 * context.fontSizeFactor, color: Colors.white),
                       ),
                     ),
                 ],
@@ -1875,12 +1881,12 @@ class _HagbadScreenState extends State<HagbadScreen> {
           ),
           const SizedBox(width: 12),
           CircleAvatar(
-            radius: 16,
+            radius: 16 * context.fontSizeFactor,
             backgroundColor: isDark ? Colors.blue.withValues(alpha: 0.2) : AppColors.primaryDark.withValues(alpha: 0.1),
             child: Text(
               member.avatar,
               style: TextStyle(
-                fontSize: 12, 
+                fontSize: 12 * context.fontSizeFactor, 
                 fontWeight: FontWeight.bold, 
                 color: isDark ? Colors.blue[300] : AppColors.primaryDark
               ),
@@ -1891,48 +1897,45 @@ class _HagbadScreenState extends State<HagbadScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
                   children: [
                     Text(
                       member.name == "You" ? l10n.you : member.name,
-                      style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface, fontWeight: FontWeight.w500),
+                      style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: theme.colorScheme.onSurface, fontWeight: FontWeight.w500),
                     ),
                     if (member.isTrusted)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4),
-                        child: Tooltip(
-                          message: l10n.trustedMember,
-                          child: const Icon(Icons.verified_rounded, size: 14, color: Colors.blue),
-                        ),
+                      Tooltip(
+                        message: l10n.trustedMember,
+                        child: Icon(Icons.verified_rounded, size: 14 * context.fontSizeFactor, color: Colors.blue),
                       ),
                     if (member.isConfirmed)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 6),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                          decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
-                          child: const Text("Aqbalay", style: TextStyle(fontSize: 8, color: Colors.green, fontWeight: FontWeight.bold)),
-                        ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                        decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
+                        child: Text("Aqbalay", style: TextStyle(fontSize: 8 * context.fontSizeFactor, color: Colors.green, fontWeight: FontWeight.bold)),
                       ),
                   ],
                 ),
                 if (member.guarantorName != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
-                    child: Row(
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        const Icon(Icons.verified_user_outlined, size: 10, color: Colors.orange),
+                        Icon(Icons.verified_user_outlined, size: 10 * context.fontSizeFactor, color: Colors.orange),
                         const SizedBox(width: 4),
                         Text(
                           "Uul: ${member.guarantorName} (${member.guarantorId})",
-                          style: const TextStyle(fontSize: 10, color: Colors.orange, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: Colors.orange, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                   ),
                 Text(
                   _getTurnLabel(freq, member.payoutOrder, l10n),
-                  style: TextStyle(fontSize: 11, color: isDark ? Colors.white54 : Colors.grey.shade600),
+                  style: TextStyle(fontSize: 11 * context.fontSizeFactor, color: isDark ? Colors.white54 : Colors.grey.shade600),
                 ),
                 if (member.name == "You" && (!member.isConfirmed || !member.hasSignedOath))
                   Padding(
@@ -1957,7 +1960,13 @@ class _HagbadScreenState extends State<HagbadScreen> {
                                     children: [
                                       const Icon(Icons.mail_outline_rounded, size: 16, color: Colors.blue),
                                       const SizedBox(width: 8),
-                                      Text(l10n.invitationReceived, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.blue)),
+                                      Expanded(
+                                        child: Text(
+                                          l10n.invitationReceived, 
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.blue),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 4),
@@ -2012,7 +2021,13 @@ class _HagbadScreenState extends State<HagbadScreen> {
                                   children: [
                                     const Icon(Icons.mosque_rounded, size: 16, color: Colors.purple),
                                     const SizedBox(width: 8),
-                                    Text(l10n.religiousOathRequired, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.purple)),
+                                    Expanded(
+                                      child: Text(
+                                        l10n.religiousOathRequired, 
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.purple),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
@@ -2096,18 +2111,22 @@ class _HagbadScreenState extends State<HagbadScreen> {
                                     );
                                   },
                                   icon: const Icon(Icons.check, size: 14),
-                                  label: const Text("Aqbal Uulnimada", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                  label: const Text("Aqbal Uulnimada", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.orange,
                                     foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                     minimumSize: const Size(0, 32),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
                                 ),
                                 TextButton(
                                   onPressed: () {}, // Handle rejection if needed
-                                  child: const Text("Diid", style: TextStyle(color: Colors.red, fontSize: 11)),
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    minimumSize: const Size(0, 32),
+                                  ),
+                                  child: const Text("Diid", style: TextStyle(color: Colors.red, fontSize: 10)),
                                 ),
                               ],
                             ),
@@ -2374,10 +2393,14 @@ class _HagbadScreenState extends State<HagbadScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "${l10n.contributionAmount} x ${l10n.members}",
-                              style: TextStyle(fontSize: 12, color: theme.hintColor),
+                            Flexible(
+                              child: Text(
+                                "${l10n.contributionAmount} x ${l10n.members}",
+                                style: TextStyle(fontSize: 12, color: theme.hintColor),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
+                            const SizedBox(width: 8),
                             Text(
                               "\$${_amountController.text} x ${_newGroupMembersWithDetails.length}",
                               style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
@@ -2388,10 +2411,14 @@ class _HagbadScreenState extends State<HagbadScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              l10n.potWadar,
-                              style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+                            Flexible(
+                              child: Text(
+                                l10n.potWadar,
+                                style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
+                            const SizedBox(width: 8),
                             Text(
                               "\$${(double.tryParse(_amountController.text) ?? 0) * _newGroupMembersWithDetails.length}",
                               style: TextStyle(
@@ -2423,7 +2450,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       keyboardType: TextInputType.number,
                       onChanged: (val) => setModalState(() {}), // Refresh UI to update calculation
                     )),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     Expanded(child: _buildTextField(l10n.serviceFee, Icons.admin_panel_settings_rounded, _feeController, isDark, keyboardType: TextInputType.number)),
                   ],
                 ),
@@ -2607,7 +2634,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
   Widget _buildFrequencyChip(HagbadFrequency freq, StateSetter setModalState, AppLocalizations l10n, bool isDark) {
     bool isSelected = freq == _selectedFrequency;
     return FilterChip(
-      label: Text(_getFrequencyText(freq, l10n)),
+      label: Text(_getFrequencyText(freq, l10n), style: const TextStyle(fontSize: 11)),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       selected: isSelected,
       onSelected: (val) {
         setModalState(() {

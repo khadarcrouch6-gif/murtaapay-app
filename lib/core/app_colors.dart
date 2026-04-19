@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const Color primaryDark = Color(0xFF0F172A); // Midnight Blue (More Premium)
+  static const Color secondary = Color(0xFF2563EB); // Royal Blue
   static const Color accentTeal = Color(0xFF10B981); // Emerald Teal
   static const Color background = Color(0xFFF1F5F9); // Soft Off-White (Eye Comfort)
   static const Color surface = Colors.white;

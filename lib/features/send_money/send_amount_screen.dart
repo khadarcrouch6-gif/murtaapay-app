@@ -10,11 +10,24 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'receiver_screen.dart';
 import 'wallet_receiver_screen.dart';
 import 'bank_screen.dart';
-import 'card_screen.dart';
 
 class SendAmountScreen extends StatefulWidget {
   final bool showBackButton;
-  const SendAmountScreen({super.key, this.showBackButton = true});
+  final String? prefilledWalletId;
+  final String? prefilledName;
+  final double? prefilledAmount;
+  final String? prefilledSenderMethod;
+  final String? prefilledReceiverMethod;
+
+  const SendAmountScreen({
+    super.key, 
+    this.showBackButton = true,
+    this.prefilledWalletId,
+    this.prefilledName,
+    this.prefilledAmount,
+    this.prefilledSenderMethod,
+    this.prefilledReceiverMethod,
+  });
 
   @override
   State<SendAmountScreen> createState() => _SendAmountScreenState();
@@ -29,6 +42,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   String _sendCurrency = "USD";
   String _receiveCurrency = "USD";
   String _selectedMethod = "EVC Plus";
+  String _selectedCategory = "All";
   bool _isCalculating = false;
   bool _isRefreshing = false;
   bool _isFeeIncluded = false; 
@@ -78,7 +92,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   double get _fee {
     double amount = double.tryParse(_sendController.text.replaceAll(',', '')) ?? 0;
     if (amount <= 0) return 0.00;
-    double feeRate = (_selectedMethod.contains("Visa") || _selectedMethod.contains("MasterCard")) ? 0.029 : 0.0099;
+    double feeRate = 0.0099;
     double calculatedFee = amount * feeRate;
     return double.parse(calculatedFee.toStringAsFixed(_sendCurrencyDecimals));
   }
@@ -97,7 +111,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     return _totalToPay <= balanceInCurrentCurrency;
   }
   
-  double get _maxLimitInCurrentCurrency => 2500 * (rates[_sendCurrency] ?? 1.0);
+  double get _maxLimitInCurrentCurrency => AppState.dailyLimit * (rates[_sendCurrency] ?? 1.0);
   double get _minLimitInCurrentCurrency => 10 * (rates[_sendCurrency] ?? 1.0);
 
   bool get _isAmountValid {
@@ -108,6 +122,12 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.prefilledAmount != null) {
+      _sendController.text = widget.prefilledAmount!.toStringAsFixed(2);
+    }
+    if (widget.prefilledReceiverMethod != null) {
+      _selectedMethod = widget.prefilledReceiverMethod!;
+    }
     _loadRates();
     _startRefreshTimer();
     _sendFocusNode.addListener(() {
@@ -195,7 +215,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         setState(() {
           double inUsd = amount / toRate;
           if (_isFeeIncluded) {
-            double feeRate = (_selectedMethod.contains("Visa") || _selectedMethod.contains("MasterCard")) ? 0.029 : 0.0099;
+            double feeRate = 0.0099;
             inUsd = inUsd / (1 - feeRate);
           }
           _sendController.text = _formatCurrency(inUsd * fromRate, _sendCurrencyDecimals);
@@ -209,7 +229,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     HapticFeedback.mediumImpact();
     double balanceInUsd = state.balance > 2500 ? 2500 : state.balance;
     double fromRate = rates[_sendCurrency] ?? 1.0;
-    double feeRate = (_selectedMethod.contains("Visa") || _selectedMethod.contains("MasterCard")) ? 0.029 : 0.0099;
+    double feeRate = 0.0099;
     double maxSend = _isFeeIncluded ? (balanceInUsd * fromRate) : ((balanceInUsd / (1 + feeRate)) * fromRate);
     setState(() {
       _sendController.text = _formatCurrency(maxSend, _sendCurrencyDecimals);
@@ -473,6 +493,21 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                     _buildSummaryRow(l10n.transactionFee, isInputEmpty ? "-" : "${_getCurrencySymbol(_sendCurrency)} ${_formatCurrency(_fee, _sendCurrencyDecimals)}"),
                                     const Divider(height: 12, thickness: 1),
                                     _buildSummaryRow(l10n.totalToPay, isInputEmpty ? "-" : "${_getCurrencySymbol(_sendCurrency)} ${_formatCurrency(_totalToPay, _sendCurrencyDecimals)}", isTotal: true, isError: !hasSufficient),
+                                    if (_selectedMethod == "Bank Transfer" && !isInputEmpty)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 8),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(Icons.access_time_filled_rounded, size: 14, color: Colors.orange),
+                                            const SizedBox(width: 6),
+                                            Text(
+                                              "Lacagtu waxay gaaraysaa muddo 24 saac gudahood ah (After 1 day)",
+                                              style: TextStyle(fontSize: 11, color: Colors.orange.shade700, fontWeight: FontWeight.w900),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     if (!hasSufficient)
                                       Padding(padding: const EdgeInsets.only(top: 4), child: Text(l10n.insufficientBalance, style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w900), textAlign: TextAlign.center)),
                                   ],
@@ -529,19 +564,32 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
 
     if (_selectedMethod == "Murtaax Wallet") {
       Navigator.push(context, MaterialPageRoute(
-        builder: (context) => WalletReceiverScreen(amount: cleanAmount, method: _selectedMethod, currencyCode: _sendCurrency)
+        builder: (context) => WalletReceiverScreen(
+          amount: cleanAmount, 
+          method: _selectedMethod, 
+          currencyCode: _sendCurrency,
+          prefilledName: widget.prefilledName,
+          prefilledPhone: widget.prefilledWalletId,
+        )
       ));
     } else if (_selectedMethod == "EVC Plus" || _selectedMethod == "ZAAD Service" || _selectedMethod == "e-Dahab" || _selectedMethod == "Sahal") {
       Navigator.push(context, MaterialPageRoute(
-        builder: (context) => ReceiverScreen(amount: cleanAmount, method: _selectedMethod, currencyCode: _sendCurrency)
+        builder: (context) => ReceiverScreen(
+          amount: cleanAmount, 
+          method: _selectedMethod, 
+          currencyCode: _sendCurrency,
+          prefilledName: widget.prefilledName,
+          prefilledPhone: widget.prefilledWalletId,
+        )
       ));
     } else if (_selectedMethod == "Bank Transfer") {
       Navigator.push(context, MaterialPageRoute(
-        builder: (context) => BankScreen(amount: cleanAmount, method: _selectedMethod, currencyCode: _sendCurrency)
-      ));
-    } else if (_selectedMethod == "Visa/MasterCard") {
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) => CardScreen(amount: cleanAmount, method: _selectedMethod, currencyCode: _sendCurrency)
+        builder: (context) => BankScreen(
+          amount: cleanAmount, 
+          method: _selectedMethod, 
+          currencyCode: _sendCurrency,
+          prefilledName: widget.prefilledName,
+        )
       ));
     }
   }
@@ -702,35 +750,63 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   }
 
   Widget _buildPaymentMethodsGrid(ThemeData theme) {
-    final methods = [
-      {"name": "EVC Plus", "image": "assets/images/evc.png"},
-      {"name": "ZAAD Service", "image": "assets/images/zaad.png"},
-      {"name": "e-Dahab", "image": "assets/images/edahab.png"},
-      {"name": "Murtaax Wallet", "image": "assets/images/walletlogo.png"},
-      {"name": "Sahal", "image": "assets/images/evc.png"},
-      {"name": "Bank Transfer", "image": "assets/images/bank.png"},
-      {"name": "Visa/MasterCard", "image": "assets/images/visa.png"},
+    final allMethods = [
+      {"name": "EVC Plus", "image": "assets/images/evc.png", "category": "Mobile Money"},
+      {"name": "ZAAD Service", "image": "assets/images/zaad.png", "category": "Mobile Money"},
+      {"name": "e-Dahab", "image": "assets/images/edahab.png", "category": "Mobile Money"},
+      {"name": "Murtaax Wallet", "image": "assets/images/walletlogo.png", "category": "Murtaax Wallet"},
+      {"name": "Sahal", "image": "assets/images/evc.png", "category": "Mobile Money"},
+      {"name": "Bank Transfer", "image": "assets/images/bank.png", "category": "Bank"},
     ];
-    
-    final ScrollController scrollController = ScrollController();
 
-    return SizedBox(
-      height: 56,
-      child: MouseRegion(
-        onEnter: (_) {}, // Placeholder for mouse detection if needed
-        child: Scrollbar(
-          controller: scrollController,
-          thumbVisibility: false, // Only show when scrolling
-          trackVisibility: false,
-          thickness: 4,
-          radius: const Radius.circular(10),
+    final categories = ["All", "Bank", "Mobile Money", "Murtaax Wallet"];
+    
+    final filteredMethods = _selectedCategory == "All" 
+        ? allMethods 
+        : allMethods.where((m) => m["category"] == _selectedCategory).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Categories
+        SizedBox(
+          height: 36,
           child: ListView.builder(
-            controller: scrollController,
             scrollDirection: Axis.horizontal,
-            itemCount: methods.length,
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              final cat = categories[index];
+              bool isCatSelected = _selectedCategory == cat;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: ChoiceChip(
+                  label: Text(cat, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: isCatSelected ? Colors.white : theme.textTheme.bodyMedium?.color)),
+                  selected: isCatSelected,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _selectedCategory = cat);
+                  },
+                  selectedColor: theme.colorScheme.secondary,
+                  backgroundColor: theme.colorScheme.surface,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  side: BorderSide(color: isCatSelected ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1)),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  visualDensity: VisualDensity.compact,
+                  showCheckmark: false,
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Methods
+        SizedBox(
+          height: 56,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: filteredMethods.length,
             padding: const EdgeInsets.symmetric(vertical: 2),
             itemBuilder: (context, index) {
-              final method = methods[index];
+              final method = filteredMethods[index];
               bool isSelected = _selectedMethod == method["name"];
               return Padding(
                 padding: const EdgeInsets.only(right: 12),
@@ -770,7 +846,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
             },
           ),
         ),
-      ),
+      ],
     );
   }
 

@@ -26,7 +26,7 @@
   "virtualCard": "Kaarka Virtual-ka",
   "virtualCardDesc": "Hel kaar virtual ah oo aamin ah oo caalamka wax kaga iibso.",
   "enterAmount": "Geli cadadka",
-  "transferLimit": "Xadadka: $5,000.00",
+  "transferLimit": "Xadadka: $50,000.00",
   "feeRate": "Kharashka: $0.99 halkii $100",
   "youSend": "Waxaad diraysaa",
   "searchCurrency": "Raadi lacagta",
@@ -55,7 +55,7 @@
   "payViaHormuud": "Ku bixi Hormuud EVC Plus",
   "payViaTelesom": "Ku bixi Telesom ZAAD",
   "payViaSomtel": "Ku bixi Somtel e-Dahab",
-  "bankTransfer": "Xawaalad bangi",
+  "bankTransfer": "Xawaalad Bangi",
   "addBank": "Ku dar Bangi",
   "localBankTransfer": "Xawaalad bangi oo maxalli ah",
   "internationalMethods": "Hababka caalamiga ah",
@@ -148,6 +148,8 @@
   "securePayment": "Lacag bixin ammaan ah",
   "cardDetails": "Faahfaahinta Kaarka",
   "cardHolder": "MILKIILAHA KAARKAA",
+  "mobileMoney": "Lacagta Moobaylka",
+  "mobileMoneyDesc": "EVC Plus, Sahal, ZAAD, e-Dahab",
   "expires": "WUXUU DHACAYAA",
   "deposit": "Dhigasho",
   "withdraw": "La bixid",
@@ -183,6 +185,18 @@
   "free": "Bilaash",
   "totalDeducted": "Wadarta laga jaray",
   "confirmWithdraw": "Xaqiiji oo Kala Bax",
+  "confirmAndWithdraw": "Xaqiiji oo Kala Bax",
+  "transactionFailed": "Macaamilka Waa Fashilmay",
+  "transactionFailedMessage": "Wax baa qaldamay. Fadlan isku day markale ama la xiriir taageerada.",
+  "tryAgain": "Isku day mar kale",
+  "newBalance": "Haraaga Cusub: {balance}",
+  "@newBalance": {
+    "placeholders": {
+      "balance": {
+        "type": "String"
+      }
+    }
+  },
   "withdrawalRequested": "Kala bixista waa la codsaday!",
   "withdrawalSuccessMessage": "Kala bixistaadi {amount} aya lagu guda jiraa.",
   "@withdrawalSuccessMessage": {
@@ -192,6 +206,23 @@
       }
     }
   },
+  "withdrawal": "Kala Bixid",
+  "feeLabel": "Khidmadda (0.99%):",
+  "totalDeduct": "Wadarta laga jarayo:",
+  "minAmountError": "Cadadka ugu yar waa {amount}",
+  "@minAmountError": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "maxAmountError": "Cadadka ugu badan waa {amount}",
+  "@maxAmountError": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "insufficientBalanceWithFee": "Haraagu kuguma filna (khidmadda oo ku jirta)",
+  "phoneLengthError": "Lambarku waa inuu ahaadaa 9 god",
   "payBills": "Bixi Biilasha",
   "selectCategory": "Dooro Qaybta",
   "recentBills": "Biilashii Dhowaa",
@@ -433,6 +464,7 @@
   "activeGoals": "Hadafyada Socda",
   "createNewGoal": "Samee Hadaf Cusub",
   "totalSavings": "Kaydka Dhan",
+  "cardBalanceLabel": "Kaarka: ",
   "chooseWithdrawalMethod": "Dooro Habka Lacag Bixinta",
   "sendToWallet": "U dir Boorsada",
   "payFromSavingBalance": "Ka bixi haraagaaga kaydka",
@@ -657,5 +689,26 @@
   "alignQRCode": "QR Code-ka ku aadi sanduuqa si uu u scan-gareeyo",
   "myQrCode": "Sawirkayga QR-ka",
   "shareMyQrCode": "La wadaag sawirkaaga QR-ka si aad lacag u hesho.",
-  "quickSend": "Xiriirada Degdega"
+  "quickSend": "Xiriirada Degdega",
+  "invalidWalletId": "Nambarka Wallet-ka waa khalad",
+  "cannotSendToSelf": "Isku diri kartid lacag",
+  "evcPlus": "EVC Plus",
+  "edahab": "e-Dahab",
+  "zaad": "ZAAD",
+  "sahal": "Sahal",
+  "purposeOfRemittance": "Sababta Lacag Dirista",
+  "purpose": "Ujeedada",
+  "familySupport": "Taageerada Qoyska",
+  "educationTuition": "Waxbarasho",
+  "medicalExpenses": "Caafimaad",
+  "businessTransaction": "Ganacsi",
+  "propertyRent": "Guri/Kiira",
+  "gift": "Hadiyad",
+  "other": "Kale",
+  "contactPermissionRequired": "Fadlan oggolaaw inaan akhrino dadka kugu jira (contacts) si aad u doorto.",
+  "openSettings": "Fur Settings",
+  "dailyLimit": "Xadka Maalinlaha ah",
+  "monthlyLimit": "Xadka Bisha",
+  "recentSavingsActivity": "Dhaqdhaqaaqa Kaydka",
+  "noActivityYet": "Weli ma jiraan dhaqdhaqaaqyo"
 }
