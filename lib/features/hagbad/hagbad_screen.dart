@@ -1145,6 +1145,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 spacing: 8,
                 children: [
+<<<<<<< HEAD
                   Text(
                     "\$${group.amount.toStringAsFixed(0)} / ${_getFrequencyText(group.frequency, l10n)}",
                     style: TextStyle(color: theme.hintColor, fontSize: 12 * context.fontSizeFactor),
@@ -1155,6 +1156,26 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       color: isDark ? Colors.greenAccent : Colors.green.shade700,
                       fontSize: 12 * context.fontSizeFactor,
                       fontWeight: FontWeight.bold,
+=======
+                  Flexible(
+                    child: Text(
+                      "\$${group.amount.toStringAsFixed(0)} / ${_getFrequencyText(group.frequency, l10n)}",
+                      style: TextStyle(color: theme.hintColor, fontSize: 12),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      "${l10n.currentBalance}: \$${group.currentBalance.toStringAsFixed(0)}",
+                      style: TextStyle(
+                        color: isDark ? Colors.greenAccent : Colors.green.shade700,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.right,
+>>>>>>> 3c1539c38d50365477a915f750f3576a122df531
                     ),
                   ),
                 ],
@@ -1201,9 +1222,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     spacing: 12,
                     runSpacing: 12,
                     children: [
-                      _buildInfoItem(l10n.nextInLine, nextReceiver.name, theme, isHighlight: true),
-                      _buildInfoItem(l10n.potWadar, "\$${group.totalPayout.toStringAsFixed(0)}", theme),
-                      _buildInfoItem(l10n.progress, "${group.currentCycle}/${group.totalCycles}", theme),
+                      Expanded(child: _buildInfoItem(l10n.nextInLine, nextReceiver.name, theme, isHighlight: true)),
+                      Expanded(child: Center(child: _buildInfoItem(l10n.potWadar, "\$${group.totalPayout.toStringAsFixed(0)}", theme))),
+                      Expanded(child: Align(alignment: Alignment.centerRight, child: _buildInfoItem(l10n.progress, "${group.currentCycle}/${group.totalCycles}", theme))),
                     ],
                   ),
                   if (group.serviceFee > 0)
@@ -1243,6 +1264,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                           color: theme.colorScheme.onSurface
                         ),
                       ),
+<<<<<<< HEAD
                       Wrap(
                         spacing: 8,
                         children: [
@@ -1284,8 +1306,58 @@ class _HagbadScreenState extends State<HagbadScreen> {
                             icon: Icon(Icons.chat_bubble_outline_rounded, size: 14 * context.fontSizeFactor),
                             label: Text(l10n.groupChat, style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
                             style: TextButton.styleFrom(padding: EdgeInsets.zero, foregroundColor: AppColors.primaryDark),
+=======
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          reverse: true,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (group.adminName == l10n.youAdmin)
+                                TextButton.icon(
+                                  onPressed: () => _performLiveQoriTuur(group),
+                                  icon: const Icon(Icons.shuffle_rounded, size: 14),
+                                  label: const Text("Qori-tuurka", style: TextStyle(fontSize: 12)),
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8), 
+                                    foregroundColor: Colors.purple,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8), 
+                                      side: BorderSide(color: Colors.purple.withValues(alpha: 0.2)),
+                                    ),
+                                  ),
+                                ),
+                              if (group.adminName == l10n.youAdmin && group.members.any((m) => !m.isFullyPaid(group.amount)))
+                                TextButton.icon(
+                                  onPressed: () => _remindAllPending(group),
+                                  icon: const Icon(Icons.notifications_active_outlined, size: 14),
+                                  label: Text(l10n.remindAll, style: const TextStyle(fontSize: 12)),
+                                  style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8), foregroundColor: Colors.orange),
+                                ),
+                              TextButton.icon(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ChatScreen(
+                                        userId: group.id,
+                                        userName: group.name,
+                                        userAvatar: group.name[0],
+                                        isGroup: true,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.chat_bubble_outline_rounded, size: 14),
+                                label: Text(l10n.groupChat, style: const TextStyle(fontSize: 12)),
+                                style: TextButton.styleFrom(padding: EdgeInsets.zero, foregroundColor: AppColors.primaryDark),
+                              ),
+                            ],
+>>>>>>> 3c1539c38d50365477a915f750f3576a122df531
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
@@ -1490,7 +1562,11 @@ class _HagbadScreenState extends State<HagbadScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
+<<<<<<< HEAD
         Text(label, style: TextStyle(color: Colors.grey, fontSize: 11 * context.fontSizeFactor)),
+=======
+        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 11), overflow: TextOverflow.ellipsis),
+>>>>>>> 3c1539c38d50365477a915f750f3576a122df531
         Text(
           value, 
           style: TextStyle(
@@ -1499,7 +1575,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
             color: isHighlight 
               ? (isDark ? Colors.blue[300] : AppColors.primaryDark) 
               : theme.colorScheme.onSurface
-          )
+          ),
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -1901,9 +1978,18 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   spacing: 4,
                   children: [
+<<<<<<< HEAD
                     Text(
                       member.name == "You" ? l10n.you : member.name,
                       style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: theme.colorScheme.onSurface, fontWeight: FontWeight.w500),
+=======
+                    Flexible(
+                      child: Text(
+                        member.name == "You" ? l10n.you : member.name,
+                        style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface, fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+>>>>>>> 3c1539c38d50365477a915f750f3576a122df531
                     ),
                     if (member.isTrusted)
                       Tooltip(

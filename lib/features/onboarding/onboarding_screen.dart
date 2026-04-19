@@ -268,27 +268,30 @@ class OnboardingPage extends StatelessWidget {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              data.color.withValues(alpha: 0.5),
+                              AppColors.accentTeal.withValues(alpha: 0.5),
                               isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.primaryDark.withValues(alpha: 0.1),
                             ],
                           ),
-                          child: data.imagePath.startsWith('http')
-                              ? Image.network(
-                                  data.imagePath,
-                                  fit: BoxFit.cover,
-                                  alignment: Alignment.topCenter,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  errorBuilder: (c, e, s) => Icon(Icons.broken_image_rounded, size: 100, color: data.color),
-                                )
-                              : Image.asset(
-                                  data.imagePath,
-                                  fit: BoxFit.cover,
-                                  alignment: Alignment.topCenter,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  errorBuilder: (c, e, s) => Icon(Icons.image_not_supported_rounded, size: 100, color: data.color),
-                                ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: data.imagePath.startsWith('http')
+                                ? Image.network(
+                                    data.imagePath,
+                                    fit: BoxFit.contain,
+                                    alignment: Alignment.center,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    errorBuilder: (c, e, s) => Icon(Icons.broken_image_rounded, size: 100, color: data.color),
+                                  )
+                                : Image.asset(
+                                    data.imagePath,
+                                    fit: BoxFit.contain,
+                                    alignment: Alignment.center,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    errorBuilder: (c, e, s) => Icon(Icons.image_not_supported_rounded, size: 100, color: data.color),
+                                  ),
+                          ),
                         ),
                       ),
                     ),

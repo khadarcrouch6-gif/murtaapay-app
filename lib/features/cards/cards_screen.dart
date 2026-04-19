@@ -481,6 +481,7 @@ class _CardsScreenState extends State<CardsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+<<<<<<< HEAD
     
     // First, verify Virtual Card PIN (1122)
     _showPinVerification(context, state, l10n, (isVerified) {
@@ -503,6 +504,63 @@ class _CardsScreenState extends State<CardsScreen> {
                 colors: isDark 
                     ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
                     : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
+=======
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (stateCtx, setModalState) => GlassmorphicContainer(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.82,
+          borderRadius: 24,
+          blur: 30,
+          alignment: Alignment.topCenter,
+          border: 2,
+          linearGradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark 
+                ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
+                : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
+          ),
+          borderGradient: LinearGradient(
+            colors: [
+              (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.2), 
+              (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05)
+            ],
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      l10n.cardSettings,
+                      style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.4)),
+                      ),
+                      child: Text(
+                        currentCard.isFrozen 
+                          ? l10n.frozen
+                          : l10n.active,
+                        style: TextStyle(color: currentCard.isFrozen ? Colors.orange : AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+>>>>>>> 3c1539c38d50365477a915f750f3576a122df531
               ),
               borderGradient: LinearGradient(
                 colors: [
@@ -690,7 +748,7 @@ class _CardsScreenState extends State<CardsScreen> {
   void _showTerminateConfirmation(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
-      builder: (context) => BackdropFilter(
+      builder: (dialogCtx) => BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: AlertDialog(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -702,14 +760,13 @@ class _CardsScreenState extends State<CardsScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogCtx),
               child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
             ),
             ElevatedButton(
               onPressed: () {
-                final localContext = context;
-                Navigator.pop(context); // Close dialog
-                _processTransaction(localContext, l10n);
+                Navigator.pop(dialogCtx); // Close dialog
+                _processTransaction(context, l10n);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
@@ -902,7 +959,7 @@ class _CardsScreenState extends State<CardsScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => GlassmorphicContainer(
+      builder: (sheetCtx) => GlassmorphicContainer(
         width: double.infinity,
         height: 320,
         borderRadius: 24,
@@ -919,7 +976,7 @@ class _CardsScreenState extends State<CardsScreen> {
             Text(l10n.addNewCard, style: TextStyle(color: Colors.white, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              child: _buildSettingsTile(context: context, icon: Icons.add_card_rounded, color: AppColors.accentTeal, title: l10n.orderVirtualCard, subtitle: l10n.instantlyIssueNewCard, onTap: () => Navigator.pop(context), isLast: true),
+              child: _buildSettingsTile(context: context, icon: Icons.add_card_rounded, color: AppColors.accentTeal, title: l10n.orderVirtualCard, subtitle: l10n.instantlyIssueNewCard, onTap: () => Navigator.pop(sheetCtx), isLast: true),
             ),
           ],
         ),

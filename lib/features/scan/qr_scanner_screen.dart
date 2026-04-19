@@ -3,8 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:ui';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/responsive_utils.dart';
 import 'scan_result_screen.dart';
@@ -19,6 +21,7 @@ class QRScannerScreen extends StatefulWidget {
 class _QRScannerScreenState extends State<QRScannerScreen> {
   final MobileScannerController controller = MobileScannerController();
   bool _isDisposed = false;
+  bool _isReceiveMode = false;
 
   @override
   void dispose() {
@@ -28,7 +31,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   }
 
   void _onDetect(BarcodeCapture capture) {
-    if (_isDisposed) return;
+    if (_isDisposed || !mounted) return;
     final List<Barcode> barcodes = capture.barcodes;
     if (barcodes.isNotEmpty) {
       final String? code = barcodes.first.rawValue;
@@ -43,7 +46,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
           ),
         ).then((_) {
           // Restart scanning when coming back
-          if (!_isDisposed) {
+          if (!_isDisposed && mounted && !_isReceiveMode) {
             controller.start();
           }
         });
@@ -57,11 +60,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
       
       if (image != null && !_isDisposed) {
-        // In mobile_scanner 3.x, analyzeImage returns Future<bool> 
-        // and detections are typically reported via the onDetect callback.
-        final bool found = await controller.analyzeImage(image.path);
+        final BarcodeCapture? capture = await controller.analyzeImage(image.path);
         
-        if (!found) {
+        if (capture == null || capture.barcodes.isEmpty) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -69,8 +70,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
               backgroundColor: Colors.redAccent,
             ),
           );
+        } else {
+          _onDetect(capture);
         }
-        // If found == true, _onDetect will handle navigation automatically.
       }
     } catch (e) {
       if (!mounted) return;
@@ -85,96 +87,329 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF1C1C1E), // Dark background similar to the screenshot
       body: Stack(
         children: [
-          // 1. Scanner Preview
-          MobileScanner(
-            controller: controller,
-            onDetect: _onDetect,
+          // Background Gradient to match the aesthetic
+          Container(
+            decoration: const BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.center,
+                radius: 1.0,
+                colors: [
+                  Color(0xFF2C3E50),
+                  Color(0xFF1C1C1E),
+                ],
+              ),
+            ),
           ),
 
-          // 2. Custom Overlay
-          _buildOverlay(context),
+          // Main Content
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: _isReceiveMode ? _buildReceiveView(context) : _buildPayView(context),
+          ),
 
-          // 3. Header Controls
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 16,
-            left: 16,
-            right: 16,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Header with Toggle
+          SafeArea(
+            child: Column(
               children: [
-                _buildCircularButton(
-                  icon: Icons.arrow_back_ios_new_rounded,
-                  onTap: () => Navigator.pop(context),
-                ),
-                Text(
-                  l10n.scanQR,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildCircularButton(
+                        icon: Icons.close_rounded,
+                        onTap: () => Navigator.pop(context),
+                      ),
+                      
+                      // Toggle Switch
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.4),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isReceiveMode = false;
+                                  controller.start();
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: !_isReceiveMode ? Colors.white.withOpacity(0.2) : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(26),
+                                ),
+                                child: Text(
+                                  "Pay",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: !_isReceiveMode ? FontWeight.bold : FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isReceiveMode = true;
+                                  controller.stop();
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: _isReceiveMode ? Colors.white.withOpacity(0.2) : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(26),
+                                ),
+                                child: Text(
+                                  "Receive",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: _isReceiveMode ? FontWeight.bold : FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Settings or Flash/Image buttons depending on mode
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (!_isReceiveMode) ...[
+                            _buildCircularButton(
+                              icon: Icons.image_rounded,
+                              onTap: _pickAndAnalyzeImage,
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          _buildCircularButton(
+                            icon: _isReceiveMode ? Icons.settings_rounded : Icons.flash_on_rounded,
+                            onTap: () {
+                              if (!_isReceiveMode) {
+                                controller.toggleTorch();
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-                Row(
-                  children: [
-                    _buildCircularButton(
-                      icon: Icons.image_rounded,
-                      onTap: _pickAndAnalyzeImage,
-                    ),
-                    const SizedBox(width: 8),
-                    _buildCircularButton(
-                      icon: Icons.flash_on_rounded,
-                      onTap: () => controller.toggleTorch(),
-                    ),
-                  ],
                 ),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
 
-          // 4. Footer Instructions
-          Positioned(
-            bottom: MediaQuery.of(context).padding.bottom + 40,
-            left: 32,
-            right: 32,
-            child: FadeInUp(
-              duration: const Duration(milliseconds: 800),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.qr_code_2_rounded, color: Colors.white, size: 32),
-                        const SizedBox(height: 12),
-                        Text(
-                          l10n.alignQRCode,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
+  Widget _buildPayView(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Stack(
+      key: const ValueKey('pay_view'),
+      children: [
+        MobileScanner(
+          controller: controller,
+          onDetect: _onDetect,
+        ),
+        _buildOverlay(context),
+        Positioned(
+          bottom: MediaQuery.of(context).padding.bottom + 40,
+          left: 32,
+          right: 32,
+          child: FadeInUp(
+            duration: const Duration(milliseconds: 800),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.qr_code_2_rounded, color: Colors.white, size: 32),
+                      const SizedBox(height: 12),
+                      Text(
+                        l10n.alignQRCode,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildReceiveView(BuildContext context) {
+    final state = AppState();
+    return Center(
+      key: const ValueKey('receive_view'),
+      child: FadeIn(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(color: Colors.white.withOpacity(0.15)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 30,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // QR Code Card
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    QrImageView(
+                      data: 'https://murtaaxpay.com/pay/${state.walletId}',
+                      version: QrVersions.auto,
+                      size: 220.0,
+                      backgroundColor: Colors.white,
+                      eyeStyle: const QrEyeStyle(
+                        eyeShape: QrEyeShape.square,
+                        color: Colors.black87,
+                      ),
+                      dataModuleStyle: const QrDataModuleStyle(
+                        dataModuleShape: QrDataModuleShape.circle,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    // Central 'M' Logo for MurtaaxPay
+                    Container(
+                      width: 54,
+                      height: 54,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryDark,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.white, width: 4),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                          )
+                        ],
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "M",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
+              
+              // Username
+              Text(
+                "@${state.walletId}",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 12),
+              
+              // Subtitle
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  "Scan to get paid by anyone, even if they are not on MurtaaxPay",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.6),
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              
+              // Share Button
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Share logic
+                },
+                icon: const Icon(Icons.ios_share_rounded, size: 18),
+                label: const Text(
+                  "Share link",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black87,
+                  elevation: 0,
+                  minimumSize: const Size(200, 52),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(26),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -286,7 +521,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white.withOpacity(0.2)),
             ),
-            child: Icon(icon, color: Colors.white, size: 24),
+            child: Icon(icon, color: Colors.white, size: 20),
           ),
         ),
       ),

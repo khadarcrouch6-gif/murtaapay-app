@@ -106,13 +106,17 @@ class AppLocalizationsSo extends AppLocalizations {
   String get selectPaymentMethod => 'Dooro habka lacag bixinta';
 
   @override
-  String get murtaaxWallet => 'Murtaax Wallet';
+  String get murtaaxWallet => 'Wallet-ka Murtaax';
 
   @override
   String get visaMastercard => 'Visa / MasterCard';
 
   @override
+<<<<<<< HEAD
   String get mobileMoney => 'Lacagta Moobaylka';
+=======
+  String get mobileMoney => 'Lacagta Mobilka';
+>>>>>>> 3c1539c38d50365477a915f750f3576a122df531
 
   @override
   String get transactionFee => 'Kharashka dirista';
@@ -256,7 +260,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get enterAmountToDeposit => 'Gali cadadka aad dhigato';
 
   @override
-  String get confirmTopUp => 'Confirm Top-Up';
+  String get confirmTopUp => 'Xaqiiji Lacag Shubista';
 
   @override
   String get expiry => 'Wakhtiga dhicitaanka';
@@ -467,45 +471,46 @@ class AppLocalizationsSo extends AppLocalizations {
   String get enterSecurityPin => 'Gali PIN-ka Aminiga';
 
   @override
-  String get cardInformation => 'Card Information';
+  String get cardInformation => 'Xogta Kaadhka';
 
   @override
-  String get visaDetails => 'Visa Details';
+  String get visaDetails => 'Faahfaahinta Visa-ha';
 
   @override
-  String get mastercardDetails => 'Mastercard Details';
+  String get mastercardDetails => 'Faahfaahinta Mastercard-ka';
 
   @override
   String cardDetailsInfo(Object amount) {
-    return 'Enter your card details to complete the transfer of $amount';
+    return 'Geli xogta kaadhkaaga si aad u dhammaystirto xawaaladda $amount';
   }
 
   @override
-  String get cardHolderName => 'Card Holder Name';
+  String get cardHolderName => 'Magaca Mulkiilaha Kaadhka';
 
   @override
-  String get expiryDate => 'Expiry Date';
+  String get expiryDate => 'Taariikhda Dhicitaanka';
 
   @override
   String get cvv => 'CVV';
 
   @override
-  String get secureProcessing => 'Securely processing your payment...';
+  String get secureProcessing =>
+      'Waxaa si ammaan ah loo socodsiinayaa lacag bixintaada...';
 
   @override
-  String get selectBank => 'Select Bank';
+  String get selectBank => 'Dooro Bangiga';
 
   @override
   String get addBank => 'Ku dar Bangi';
 
   @override
-  String get murtaaxWalletDesc => 'Pay from your app balance';
+  String get murtaaxWalletDesc => 'Ka bixi hadhaaga app-kaaga';
 
   @override
-  String get visaMastercardDesc => 'Pay using your card';
+  String get visaMastercardDesc => 'Ku bixi adoo isticmaalaya kaadhkaaga';
 
   @override
-  String get bankTransferDesc => 'Direct bank transfer';
+  String get bankTransferDesc => 'Xawilaad toos ah oo bangi';
 
   @override
   String get mobileMoneyDesc => 'EVC Plus, Sahal, ZAAD, e-Dahab';
@@ -615,76 +620,76 @@ class AppLocalizationsSo extends AppLocalizations {
   String get cardHolder => 'MILKIILAHA KAARKAA';
 
   @override
-  String get yourName => 'YOUR NAME';
+  String get yourName => 'MAGACAAGA';
 
   @override
   String get expires => 'WUXUU DHACAYAA';
 
   @override
-  String get requiredField => 'Required';
+  String get requiredField => 'Waa lagama maarmaan';
 
   @override
   String get chooseProviderAndEnterPhone =>
-      'Choose your provider and enter phone number';
+      'Dooro shirkadda oo geli lambarka telefoonka';
 
   @override
-  String get enterNumberToCharge => 'Enter number to charge';
+  String get enterNumberToCharge => 'Geli lambarka lacagta laga jarayo';
 
   @override
-  String get servicePin => 'Service PIN';
+  String get servicePin => 'PIN-ka Adeegga';
 
   @override
-  String get enterPin => 'Enter PIN';
+  String get enterPin => 'Geli PIN-ka';
 
   @override
-  String get ibanHint => 'e.g. GB29 NWBK 6016 1331 9268 19';
+  String get ibanHint => 'tusaale: GB29 NWBK 6016 1331 9268 19';
 
   @override
-  String get cardHolderNameLabel => 'Card Holder Name';
+  String get cardHolderNameLabel => 'Magaca Mulkiilaha Kaadhka';
 
   @override
-  String get johnDoe => 'John Doe';
+  String get johnDoe => 'Maxamed Cali';
 
   @override
   String get verifyingIdentity => 'Xaqiijinta Aqoonsiga...';
 
   @override
-  String get pleaseFillAllFields => 'Please fill in all fields';
+  String get pleaseFillAllFields => 'Fadlan buuxi dhammaan meelaha banaan';
 
   @override
-  String get virtualCardTopUp => 'Virtual Card Top-Up';
+  String get virtualCardTopUp => 'Ku Shubista Kaadhka Virtual-ka';
 
   @override
-  String get cardTopUpSuccessful => 'Card Top-Up Successful!';
+  String get cardTopUpSuccessful => 'Lacag ku shubista kaadhku waa guul!';
 
   @override
   String cardTopUpSuccessMessage(String amount) {
-    return '$amount has been added to your virtual card.';
+    return '$amount ayaa lagu daray kaadhkaaga virtual-ka ah.';
   }
 
   @override
-  String get enterAmountToTopUp => 'Enter amount to top up';
+  String get enterAmountToTopUp => 'Geli cadadka aad ku shubayso';
 
   @override
-  String get topUp => 'Top Up';
+  String get topUp => 'Ku Shubo';
 
   @override
   String topUpInstantlyVia(String method) {
-    return 'Top up instantly via $method';
+    return 'Si degdeg ah ugu shubo $method';
   }
 
   @override
-  String get walletPin => 'Wallet PIN';
+  String get walletPin => 'PIN-ka Wallet-ka';
 
   @override
   String get enterWalletPinMessage =>
-      'Enter your 4-digit wallet PIN to authorize top-up.';
+      'Geli 4-digit PIN-kaaga wallet-ka si aad u xaqiijiso lacag ku shubista.';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'Xaqiiji';
 
   @override
-  String get submit => 'Submit';
+  String get submit => 'Gudbi';
 
   @override
   String get accountName => 'Magaca Koontada';
@@ -695,14 +700,14 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String cardEndingIn(String lastFour) {
-    return 'Card ending in $lastFour';
+    return 'Kaadhka ku dhammaada $lastFour';
   }
 
   @override
   String get withdrawMoney => 'Kala Bax Lacag';
 
   @override
-  String get withdrawToStripe => 'Withdraw to your Stripe account';
+  String get withdrawToStripe => 'Kala bax akoonkaaga Stripe';
 
   @override
   String get withdrawalMethod => 'Habka Kala Bixista';
@@ -966,23 +971,23 @@ class AppLocalizationsSo extends AppLocalizations {
   String get topUpFromWallet => 'Kaga buuxi Boorsada';
 
   @override
-  String get withdrawToWallet => 'Send to Wallet';
+  String get withdrawToWallet => 'U dir Wallet-ka';
 
   @override
-  String get withdrawToWalletDesc => 'Transfer to your main wallet balance';
+  String get withdrawToWalletDesc => 'U wareeji hadhaaga wallet-kaaga weyn';
 
   @override
-  String get withdrawToBankDesc => 'Withdraw to local or international bank';
+  String get withdrawToBankDesc => 'Kala bax bangi gudaha ama dibadda ah';
 
   @override
   String get withdrawToStripeDesc => 'Kala bax akoonkaaga Stripe';
 
   @override
   String get enterVirtualCardPin =>
-      'Enter your 4-digit virtual card PIN to authorize withdrawal.';
+      'Geli 4-digit PIN-kaaga kaadhka virtual-ka ah si aad u xaqiijiso kala bixitaanka.';
 
   @override
-  String get currentCardBalance => 'CURRENT CARD BALANCE';
+  String get currentCardBalance => 'HADHAAGA KAADHKA EE HADDA';
 
   @override
   String get welcomeBack => 'Ku soo dhawaaw';
@@ -1020,7 +1025,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get useFaceIdFingerprint => 'Isticmaal FaceID / Faraha';
 
   @override
-  String get virtualCardBalance => 'VIRTUAL CARD BALANCE';
+  String get virtualCardBalance => 'HADHAAGA KAADHKA VIRTUAL-KA AH';
 
   @override
   String get messages => 'Farimaha';
@@ -1640,22 +1645,24 @@ class AppLocalizationsSo extends AppLocalizations {
   String get yearly => 'Sannadle';
 
   @override
-  String get hagbadCreatedSuccess => 'Hagbad Group Created Successfully!';
+  String get hagbadCreatedSuccess =>
+      'Kooxda Hagbad-da waa la abuuray si guul leh!';
 
   @override
-  String get drawing => 'Drawing...';
+  String get drawing => 'Bakhti-nasiibka...';
 
   @override
   String get qoriTuur => 'Qori-tuur';
 
   @override
-  String get noHagbadGroups => 'No groups yet. Create one to start saving!';
+  String get noHagbadGroups =>
+      'Weli ma jiraan kooxo. Abuur mid si aad u bilowdo kaydinta!';
 
   @override
-  String get progress => 'Progress';
+  String get progress => 'Heerka';
 
   @override
-  String get members => 'Members';
+  String get members => 'Xubnaha';
 
   @override
   String get you => 'Adiga';

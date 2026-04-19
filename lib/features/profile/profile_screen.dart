@@ -706,11 +706,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
                     ),
-                    child: QrImageView(
-                      data: state.walletId,
-                      version: QrVersions.auto,
-                      size: 200.0,
-                      foregroundColor: AppColors.primaryDark,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        QrImageView(
+                          data: 'https://murtaaxpay.com/pay/${state.walletId}',
+                          version: QrVersions.auto,
+                          size: 220.0,
+                          backgroundColor: Colors.white,
+                          eyeStyle: const QrEyeStyle(
+                            eyeShape: QrEyeShape.square,
+                            color: Colors.black87,
+                          ),
+                          dataModuleStyle: const QrDataModuleStyle(
+                            dataModuleShape: QrDataModuleShape.circle,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        // Central 'M' Logo for MurtaaxPay
+                        Container(
+                          width: 54,
+                          height: 54,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryDark,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white, width: 4),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 8,
+                                spreadRadius: 2,
+                              )
+                            ],
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "M",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                height: 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
