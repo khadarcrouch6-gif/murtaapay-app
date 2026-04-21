@@ -494,6 +494,17 @@ class ReviewScreen extends StatelessWidget {
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
           transactionData: transactionData,
+          onPressed: () {
+            Navigator.of(context).popUntil((route) {
+              return route.settings.name == 'SendAmountScreen' || route.isFirst;
+            });
+            // If we are at isFirst and it's not SendAmountScreen, we might need to push it or 
+            // just ensure SendAmountScreen is reached. 
+            // However, usually it's in the stack.
+            // A safer way if name is not set:
+            // Navigator.of(context).pop(); // Pops SuccessScreen to ReceiverScreen
+            // Navigator.of(context).pop(); // Pops ReceiverScreen to SendAmountScreen
+          },
         ),
       ),
     );

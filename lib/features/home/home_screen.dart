@@ -123,6 +123,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             Navigator.push(
               context,
               MaterialPageRoute(
+                settings: const RouteSettings(name: 'SendAmountScreen'),
                 builder: (context) => SendAmountScreen(
                   prefilledWalletId: phoneNumber,
                   prefilledName: verifiedName.split(' ').first,
@@ -513,7 +514,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 children: [
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : double.infinity),
-                    child: _buildActionButton(context, l10n.send, FontAwesomeIcons.circleArrowRight, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SendAmountScreen()))),
+                    child: _buildActionButton(context, l10n.send, FontAwesomeIcons.circleArrowRight, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(settings: const RouteSettings(name: 'SendAmountScreen'), builder: (context) => const SendAmountScreen()))),
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
@@ -916,6 +917,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     Navigator.push(
       context,
       MaterialPageRoute(
+        settings: const RouteSettings(name: 'SendAmountScreen'),
         builder: (context) => SendAmountScreen(
           prefilledWalletId: profile.walletId,
           prefilledName: profile.name,
@@ -1013,10 +1015,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                               child: CircleAvatar(
                                 radius: 30,
-                                backgroundImage: profile.avatarUrl != null && profile.avatarUrl!.startsWith('http') 
-                                  ? NetworkImage(profile.avatarUrl!) 
-                                  : AssetImage(profile.avatarUrl ?? 'assets/avatars/avatar1.png') as ImageProvider,
-                                backgroundColor: Colors.grey.shade200,
+                                backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+                                child: ClipOval(
+                                  child: Image(
+                                    image: profile.avatarUrl != null && profile.avatarUrl!.startsWith('http') 
+                                      ? NetworkImage(profile.avatarUrl!) 
+                                      : AssetImage(profile.avatarUrl ?? 'assets/avatars/avatar1.png') as ImageProvider,
+                                    fit: BoxFit.cover,
+                                    width: 60,
+                                    height: 60,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(
+                                        Icons.person_rounded,
+                                        color: AppColors.accentTeal,
+                                        size: 30,
+                                      );
+                                    },
+                                  ),
+                                ),
                               ),
                             ),
                           ],

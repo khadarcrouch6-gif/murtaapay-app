@@ -66,44 +66,44 @@ class AppLocalizationsSo extends AppLocalizations {
   String get vouchers => 'Vouchers';
 
   @override
-  String get seeAll => 'Arag dhammaan';
+  String get seeAll => 'See All';
 
   @override
-  String get spendingAnalysis => 'Falanqaynta kharashka';
+  String get spendingAnalysis => 'Spending Analysis';
 
   @override
-  String get walletBalance => 'Haraaga boorsada';
+  String get walletBalance => 'Wallet Balance';
 
   @override
-  String get getStarted => 'Bilow hadda';
+  String get getStarted => 'Bilow';
 
   @override
-  String get virtualCard => 'Kaarka Virtual-ka';
+  String get virtualCard => 'Kaadhka Virtual-ka';
 
   @override
   String get virtualCardDesc =>
-      'Hel kaar virtual ah oo aamin ah oo caalamka wax kaga iibso.';
+      'Get your secure virtual card and shop globally.';
 
   @override
   String get enterAmount => 'Geli cadadka';
 
   @override
-  String get transferLimit => 'Xadadka: \$50,000.00';
+  String get transferLimit => 'Limit: \$50,000.00';
 
   @override
-  String get feeRate => 'Kharashka: \$0.99 halkii \$100';
+  String get feeRate => 'Fee: \$0.99 per \$100';
 
   @override
-  String get youSend => 'Waxaad diraysaa';
+  String get youSend => 'You Send';
 
   @override
-  String get searchCurrency => 'Raadi lacagta';
+  String get searchCurrency => 'Search currency';
 
   @override
-  String get receiverGets => 'Waxa helaya qofka';
+  String get receiverGets => 'Receiver Gets';
 
   @override
-  String get selectPaymentMethod => 'Dooro habka lacag bixinta';
+  String get selectPaymentMethod => 'Select Payment Method';
 
   @override
   String get murtaaxWallet => 'Wallet-ka Murtaax';
@@ -112,363 +112,356 @@ class AppLocalizationsSo extends AppLocalizations {
   String get visaMastercard => 'Visa / MasterCard';
 
   @override
-<<<<<<< HEAD
-  String get mobileMoney => 'Lacagta Moobaylka';
-=======
   String get mobileMoney => 'Lacagta Mobilka';
->>>>>>> 3c1539c38d50365477a915f750f3576a122df531
 
   @override
-  String get transactionFee => 'Kharashka dirista';
+  String get transactionFee => 'Kharashka dhaqdhaqaaqa';
 
   @override
-  String get totalToPay => 'Wadarta guud';
+  String get totalToPay => 'Wadarta la bixinayo';
 
   @override
-  String get insufficientBalance => 'Haraagu kuguma filna';
+  String get insufficientBalance => 'Haraagaagu kuguma filna';
 
   @override
-  String get receiverDetails => 'Faahfaahinta qaataha';
+  String get receiverDetails => 'Receiver Details';
 
   @override
-  String get enterReceiverPhone => 'Geli lambarka taleefanka qaataha';
+  String get enterReceiverPhone => 'Enter Receiver Phone Number';
 
   @override
   String get phoneNumber => 'Lambarka Taleefanka';
 
   @override
-  String get receiver => 'Qaataha';
+  String get receiver => 'Receiver';
 
   @override
-  String get recent => 'Dhowaan';
+  String get recent => 'Recent';
 
   @override
-  String get pleaseEnterDetails => 'Fadlan geli faahfaahinta qaataha';
+  String get pleaseEnterDetails => 'Please enter receiver details';
 
   @override
   String get invalidAmount => 'Invalid amount';
 
   @override
-  String get continueToReview => 'Sii soco si aad u eegto';
+  String get continueToReview => 'Continue to Review';
 
   @override
-  String get reviewTransfer => 'Dib u eegista xawaaladda';
+  String get reviewTransfer => 'Review Transfer';
 
   @override
   String get paymentMethod => 'Habka lacag bixinta';
 
   @override
-  String get fee => 'Kharashka';
+  String get fee => 'Fee';
 
   @override
-  String get exchangeRate => 'Qiimaha sarrifka';
+  String get exchangeRate => 'Heerka sarrifka';
 
   @override
-  String get deliveryNotice => 'Lacagta waxay gaari doontaa daqiiqado gudahood';
+  String get deliveryNotice => 'Funds will be delivered within minutes';
 
   @override
-  String get confirmAndPay => 'Hubi oo bixi';
+  String get confirmAndPay => 'Confirm and Pay';
 
   @override
-  String get choosePaymentMethod => 'Dooro habka lacag bixinta';
+  String get choosePaymentMethod => 'Choose Payment Method';
 
   @override
-  String get finalSummary => 'Koobitaanka u dambeeya';
+  String get finalSummary => 'Final Summary';
 
   @override
   String get amount => 'Cadadka';
 
   @override
-  String get instantPaymentFromWallet =>
-      'Lacag bixin degdeg ah oo boorsada ka socota';
+  String get instantPaymentFromWallet => 'Instant payment from wallet';
 
   @override
-  String get payViaHormuud => 'Ku bixi Hormuud EVC Plus';
+  String get payViaHormuud => 'Pay via Hormuud EVC Plus';
 
   @override
-  String get payViaTelesom => 'Ku bixi Telesom ZAAD';
+  String get payViaTelesom => 'Pay via Telesom ZAAD';
 
   @override
-  String get payViaSomtel => 'Ku bixi Somtel e-Dahab';
+  String get payViaSomtel => 'Pay via Somtel e-Dahab';
 
   @override
-  String get bankTransfer => 'Xawaalad Bangi';
+  String get bankTransfer => 'Bank Transfer';
 
   @override
-  String get localBankTransfer => 'Xawaalad bangi oo maxalli ah';
+  String get localBankTransfer => 'Local Somali bank transfer';
 
   @override
-  String get internationalMethods => 'Hababka caalamiga ah';
+  String get internationalMethods => 'International Methods';
 
   @override
-  String get payWithInternationalCard => 'Ku bixi kaar caalami ah';
+  String get payWithInternationalCard => 'Pay with international card';
 
   @override
-  String get payNow => 'Bixi hadda';
+  String get payNow => 'Hadda bixi';
 
   @override
-  String get transferSuccessful => 'Diristii way guulaysatay!';
+  String get transferSuccessful => 'Transfer Successful!';
 
   @override
   String transferSentMessage(Object amount, Object receiver) {
-    return '$amount ayaa si aamin ah loogu diray $receiver.';
+    return '$amount has been safely sent to $receiver.';
   }
 
   @override
-  String get method => 'Habka';
+  String get method => 'Method';
 
   @override
-  String get accountNumber => 'Lambarka Koontada';
+  String get accountNumber => 'Account Number';
 
   @override
-  String get walletId => 'ID-ga Boorsada';
+  String get walletId => 'ID-ga Wallet-ka';
 
   @override
-  String get cardNumber => 'Lambarka Kaarka';
+  String get cardNumber => 'Card Number';
 
   @override
-  String get payoutVia => 'Habka loo helayo';
+  String get payoutVia => 'Payout Via';
 
   @override
-  String get paidUsing => 'Habka loo bixiyay';
+  String get paidUsing => 'Paid Using';
 
   @override
   String get cancel => 'Jooji';
 
   @override
-  String get moneyOnWay => 'Lacagtaadii way socotaa.';
+  String get moneyOnWay => 'Your money is on its way.';
 
   @override
-  String get refId => 'Aqoonsiga';
+  String get refId => 'Ref ID';
 
   @override
-  String get idCopied => 'ID-ga waa la koobiyeeyay';
+  String get idCopied => 'ID-ga waa la koobiyey';
 
   @override
-  String get shareReceipt => 'La wadaag rasiidhka';
+  String get shareReceipt => 'Share Receipt';
 
   @override
-  String get reference => 'Tixraaca';
+  String get reference => 'Reference';
 
   @override
-  String get backToHome => 'Ku laabo hoyga';
+  String get backToHome => 'Ku laabo Hoyga';
 
   @override
-  String get addMoney => 'Ku dar Lacag';
+  String get addMoney => 'Add Money';
 
   @override
-  String get enterAmountToDeposit => 'Gali cadadka aad dhigato';
+  String get enterAmountToDeposit => 'Enter Amount to Deposit';
 
   @override
   String get confirmTopUp => 'Xaqiiji Lacag Shubista';
 
   @override
-  String get expiry => 'Wakhtiga dhicitaanka';
+  String get expiry => 'Expiry';
 
   @override
-  String get cardholderName => 'Magaca qofka iska leh';
+  String get cardholderName => 'Cardholder Name';
 
   @override
-  String get fullNameOnCard => 'Magaca oo buuxa ee kaarka ku qoran';
+  String get fullNameOnCard => 'Full name on card';
 
   @override
   String get selectProvider => 'Dooro Shirkadda';
 
   @override
-  String get accountHolderName => 'Magaca qofka akoonka leh';
+  String get accountHolderName => 'Account Holder Name';
 
   @override
-  String get fullName => 'Magaca oo buuxa';
+  String get fullName => 'Magaca oo dhammaystiran';
 
   @override
-  String get reviewDeposit => 'Eeg Dhigashada horta';
+  String get reviewDeposit => 'Review Deposit';
 
   @override
-  String get totalCharged => 'Wadarta Guud';
+  String get totalCharged => 'Total Charged';
 
   @override
-  String get confirmAndDeposit => 'Xaqiiji & Dhigo';
+  String get confirmAndDeposit => 'Confirm & Deposit';
 
   @override
-  String get depositSuccessful => 'Dhigashadu waa lagu guulaystay!';
+  String get depositSuccessful => 'Deposit Successful!';
 
   @override
   String depositSuccessMessage(Object amount) {
-    return '$amount waa lagu daray boorsadaada.';
+    return '$amount has been added to your wallet.';
   }
 
   @override
-  String get stepAmount => 'Cadadka';
+  String get stepAmount => 'Amount';
 
   @override
-  String get stepReceiver => 'Qaataha';
+  String get stepReceiver => 'Receiver';
 
   @override
-  String get stepPayment => 'Lacag bixinta';
+  String get stepPayment => 'Payment';
 
   @override
-  String get stepReview => 'Eegis';
+  String get stepReview => 'Review';
 
   @override
-  String get refreshed => 'Waa la cusboonaysiiyay';
+  String get refreshed => 'Refreshed';
 
   @override
-  String get ok => 'Hagaag';
+  String get ok => 'OK';
 
   @override
-  String get feeInfoTitle => 'Warbixinta Kharashka';
+  String get feeInfoTitle => 'Exchange Fee Info';
 
   @override
   String get feeInfoContent =>
-      'Kharashku waa 0.99%. Tusaale: markaad dirto \$100 khidmaddu waa \$0.99 kaliya.';
+      'The fee is 0.99%. For example: sending \$100 will cost only \$0.99 in fees.';
 
   @override
   String get maxLabel => 'MAX';
 
   @override
-  String get continueLabel => 'Sii soco';
+  String get continueLabel => 'Continue';
 
   @override
-  String get murtaaxTransfer => 'Xawaaladda Murtaax';
+  String get murtaaxTransfer => 'Murtaax Transfer';
 
   @override
-  String get enterReceiverWalletId => 'Geli ID-ga boorsada qaataha';
+  String get enterReceiverWalletId => 'Enter Receiver Wallet ID';
 
   @override
   String get walletIdTransferNotice =>
-      'Lacagta si degdeg ah ayaa loogu wareejin doonaa ID-ga Murtaax ee la cayimay.';
+      'Funds will be transferred instantly to the specified Murtaax ID.';
 
   @override
-  String get enterWalletIdHint => 'Geli ID-ga boorsada (tusaale 102234)';
+  String get enterWalletIdHint => 'Enter Wallet ID (e.g. 102234)';
 
   @override
-  String get verifiedReceiverLabel => 'QAATAHA LA HUUBIYAY';
+  String get verifiedReceiverLabel => 'VERIFIED RECEIVER';
 
   @override
-  String get recentContacts => 'Dadkii u dambeeyay';
+  String get recentContacts => 'Recent Contacts';
 
   @override
-  String get securityVerification => 'Xaqiijinta amniga';
+  String get securityVerification => 'Security Verification';
 
   @override
   String get enterTransactionPin =>
-      'Fadlan geli 4-ta god ee PIN-kaaga si aad u oggolaato lacag bixintan.';
+      'Please enter your 4-digit PIN to authorize this payment.';
 
   @override
-  String get authorizing => 'Oggolaansho...';
+  String get authorizing => 'Authorizing...';
 
   @override
   String confirmPaymentAmount(Object amount) {
-    return 'Xaqiiji lacag bixinta ($amount)';
+    return 'Confirm Payment ($amount)';
   }
 
   @override
   String get verifyingTransaction =>
-      'Xaqiijinta amniga xawaaladda iyo xiriirka server-yada Murtaax...';
+      'Securing confirming transaction with Murtaax servers...';
 
   @override
-  String get cancelAndChangeMethod => 'Jooji oo beddel habka';
+  String get cancelAndChangeMethod => 'Cancel and Change Method';
 
   @override
   String get active => 'Firfircoon';
 
   @override
-  String get availableBalance => 'HARAAGA LA HELI KARO';
+  String get availableBalance => 'AVAILABLE BALANCE';
 
   @override
-  String get deductFeeFromAmount => 'Khidmadda ka jar lacagta';
+  String get deductFeeFromAmount => 'Deduct fee from amount';
 
   @override
-  String get receiverWillReceiveLess => 'Qaataha ayaa wax yar heli doona';
+  String get receiverWillReceiveLess => 'Receiver will receive less';
 
   @override
-  String get payFeeSeparately => 'Khidmadda gooni u bixi';
+  String get payFeeSeparately => 'Pay fee separately';
 
   @override
-  String get myCards => 'Kaartayda';
+  String get myCards => 'My Cards';
 
   @override
-  String get addNewCard => 'Ku dar Kaar Cusub';
+  String get addNewCard => 'Add New Card';
 
   @override
-  String get cardNumberCopied => 'Lambarka kaarka waa la koobiyeeyay!';
+  String get cardNumberCopied => 'Card number copied!';
 
   @override
-  String get payWithCard => 'Ku bixi Kaar';
+  String get payWithCard => 'Pay with Card';
 
   @override
-  String get securePayment => 'Lacag bixin ammaan ah';
+  String get securePayment => 'Secure Payment';
 
   @override
-  String get cardDetails => 'Faahfaahinta Kaarka';
+  String get cardDetails => 'Card Details';
 
   @override
-  String get deposit => 'Dhigasho';
+  String get deposit => 'Deposit';
 
   @override
-  String get withdraw => 'La bixid';
+  String get withdraw => 'Kala bax';
 
   @override
   String get savings => 'Kaydka';
 
   @override
-  String get invest => 'Maalgashi';
+  String get invest => 'Invest';
 
   @override
   String get transactions => 'Dhaqdhaqaaqyada';
 
   @override
-  String get food => 'Cunno';
+  String get food => 'Food';
 
   @override
-  String get shopping => 'Adeeg';
+  String get shopping => 'Shopping';
 
   @override
-  String get billsLabel => 'Biilasha';
+  String get billsLabel => 'Bills';
 
   @override
   String get monthlyBudget => 'Miisaaniyadda Bisha';
 
   @override
-  String get cardSettings => 'Habsamada Kaarka';
+  String get cardSettings => 'Card Settings';
 
   @override
-  String get frozen => 'Waa la fadhiisiyay';
+  String get frozen => 'Frozen';
 
   @override
-  String get unfreezeCard => 'Ka qaad fadhiisinta';
+  String get unfreezeCard => 'Unfreeze Card';
 
   @override
-  String get freezeCard => 'Fadhiisi Kaarka';
+  String get freezeCard => 'Xir kaadhka';
 
   @override
-  String get temporarilyDisablePayments =>
-      'Si kumeel gaar ah u jooji lacag bixinta';
+  String get temporarilyDisablePayments => 'Temporarily disable payments';
 
   @override
   String get security => 'Amniga';
 
   @override
-  String get cardControls => 'Maamulka Kaarka';
+  String get cardControls => 'Card Controls';
 
   @override
-  String get onlinePayments => 'Lacag bixinta Online-ka';
+  String get onlinePayments => 'Online Payments';
 
   @override
-  String get internationalUsage => 'Isticmaalka Caalamiga ah';
+  String get internationalUsage => 'International Usage';
 
   @override
-  String get contactlessPayments => 'Lacag bixinta aan taabashada lahayn';
+  String get contactlessPayments => 'Contactless Payments';
 
   @override
-  String get terminateCard => 'Tirtir Kaarka';
+  String get terminateCard => 'Terminate Card';
 
   @override
-  String get permanentlyDeleteCard =>
-      'Si joogto ah u tirtir kaarkan virtual-ka ah';
+  String get permanentlyDeleteCard => 'Permanently delete this virtual card';
 
   @override
-  String get enterSecurityPin => 'Gali PIN-ka Aminiga';
+  String get enterSecurityPin => 'Enter Security PIN';
 
   @override
   String get cardInformation => 'Xogta Kaadhka';
@@ -501,7 +494,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get selectBank => 'Dooro Bangiga';
 
   @override
-  String get addBank => 'Ku dar Bangi';
+  String get addBank => 'Add Bank';
 
   @override
   String get murtaaxWalletDesc => 'Ka bixi hadhaaga app-kaaga';
@@ -516,114 +509,114 @@ class AppLocalizationsSo extends AppLocalizations {
   String get mobileMoneyDesc => 'EVC Plus, Sahal, ZAAD, e-Dahab';
 
   @override
-  String get identityVerification => 'Xaqiijinta Aqoonsiga';
+  String get identityVerification => 'Identity Verification';
 
   @override
-  String get verifyYourIdentity => 'Xaqiiji Aqoonsigaaga';
+  String get verifyYourIdentity => 'Verify Your Identity';
 
   @override
   String get verifyIdentityDesc =>
-      'Waxaan u baahanahay inaan xaqiijino aqoonsigaaga si aan koontadaada u ilaalino. Tani waxay qaadanaysaa 2 daqiiqo oo kaliya.';
+      'We need to verify your identity to keep your account secure. This only takes 2 minutes.';
 
   @override
-  String get prepareIdDoc => 'Diyaari dukumiintigaaga';
+  String get prepareIdDoc => 'Prepare your ID document';
 
   @override
-  String get wellLitArea => 'Hubi inaad joogto meel iftiimaysa';
+  String get wellLitArea => 'Make sure you\'re in a well-lit area';
 
   @override
-  String get followInstructions => 'Raac tilmaamaha shaashadda';
+  String get followInstructions => 'Follow the on-screen instructions';
 
   @override
-  String get letsGetStarted => 'Aan Bilowno';
+  String get letsGetStarted => 'Let\'s Get Started';
 
   @override
-  String get encryptedConnection => 'XOGTU WAA AMAAN';
+  String get encryptedConnection => 'ENCRYPTED & SECURE CONNECTION';
 
   @override
-  String get personalDetails => 'Faahfaahinta Shakhsiga';
+  String get personalDetails => 'Personal Details';
 
   @override
-  String get emailAddress => 'Boostada qoraalka';
+  String get emailAddress => 'Email-ka';
 
   @override
-  String get city => 'Magaalada';
+  String get city => 'City';
 
   @override
-  String get residentialAddress => 'Cinwaanka Hoyga';
+  String get residentialAddress => 'Residential Address';
 
   @override
-  String get required => 'Waa lagama maarmaan';
+  String get required => 'Required';
 
   @override
-  String get chooseDocumentType => 'Dooro Nooca Dukumiintiga';
+  String get chooseDocumentType => 'Choose Document Type';
 
   @override
-  String get passport => 'Baasaboor';
+  String get passport => 'Passport';
 
   @override
-  String get nationalIdCard => 'Kaadhka Aqoonsiga';
+  String get nationalIdCard => 'National ID Card';
 
   @override
-  String get driversLicense => 'Liisanka Wadista';
+  String get driversLicense => 'Driver\'s License';
 
   @override
-  String get bankGradeEncryption => 'Amniga heerka bangiga';
+  String get bankGradeEncryption => 'Bank-grade encryption';
 
   @override
-  String get dataDeletedNotice => 'Xogtaada waa la tirtiraa ka dib xaqiijinta';
+  String get dataDeletedNotice => 'Your data is deleted after verification';
 
   @override
-  String get frontOfIdCard => 'Hore ee Kaadhka';
+  String get frontOfIdCard => 'Front of ID Card';
 
   @override
-  String get verifyYourFace => 'Xaqiiji wejigaaga';
+  String get verifyYourFace => 'Verify your face';
 
   @override
-  String get positionFaceNotice => 'Wajigaaga dhig meel iftiimaysa oo cad';
+  String get positionFaceNotice => 'Position your face well-lit and clearly';
 
   @override
-  String get alignId => 'Toosi ID-ga';
+  String get alignId => 'Align your ID';
 
   @override
-  String get capturing => 'Waa la qabanayaa...';
+  String get capturing => 'Capturing...';
 
   @override
-  String get lookStraight => 'Toos u eeg';
+  String get lookStraight => 'Look Straight';
 
   @override
-  String get lookLeft => 'Bidix u eeg';
+  String get lookLeft => 'Look Left';
 
   @override
-  String get lookRight => 'Midig u eeg';
+  String get lookRight => 'Look Right';
 
   @override
-  String get verificationPending => 'Xaqiijinta wali way dhimantahay';
+  String get verificationPending => 'Verification Pending';
 
   @override
   String get verificationPendingDesc =>
-      'Dukumiintigaaga waa la baarayaa. Waxay qaadanaysaa 10-15 daqiiqo. Waxaan ku ogeysiin doonaa marka ay dhammaato.';
+      'Your documents are being reviewed. This usually takes 10-15 minutes. We\'ll notify you once it\'s complete.';
 
   @override
-  String get documentCheck => 'Baaritaanka Dukumiintiga';
+  String get documentCheck => 'Document Check';
 
   @override
-  String get scanningForClarity => 'Baadhista caddaynta';
+  String get scanningForClarity => 'Scanning for clarity';
 
   @override
-  String get biometricMatch => 'Match-ka Biometric-ga';
+  String get biometricMatch => 'Biometric Match';
 
   @override
-  String get comparingSelfie => 'Isbarbardhigga selfie iyo ID';
+  String get comparingSelfie => 'Comparing selfie with ID';
 
   @override
-  String get cardHolder => 'MILKIILAHA KAARKAA';
+  String get cardHolder => 'CARD HOLDER';
 
   @override
   String get yourName => 'MAGACAAGA';
 
   @override
-  String get expires => 'WUXUU DHACAYAA';
+  String get expires => 'EXPIRES';
 
   @override
   String get requiredField => 'Waa lagama maarmaan';
@@ -651,7 +644,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get johnDoe => 'Maxamed Cali';
 
   @override
-  String get verifyingIdentity => 'Xaqiijinta Aqoonsiga...';
+  String get verifyingIdentity => 'Verifying Identity...';
 
   @override
   String get pleaseFillAllFields => 'Fadlan buuxi dhammaan meelaha banaan';
@@ -692,11 +685,11 @@ class AppLocalizationsSo extends AppLocalizations {
   String get submit => 'Gudbi';
 
   @override
-  String get accountName => 'Magaca Koontada';
+  String get accountName => 'Account Name';
 
   @override
   String get transferToAccountBelow =>
-      'Fadlan lacagta ugu wareeji koontada hoos ku qoran ka dibna taabo sii soco.';
+      'Please transfer the amount to the account below and click continue.';
 
   @override
   String cardEndingIn(String lastFour) {
@@ -704,175 +697,174 @@ class AppLocalizationsSo extends AppLocalizations {
   }
 
   @override
-  String get withdrawMoney => 'Kala Bax Lacag';
+  String get withdrawMoney => 'Withdraw Money';
 
   @override
   String get withdrawToStripe => 'Kala bax akoonkaaga Stripe';
 
   @override
-  String get withdrawalMethod => 'Habka Kala Bixista';
+  String get withdrawalMethod => 'Withdrawal Method';
 
   @override
-  String get stripeEmail => 'Email-ka Stripe-ka';
+  String get stripeEmail => 'Stripe Email';
 
   @override
-  String get mobileNumber => 'Lambarka Moobaylka';
+  String get mobileNumber => 'Mobile Number';
 
   @override
   String get iban => 'IBAN';
 
   @override
-  String get reviewWithdrawal => 'Dib u eegista Kala Bixista';
+  String get reviewWithdrawal => 'Review Withdrawal';
 
   @override
-  String get details => 'Faahfaahinta';
+  String get details => 'Details';
 
   @override
-  String get free => 'Bilaash';
+  String get free => 'Free';
 
   @override
-  String get totalDeducted => 'Wadarta laga jaray';
+  String get totalDeducted => 'Total Deducted';
 
   @override
-  String get confirmWithdraw => 'Xaqiiji oo Kala Bax';
+  String get confirmWithdraw => 'Confirm & Withdraw';
 
   @override
-  String get confirmAndWithdraw => 'Xaqiiji oo Kala Bax';
+  String get confirmAndWithdraw => 'Confirm & Withdraw';
 
   @override
-  String get transactionFailed => 'Macaamilka Waa Fashilmay';
+  String get transactionFailed => 'Transaction Failed';
 
   @override
   String get transactionFailedMessage =>
-      'Wax baa qaldamay. Fadlan isku day markale ama la xiriir taageerada.';
+      'Something went wrong. Please try again or contact support.';
 
   @override
-  String get tryAgain => 'Isku day mar kale';
+  String get tryAgain => 'Mar kale isku day';
 
   @override
   String newBalance(String balance) {
-    return 'Haraaga Cusub: $balance';
+    return 'New Balance: $balance';
   }
 
   @override
-  String get withdrawalRequested => 'Kala bixista waa la codsaday!';
+  String get withdrawalRequested => 'Withdrawal Requested!';
 
   @override
   String withdrawalSuccessMessage(String amount) {
-    return 'Kala bixistaadi $amount aya lagu guda jiraa.';
+    return 'Your withdrawal of $amount is being processed.';
   }
 
   @override
-  String get withdrawal => 'Kala Bixid';
+  String get withdrawal => 'Withdrawal';
 
   @override
-  String get feeLabel => 'Khidmadda (0.99%):';
+  String get feeLabel => 'Fee (0.99%):';
 
   @override
-  String get totalDeduct => 'Wadarta laga jarayo:';
+  String get totalDeduct => 'Total Deduct:';
 
   @override
   String minAmountError(String amount) {
-    return 'Cadadka ugu yar waa $amount';
+    return 'Minimum amount is $amount';
   }
 
   @override
   String maxAmountError(String amount) {
-    return 'Cadadka ugu badan waa $amount';
+    return 'Maximum amount is $amount';
   }
 
   @override
-  String get insufficientBalanceWithFee =>
-      'Haraagu kuguma filna (khidmadda oo ku jirta)';
+  String get insufficientBalanceWithFee => 'Insufficient balance (incl. fee)';
 
   @override
-  String get phoneLengthError => 'Lambarku waa inuu ahaadaa 9 god';
+  String get phoneLengthError => 'Number must be 9 digits';
 
   @override
-  String get payBills => 'Bixi Biilasha';
+  String get payBills => 'Pay Bills';
 
   @override
-  String get selectCategory => 'Dooro Qaybta';
+  String get selectCategory => 'Select Category';
 
   @override
-  String get recentBills => 'Biilashii Dhowaa';
+  String get recentBills => 'Recent Bills';
 
   @override
-  String get amountToPay => 'Cadadka la bixinayo (\$)';
+  String get amountToPay => 'Cadadka la bixinayo';
 
   @override
-  String get confirmPayment => 'Xaqiiji Lacag Bixinta';
+  String get confirmPayment => 'Xaqiiji Bixinta';
 
   @override
-  String get paymentSuccessful => 'Lacag bixinta waa lagu guulaystay!';
+  String get paymentSuccessful => 'Bixinta way guulaysatay!';
 
   @override
   String paymentSuccessMessage(String amount, String category) {
-    return 'Lacag bixintaadi $amount ee $category waa laga gudubay.';
+    return 'Your payment of $amount for $category has been processed.';
   }
 
   @override
   String get billDetails => 'Faahfaahinta Biilka';
 
   @override
-  String get serviceProvider => 'Bixiyaha Adeegga';
+  String get serviceProvider => 'Service Provider';
 
   @override
-  String get category => 'Qaybta';
+  String get category => 'Category';
 
   @override
-  String get accountId => 'Aqoonsiga Xisaabta';
+  String get accountId => 'Account ID';
 
   @override
-  String get amountPaid => 'Lacagta la bixiyay';
+  String get amountPaid => 'Amount Paid';
 
   @override
-  String get paymentDate => 'Taariikhda Lacag Bixinta';
+  String get paymentDate => 'Payment Date';
 
   @override
-  String get status => 'Heerka';
+  String get status => 'Xaaladda';
 
   @override
   String get success => 'Guul';
 
   @override
-  String get pending => 'Sugayn';
+  String get pending => 'Wuu socdaa';
 
   @override
-  String get completed => 'Dhammaystiran';
+  String get completed => 'Guulaystay';
 
   @override
-  String get downloadReceipt => 'Soo deji Receipt-ka';
+  String get downloadReceipt => 'Download Receipt';
 
   @override
-  String get downloadPdf => 'Soo deji PDF';
+  String get downloadPdf => 'Download PDF';
 
   @override
   String get viewReceipt => 'View Receipt';
 
   @override
-  String get transactionSuccessful => 'Dhaqdhaqaaqa waa lagu guuleystay';
+  String get transactionSuccessful => 'Transaction Successful!';
 
   @override
-  String get topUpSuccessful => 'Lacag ku shubista waa lagu guuleystay';
+  String get topUpSuccessful => 'Top-up Successful!';
 
   @override
-  String get withdrawalSuccessful => 'Lacag bixinta waa lagu guuleystay';
+  String get withdrawalSuccessful => 'Withdrawal Successful!';
 
   @override
-  String get cardPaymentSuccessful => 'Lacag bixinta kaarka waa guul';
+  String get cardPaymentSuccessful => 'Card Payment Successful!';
 
   @override
-  String get walletTransaction => 'Dhaqdhaqaaqa Wallet-ka';
+  String get walletTransaction => 'Wallet Transaction';
 
   @override
-  String get merchant => 'Ganacsadaha';
+  String get merchant => 'Ganacsade';
 
   @override
-  String get sourceReceiver => 'Isha/Helaha';
+  String get sourceReceiver => 'Source/Receiver';
 
   @override
-  String get receiverSource => 'Qofka helay/Loo diray';
+  String get receiverSource => 'Receiver/Source';
 
   @override
   String get transactionId => 'ID-ga Dhaqdhaqaaqa';
@@ -881,10 +873,10 @@ class AppLocalizationsSo extends AppLocalizations {
   String get date => 'Taariikhda';
 
   @override
-  String get close => 'Xidh';
+  String get close => 'Close';
 
   @override
-  String get backToBills => 'Ku laabo Biillasha';
+  String get backToBills => 'Back to Bills';
 
   @override
   String get electricity => 'Korontada';
@@ -896,79 +888,78 @@ class AppLocalizationsSo extends AppLocalizations {
   String get internet => 'Internet-ka';
 
   @override
-  String get tvCable => 'TV-ga';
+  String get tvCable => 'TV Cable';
 
   @override
-  String get education => 'Waxbarashada';
+  String get education => 'Education';
 
   @override
-  String get govServices => 'Adeegyada Dawladda';
+  String get govServices => 'Gov Services';
 
   @override
   String get stripe => 'Stripe';
 
   @override
-  String get debitCreditCard => 'Kaadhka Bangiga';
+  String get debitCreditCard => 'Debit / Credit Card';
 
   @override
-  String get justAMoment => 'Daqiiqad sug';
+  String get justAMoment => 'Just a moment';
 
   @override
-  String get processing => 'Waa la farsameynayaa...';
+  String get processing => 'Processing...';
 
   @override
-  String get copiedToClipboard => 'Waa la koobiyeeyay';
+  String get copiedToClipboard => 'Copied to clipboard';
 
   @override
-  String get otherBank => 'Bangiga Kale';
+  String get otherBank => 'Other Bank';
 
   @override
-  String get bankName => 'Magaca Bangiga';
+  String get bankName => 'Bank Name';
 
   @override
-  String get enterBankName => 'Geli Magaca Bangiga';
+  String get enterBankName => 'Enter Bank Name';
 
   @override
-  String get enterAccountNumber => 'Geli Lambarka Akoonka';
+  String get enterAccountNumber => 'Enter Account Number';
 
   @override
-  String get enterAccountName => 'Geli Magaca Akoonka';
+  String get enterAccountName => 'Enter Account Name';
 
   @override
-  String get noActiveCards => 'Ma jiraan kaarar shaqeynaya';
+  String get noActiveCards => 'No active cards';
 
   @override
-  String get orderVirtualCard => 'Dalbo Kaar Cusub';
+  String get orderVirtualCard => 'Order Virtual Card';
 
   @override
-  String get instantlyIssueNewCard =>
-      'Isla markiiba hel kaar cusub oo digital ah';
+  String get instantlyIssueNewCard => 'Instantly issue a new digital card';
 
   @override
-  String get addToAppleWallet => 'Ku dar Apple Wallet';
+  String get addToAppleWallet => 'Add to Apple Wallet';
 
   @override
-  String get addToGooglePay => 'Ku dar Google Pay';
+  String get addToGooglePay => 'Add to Google Pay';
 
   @override
   String get terminateCardConfirm =>
-      'Ma hubtaa inaad si joogto ah u tirtirto kaarkan? Ficilkan lagama noqon karo.';
+      'Are you sure you want to permanently delete this card? This action cannot be undone.';
 
   @override
   String get all => 'Dhammaan';
 
   @override
-  String get subscriptions => 'Is-diiwaangelinta';
+  String get subscriptions => 'Subscriptions';
 
   @override
-  String get cardTerminated => 'Kaarkii waa la tirtiray';
+  String get cardTerminated => 'Card Terminated';
 
   @override
   String get cardTerminatedSuccess =>
-      'Kaarkaagii virtual-ka ahaa si joogto ah ayaa loo tirtiray.';
+      'Your virtual card has been permanently deleted.';
 
   @override
-  String get topUpFromWallet => 'Kaga buuxi Boorsada';
+  String get topUpFromWallet => 'Top-up from Wallet';
 
   @override
   String get withdrawToWallet => 'U dir Wallet-ka';
@@ -980,7 +971,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get withdrawToBankDesc => 'Kala bax bangi gudaha ama dibadda ah';
 
   @override
-  String get withdrawToStripeDesc => 'Kala bax akoonkaaga Stripe';
+  String get withdrawToStripeDesc => 'Withdraw to your Stripe account';
 
   @override
   String get enterVirtualCardPin =>
@@ -990,338 +981,333 @@ class AppLocalizationsSo extends AppLocalizations {
   String get currentCardBalance => 'HADHAAGA KAADHKA EE HADDA';
 
   @override
-  String get welcomeBack => 'Ku soo dhawaaw';
+  String get welcomeBack => 'Ku soo laabo guul!';
 
   @override
   String get enterPhoneNumberToContinue =>
-      'Gali lambarkaaga taleefanka si aad u sii wadato';
+      'Enter your phone number to continue';
 
   @override
-  String get dontHaveAccountSignUp => 'Miyaadan lahayn akoon? Is qor';
+  String get dontHaveAccountSignUp => 'Don\'t have an account? Sign Up';
 
   @override
-  String get createAccount => 'Sameeyso Akoon';
+  String get createAccount => 'Abuur Akoon';
 
   @override
-  String get joinMurtaaxPayToday =>
-      'Ku soo biir MurtaaxPay maanta oo bilow inaad lacag si ammaan ah u dirto.';
+  String get joinMurtaaxPayToday => 'Ku soo biir MurtaaxPay maanta';
 
   @override
-  String get password => 'Erayga sirta ah';
+  String get password => 'Sirta';
 
   @override
-  String get signUp => 'Is qor';
+  String get signUp => 'Isku diwaangeli';
 
   @override
-  String get alreadyHaveAccountLogin => 'Miyaad hore u lahabd akoon? Soo gal';
+  String get alreadyHaveAccountLogin => 'Horay ma u lahayd akoon? Soo gal';
 
   @override
-  String get confirmYourPin => 'Hubi PIN-kaaga';
+  String get confirmYourPin => 'Confirm your PIN';
 
   @override
-  String get toKeepYourMoneySafe => 'Si lacagtaada loogu hayo si ammaan ah';
+  String get toKeepYourMoneySafe => 'To keep your money safe';
 
   @override
-  String get useFaceIdFingerprint => 'Isticmaal FaceID / Faraha';
+  String get useFaceIdFingerprint => 'Use FaceID / Fingerprint';
 
   @override
   String get virtualCardBalance => 'HADHAAGA KAADHKA VIRTUAL-KA AH';
 
   @override
-  String get messages => 'Farimaha';
+  String get messages => 'Messages';
 
   @override
-  String get startNewConversation => 'Bilow wada hadal cusub';
+  String get startNewConversation => 'Start new conversation';
 
   @override
-  String get searchConversations => 'Raadi wada sheekaysiga...';
+  String get searchConversations => 'Search conversations...';
 
   @override
-  String get noMessages => 'Farimo ma jiraan';
+  String get noMessages => 'No messages';
 
   @override
-  String get now => 'hadda';
+  String get now => 'Hadda';
 
   @override
   String minutesAgo(int minutes) {
-    return '${minutes}d horta';
+    return '${minutes}m ago';
   }
 
   @override
   String hoursAgo(int hours) {
-    return '${hours}saac horta';
+    return '${hours}h ago';
   }
 
   @override
   String daysAgo(int days) {
-    return '${days}maalmood horta';
+    return '${days}d ago';
   }
 
   @override
-  String get online => 'Khadka ayuu ku jiraa';
+  String get online => 'Online';
 
   @override
-  String get viewInfo => 'Fiiri Macluumaadka';
+  String get viewInfo => 'View Info';
 
   @override
-  String get helpSupport => 'Caawinaad & Taageero';
+  String get helpSupport => 'Caawinaad';
 
   @override
-  String get clearChat => 'Tirtir Wada Sheekaysiga';
+  String get clearChat => 'Clear Chat';
 
   @override
-  String get contactInformation => 'Macluumaadka Xiriirka';
+  String get contactInformation => 'Contact Information';
 
   @override
-  String get nameLabel => 'Magaca';
+  String get nameLabel => 'Name';
 
   @override
-  String get phoneLabel => 'Taleefanka';
+  String get phoneLabel => 'Phone';
 
   @override
   String get emailLabel => 'Email';
 
   @override
-  String get messageTypes => 'Noocyada Farimaha';
+  String get messageTypes => 'Message Types';
 
   @override
   String get messageTypesDesc =>
-      'Qoraal, SMS, Cod, Sawirro, Dukumiintiyo & Xog Shakhsi';
+      'Text, SMS, Audio, Images, Documents & Personal Info';
 
   @override
-  String get shareInformation => 'Wadaag Macluumaadka';
+  String get shareInformation => 'Share Information';
 
   @override
   String get shareInformationDesc =>
-      'Si ammaan ah u wadaag xogtaada xiriirka iyo ciwaanka';
+      'Securely share your contact details and address';
 
   @override
-  String get searchChats => 'Raadi Wada Hadalada';
+  String get searchChats => 'Search Chats';
 
   @override
-  String get searchChatsDesc => 'Si degdeg ah u hel wada hadal kasta';
+  String get searchChatsDesc => 'Find any conversation quickly';
 
   @override
-  String get chatSettings => 'Habaynta Wada Hadalka';
+  String get chatSettings => 'Chat Settings';
 
   @override
-  String get chatSettingsDesc =>
-      'Tirtir taariikhda wada hadalka iyo qaabka loo habeeyo';
+  String get chatSettingsDesc => 'Clear chat history and manage preferences';
 
   @override
-  String get clearChatConfirm =>
-      'Ma hubtaa inaad rabto inaad tirtirto wada hadalkan?';
+  String get clearChatConfirm => 'Are you sure you want to clear this chat?';
 
   @override
   String get clear => 'Tirtir';
 
   @override
-  String get location => 'Goobta';
+  String get location => 'Location';
 
   @override
-  String get youSentMoney => 'Lacag baad dirtay';
+  String get youSentMoney => 'You sent money';
 
   @override
-  String get youReceivedMoney => 'Lacag baad heshay';
+  String get youReceivedMoney => 'You received money';
 
   @override
-  String get smsMessage => 'Fariinta SMS';
+  String get smsMessage => 'SMS Message';
 
   @override
-  String get audioMessage => 'Fariin Cod ah';
+  String get audioMessage => 'Audio Message';
 
   @override
-  String get downloadingDocument => 'Dukumiintiga ayaa la soo dejinayaa...';
+  String get downloadingDocument => 'Downloading document...';
 
   @override
-  String get personalInformation => 'Xogta Shakhsiga';
+  String get personalInformation => 'Personal Information';
 
   @override
   String get sms => 'SMS';
 
   @override
-  String get gallery => 'Sawirrada';
+  String get gallery => 'Gallery';
 
   @override
-  String get file => 'Fayl';
+  String get file => 'File';
 
   @override
-  String get contact => 'Xiriirka';
+  String get contact => 'Contact';
 
   @override
-  String get typeAMessage => 'Qor fariin...';
+  String get typeAMessage => 'Type a message...';
 
   @override
-  String get shareContent => 'Wadaag Macluumaadka';
+  String get shareContent => 'Share Content';
 
   @override
-  String get smsSentSuccess => 'SMS-ka si guul leh ayaa loo diray';
+  String get smsSentSuccess => 'SMS sent successfully!';
 
   @override
-  String get audioSentSuccess => 'Fariintii codka ahayd waa la diray!';
+  String get audioSentSuccess => 'Audio message sent!';
 
   @override
-  String get imageSentSuccess => 'Sawirkii waa la diray!';
+  String get imageSentSuccess => 'Image sent!';
 
   @override
-  String get documentSentSuccess => 'Dukumiintigii waa la diray!';
+  String get documentSentSuccess => 'Document sent!';
 
   @override
-  String get personalInfoSharedSuccess => 'Xogta shakhsiga ah waa la wadaagay!';
+  String get personalInfoSharedSuccess => 'Personal information shared!';
 
   @override
-  String get sharePersonalInfo => 'Wadaag Xogta Shakhsiga';
+  String get sharePersonalInfo => 'Share Personal Info';
 
   @override
-  String get reviewInfoToShare => 'Diri xogta si aad u wadaagto';
+  String get reviewInfoToShare => 'Review information to share';
 
   @override
   String get infoSharedNotice =>
-      'Xogtan waxaa lala wadaagi doonaa wada hadalka hadda socda.';
+      'This information will be shared with the current conversation.';
 
   @override
-  String get address => 'Ciwaanka';
+  String get address => 'Address';
 
   @override
-  String get postalCode => 'Boosta';
+  String get postalCode => 'Postal Code';
 
   @override
-  String get country => 'Waddan';
+  String get country => 'Country';
 
   @override
-  String get pleaseEnter => 'Fadlan geli';
+  String get pleaseEnter => 'Please enter';
 
   @override
-  String get help => 'Caawinaad';
+  String get help => 'Help';
 
   @override
-  String get returnToHome => 'Ku noqo Guriga';
+  String get returnToHome => 'Return to Home';
 
   @override
   String get verification => 'Xaqiijinta';
 
   @override
-  String get voucherCopied =>
-      'Koodhka waatsharka waa la koobiyeeyay! Diyaar u ah isticmaalka.';
+  String get voucherCopied => 'Voucher code copied! Ready to use.';
 
   @override
-  String get howToUse => 'Sida loo isticmaalo';
+  String get howToUse => 'How to use';
 
   @override
-  String get stepRedeem => 'Taabo \'Hadda Fur\' si aad u koobiyeysato koodhka.';
+  String get stepRedeem => 'Tap \'Redeem Now\' to copy the code.';
 
   @override
-  String get stepTransfer => 'Bilow xawaalad lacageed oo cusub.';
+  String get stepTransfer => 'Start a new money transfer.';
 
   @override
-  String get stepPaste => 'Dhig koodhka qaybta \'Promo Code\'.';
+  String get stepPaste => 'Paste code in the \'Promo Code\' field.';
 
   @override
-  String get welcomeBonus => 'Abaalmarinta Soo-dhaweynta';
+  String get welcomeBonus => 'Welcome Bonus';
 
   @override
-  String get welcomeBonusDesc => 'Hel 5% lacag celin ah xawaaladdaada xigta.';
+  String get welcomeBonusDesc => 'Get 5% cashback on your next transfer.';
 
   @override
-  String get expires30Dec => 'Dhacaya: 30 Dec';
+  String get expires30Dec => 'Expires: 30 Dec';
 
   @override
-  String get familyFriday => 'Jimcaha Qoyska';
+  String get familyFriday => 'Family Friday';
 
   @override
-  String get familyFridayDesc =>
-      'Khidmad la\'aan xawaalad kasta oo Soomaaliya maanta!';
+  String get familyFridayDesc => 'Zero fees for any transfer to Somalia today!';
 
   @override
-  String get expiresTomorrow => 'Dhacaya: Berri';
+  String get expiresTomorrow => 'Expires: Tomorrow';
 
   @override
-  String get eidSpecial => 'Gaar u ah Ciidda';
+  String get eidSpecial => 'Eid Special';
 
   @override
-  String get eidSpecialDesc => '\$10 oo gunno ah xawaaladaha ka badan \$100.';
+  String get eidSpecialDesc => '\$10 bonus on transfers over \$100.';
 
   @override
-  String get expiresIn5Days => 'Dhacaya: 5 maalin';
+  String get expiresIn5Days => 'Expires: in 5 days';
 
   @override
-  String get reward => 'ABAALMARIN';
+  String get reward => 'REWARD';
 
   @override
-  String get copied => 'Waa la koobiyey!';
+  String get copied => 'Copied!';
 
   @override
-  String get redeemNow => 'Hadda Fur';
+  String get redeemNow => 'Redeem Now';
 
   @override
-  String get referAndEarn => 'Tixraac & Guulayso';
+  String get referAndEarn => 'Refer & Earn';
 
   @override
-  String get referralCodeCopied => 'Koodhka tixraaca waa la koobiyeeyay!';
+  String get referralCodeCopied => 'Referral code copied to clipboard!';
 
   @override
-  String get rewardsWaiting => 'Abaalmarino ku sugaya';
+  String get rewardsWaiting => 'Rewards Waiting';
 
   @override
-  String get inviteFriendsGet10 => 'Saaxiibbadaa casuun, hel \$10';
+  String get inviteFriendsGet10 => 'Invite Friends, Get \$10';
 
   @override
   String get referralDescription =>
-      'La wadaag MurtaaxPay saaxiibbadaa oo labadiinaba waxaad helaysaan \$10 marka ay sameeyaan xawaaladdooda ugu horreysa oo \$50 ama ka badan ah.';
+      'Share MurtaaxPay with your friends and you both get \$10 when they make their first transfer of \$50 or more.';
 
   @override
-  String get yourReferralCode => 'Koodhkaaga Tixraaca';
+  String get yourReferralCode => 'Your Referral Code';
 
   @override
-  String get copy => 'KOOBIYEEY';
+  String get copy => 'COPY';
 
   @override
   String get whatsApp => 'WhatsApp';
 
   @override
-  String get sadaqahCommunity => 'Sadaqada & Bulshada';
+  String get sadaqahCommunity => 'Sadaqah & Community';
 
   @override
-  String get medicalEmergency => 'Xaalad Caafimaad';
+  String get medicalEmergency => 'Medical Emergency';
 
   @override
   String get medicalEmergencyDesc =>
-      'Ka caawi Axmed kharashka qalliinka wadnaha ee Turkiga.';
+      'Help Ahmed cover his heart surgery expenses in Turkey.';
 
   @override
-  String get villageWaterWell => 'Ceelka Biyaha Tuulada';
+  String get villageWaterWell => 'Village Water Well';
 
   @override
   String get villageWaterWellDesc =>
-      'Dhisidda il biyo oo joogto ah oo loo sameeyo tuulo ku taal Gedo.';
+      'Building a permanent water source for a village in Gedo.';
 
   @override
-  String get educationSupport => 'Garab istaagga Waxbarashada';
+  String get educationSupport => 'Education Support';
 
   @override
   String get educationSupportDesc =>
-      'Deeq waxbarasho oo loogu talagalay 10 agoon ah oo ku nool Muqdisho.';
+      'Scholarships for 10 orphans in Mogadishu.';
 
   @override
-  String get verified => 'La Hubiyay';
+  String get verified => 'La xaqiijiyay';
 
   @override
-  String get by => 'Waxaa Bilaabay';
+  String get by => 'By';
 
   @override
-  String get raised => 'La Ururiyay';
+  String get raised => 'Raised';
 
   @override
-  String get goal => 'Hadafka';
+  String get goal => 'Goal';
 
   @override
-  String get startAFundraiser => 'Bilow Ururinta Sadaqo';
+  String get startAFundraiser => 'Start a Fundraiser';
 
   @override
-  String get totalInvestment => 'Wadarta Maal-gashiga';
+  String get totalInvestment => 'Total Investment';
 
   @override
-  String get yourPortfolio => 'Sanduuqaaga';
+  String get yourPortfolio => 'Your Portfolio';
 
   @override
   String get bitcoin => 'Bitcoin';
@@ -1330,241 +1316,239 @@ class AppLocalizationsSo extends AppLocalizations {
   String get ethereum => 'Ethereum';
 
   @override
-  String get gold => 'Dahab';
+  String get gold => 'Gold';
 
   @override
-  String get investmentOpportunities => 'Fursadaha Maal-gashi';
+  String get investmentOpportunities => 'Investment Opportunities';
 
   @override
-  String get realEstate => 'Guryaha & Dhulka';
+  String get realEstate => 'Real Estate';
 
   @override
-  String get realEstateDesc => 'Maal-gashiga mashruucyo guryo tayo leh.';
+  String get realEstateDesc => 'Investment in premium property projects.';
 
   @override
-  String get agriculture => 'Beeraha';
+  String get agriculture => 'Agriculture';
 
   @override
-  String get agricultureDesc => 'Taageer beeraha gudaha ee joogtada ah.';
+  String get agricultureDesc => 'Support local sustainable farming.';
 
   @override
-  String get savingsAndGoals => 'Kaydka & Hadafka';
+  String get savingsAndGoals => 'Savings & Goals';
 
   @override
-  String get activeGoals => 'Hadafyada Socda';
+  String get activeGoals => 'Active Goals';
 
   @override
-  String get createNewGoal => 'Samee Hadaf Cusub';
+  String get createNewGoal => 'Create New Goal';
 
   @override
-  String get totalSavings => 'Kaydka Dhan';
+  String get totalSavings => 'Total Savings';
 
   @override
-  String get cardBalanceLabel => 'Kaarka: ';
+  String get cardBalanceLabel => 'Card: ';
 
   @override
-  String get chooseWithdrawalMethod => 'Dooro Habka Lacag Bixinta';
+  String get chooseWithdrawalMethod => 'Choose Withdrawal Method';
 
   @override
-  String get sendToWallet => 'U dir Boorsada';
+  String get sendToWallet => 'Send to Wallet';
 
   @override
-  String get payFromSavingBalance => 'Ka bixi haraagaaga kaydka';
+  String get payFromSavingBalance => 'Pay from your Saving balance';
 
   @override
-  String get sendToCard => 'U dir Kaarka';
+  String get sendToCard => 'Send to Card';
 
   @override
-  String get withdrawToVirtualCard => 'ugala bax kaarkaaga virtual-ka ah';
+  String get withdrawToVirtualCard => 'withdraw to your virtual card';
 
   @override
-  String get savingsBalanceLabel => 'KAYDKA HARAY';
+  String get savingsBalanceLabel => 'SAVINGS BALANCE';
 
   @override
-  String get cardPin => 'PIN-ka Kaarka';
+  String get cardPin => 'Card PIN';
 
   @override
   String withdrawalSuccessFromSavings(String amount) {
-    return 'Waxaad si guul leh ugala baxday $amount kaydkaaga.';
+    return 'You have successfully withdrawn $amount from your savings.';
   }
 
   @override
-  String get goalName => 'Magaca Hadafka';
+  String get goalName => 'Goal Name';
 
   @override
-  String get targetAmount => 'Lacagta la rabo';
+  String get targetAmount => 'Target Amount';
 
   @override
-  String get deadline => 'Wakhtiga kama dambaysta ah';
+  String get deadline => 'Deadline';
 
   @override
-  String get selectIcon => 'Dooro Icon-ka';
+  String get selectIcon => 'Select Icon';
 
   @override
-  String get selectColor => 'Dooro Midabka';
+  String get selectColor => 'Select Color';
 
   @override
-  String get create => 'Abuur';
+  String get create => 'Create';
 
   @override
-  String get creating => 'Abuuraya...';
+  String get creating => 'Creating...';
 
   @override
-  String get goalCreated => 'Hadafka waa la abuuray!';
+  String get goalCreated => 'Goal Created!';
 
   @override
   String goalCreatedSuccess(String title, String amount) {
-    return 'Hadafkaaga cusub \'$title\' oo bartilmaameedkiisu yahay $amount si guul leh ayaa loo dejiyay.';
+    return 'Your new goal \'$title\' with a target of $amount has been set up successfully.';
   }
 
   @override
-  String get backToSavings => 'Ku laabo Kaydka';
+  String get backToSavings => 'Back to Savings';
 
   @override
-  String get sendFromWallet => 'Ka soo dir Boorsada';
+  String get sendFromWallet => 'Send from Wallet';
 
   @override
-  String get payFromWalletBalance => 'Ka bixi haraaga boorsadaada';
+  String get payFromWalletBalance => 'Pay from your wallet balance';
 
   @override
-  String get sendFromCard => 'Ka soo dir Kaarka';
+  String get sendFromCard => 'Send from Card';
 
   @override
-  String get payFromVirtualCard => 'Ka bixi Kaarkaaga Virtual-ka ah';
+  String get payFromVirtualCard => 'Pay from your Virtual Card';
 
   @override
-  String get paused => 'Hakin';
+  String get paused => 'Paused';
 
   @override
-  String get targetWithColon => 'Hadafka: ';
+  String get targetWithColon => 'Target: ';
 
   @override
-  String get addFunds => 'Ku dar Lacag';
+  String get addFunds => 'Add Funds';
 
   @override
-  String get edit => 'Wax ka bedel';
+  String get edit => 'Wax ka beddel';
 
   @override
-  String get resume => 'Sii wad';
+  String get resume => 'Resume';
 
   @override
-  String get pause => 'Haki';
+  String get pause => 'Pause';
 
   @override
   String get delete => 'Tirtir';
 
   @override
-  String get amountToAdd => 'Lacagta lagu darayo';
+  String get amountToAdd => 'Amount to add';
 
   @override
-  String get fundsAddedSuccess => 'Lacagta si guul leh ayaa loogu daray!';
+  String get fundsAddedSuccess => 'Successfully added funds!';
 
   @override
-  String get deleteGoal => 'Ma tirtirtaa?';
+  String get deleteGoal => 'Delete Goal?';
 
   @override
-  String get deleteGoalConfirm =>
-      'Ma hubtaa? Tallaabadan dib looma soo celin karo.';
+  String get deleteGoalConfirm => 'Are you sure? This action cannot be undone.';
 
   @override
-  String get editGoal => 'Wax ka bedel Hadafka';
+  String get editGoal => 'Edit Goal';
 
   @override
   String get save => 'Keydi';
 
   @override
-  String get pinChangedSuccess =>
-      'PIN-kaaga si guul leh ayaa loo cusboonaysiiyay. Isticmaal PIN-kaaga cusub dhaqdhaqaaqyada mustaqbalka.';
+  String get pinChangedSuccess => 'PIN-ka waa la beddelay';
 
   @override
-  String get done => 'Dhammaystiran';
+  String get done => 'Done';
 
   @override
   String get changePin => 'Beddel PIN-ka';
 
   @override
-  String get createNewPin => 'Abuur PIN Cusub';
+  String get createNewPin => 'Create New PIN';
 
   @override
   String get newPinDescription =>
-      'Geli PIN-kaaga hadda oo dooro 4-god oo cusub oo ah PIN-ka amniga.';
+      'Enter your current PIN and choose a new 4-digit security PIN.';
 
   @override
-  String get currentPin => 'PIN-ka Hadda';
+  String get currentPin => 'Current PIN';
 
   @override
-  String get pleaseEnterCurrentPin => 'Fadlan geli PIN-ka hadda';
+  String get pleaseEnterCurrentPin => 'Please enter current PIN';
 
   @override
-  String get pinMustBe4Digits => 'PIN-ka waa inuu ahaadaa 4 god';
+  String get pinMustBe4Digits => 'PIN must be 4 digits';
 
   @override
-  String get newPin => 'PIN Cusub';
+  String get newPin => 'New PIN';
 
   @override
-  String get pleaseEnterNewPin => 'Fadlan geli PIN cusub';
+  String get pleaseEnterNewPin => 'Please enter new PIN';
 
   @override
-  String get cannotBeSameAsOld => 'Ma noqon karo mid la mid ah kii hore';
+  String get cannotBeSameAsOld => 'Cannot be same as old PIN';
 
   @override
-  String get confirmNewPin => 'Xaqiiji PIN-ka Cusub';
+  String get confirmNewPin => 'Confirm New PIN';
 
   @override
-  String get pleaseConfirmNewPin => 'Fadlan xaqiiji PIN-ka cusub';
+  String get pleaseConfirmNewPin => 'Please confirm new PIN';
 
   @override
-  String get pinsDoNotMatch => 'PIN-nada isma laha';
+  String get pinsDoNotMatch => 'PINs do not match';
 
   @override
-  String get saveChanges => 'Keydi Isbeddellada';
+  String get saveChanges => 'Save Changes';
 
   @override
-  String get termsConditions => 'Shuruudaha & Xaaladaha';
+  String get termsConditions => 'Terms & Conditions';
 
   @override
-  String get lastUpdated => 'Ugu dambayn la cusboonaysiiyay';
+  String get lastUpdated => 'Last Updated';
 
   @override
-  String get acceptanceOfTerms => '1. Ogolaanshaha Shuruudaha';
+  String get acceptanceOfTerms => '1. Acceptance of Terms';
 
   @override
   String get acceptanceOfTermsDesc =>
-      'Markaad gasho ama isticmaasho MurtaaxPay, waxaad ogolaatay inay kugu waajibaan shuruudahan. Haddii aadan ogolayn dhamaan shuruudahan, ha isticmaalin adeegyadayada.';
+      'By accessing or using MurtaaxPay, you agree to be bound by these terms. If you do not agree to all of these terms, do not use our services.';
 
   @override
-  String get userVerificationL10n => '2. Xaqiijinta Isticmaalaha';
+  String get userVerificationL10n => '2. User Verification';
 
   @override
   String get userVerificationDescL10n =>
-      'Si aan u raacno xeerarka maaliyadda, waxaan u baahanahay xaqiijinta aqoonsiga xadka macaamil ganacsi qaarkood. Waxaad ogolaatay inaad bixiso macluumaad sax ah.';
+      'To comply with financial regulations, we require identity verification for certain transaction limits. You agree to provide accurate information.';
 
   @override
-  String get transactionFees => '3. Khidmadaha Macaamilka';
+  String get transactionFees => '3. Transaction Fees';
 
   @override
   String get transactionFeesDesc =>
-      'Khidmadaha si cad ayaa loo soo bandhigaa ka hor macaamil kasta. Markaad xaqiijiso macaamilka, waxaad ogolaatay inaad bixiso khidmadaha la cayimay.';
+      'Fees are clearly displayed before every transaction. By confirming a transaction, you agree to pay the specified fees.';
 
   @override
-  String get privacyPolicyL10n => '4. Siyaasadda Khaaska ah';
+  String get privacyPolicyL10n => '4. Privacy Policy';
 
   @override
   String get privacyPolicyDescL10n =>
-      'Asturnaantaadu muhiim ayay noo tahay. Waxaan isticmaalnaa sireeynta heerka bangiga si aan u ilaalinno xogtaada. Fadlan dib u eeg siyaasaddayada khaaska ah ee buuxda wixii faahfaahin dheeraad ah.';
+      'Your privacy is important to us. We use bank-grade encryption to protect your data. Please review our full privacy policy for more details.';
 
   @override
-  String get limitationOfLiability => '5. Xaddidaadda Mas\'uuliyadda';
+  String get limitationOfLiability => '5. Limitation of Liability';
 
   @override
   String get limitationOfLiabilityDesc =>
-      'MurtaaxPay mas\'uul kama aha waxyeelada dadban, shilka ah, ama ka dhalan karta isticmaalka ama awood la\'aanta isticmaalka adeegga.';
+      'MurtaaxPay is not liable for indirect, incidental, or consequential damages resulting from the use or inability to use the service.';
 
   @override
-  String get allRightsReserved => 'Dhammaan Xuquuqaha waa la Dhawray';
+  String get allRightsReserved => 'Xuquuqda oo dhan waa la dhawray.';
 
   @override
-  String get oct2023 => 'Oktoobar 2023';
+  String get oct2023 => 'Oct 2023';
 
   @override
   String get copyrightMurtaaxPay => '© 2026 MurtaaxPay.';
@@ -1579,70 +1563,70 @@ class AppLocalizationsSo extends AppLocalizations {
   String get createHagbad => 'Abuur Hagbad';
 
   @override
-  String get totalSavingsPot => 'Wadarta Kaydka Guud';
+  String get totalSavingsPot => 'Total Savings Pot';
 
   @override
-  String get activeGroups => 'Kooxaha Firfircoon';
+  String get activeGroups => 'Kooxaha firfircoon';
 
   @override
-  String get nextPayout => 'Lacag Bixinta Xigta';
+  String get nextPayout => 'Lacag bixinta xigta';
 
   @override
-  String get days => 'Maalmood';
+  String get days => 'maalmood';
 
   @override
-  String get nextInLine => 'Safka xiga';
+  String get nextInLine => 'Next in line';
 
   @override
-  String get rotation => 'Wareegga';
+  String get rotation => 'Rotation';
 
   @override
-  String get groupChat => 'Wada hadalka Kooxda';
+  String get groupChat => 'Wada-hadalka Kooxda';
 
   @override
-  String get payContribution => 'Bixi Qaaraanka';
+  String get payContribution => 'Pay Contribution';
 
   @override
-  String get createNewHagbad => 'Abuur Hagbad Cusub';
+  String get createNewHagbad => 'Create New Hagbad';
 
   @override
   String get groupName => 'Magaca Kooxda';
 
   @override
-  String get contributionAmount => 'Cadadka Qaaraanka';
+  String get contributionAmount => 'Cadadka qaaraanka';
 
   @override
   String get frequency => 'Muddada';
 
   @override
-  String get addMembers => 'Ku dar Xubno (Taleefan ama Magac)';
+  String get addMembers => 'Add Members (Phone or Name)';
 
   @override
-  String get createGroup => 'Abuur Kooxda';
+  String get createGroup => 'Create Group';
 
   @override
   String get received => 'Waa la helay';
 
   @override
-  String get currentBalance => 'Dhextaal';
+  String get currentBalance => 'Current Balance';
 
   @override
-  String get potWadar => 'Wadarta Sanduuqa';
+  String get potWadar => 'Total Fund';
 
   @override
   String get daily => 'Maalinle';
 
   @override
-  String get weekly => 'Todobaadle';
+  String get weekly => 'Toddobaadle';
 
   @override
-  String get tenDays => '10 Maalmood';
+  String get tenDays => '10 Days';
 
   @override
-  String get monthly => 'Biloodle';
+  String get monthly => 'Bil kasta';
 
   @override
-  String get yearly => 'Sannadle';
+  String get yearly => 'Yearly';
 
   @override
   String get hagbadCreatedSuccess =>
@@ -1665,100 +1649,100 @@ class AppLocalizationsSo extends AppLocalizations {
   String get members => 'Xubnaha';
 
   @override
-  String get you => 'Adiga';
+  String get you => 'You';
 
   @override
-  String get youAdmin => 'Adiga (Admin)';
+  String get youAdmin => 'You (Admin)';
 
   @override
   String payoutAfterFee(String fee) {
-    return 'Waxa soo haraya ka dib $fee khidmad';
+    return 'Payout after $fee fee';
   }
 
   @override
-  String get receiptDownloaded => 'Rasiidhka waxaa lagu keydiyay sawirradaada';
+  String get receiptDownloaded => 'Receipt downloaded to your gallery';
 
   @override
   String yourTurnInDays(int days) {
-    return 'Fursadaadu waxay ku beegan tahay $days maalmood';
+    return 'Your turn in $days days';
   }
 
   @override
   String dayWithNumber(int number) {
-    return 'Maalinta $number';
+    return 'Day $number';
   }
 
   @override
   String weekWithNumber(int number) {
-    return 'Todobaadka $number';
+    return 'Week $number';
   }
 
   @override
   String monthWithNumber(int number) {
-    return 'Bisha $number';
+    return 'Month $number';
   }
 
   @override
   String turnWithNumber(int number) {
-    return 'Wareegga $number';
+    return 'Turn $number';
   }
 
   @override
   String get cannotSwapReceived =>
-      'Lama beddeli karo xubnaha horay u helay lacagtooda.';
+      'Cannot swap with members who already received their payout.';
 
   @override
-  String get swapTurn => 'Beddel Safka';
+  String get swapTurn => 'Swap Turn';
 
   @override
   String swapWith(String name) {
-    return 'Ku beddel $name';
+    return 'Swap with $name';
   }
 
   @override
-  String get trustedMember => 'Xubun la aaminay';
+  String get trustedMember => 'Trusted Member';
 
   @override
-  String get yourTurnToday => 'Maanta waa fursadaadi!';
+  String get yourTurnToday => 'It\'s your turn today!';
 
   @override
-  String get yourTurnTomorrow => 'Berri waa fursadaadi!';
+  String get yourTurnTomorrow => 'Your turn is tomorrow!';
 
   @override
-  String get serviceFee => 'Khidmadda Adeegga';
+  String get serviceFee => 'Service Fee';
 
   @override
-  String get payoutMethod => 'Habka Lacag Bixinta';
+  String get payoutMethod => 'Payout Method';
 
   @override
-  String get payoutReady => 'Lacagtii way diyaar';
+  String get payoutReady => 'Payout Ready';
 
   @override
-  String get totalPot => 'Wadarta Sanduuqa';
+  String get totalPot => 'Wadarta lacagta';
 
   @override
-  String get hagbadPot => 'Aamin-dhigga Hagbad';
+  String get hagbadPot => 'Hagbad Pot (Escrow)';
 
   @override
-  String get amountToReceive => 'Lacagta aad helayso';
+  String get amountToReceive => 'Amount to Receive';
 
   @override
-  String get claimPayout => 'Qaado Lacagta';
+  String get claimPayout => 'Claim Payout';
 
   @override
-  String get guarantor => 'Uul (Dammiin)';
+  String get guarantor => 'Dammaanad-qaade';
 
   @override
-  String get guarantorNameLabel => 'Magaca Dammaanadda (Uul)';
+  String get guarantorNameLabel => 'Guarantor Name';
 
   @override
-  String get guarantorIdLabel => 'ID-ga Dammaanadda';
+  String get guarantorIdLabel => 'Guarantor Wallet ID';
 
   @override
-  String get requireGuarantor => 'Xubintan waxay u baahantahay dammaanad (Uul)';
+  String get requireGuarantor => 'This member requires a guarantor (Uul)';
 
   @override
-  String get guarantorDetails => 'Faahfaahinta Dammaanadda';
+  String get guarantorDetails => 'Guarantor Details';
 
   @override
   String get debtor => 'Debtor';

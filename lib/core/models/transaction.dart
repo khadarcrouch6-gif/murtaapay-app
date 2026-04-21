@@ -13,6 +13,7 @@ class Transaction {
   final String? method; // "Wallet", "Bank", "EVC Plus"
   final String? purpose;
   final String? referenceId; // External ID or Wallet ID
+  final String? cardId; // Associated Virtual Card ID
 
   Transaction({
     required this.id,
@@ -29,6 +30,7 @@ class Transaction {
     this.method,
     this.purpose,
     this.referenceId,
+    this.cardId,
   }) : timestamp = timestamp ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
@@ -47,6 +49,7 @@ class Transaction {
       'method': method,
       'purpose': purpose,
       'referenceId': referenceId,
+      'cardId': cardId,
     };
   }
 
@@ -68,6 +71,7 @@ class Transaction {
       method: json['method'],
       purpose: json['purpose'],
       referenceId: json['referenceId'],
+      cardId: json['cardId'],
     );
   }
 }

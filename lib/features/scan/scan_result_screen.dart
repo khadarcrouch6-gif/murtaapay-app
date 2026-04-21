@@ -169,6 +169,9 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                             message: l10n.paymentSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(amountValue), _receiverName),
                             subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
                             buttonText: l10n.backToHome,
+                            onPressed: () {
+                              Navigator.of(context).popUntil((route) => route.settings.name == 'SendAmountScreen' || route.isFirst);
+                            },
                           ),
                         ),
                       );
@@ -203,6 +206,9 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                             message: l10n.paymentSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(flexibleAmount), _receiverName),
                             subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
                             buttonText: l10n.backToHome,
+                            onPressed: () {
+                              Navigator.of(context).popUntil((route) => route.settings.name == 'SendAmountScreen' || route.isFirst);
+                            },
                           ),
                         ),
                       );

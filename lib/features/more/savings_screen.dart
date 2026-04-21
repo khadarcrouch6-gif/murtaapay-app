@@ -449,6 +449,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
             title: l10n.withdrawalSuccessful,
             message: l10n.withdrawalSuccessFromSavings(NumberFormat.simpleCurrency(name: state.currencyCode).format(amount)),
             buttonText: l10n.backToSavings,
+            onPressed: () => Navigator.pop(context),
           ),
         ),
       );
@@ -697,6 +698,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
             title: l10n.depositSuccessful,
             message: l10n.depositSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(amount)),
             buttonText: l10n.backToSavings,
+            onPressed: () => Navigator.pop(context),
           ),
         ),
       );
@@ -1093,6 +1095,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
           title: l10n.goalCreated,
           message: l10n.goalCreatedSuccess(title, NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(amount) ?? 0)),
           buttonText: l10n.backToSavings,
+          onPressed: () => Navigator.pop(context),
         ),
       ),
     );

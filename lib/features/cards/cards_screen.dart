@@ -12,6 +12,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:intl/intl.dart';
 import '../more/investments_screen.dart';
@@ -33,6 +34,7 @@ class CardsScreen extends StatefulWidget {
 class _CardsScreenState extends State<CardsScreen> {
   final PageController _pageController = PageController(viewportFraction: 0.9);
   final TextEditingController _searchController = TextEditingController();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   int _currentIndex = 0;
   bool _showBack = false;
   bool _showNumber = false;
@@ -44,49 +46,12 @@ class _CardsScreenState extends State<CardsScreen> {
   void dispose() {
     _pageController.dispose();
     _searchController.dispose();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
-  final List<VirtualCard> _cards = [
-    VirtualCard(
-      id: "1",
-      cardNumber: "4580123456789012",
-      cardHolder: "KHADAR RAYAALE",
-      expiryDate: "12/28",
-      cvv: "455",
-      theme: CardThemeType.obsidian,
-      network: CardNetwork.visa,
-    ),
-    VirtualCard(
-      id: "2",
-      cardNumber: "5241987654321098",
-      cardHolder: "KHADAR RAYAALE",
-      expiryDate: "05/30",
-      cvv: "822",
-      theme: CardThemeType.gold,
-      network: CardNetwork.mastercard,
-    ),
-    VirtualCard(
-      id: "3",
-      cardNumber: "4000111122223333",
-      cardHolder: "KHADAR RAYAALE",
-      expiryDate: "08/29",
-      cvv: "109",
-      theme: CardThemeType.emerald,
-      network: CardNetwork.visa,
-    ),
-     VirtualCard(
-      id: "4",
-      cardNumber: "4912776655443322",
-      cardHolder: "KHADAR RAYAALE",
-      expiryDate: "03/31",
-      cvv: "331",
-      theme: CardThemeType.midnight,
-      network: CardNetwork.amex,
-    ),
-  ];
-
   void _flipCard() {
+    HapticFeedback.mediumImpact();
     setState(() {
       _showBack = !_showBack;
       if (_showBack) _showNumber = false;
@@ -94,12 +59,14 @@ class _CardsScreenState extends State<CardsScreen> {
   }
 
   void _toggleShowNumber() {
+    HapticFeedback.selectionClick();
     setState(() => _showNumber = !_showNumber);
   }
 
   void _copyCardNumber(BuildContext context, AppState state) {
+    if (state.cards.isEmpty) return;
     final l10n = AppLocalizations.of(context)!;
-    Clipboard.setData(ClipboardData(text: _cards[_currentIndex].cardNumber));
+    Clipboard.setData(ClipboardData(text: state.cards[_currentIndex].cardNumber));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(l10n.cardNumberCopied),
@@ -120,7 +87,16 @@ class _CardsScreenState extends State<CardsScreen> {
     final filteredTransactions = state.transactions.where((tx) {
       final matchesSearch = tx.title.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesFilter = _selectedFilter == "All" || tx.category == _selectedFilter;
-      return matchesSearch && matchesFilter;
+      
+      // Filter by the currently selected card if any cards exist
+      bool matchesCard = true;
+      if (state.cards.isNotEmpty) {
+        final currentCardId = state.cards[_currentIndex].id;
+        // Show only transactions for this card, OR general transactions if it's not a card payment
+        matchesCard = tx.cardId == currentCardId || tx.cardId == null;
+      }
+      
+      return matchesSearch && matchesFilter && matchesCard;
     }).toList();
 
     return Scaffold(
@@ -152,6 +128,7 @@ class _CardsScreenState extends State<CardsScreen> {
                       ),
                     ),
                   ),
+                  _buildBalanceDisplay(context, state, theme),
                   IconButton(
                     onPressed: () => _showCardSettings(context, state),
                     icon: Container(
@@ -207,7 +184,7 @@ class _CardsScreenState extends State<CardsScreen> {
             const SizedBox(height: 24),
             
             // --- CAROUSEL ---
-            if (_cards.isEmpty)
+            if (state.cards.isEmpty)
               Container(
                 height: 230 * context.fontSizeFactor,
                 width: double.infinity,
@@ -241,7 +218,7 @@ class _CardsScreenState extends State<CardsScreen> {
                     ),
                     child: PageView.builder(
                       controller: _pageController,
-                      itemCount: _cards.length,
+                      itemCount: state.cards.length,
                       onPageChanged: (index) => setState(() {
                         _currentIndex = index;
                         _showBack = false;
@@ -264,7 +241,7 @@ class _CardsScreenState extends State<CardsScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                     child: EliteVirtualCard(
-                                      card: _cards[index],
+                                      card: state.cards[index],
                                       showNumber: _showNumber,
                                       showBack: _showBack,
                                       onFlip: _flipCard,
@@ -284,11 +261,11 @@ class _CardsScreenState extends State<CardsScreen> {
               ),
             
             const SizedBox(height: 16),
-            if (_cards.isNotEmpty)
+            if (state.cards.isNotEmpty)
               Center(
                 child: SmoothPageIndicator(
                   controller: _pageController,
-                  count: _cards.length,
+                  count: state.cards.length,
                   effect: const ExpandingDotsEffect(
                     activeDotColor: AppColors.accentTeal,
                     dotColor: Colors.grey,
@@ -301,7 +278,7 @@ class _CardsScreenState extends State<CardsScreen> {
               ),
             
             const SizedBox(height: 32),
-            if (_cards.isNotEmpty)
+            if (state.cards.isNotEmpty)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
                 child: Column(
@@ -316,9 +293,9 @@ class _CardsScreenState extends State<CardsScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                _buildQuickAction(context, state, "Deposit", l10n.deposit, Icons.add_circle_outline_rounded, AppColors.accentTeal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DepositCardScreen(amount: "0", currencyCode: "USD")))),
+                                _buildQuickAction(context, state, "Deposit", l10n.deposit, Icons.add_circle_outline_rounded, AppColors.accentTeal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DepositCardScreen(amount: "0", currencyCode: "USD", cardId: state.cards[_currentIndex].id)))),
                                 const SizedBox(width: 8),
-                                _buildQuickAction(context, state, "Withdraw", l10n.withdraw, Icons.file_upload_outlined, Colors.orange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WithdrawScreen()))),
+                                _buildQuickAction(context, state, "Withdraw", l10n.withdraw, Icons.file_upload_outlined, Colors.orange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => WithdrawScreen(cardId: state.cards[_currentIndex].id)))),
                                 const SizedBox(width: 8),
                                 _buildQuickAction(context, state, "Savings", l10n.savings, Icons.account_balance_outlined, Colors.blue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SavingsScreen()))),
                                 const SizedBox(width: 8),
@@ -389,15 +366,30 @@ class _CardsScreenState extends State<CardsScreen> {
                           tx.date, 
                           tx.amount, 
                           tx.isNegative,
-                          onTap: () => CardReceiptView.show(context, tx.toJson()),
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            CardReceiptView.show(context, tx.toJson());
+                          },
                         );
                       },
                     ),
                     if (filteredTransactions.isEmpty)
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Text(l10n.noTransactionsFound, style: TextStyle(color: AppColors.grey)),
+                      FadeIn(
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 40),
+                            child: Column(
+                              children: [
+                                Icon(Icons.receipt_long_outlined, size: 48 * context.fontSizeFactor, color: Colors.grey.withValues(alpha: 0.2)),
+                                const SizedBox(height: 16),
+                                Text(
+                                  _isSearching ? l10n.noTransactionsFound : state.translate("Ma jiro wax macaamil ah oo kaadhkan loo helay.", "No transactions found for this card."), 
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     const SizedBox(height: 100),
@@ -477,12 +469,11 @@ class _CardsScreenState extends State<CardsScreen> {
   Widget _buildFilterChip(String label, bool sel, ValueChanged<bool> onSelected) => Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: onSelected, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), selectedColor: AppColors.accentTeal.withValues(alpha: 0.2), checkmarkColor: AppColors.accentTeal));
 
   void _showCardSettings(BuildContext context, AppState state) {
-    final currentCard = _cards[_currentIndex];
+    if (state.cards.isEmpty) return;
+    final currentCard = state.cards[_currentIndex];
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-<<<<<<< HEAD
-    
     // First, verify Virtual Card PIN (1122)
     _showPinVerification(context, state, l10n, (isVerified) {
       if (isVerified) {
@@ -504,63 +495,6 @@ class _CardsScreenState extends State<CardsScreen> {
                 colors: isDark 
                     ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
                     : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
-=======
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetCtx) => StatefulBuilder(
-        builder: (stateCtx, setModalState) => GlassmorphicContainer(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.82,
-          borderRadius: 24,
-          blur: 30,
-          alignment: Alignment.topCenter,
-          border: 2,
-          linearGradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDark 
-                ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
-                : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
-          ),
-          borderGradient: LinearGradient(
-            colors: [
-              (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.2), 
-              (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05)
-            ],
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      l10n.cardSettings,
-                      style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.4)),
-                      ),
-                      child: Text(
-                        currentCard.isFrozen 
-                          ? l10n.frozen
-                          : l10n.active,
-                        style: TextStyle(color: currentCard.isFrozen ? Colors.orange : AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
->>>>>>> 3c1539c38d50365477a915f750f3576a122df531
               ),
               borderGradient: LinearGradient(
                 colors: [
@@ -619,9 +553,7 @@ class _CardsScreenState extends State<CardsScreen> {
                               : l10n.freezeCard,
                             subtitle: l10n.temporarilyDisablePayments,
                             onTap: () {
-                              setState(() {
-                                _cards[_currentIndex] = currentCard.copyWith(isFrozen: !currentCard.isFrozen);
-                              });
+                              state.updateCard(_currentIndex, currentCard.copyWith(isFrozen: !currentCard.isFrozen));
                               setModalState(() {});
                             },
                           ),
@@ -635,7 +567,7 @@ class _CardsScreenState extends State<CardsScreen> {
                             title: l10n.onlinePayments,
                             value: currentCard.allowOnline,
                             onChanged: (v) {
-                              setState(() => _cards[_currentIndex] = currentCard.copyWith(allowOnline: v));
+                              state.updateCard(_currentIndex, currentCard.copyWith(allowOnline: v));
                               setModalState(() {});
                             },
                           ),
@@ -647,7 +579,7 @@ class _CardsScreenState extends State<CardsScreen> {
                             title: l10n.internationalUsage,
                             value: currentCard.allowInternational,
                             onChanged: (v) {
-                              setState(() => _cards[_currentIndex] = currentCard.copyWith(allowInternational: v));
+                              state.updateCard(_currentIndex, currentCard.copyWith(allowInternational: v));
                               setModalState(() {});
                             },
                           ),
@@ -659,7 +591,7 @@ class _CardsScreenState extends State<CardsScreen> {
                             title: l10n.contactlessPayments,
                             value: currentCard.allowContactless,
                             onChanged: (v) {
-                              setState(() => _cards[_currentIndex] = currentCard.copyWith(allowContactless: v));
+                              state.updateCard(_currentIndex, currentCard.copyWith(allowContactless: v));
                               setModalState(() {});
                             },
                           ),
@@ -783,6 +715,11 @@ class _CardsScreenState extends State<CardsScreen> {
 
   void _processTransaction(BuildContext context, AppLocalizations l10n) async {
     final theme = Theme.of(context);
+    final appState = Provider.of<AppState>(context, listen: false);
+    
+    // Add haptic feedback start
+    HapticFeedback.heavyImpact();
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -858,13 +795,28 @@ class _CardsScreenState extends State<CardsScreen> {
     await Future.delayed(const Duration(seconds: 2));
 
     if (!context.mounted) return;
+    
+    // Success haptic and sound
+    HapticFeedback.vibrate();
+    _audioPlayer.play(AssetSource('sounds/success.mp3'));
+
     Navigator.of(context, rootNavigator: true).pop();
+
+    // Refund card balance to wallet before removing the card
+    final oldIndex = _currentIndex;
+    final cardToTerminate = appState.cards[oldIndex];
+    final refundAmount = cardToTerminate.balance;
+    appState.addBalance(refundAmount);
+    
+    // Use AppState to remove the card permanently
+    appState.removeCard(oldIndex);
     
     if (!context.mounted) return;
     setState(() {
-      _cards.removeAt(_currentIndex);
-      if (_currentIndex >= _cards.length && _cards.isNotEmpty) {
-        _currentIndex = _cards.length - 1;
+      if (_currentIndex >= appState.cards.length && appState.cards.isNotEmpty) {
+        _currentIndex = appState.cards.length - 1;
+      } else if (appState.cards.isEmpty) {
+        _currentIndex = 0;
       }
     });
     
@@ -881,9 +833,39 @@ class _CardsScreenState extends State<CardsScreen> {
         builder: (_) => SuccessScreen(
           title: l10n.cardTerminated,
           message: l10n.cardTerminatedSuccess,
-          subMessage: l10n.newBalance(currencyFormatter.format(AppState().balance)),
+          subMessage: l10n.newBalance(currencyFormatter.format(appState.balance)),
           buttonText: l10n.backToHome,
+          onPressed: () => appState.setNavIndex(3),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBalanceDisplay(BuildContext context, AppState state, ThemeData theme) {
+    final currencyFormatter = NumberFormat.simpleCurrency(name: state.currencyCode);
+    final cardBalance = state.cards.isNotEmpty ? state.cards[_currentIndex].balance : 0.0;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      margin: const EdgeInsets.only(right: 8),
+      decoration: BoxDecoration(
+        color: AppColors.accentTeal.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.account_balance_wallet_rounded, color: AppColors.accentTeal, size: 14 * context.fontSizeFactor),
+          const SizedBox(width: 6),
+          Text(
+            currencyFormatter.format(cardBalance),
+            style: TextStyle(
+              color: AppColors.accentTeal,
+              fontWeight: FontWeight.bold,
+              fontSize: 14 * context.fontSizeFactor,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -976,9 +958,67 @@ class _CardsScreenState extends State<CardsScreen> {
             Text(l10n.addNewCard, style: TextStyle(color: Colors.white, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              child: _buildSettingsTile(context: context, icon: Icons.add_card_rounded, color: AppColors.accentTeal, title: l10n.orderVirtualCard, subtitle: l10n.instantlyIssueNewCard, onTap: () => Navigator.pop(sheetCtx), isLast: true),
+              child: _buildSettingsTile(context: context, icon: Icons.add_card_rounded, color: AppColors.accentTeal, title: l10n.orderVirtualCard, subtitle: l10n.instantlyIssueNewCard, onTap: () {
+                Navigator.pop(sheetCtx);
+                _createNewVirtualCard(context, state);
+              }, isLast: true),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _createNewVirtualCard(BuildContext context, AppState state) async {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Check if user has enough balance for a new card ($5 fee)
+    if (state.balance < 5.0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(state.translate("Dhibka: Baaqigaagu kuma filna (\$5 fee).", "Error: Insufficient balance (\$5 fee).")), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    // Show processing dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(child: CircularProgressIndicator(color: AppColors.accentTeal)),
+    );
+
+    await Future.delayed(const Duration(seconds: 2));
+    if (!context.mounted) return;
+    Navigator.pop(context); // Close loading
+
+    // Deduct fee
+    state.deductBalance(5.0);
+
+    // Create new card
+    final newCard = VirtualCard(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      cardNumber: "4${(100000000000000 + (DateTime.now().millisecondsSinceEpoch % 900000000000000)).toString()}",
+      cardHolder: "KHADAR RAYAALE",
+      expiryDate: "10/30",
+      cvv: (100 + (DateTime.now().millisecondsSinceEpoch % 900)).toString(),
+      theme: CardThemeType.values[state.cards.length % CardThemeType.values.length],
+      network: CardNetwork.visa,
+    );
+
+    state.addCard(newCard);
+    
+    // Play success sound
+    _audioPlayer.play(AssetSource('sounds/success.mp3'));
+
+    if (!context.mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SuccessScreen(
+          title: state.translate("Kaadhka waa la sameeyay", "Card Created"),
+          message: state.translate("Kaadhkaaga cusub hadda waa diyaar.", "Your new virtual card is now ready."),
+          buttonText: l10n.backToHome,
+          onPressed: () => state.setNavIndex(3),
         ),
       ),
     );

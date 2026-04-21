@@ -15,7 +15,8 @@ import '../../core/models/transaction.dart' as model;
 
 class WithdrawScreen extends StatefulWidget {
   final bool isTab;
-  const WithdrawScreen({super.key, this.isTab = false});
+  final String cardId;
+  const WithdrawScreen({super.key, this.isTab = false, required this.cardId});
 
   @override
   State<WithdrawScreen> createState() => _WithdrawScreenState();
@@ -108,10 +109,16 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                         ),
                       ),
                             const SizedBox(height: 8),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(_cardBalance), style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                            ),
+                      ListenableBuilder(
+                        listenable: state,
+                        builder: (context, _) {
+                          final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
+                          return FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance), style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                          );
+                        },
+                      ),
                             const SizedBox(height: 20),
                             // Amount Input
                             Container(
@@ -185,8 +192,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 const SizedBox(height: 16),
                 ...List.generate(_methods.length, (index) {
                   final method = _methods[index];
+                  final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
                   final isAmountValid = (double.tryParse(_amountController.text) ?? 0) > 0 && 
-                                       (double.tryParse(_amountController.text) ?? 0) <= _cardBalance;
+                                       (double.tryParse(_amountController.text) ?? 0) <= card.balance;
                   return FadeInUp(
                     delay: Duration(milliseconds: index * 80),
                     child: Opacity(
@@ -313,13 +321,19 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       SizedBox(height: 4 * context.fontSizeFactor),
                       FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text(
-                          NumberFormat.simpleCurrency(name: state.currencyCode).format(_cardBalance), // Mock card balance
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 32 * context.fontSizeFactor,
-                            fontWeight: FontWeight.w900,
-                          ),
+                        child: ListenableBuilder(
+                          listenable: state,
+                          builder: (context, _) {
+                            final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
+                            return Text(
+                              NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 32 * context.fontSizeFactor,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -498,13 +512,19 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       SizedBox(height: 4 * context.fontSizeFactor),
                       FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text(
-                          NumberFormat.simpleCurrency(name: state.currencyCode).format(_cardBalance),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 32 * context.fontSizeFactor,
-                            fontWeight: FontWeight.w900,
-                          ),
+                        child: ListenableBuilder(
+                          listenable: state,
+                          builder: (context, _) {
+                            final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
+                            return Text(
+                              NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 32 * context.fontSizeFactor,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -694,7 +714,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     Navigator.of(context, rootNavigator: true).pop();
 
     if (type == "wallet") {
-      // Card -> Wallet: Increase Wallet Balance
+      // Card -> Wallet: Decrease Card Balance, Increase Wallet Balance
+      state.deductCardBalance(widget.cardId, amountVal);
       state.addBalance(amountVal);
       state.addTransaction(model.Transaction(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -707,9 +728,11 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         type: "deposit",
         method: "Virtual Card",
         purpose: _selectedPurpose ?? l10n.familySupport,
+        cardId: widget.cardId,
       ));
     } else if (type == "bank") {
-      // Card -> Bank: No change to Wallet Balance, just a transaction log
+      // Card -> Bank: Decrease Card Balance, No change to Wallet Balance
+      state.deductCardBalance(widget.cardId, amountVal);
       final String receiverName = _field2Controller.text.isNotEmpty ? _field2Controller.text : "Bank Transfer";
       final String purpose = _selectedPurpose ?? l10n.familySupport;
       
@@ -717,13 +740,14 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: "$receiverName ($purpose)",
         date: DateFormat('MMM dd').format(DateTime.now()),
-        amount: NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal),
-        isNegative: false, // It's neutral relative to the wallet
+        amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal)}",
+        isNegative: true,
         category: "Withdraw",
         status: "Success",
         type: "withdraw",
-        method: "Bank Transfer",
+        method: "Virtual Card",
         purpose: purpose,
+        cardId: widget.cardId,
       ));
     }
 
@@ -739,6 +763,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
           message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0)),
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
+          onPressed: () => state.setNavIndex(3),
         ),
       ),
     );

@@ -55,7 +55,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
   }
 
   void _handleContinue() {
-    if (_selectedProvider == null || _phoneController.text.isEmpty || _pinController.text.isEmpty) return;
+    if (_selectedProvider == null || _phoneController.text.isEmpty) return;
     
     HapticFeedback.mediumImpact();
     Navigator.push(
@@ -222,26 +222,13 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                             child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
                           ),
 
-                        const SizedBox(height: 20),
-                        Text(l10n.servicePin, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                        const SizedBox(height: 12),
-                        
-                        _buildTextField(
-                          controller: _pinController,
-                          focusNode: _pinFocus,
-                          hint: l10n.enterPin,
-                          icon: Icons.lock_outline_rounded,
-                          theme: theme,
-                          isPin: true,
-                        ),
-
                         const SizedBox(height: 40),
                         
                         SizedBox(
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
-                            onPressed: (_selectedProvider != null && _phoneController.text.length == 9 && _pinController.text.isNotEmpty) ? _handleContinue : null,
+                            onPressed: (_selectedProvider != null && _phoneController.text.length == 9) ? _handleContinue : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.secondary,
                               foregroundColor: Colors.white,

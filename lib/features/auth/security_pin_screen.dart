@@ -28,9 +28,10 @@ class _SecurityPinScreenState extends State<SecurityPinScreen> {
     bool authenticated = await AppAuthHelper.authenticateWithBiometrics();
     if (authenticated) {
       if (!mounted) return;
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const MainNavigation()),
+        (route) => false,
       );
     }
   }
@@ -42,9 +43,10 @@ class _SecurityPinScreenState extends State<SecurityPinScreen> {
     if (_pin.length == 4) {
       Future.delayed(const Duration(milliseconds: 300), () {
         if (!mounted) return;
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const MainNavigation()),
+          (route) => false,
         );
       });
     }

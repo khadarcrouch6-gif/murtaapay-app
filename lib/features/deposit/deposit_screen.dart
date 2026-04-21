@@ -720,7 +720,7 @@ class _DepositScreenState extends State<DepositScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) {
-          bool isValid = _field1Controller.text.length == 9 && _field4Controller.text.length >= 4;
+          bool isValid = _field1Controller.text.length == 9;
           return AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             title: Row(
@@ -768,8 +768,6 @@ class _DepositScreenState extends State<DepositScreen> {
                      padding: const EdgeInsets.only(top: 8, left: 4),
                      child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
                    ),
-                SizedBox(height: 16 * context.fontSizeFactor),
-                _inputField(context, l10n.servicePin, Icons.lock_outline_rounded, "••••", _field4Controller, isNumber: true, isObscure: true, onChanged: (_) => setDialogState((){})),
               ],
             ),
             actions: [
@@ -1061,6 +1059,7 @@ class _DepositScreenState extends State<DepositScreen> {
           message: l10n.depositSuccessMessage("\$${_amountController.text}"),
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
     );

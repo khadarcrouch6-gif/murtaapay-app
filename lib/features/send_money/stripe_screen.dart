@@ -134,6 +134,9 @@ class _StripeScreenState extends State<StripeScreen> {
               widget.receiverName,
             ),
             buttonText: l10n.backToHome,
+            onPressed: () {
+              Navigator.of(context).popUntil((route) => route.settings.name == 'SendAmountScreen' || route.isFirst);
+            },
           ),
         ),
       );

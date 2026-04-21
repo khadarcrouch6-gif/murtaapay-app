@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import '../../core/countries.dart';
 import 'login_screen.dart';
-import 'security_pin_screen.dart';
+import 'otp_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -15,64 +17,105 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  String _selectedCountryCode = "+252";
-  String _selectedFlag = "🇸🇴";
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  Country _selectedCountry = countries.firstWhere((c) => c.code == "+252");
+  List<Country> _filteredCountries = countries;
 
-  final List<Map<String, String>> _countries = [
-    {"name": "Somalia", "code": "+252", "flag": "🇸🇴"},
-    {"name": "Kenya", "code": "+254", "flag": "🇰🇪"},
-    {"name": "Ethiopia", "code": "+251", "flag": "🇪🇹"},
-    {"name": "Djibouti", "code": "+253", "flag": "🇩🇯"},
-    {"name": "United Kingdom", "code": "+44", "flag": "🇬🇧"},
-    {"name": "United States", "code": "+1", "flag": "🇺🇸"},
-    {"name": "Canada", "code": "+1", "flag": "🇨🇦"},
-    {"name": "Sweden", "code": "+46", "flag": "🇸🇪"},
-    {"name": "Norway", "code": "+47", "flag": "🇳🇴"},
-    {"name": "UAE", "code": "+971", "flag": "🇦🇪"},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_filterCountries);
+  }
+
+  void _filterCountries() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredCountries = countries
+          .where((c) =>
+              c.name.toLowerCase().contains(query) ||
+              c.code.contains(query))
+          .toList();
+    });
+  }
 
   void _showCountryPicker() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.selectProvider,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _countries.length,
-                  itemBuilder: (context, index) {
-                    final country = _countries[index];
-                    return ListTile(
-                      leading: Text(country["flag"]!, style: const TextStyle(fontSize: 24)),
-                      title: Text(country["name"]!),
-                      trailing: Text(country["code"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                      onTap: () {
-                        setState(() {
-                          _selectedCountryCode = country["code"]!;
-                          _selectedFlag = country["flag"]!;
-                        });
-                        Navigator.pop(context);
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.8,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.selectProvider,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: "Search country or code...",
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    onChanged: (v) {
+                      setModalState(() {});
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _filteredCountries.length,
+                      itemBuilder: (context, index) {
+                        final country = _filteredCountries[index];
+                        return ListTile(
+                          leading: Text(country.flag, style: const TextStyle(fontSize: 24)),
+                          title: Text(country.name),
+                          trailing: Text(country.code, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          onTap: () {
+                            setState(() {
+                              _selectedCountry = country;
+                            });
+                            Navigator.pop(context);
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          }
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -106,7 +149,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           const SizedBox(height: 32),
                           _buildInput(context, l10n.fullName, Icons.person_outline_rounded),
                           _buildInput(context, l10n.emailAddress, Icons.email_outlined),
-                          _buildInput(context, l10n.phoneNumber, Icons.phone_android_rounded, isPhone: true),
+                          _buildPhoneInput(context, l10n.phoneNumber),
                           _buildInput(context, l10n.password, Icons.lock_outline_rounded, isPass: true),
                           const Spacer(),
                           const SizedBox(height: 40),
@@ -115,7 +158,15 @@ class _SignupScreenState extends State<SignupScreen> {
                               minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
                             ),
                             onPressed: () {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SecurityPinScreen()));
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OtpScreen(
+                                    phoneNumber: "${_selectedCountry.code}${_phoneController.text}",
+                                    isLogin: false,
+                                  ),
+                                ),
+                              );
                             },
                              child: Text(l10n.signUp, style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
                           ),
@@ -147,7 +198,55 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _buildInput(BuildContext context, String label, IconData icon, {bool isPass = false, bool isPhone = false}) {
+  Widget _buildPhoneInput(BuildContext context, String label) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextField(
+        controller: _phoneController,
+        onChanged: (v) => setState(() {}),
+        maxLength: _selectedCountry.maxLength,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(_selectedCountry.maxLength),
+        ],
+        style: TextStyle(
+          fontSize: 16 * context.fontSizeFactor,
+          color: theme.textTheme.bodyLarge?.color,
+        ),
+        keyboardType: TextInputType.phone,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: "XXXXXXXXX",
+          counterText: "",
+          labelStyle: const TextStyle(color: AppColors.grey),
+          prefixIcon: InkWell(
+            onTap: _showCountryPicker,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 12, right: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(_selectedCountry.flag, style: const TextStyle(fontSize: 20)),
+                  const SizedBox(width: 4),
+                  Text(_selectedCountry.code, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: AppColors.grey)),
+                  const Icon(Icons.arrow_drop_down, color: AppColors.grey),
+                ],
+              ),
+            ),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: theme.colorScheme.surface,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInput(BuildContext context, String label, IconData icon, {bool isPass = false}) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -157,29 +256,10 @@ class _SignupScreenState extends State<SignupScreen> {
           fontSize: 16 * context.fontSizeFactor,
           color: theme.textTheme.bodyLarge?.color,
         ),
-        keyboardType: isPhone ? TextInputType.phone : TextInputType.text,
         decoration: InputDecoration(
           labelText: label,
-          hintText: isPhone ? "XXXXXXXXX" : null,
-          counterText: "",
           labelStyle: const TextStyle(color: AppColors.grey),
-          prefixIcon: isPhone 
-            ? InkWell(
-                onTap: _showCountryPicker,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 12, right: 8),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(_selectedFlag, style: const TextStyle(fontSize: 20)),
-                      const SizedBox(width: 4),
-                      Text(_selectedCountryCode, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: AppColors.grey)),
-                      const Icon(Icons.arrow_drop_down, color: AppColors.grey),
-                    ],
-                  ),
-                ),
-              )
-            : Icon(icon, color: AppColors.grey),
+          prefixIcon: Icon(icon, color: AppColors.grey),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,

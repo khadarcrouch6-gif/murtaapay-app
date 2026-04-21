@@ -863,6 +863,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
             message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(_amount)),
             subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
             buttonText: l10n.backToHome,
+            onPressed: () => Navigator.pop(context),
           ),
         ),
       );

@@ -22,12 +22,14 @@ class DepositCardScreen extends StatefulWidget {
   final String amount;
   final String currencyCode;
   final String initialCardType;
+  final String cardId;
 
   const DepositCardScreen({
     super.key,
     required this.amount,
     required this.currencyCode,
     this.initialCardType = "unknown",
+    required this.cardId,
   });
 
   @override
@@ -112,8 +114,9 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
         builder: (context) => SuccessScreen(
           title: l10n.cardTopUpSuccessful,
           message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0)),
-          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
+          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.cardBalance)),
           buttonText: l10n.backToHome,
+          onPressed: () => state.setNavIndex(3),
         ),
       ),
     );
@@ -203,6 +206,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
     if (isWalletDeduction) {
       final appState = Provider.of<AppState>(localContext, listen: false);
       appState.deductBalance(amount);
+      appState.addCardBalance(widget.cardId, amount);
       
       appState.addTransaction(model.Transaction(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -213,9 +217,11 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
         category: "All",
         status: "Success",
         type: "payment",
+        cardId: widget.cardId,
       ));
     } else {
        final appState = Provider.of<AppState>(localContext, listen: false);
+       appState.addCardBalance(widget.cardId, amount);
        appState.addTransaction(model.Transaction(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: "Card Top-up",
@@ -226,6 +232,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
         status: "Success",
         type: "deposit",
         method: "Bank",
+        cardId: widget.cardId,
       ));
     }
 
@@ -453,13 +460,19 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                         ),
                       ),
                       SizedBox(height: 4 * context.fontSizeFactor),
-                      Text(
-                        NumberFormat.simpleCurrency(name: state.currencyCode).format(_cardBalance),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28 * context.fontSizeFactor,
-                          fontWeight: FontWeight.w900,
-                        ),
+                      ListenableBuilder(
+                        listenable: state,
+                        builder: (context, _) {
+                          final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
+                          return Text(
+                            NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 28 * context.fontSizeFactor,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          );
+                        },
                       ),
                       SizedBox(height: 24 * context.fontSizeFactor),
                       Text(

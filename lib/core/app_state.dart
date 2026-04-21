@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_analytics.dart';
 import 'package:intl/intl.dart';
-import '../l10n/app_localizations.dart';
 import 'models/bank_account.dart';
 import 'models/transaction.dart';
 import 'models/quick_profile.dart';
+import '../features/cards/models/card_model.dart';
 
 class AppState extends ChangeNotifier {
   static final AppState _instance = AppState._internal();
@@ -23,8 +23,10 @@ class AppState extends ChangeNotifier {
   double _savingsBalance = 0.0;
   double get savingsBalance => _savingsBalance;
 
-  double _cardBalance = 850.50;
-  double get cardBalance => _cardBalance;
+  List<QuickProfile> _quickProfiles = [];
+  List<QuickProfile> get quickProfiles => _quickProfiles;
+
+  double get cardBalance => _cards.fold(0.0, (sum, card) => sum + card.balance);
 
   String _walletId = '102234';
   String get walletId => _walletId;
@@ -52,8 +54,72 @@ class AppState extends ChangeNotifier {
   List<Map<String, String>> _recentWithdrawals = [];
   List<Map<String, String>> get recentWithdrawals => _recentWithdrawals;
 
-  List<QuickProfile> _quickProfiles = [];
-  List<QuickProfile> get quickProfiles => _quickProfiles;
+  List<VirtualCard> _cards = [];
+  List<VirtualCard> get cards => _cards;
+
+  void _loadCards() {
+    final List<String>? cardsJson = _prefs.getStringList('virtual_cards');
+    if (cardsJson != null) {
+      _cards = cardsJson.map((e) => VirtualCard.fromJson(json.decode(e))).toList();
+    } else {
+      _cards = [
+        VirtualCard(
+          id: "1",
+          cardNumber: "4580123456789012",
+          cardHolder: "KHADAR RAYAALE",
+          expiryDate: "12/28",
+          cvv: "455",
+          theme: CardThemeType.obsidian,
+          network: CardNetwork.visa,
+          balance: 850.50,
+        ),
+        VirtualCard(
+          id: "2",
+          cardNumber: "5241987654321098",
+          cardHolder: "KHADAR RAYAALE",
+          expiryDate: "05/30",
+          cvv: "822",
+          theme: CardThemeType.gold,
+          network: CardNetwork.mastercard,
+          balance: 150.0,
+        ),
+        VirtualCard(
+          id: "3",
+          cardNumber: "4000111122223333",
+          cardHolder: "KHADAR RAYAALE",
+          expiryDate: "08/29",
+          cvv: "109",
+          theme: CardThemeType.emerald,
+          network: CardNetwork.visa,
+          balance: 0.0,
+        ),
+      ];
+      _saveCards();
+    }
+  }
+
+  void _saveCards() {
+    final List<String> cardsJson = _cards.map((e) => json.encode(e.toJson())).toList();
+    _prefs.setStringList('virtual_cards', cardsJson);
+  }
+
+  void updateCard(int index, VirtualCard card) {
+    _cards[index] = card;
+    _saveCards();
+    notifyListeners();
+  }
+
+  void removeCard(int index) {
+    _cards.removeAt(index);
+    _saveCards();
+    notifyListeners();
+  }
+
+  void addCard(VirtualCard card) {
+    _cards.add(card);
+    _saveCards();
+    notifyListeners();
+  }
 
   ThemeMode _themeMode = ThemeMode.light;
   ThemeMode get themeMode => _themeMode;
@@ -112,14 +178,11 @@ class AppState extends ChangeNotifier {
     // Load balance (mock)
     _balance = _prefs.getDouble('balance') ?? 12450.80;
     _savingsBalance = _prefs.getDouble('savings_balance') ?? 520.50;
-    _cardBalance = _prefs.getDouble('card_balance') ?? 850.50;
 
     _loadRecentWithdrawals();
-
     _loadQuickProfiles();
-
     _loadBanks();
-
+    _loadCards();
     _loadTransactions();
 
     _isInitialized = true;
@@ -142,7 +205,8 @@ class AppState extends ChangeNotifier {
           isNegative: true, 
           category: "Subscriptions", 
           status: "Success", 
-          type: "payment"
+          type: "payment",
+          cardId: "1"
         ),
         Transaction(
           id: "2", 
@@ -153,7 +217,8 @@ class AppState extends ChangeNotifier {
           isNegative: true, 
           category: "Shopping", 
           status: "Success", 
-          type: "payment"
+          type: "payment",
+          cardId: "1"
         ),
         Transaction(
           id: "3", 
@@ -176,7 +241,8 @@ class AppState extends ChangeNotifier {
           isNegative: true, 
           category: "Food", 
           status: "Success", 
-          type: "payment"
+          type: "payment",
+          cardId: "2"
         ),
         Transaction(
           id: "5", 
@@ -187,7 +253,8 @@ class AppState extends ChangeNotifier {
           isNegative: true, 
           category: "Subscriptions", 
           status: "Success", 
-          type: "payment"
+          type: "payment",
+          cardId: "2"
         ),
         Transaction(
           id: "6", 
@@ -198,7 +265,8 @@ class AppState extends ChangeNotifier {
           isNegative: true, 
           category: "Transport", 
           status: "Success", 
-          type: "payment"
+          type: "payment",
+          cardId: "3"
         ),
         Transaction(
           id: "7", 
@@ -312,11 +380,11 @@ class AppState extends ChangeNotifier {
     } else {
       // Mock initial profiles with Somali numbers
       _quickProfiles = [
-        QuickProfile(id: '1', name: 'Ayaanle', walletId: '252615123456', avatarUrl: 'assets/avatars/avatar1.png'),
-        QuickProfile(id: '2', name: 'Fartun', walletId: '252615654321', avatarUrl: 'assets/avatars/avatar2.png'),
-        QuickProfile(id: '3', name: 'Abdirahman', walletId: '252617788990', avatarUrl: 'assets/avatars/avatar3.png'),
-        QuickProfile(id: '4', name: 'Hodan', walletId: '252618877665', avatarUrl: 'assets/avatars/avatar4.png'),
-        QuickProfile(id: '5', name: 'Mustafe', walletId: '252619922334', avatarUrl: 'assets/avatars/avatar5.png'),
+        QuickProfile(id: '1', name: 'Ayaanle', walletId: '252615123456', avatarUrl: 'https://i.pravatar.cc/150?u=ayaanle'),
+        QuickProfile(id: '2', name: 'Fartun', walletId: '252615654321', avatarUrl: 'https://i.pravatar.cc/150?u=fartun'),
+        QuickProfile(id: '3', name: 'Abdirahman', walletId: '252617788990', avatarUrl: 'https://i.pravatar.cc/150?u=abdirahman'),
+        QuickProfile(id: '4', name: 'Hodan', walletId: '252618877665', avatarUrl: 'https://i.pravatar.cc/150?u=hodan'),
+        QuickProfile(id: '5', name: 'Mustafe', walletId: '252619922334', avatarUrl: 'https://i.pravatar.cc/150?u=mustafe'),
       ];
     }
   }
@@ -430,6 +498,24 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deductCardBalance(String cardId, double amount) {
+    final index = _cards.indexWhere((c) => c.id == cardId);
+    if (index != -1) {
+      _cards[index] = _cards[index].copyWith(balance: _cards[index].balance - amount);
+      _saveCards();
+      notifyListeners();
+    }
+  }
+
+  void addCardBalance(String cardId, double amount) {
+    final index = _cards.indexWhere((c) => c.id == cardId);
+    if (index != -1) {
+      _cards[index] = _cards[index].copyWith(balance: _cards[index].balance + amount);
+      _saveCards();
+      notifyListeners();
+    }
+  }
+
   // Helper for translations
   String translate(String en, String so, {String ar = '', String et = '', String de = ''}) {
     switch (_locale.languageCode) {
@@ -442,25 +528,32 @@ class AppState extends ChangeNotifier {
   }
 
   // Savings Logic
-  Future<void> transferToSavings(double amount, {bool fromCard = false, String? goalName}) async {
-    final double sourceBalance = fromCard ? _cardBalance : _balance;
+  Future<void> transferToSavings(double amount, {String? fromCardId, bool? fromCard, String? goalName}) async {
+    final bool isFromCard = fromCardId != null || (fromCard ?? false);
+    final String? effectiveFromCardId = fromCardId ?? ((fromCard ?? false) && _cards.isNotEmpty ? _cards.first.id : null);
+
+    final double sourceBalance = isFromCard 
+        ? _cards.firstWhere((c) => c.id == effectiveFromCardId).balance 
+        : _balance;
+
     if (sourceBalance < amount) {
-      throw Exception(fromCard ? 'insufficient_card_funds' : 'insufficient_funds');
+      throw Exception(isFromCard ? 'insufficient_card_funds' : 'insufficient_funds');
     }
 
-    if (!fromCard) {
+    if (!isFromCard) {
       _checkTransactionLimits(amount);
     }
 
     // Capture state for rollback
     final double originalBalance = _balance;
-    final double originalCardBalance = _cardBalance;
+    final List<VirtualCard> originalCards = List.from(_cards.map((e) => e.copyWith()));
     final double originalSavingsBalance = _savingsBalance;
     final List<Transaction> originalTransactions = List.from(_transactions);
 
     try {
-      if (fromCard) {
-        _cardBalance -= amount;
+      if (isFromCard) {
+        final index = _cards.indexWhere((c) => c.id == effectiveFromCardId);
+        _cards[index] = _cards[index].copyWith(balance: _cards[index].balance - amount);
       } else {
         _balance -= amount;
       }
@@ -468,7 +561,7 @@ class AppState extends ChangeNotifier {
 
       final tx = Transaction(
         id: "TX${DateTime.now().millisecondsSinceEpoch}",
-        title: goalName != null ? "Deposit to $goalName" : (fromCard ? "Deposit from Card" : "Deposit to Savings"),
+        title: goalName != null ? "Deposit to $goalName" : (isFromCard ? "Deposit from Card" : "Deposit to Savings"),
         date: DateFormat('MMM dd').format(DateTime.now()),
         numericAmount: amount,
         amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(amount)}",
@@ -476,23 +569,24 @@ class AppState extends ChangeNotifier {
         category: "Savings",
         status: "Success",
         type: "transfer_out",
-        method: fromCard ? "Virtual Card" : "Wallet",
+        method: isFromCard ? "Virtual Card" : "Wallet",
+        cardId: effectiveFromCardId,
       );
 
       _transactions.insert(0, tx);
 
       // Persist changes
       await _prefs.setDouble('balance', _balance);
-      await _prefs.setDouble('card_balance', _cardBalance);
+      _saveCards();
       await _prefs.setDouble('savings_balance', _savingsBalance);
       _saveTransactions();
 
       notifyListeners();
-      analytics.logEvent('savings_deposit_success', parameters: {'amount': amount, 'from_card': fromCard, 'goal': goalName});
+      analytics.logEvent('savings_deposit_success', parameters: {'amount': amount, 'from_card': isFromCard, 'goal': goalName});
     } catch (e) {
       // Rollback
       _balance = originalBalance;
-      _cardBalance = originalCardBalance;
+      _cards = originalCards;
       _savingsBalance = originalSavingsBalance;
       _transactions = originalTransactions;
       notifyListeners();
@@ -500,28 +594,32 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  Future<void> withdrawFromSavings(double amount, {bool toCard = false, String? goalName}) async {
+  Future<void> withdrawFromSavings(double amount, {String? toCardId, bool? toCard, String? goalName}) async {
     if (_savingsBalance < amount) {
       throw Exception('insufficient_savings');
     }
 
+    final bool isToCard = toCardId != null || (toCard ?? false);
+    final String? effectiveToCardId = toCardId ?? ((toCard ?? false) && _cards.isNotEmpty ? _cards.first.id : null);
+
     // Capture state for rollback
     final double originalBalance = _balance;
-    final double originalCardBalance = _cardBalance;
+    final List<VirtualCard> originalCards = List.from(_cards.map((e) => e.copyWith()));
     final double originalSavingsBalance = _savingsBalance;
     final List<Transaction> originalTransactions = List.from(_transactions);
 
     try {
       _savingsBalance -= amount;
-      if (toCard) {
-        _cardBalance += amount;
+      if (isToCard) {
+        final index = _cards.indexWhere((c) => c.id == effectiveToCardId);
+        _cards[index] = _cards[index].copyWith(balance: _cards[index].balance + amount);
       } else {
         _balance += amount;
       }
 
       final tx = Transaction(
         id: "TX${DateTime.now().millisecondsSinceEpoch}",
-        title: goalName != null ? "Withdraw from $goalName" : (toCard ? "Withdraw to Card" : "Withdraw from Savings"),
+        title: goalName != null ? "Withdraw from $goalName" : (isToCard ? "Withdraw to Card" : "Withdraw from Savings"),
         date: DateFormat('MMM dd').format(DateTime.now()),
         numericAmount: amount,
         amount: "+${NumberFormat.simpleCurrency(name: _currencyCode).format(amount)}",
@@ -529,23 +627,24 @@ class AppState extends ChangeNotifier {
         category: "Savings",
         status: "Success",
         type: "transfer_in",
-        method: toCard ? "Virtual Card" : "Wallet",
+        method: isToCard ? "Virtual Card" : "Wallet",
+        cardId: effectiveToCardId,
       );
 
       _transactions.insert(0, tx);
 
       // Persist changes
       await _prefs.setDouble('balance', _balance);
-      await _prefs.setDouble('card_balance', _cardBalance);
+      _saveCards();
       await _prefs.setDouble('savings_balance', _savingsBalance);
       _saveTransactions();
 
       notifyListeners();
-      analytics.logEvent('savings_withdraw_success', parameters: {'amount': amount, 'to_card': toCard});
+      analytics.logEvent('savings_withdraw_success', parameters: {'amount': amount, 'to_card': isToCard});
     } catch (e) {
       // Rollback
       _balance = originalBalance;
-      _cardBalance = originalCardBalance;
+      _cards = originalCards;
       _savingsBalance = originalSavingsBalance;
       _transactions = originalTransactions;
       notifyListeners();

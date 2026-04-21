@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'security_pin_screen.dart';
+import '../../core/countries.dart';
+import 'otp_screen.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -16,61 +18,94 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
-  String _selectedCountryCode = "+252";
-  String _selectedFlag = "🇸🇴";
+  final TextEditingController _searchController = TextEditingController();
+  Country _selectedCountry = countries.firstWhere((c) => c.code == "+252");
+  List<Country> _filteredCountries = countries;
 
-  final List<Map<String, String>> _countries = [
-    {"name": "Somalia", "code": "+252", "flag": "🇸🇴"},
-    {"name": "Kenya", "code": "+254", "flag": "🇰🇪"},
-    {"name": "Ethiopia", "code": "+251", "flag": "🇪🇹"},
-    {"name": "Djibouti", "code": "+253", "flag": "🇩🇯"},
-    {"name": "United Kingdom", "code": "+44", "flag": "🇬🇧"},
-    {"name": "United States", "code": "+1", "flag": "🇺🇸"},
-    {"name": "Canada", "code": "+1", "flag": "🇨🇦"},
-    {"name": "Sweden", "code": "+46", "flag": "🇸🇪"},
-    {"name": "Norway", "code": "+47", "flag": "🇳🇴"},
-    {"name": "UAE", "code": "+971", "flag": "🇦🇪"},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_filterCountries);
+  }
+
+  void _filterCountries() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredCountries = countries
+          .where((c) =>
+              c.name.toLowerCase().contains(query) ||
+              c.code.contains(query))
+          .toList();
+    });
+  }
 
   void _showCountryPicker() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.selectProvider, // Reusing localized string for "Select"
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _countries.length,
-                  itemBuilder: (context, index) {
-                    final country = _countries[index];
-                    return ListTile(
-                      leading: Text(country["flag"]!, style: const TextStyle(fontSize: 24)),
-                      title: Text(country["name"]!),
-                      trailing: Text(country["code"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                      onTap: () {
-                        setState(() {
-                          _selectedCountryCode = country["code"]!;
-                          _selectedFlag = country["flag"]!;
-                        });
-                        Navigator.pop(context);
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.8,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.selectProvider, // Reusing localized string for "Select"
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: "Search country or code...",
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    onChanged: (v) {
+                      setModalState(() {});
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _filteredCountries.length,
+                      itemBuilder: (context, index) {
+                        final country = _filteredCountries[index];
+                        return ListTile(
+                          leading: Text(country.flag, style: const TextStyle(fontSize: 24)),
+                          title: Text(country.name),
+                          trailing: Text(country.code, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          onTap: () {
+                            setState(() {
+                              _selectedCountry = country;
+                            });
+                            Navigator.pop(context);
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          }
         );
       },
     );
@@ -79,6 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _phoneController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -89,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: MaxWidthBox(
-            maxWidth: 500, // Login forms should be compact
+            maxWidth: 500,
             child: SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
@@ -138,6 +174,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             controller: _phoneController,
                             onChanged: (v) => setState(() {}),
                             keyboardType: TextInputType.phone,
+                            maxLength: _selectedCountry.maxLength,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(_selectedCountry.maxLength),
+                            ],
                             style: TextStyle(
                               fontSize: 16 * context.fontSizeFactor,
                               color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -154,9 +195,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(_selectedFlag, style: const TextStyle(fontSize: 20)),
+                                      Text(_selectedCountry.flag, style: const TextStyle(fontSize: 20)),
                                       const SizedBox(width: 4),
-                                      Text(_selectedCountryCode, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: AppColors.grey)),
+                                      Text(_selectedCountry.code, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: AppColors.grey)),
                                       const Icon(Icons.arrow_drop_down, color: AppColors.grey),
                                     ],
                                   ),
@@ -182,10 +223,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
                         ),
                         onPressed: _phoneController.text.length >= 7 ? () {
-                          // Allow at least 7 digits for international numbers
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const SecurityPinScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => OtpScreen(
+                                phoneNumber: "${_selectedCountry.code}${_phoneController.text}",
+                                isLogin: true,
+                              ),
+                            ),
                           );
                         } : null,
                         child: Text(l10n.continueLabel, style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
@@ -195,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Center(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) => const SignupScreen()),
                           );
@@ -221,4 +266,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
