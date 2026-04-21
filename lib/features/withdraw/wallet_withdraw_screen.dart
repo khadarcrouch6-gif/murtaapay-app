@@ -396,7 +396,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
              Text(l10n.recent, style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
              const SizedBox(height: 8),
              SizedBox(
-               height: 44,
+               height: 52,
                child: ListView.builder(
                  scrollDirection: Axis.horizontal,
                  itemCount: combinedRecents.length,
@@ -426,9 +426,10 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                        child: Column(
                          mainAxisAlignment: MainAxisAlignment.center,
                          crossAxisAlignment: CrossAxisAlignment.start,
+                         mainAxisSize: MainAxisSize.min,
                          children: [
-                           Text(r["name"]!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                           Text(r["detail"]!, style: TextStyle(fontSize: 10, color: AppColors.grey)),
+                           Text(r["name"]!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                           Text(r["detail"]!, style: TextStyle(fontSize: 10, color: AppColors.grey), maxLines: 1, overflow: TextOverflow.ellipsis),
                          ],
                        ),
                      ),
@@ -863,7 +864,10 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
             message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(_amount)),
             subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
             buttonText: l10n.backToHome,
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              state.setNavIndex(0); // Go to Home tab for Wallet Withdraw
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
           ),
         ),
       );

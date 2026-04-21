@@ -134,6 +134,14 @@ class AppState extends ChangeNotifier {
   int _selectedNavIndex = 0;
   int get selectedNavIndex => _selectedNavIndex;
 
+  int _selectedCardIndex = 0;
+  int get selectedCardIndex => _selectedCardIndex;
+
+  void setSelectedCardIndex(int index) {
+    _selectedCardIndex = index;
+    notifyListeners();
+  }
+
   bool _showHomePromo = false;
   bool get showHomePromo => _showHomePromo;
 

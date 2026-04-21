@@ -187,7 +187,18 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text("${l10n.cardBalanceLabel}${NumberFormat.simpleCurrency(name: 'USD').format(state.cardBalance)}", style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w600)),
+                    ListenableBuilder(
+                      listenable: state,
+                      builder: (context, _) {
+                        final currentCardBalance = state.cards.isNotEmpty 
+                            ? state.cards[state.selectedCardIndex < state.cards.length ? state.selectedCardIndex : 0].balance 
+                            : 0.0;
+                        return Text(
+                          "${l10n.cardBalanceLabel}${NumberFormat.simpleCurrency(name: 'USD').format(currentCardBalance)}",
+                          style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w600),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -608,7 +619,12 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       const SizedBox(height: 16),
                       Text(l10n.virtualCardBalance, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
                       const SizedBox(height: 4),
-                      FittedBox(fit: BoxFit.scaleDown, child: ListenableBuilder(listenable: state, builder: (context, _) => Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.cardBalance), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900)))),
+                      FittedBox(fit: BoxFit.scaleDown, child: ListenableBuilder(listenable: state, builder: (context, _) {
+                        final currentCardBalance = state.cards.isNotEmpty 
+                            ? state.cards[state.selectedCardIndex < state.cards.length ? state.selectedCardIndex : 0].balance 
+                            : 0.0;
+                        return Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(currentCardBalance), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900));
+                      })),
                     ],
                   ),
                 ),
@@ -633,7 +649,10 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
                   if (state.verifyCardPin(pinController.text)) {
                     final double amount = double.tryParse(amountController.text) ?? 0.0;
-                    if (amount > state.cardBalance) {
+                    final currentCardBalance = state.cards.isNotEmpty 
+                        ? state.cards[state.selectedCardIndex < state.cards.length ? state.selectedCardIndex : 0].balance 
+                        : 0.0;
+                    if (amount > currentCardBalance) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
                       return;
                     }

@@ -763,7 +763,10 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
           message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0)),
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
-          onPressed: () => state.setNavIndex(3),
+          onPressed: () {
+            state.setNavIndex(3);
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
         ),
       ),
     );

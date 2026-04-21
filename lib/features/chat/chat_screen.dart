@@ -150,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
               tag: 'avatar_${widget.userId}',
               child: CircleAvatar(
                 radius: 18 * context.fontSizeFactor,
-                backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+                backgroundColor: AppColors.accentTeal.withOpacity(0.1),
                 child: AdaptiveIcon(
                   FontAwesomeIcons.user,
                   size: 16 * context.fontSizeFactor,
@@ -330,7 +330,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     width: 60,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.grey.withValues(alpha: 0.3),
+                      color: AppColors.grey.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -434,7 +434,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     width: 60,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.grey.withValues(alpha: 0.3),
+                      color: AppColors.grey.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -497,7 +497,7 @@ class _ChatScreenState extends State<ChatScreen> {
           width: 44 * context.fontSizeFactor,
           height: 44 * context.fontSizeFactor,
           decoration: BoxDecoration(
-            color: AppColors.accentTeal.withValues(alpha: 0.1),
+            color: AppColors.accentTeal.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: AdaptiveIcon(

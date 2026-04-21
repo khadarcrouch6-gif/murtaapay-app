@@ -39,7 +39,7 @@ class CardReceiptView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
+                    color: Colors.black.withOpacity(0.2),
                     blurRadius: 30,
                     offset: const Offset(0, 15),
                   )
@@ -77,7 +77,7 @@ class CardReceiptView extends StatelessWidget {
           top: 16,
           child: IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.close_rounded, color: Colors.grey.withValues(alpha: 0.5)),
+            icon: Icon(Icons.close_rounded, color: Colors.grey.withOpacity(0.5)),
           ),
         ),
         Padding(
@@ -87,7 +87,7 @@ class CardReceiptView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: (isSuccess ? AppColors.accentTeal : Colors.orange).withValues(alpha: 0.1),
+                  color: (isSuccess ? AppColors.accentTeal : Colors.orange).withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -124,7 +124,7 @@ class CardReceiptView extends StatelessWidget {
             child: Container(
               height: 1,
               margin: const EdgeInsets.symmetric(horizontal: 2),
-              color: Colors.grey.withValues(alpha: 0.3),
+              color: Colors.grey.withOpacity(0.3),
             ),
           ),
         ),
@@ -197,7 +197,7 @@ class CardReceiptView extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
-              side: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
+              side: BorderSide(color: Colors.grey.withOpacity(0.2)),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
             child: Text(

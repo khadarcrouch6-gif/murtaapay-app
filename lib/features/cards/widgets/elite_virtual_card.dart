@@ -117,7 +117,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: themeColors.primaryGlow.withValues(alpha: 0.25),
+            color: themeColors.primaryGlow.withOpacity(0.25),
             blurRadius: 30,
             offset: const Offset(0, 15),
             spreadRadius: -5,
@@ -155,9 +155,9 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
                     end: Alignment.topRight,
                     colors: [
                       Colors.transparent,
-                      themeColors.holographic1.withValues(alpha: 0.08),
-                      Colors.white.withValues(alpha: 0.2),
-                      themeColors.holographic2.withValues(alpha: 0.08),
+                      themeColors.holographic1.withOpacity(0.08),
+                      Colors.white.withOpacity(0.2),
+                      themeColors.holographic2.withOpacity(0.08),
                       Colors.transparent,
                     ],
                     stops: const [0.4, 0.48, 0.5, 0.52, 0.6],
@@ -172,7 +172,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.8),
+                border: Border.all(color: Colors.white.withOpacity(0.1), width: 0.8),
               ),
             ),
           ),
@@ -224,7 +224,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: RadialGradient(
-            colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.05), Colors.transparent],
+            colors: [color.withOpacity(0.15), color.withOpacity(0.05), Colors.transparent],
             stops: const [0.0, 0.4, 1.0],
           ),
         ),
@@ -247,7 +247,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
+                decoration: BoxDecoration(color: AppColors.accentTeal.withOpacity(0.15), borderRadius: BorderRadius.circular(4)),
                 child: const Text("PLATINUM", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w900, fontSize: 7, letterSpacing: 1.5)),
               ),
             ],
@@ -271,7 +271,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
       children: [
         Container(
           width: 46, height: 34,
-          decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))]),
+          decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))]),
           child: CustomPaint(painter: RealisticCardChipPainter()),
         ),
         const SizedBox(width: 16),
@@ -301,7 +301,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
           color: Colors.white,
           letterSpacing: widget.showNumber ? 2.5 : 3.5,
           fontWeight: FontWeight.w900, fontSize: 22, fontFamily: 'monospace',
-          shadows: [Shadow(color: Colors.black.withValues(alpha: 0.8), offset: const Offset(0, 2), blurRadius: 4)],
+          shadows: [Shadow(color: Colors.black.withOpacity(0.8), offset: const Offset(0, 2), blurRadius: 4)],
         ),
       ),
     );
@@ -320,7 +320,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             children: [
               FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(l10n.cardHolder.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
+                child: Text(l10n.cardHolder.toUpperCase(), style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
               ),
               const SizedBox(height: 2),
               Text(widget.card.cardHolder, style: const TextStyle(color: Colors.white, letterSpacing: 1, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis),
@@ -335,7 +335,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             children: [
               FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(l10n.expires.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
+                child: Text(l10n.expires.toUpperCase(), style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
               ),
               const SizedBox(height: 2),
               Text(widget.card.expiryDate, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis),
@@ -352,8 +352,8 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-        child: Icon(icon, color: Colors.white.withValues(alpha: 0.8), size: 16),
+        decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+        child: Icon(icon, color: Colors.white.withOpacity(0.8), size: 16),
       ),
     );
   }
@@ -366,7 +366,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
           child: Container(
-            decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(24)),
+            decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(24)),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -387,7 +387,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
     return Container(
       width: double.infinity, height: 200 * context.fontSizeFactor,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 30, offset: const Offset(0, 15), spreadRadius: -5)]),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 30, offset: const Offset(0, 15), spreadRadius: -5)]),
       child: Stack(
         children: [
           Positioned.fill(child: Container(decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [Color(0xFF020617), Color(0xFF0F172A)])))),
@@ -400,10 +400,10 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             top: 82, left: 20, right: 20,
             child: Container(
               height: 48, padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.white.withValues(alpha: 0.1))),
+              decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.white.withOpacity(0.1))),
               child: Row(
                 children: [
-                  Expanded(child: Text("AUTHORIZED SIGNATURE", style: TextStyle(color: Colors.white.withValues(alpha: 0.2), fontSize: 6, fontWeight: FontWeight.w900, letterSpacing: 0.5))),
+                  Expanded(child: Text("AUTHORIZED SIGNATURE", style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 6, fontWeight: FontWeight.w900, letterSpacing: 0.5))),
                   Container(
                     width: 60, height: 32,
                     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6)),
@@ -430,7 +430,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
                 const SizedBox(width: 12),
                 Container(
                   width: 32, height: 32,
-                  decoration: BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [const Color(0xFF6366F1).withValues(alpha: 0.4), const Color(0xFF2DD4BF).withValues(alpha: 0.4)])),
+                  decoration: BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [const Color(0xFF6366F1).withOpacity(0.4), const Color(0xFF2DD4BF).withOpacity(0.4)])),
                   child: const Center(child: Icon(Icons.verified_user_rounded, color: Colors.white24, size: 16)),
                 ),
               ],
@@ -522,7 +522,7 @@ class RealisticCardChipPainter extends CustomPainter {
     final RRect rrect = RRect.fromLTRBR(0, 0, size.width, size.height, const Radius.circular(8));
     canvas.drawRRect(rrect, paint);
     
-    final linePaint = Paint()..color = Colors.black.withValues(alpha: 0.4)..style = PaintingStyle.stroke..strokeWidth = 0.8;
+    final linePaint = Paint()..color = Colors.black.withOpacity(0.4)..style = PaintingStyle.stroke..strokeWidth = 0.8;
     canvas.drawLine(Offset(0, size.height * 0.25), Offset(size.width * 0.35, size.height * 0.25), linePaint);
     canvas.drawLine(Offset(0, size.height * 0.5), Offset(size.width * 0.35, size.height * 0.5), linePaint);
     canvas.drawLine(Offset(0, size.height * 0.75), Offset(size.width * 0.35, size.height * 0.75), linePaint);

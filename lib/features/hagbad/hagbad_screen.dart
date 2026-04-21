@@ -273,7 +273,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
   }
 
   void _performLiveQoriTuur(HagbadGroup group) async {
-    final l10n = AppLocalizations.of(context)!;
     
     // Check if all members are confirmed
     bool allConfirmed = group.members.every((m) => m.isConfirmed && m.hasSignedOath);
@@ -338,7 +337,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
-              )).toList(),
+              )),
             ],
           ),
           actions: [
@@ -579,26 +578,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
     );
   }
 
-  Widget _buildPaymentRow(String label, String value, ThemeData theme, {bool isBold = false}) {
-    final isDark = theme.brightness == Brightness.dark;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: TextStyle(color: isDark ? Colors.white70 : theme.hintColor, fontSize: 14)),
-          Text(
-            value,
-            style: TextStyle(
-              fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
-              fontSize: isBold ? 16 : 14,
-              color: isDark ? Colors.white : AppColors.textPrimary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _processHagbadPayment(HagbadGroup group) async {
     final l10n = AppLocalizations.of(context)!;
@@ -1490,7 +1469,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(label, style: TextStyle(color: Colors.grey, fontSize: 11 * context.fontSizeFactor)),
+        Text(label, style: TextStyle(color: Colors.grey, fontSize: 11 * context.fontSizeFactor), overflow: TextOverflow.ellipsis),
         Text(
           value, 
           style: TextStyle(
@@ -1735,7 +1714,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
 
   void _showSwapOptions(HagbadGroup group, int currentIndex) {
     final l10n = AppLocalizations.of(context)!;
-    final currentMember = group.members[currentIndex];
 
     showModalBottomSheet(
       context: context,
@@ -1899,6 +1877,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     Text(
                       member.name == "You" ? l10n.you : member.name,
                       style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: theme.colorScheme.onSurface, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     if (member.isTrusted)
                       Tooltip(
@@ -2481,7 +2460,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Container(
+                    SizedBox(
                       height: 56,
                       child: IconButton.filled(
                         onPressed: _isSearchingUser ? null : () => _lookupAndAddMember(setModalState),
@@ -2521,7 +2500,44 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   ),
                 ],
                 if (_newGroupMembersWithDetails.isNotEmpty) ...[
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(l10n.members, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      if (_newGroupMembersWithDetails.length > 1)
+                        TextButton.icon(
+                          onPressed: _isDrawing ? null : () => _performQoriTuur(setModalState),
+                          icon: _isDrawing 
+                            ? const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2))
+                            : const Icon(Icons.shuffle_rounded, size: 16),
+                          label: const Text("Qori-tuurka Bilow", style: TextStyle(fontSize: 12)),
+                          style: TextButton.styleFrom(foregroundColor: Colors.purple),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _newGroupMembersWithDetails.asMap().entries.map((entry) {
+                      int idx = entry.key;
+                      var m = entry.value;
+                      return Chip(
+                        avatar: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: AppColors.primaryDark.withValues(alpha: 0.1),
+                          child: Text(m['name']![0], style: const TextStyle(fontSize: 8)),
+                        ),
+                        label: Text("${idx + 1}. ${m['name']}", style: const TextStyle(fontSize: 11)),
+                        deleteIcon: const Icon(Icons.cancel, size: 14),
+                        onDeleted: () => setModalState(() => _newGroupMembersWithDetails.removeAt(idx)),
+                        backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100,
+                      );
+                    }).toList(),
+                  ),
+                ],
+                const SizedBox(height: 32),
                   const Divider(),
                   const SizedBox(height: 16),
                   Text(l10n.hagbadTerms, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
@@ -2583,7 +2599,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       ],
                     ),
                   ),
-                ],
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,

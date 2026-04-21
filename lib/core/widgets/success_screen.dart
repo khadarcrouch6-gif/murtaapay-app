@@ -76,7 +76,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF11998E).withValues(alpha: 0.4),
+                          color: const Color(0xFF11998E).withOpacity(0.4),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         )
@@ -114,7 +114,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: AppColors.accentTeal.withValues(alpha: 0.1),
+                      color: AppColors.accentTeal.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(

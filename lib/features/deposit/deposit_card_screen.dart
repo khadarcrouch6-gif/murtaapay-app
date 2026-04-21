@@ -116,7 +116,10 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
           message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0)),
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.cardBalance)),
           buttonText: l10n.backToHome,
-          onPressed: () => state.setNavIndex(3),
+          onPressed: () {
+            state.setNavIndex(3);
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
         ),
       ),
     );
@@ -256,6 +259,41 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
               Icon(Icons.account_balance_wallet_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
               SizedBox(width: 12 * context.fontSizeFactor),
               Text(l10n.topUpFromWallet, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.enterWalletPinMessage,
+                style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20 * context.fontSizeFactor),
+              TextField(
+                controller: _pinController,
+                obscureText: true,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                maxLength: 4,
+                style: TextStyle(
+                  fontSize: 24 * context.fontSizeFactor,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 12,
+                ),
+                decoration: InputDecoration(
+                  counterText: "",
+                  filled: true,
+                  fillColor: AppColors.accentTeal.withValues(alpha: 0.05),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  hintText: "••••",
+                  hintStyle: TextStyle(color: AppColors.grey.withValues(alpha: 0.3), letterSpacing: 8),
+                ),
+                onChanged: (value) => setDialogState(() {}),
+              ),
             ],
           ),
           actions: [

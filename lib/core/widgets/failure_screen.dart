@@ -44,7 +44,7 @@ class FailureScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFD32F2F).withValues(alpha: 0.4),
+                          color: const Color(0xFFD32F2F).withOpacity(0.4),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         )

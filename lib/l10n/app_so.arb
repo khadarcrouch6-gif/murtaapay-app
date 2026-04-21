@@ -600,12 +600,18 @@
   "noActivityYet": "Weli ma jiraan dhaqdhaqaaqyo",
   "murtaaxWallet": "Wallet-ka Murtaax",
   "visaMastercard": "Visa / MasterCard",
-  "mobileMoney": "Lacagta Mobilka",
   "confirmTopUp": "Xaqiiji Lacag Shubista",
   "cardInformation": "Xogta Kaadhka",
   "visaDetails": "Faahfaahinta Visa-ha",
   "mastercardDetails": "Faahfaahinta Mastercard-ka",
   "cardDetailsInfo": "Geli xogta kaadhkaaga si aad u dhammaystirto xawaaladda {amount}",
+  "@cardDetailsInfo": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
   "cardHolderName": "Magaca Mulkiilaha Kaadhka",
   "expiryDate": "Taariikhda Dhicitaanka",
   "cvv": "CVV",
@@ -614,7 +620,6 @@
   "murtaaxWalletDesc": "Ka bixi hadhaaga app-kaaga",
   "visaMastercardDesc": "Ku bixi adoo isticmaalaya kaadhkaaga",
   "bankTransferDesc": "Xawilaad toos ah oo bangi",
-  "mobileMoneyDesc": "EVC Plus, Sahal, ZAAD, e-Dahab",
   "yourName": "MAGACAAGA",
   "requiredField": "Waa lagama maarmaan",
   "chooseProviderAndEnterPhone": "Dooro shirkadda oo geli lambarka telefoonka",
@@ -628,14 +633,35 @@
   "virtualCardTopUp": "Ku Shubista Kaadhka Virtual-ka",
   "cardTopUpSuccessful": "Lacag ku shubista kaadhku waa guul!",
   "cardTopUpSuccessMessage": "{amount} ayaa lagu daray kaadhkaaga virtual-ka ah.",
+  "@cardTopUpSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "enterAmountToTopUp": "Geli cadadka aad ku shubayso",
   "topUp": "Ku Shubo",
   "topUpInstantlyVia": "Si degdeg ah ugu shubo {method}",
+  "@topUpInstantlyVia": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
   "walletPin": "PIN-ka Wallet-ka",
   "enterWalletPinMessage": "Geli 4-digit PIN-kaaga wallet-ka si aad u xaqiijiso lacag ku shubista.",
   "confirm": "Xaqiiji",
   "submit": "Gudbi",
   "cardEndingIn": "Kaadhka ku dhammaada {lastFour}",
+  "@cardEndingIn": {
+    "placeholders": {
+      "lastFour": {
+        "type": "String"
+      }
+    }
+  },
   "withdrawToStripe": "Kala bax akoonkaaga Stripe",
   "withdrawToWallet": "U dir Wallet-ka",
   "withdrawToWalletDesc": "U wareeji hadhaaga wallet-kaaga weyn",
@@ -648,33 +674,5 @@
   "qoriTuur": "Qori-tuur",
   "noHagbadGroups": "Weli ma jiraan kooxo. Abuur mid si aad u bilowdo kaydinta!",
   "progress": "Heerka",
-  "members": "Xubnaha",
-  "@cardDetailsInfo": {
-    "placeholders": {
-      "amount": {
-        "type": "Object"
-      }
-    }
-  },
-  "@cardTopUpSuccessMessage": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "@topUpInstantlyVia": {
-    "placeholders": {
-      "method": {
-        "type": "String"
-      }
-    }
-  },
-  "@cardEndingIn": {
-    "placeholders": {
-      "lastFour": {
-        "type": "String"
-      }
-    }
-  }
+  "members": "Xubnaha"
 }

@@ -42,7 +42,7 @@ class TransactionItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
+              color: Colors.black.withOpacity(0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             )
@@ -55,10 +55,10 @@ class TransactionItem extends StatelessWidget {
               width: 48,
               decoration: BoxDecoration(
                 color: (icon != null)
-                  ? Colors.grey.withValues(alpha: 0.1)
+                  ? Colors.grey.withOpacity(0.1)
                   : (isSent == null 
-                    ? theme.colorScheme.primary.withValues(alpha: 0.05)
-                    : (isSent! ? Colors.red : AppColors.accentTeal).withValues(alpha: 0.1)),
+                    ? theme.colorScheme.primary.withOpacity(0.05)
+                    : (isSent! ? Colors.red : AppColors.accentTeal).withOpacity(0.1)),
                 shape: BoxShape.circle,
               ),
               child: Center(

@@ -133,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen())),
                                             trailing: Container(
                                               padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
-                                              decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+                                              decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
                                               child: Text(
                                                 state.translate("Verified", "La Hubiyay", ar: "موثق", de: "Verifiziert", et: "Kinnitatud"),
                                                 style: TextStyle(color: Colors.green, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold),
@@ -254,7 +254,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen())),
                                 trailing: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
-                                  decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+                                  decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
                                   child: Text(
                                     state.translate("Verified", "La Hubiyay", ar: "موثق", de: "Verifiziert", et: "Kinnitatud"),
                                     style: TextStyle(color: Colors.green, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold),
@@ -392,10 +392,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(28),
-                  color: AppColors.primaryDark.withValues(alpha: 0.1),
+                  color: AppColors.primaryDark.withOpacity(0.1),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.15),
+                      color: Colors.black.withOpacity(0.15),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     )
@@ -417,7 +417,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               colors: [AppColors.primaryDark, AppColors.accentTeal],
                             ),
                           ),
-                          child: Icon(Icons.landscape_rounded, color: Colors.white.withValues(alpha: 0.2), size: 64),
+                          child: Icon(Icons.landscape_rounded, color: Colors.white.withOpacity(0.2), size: 64),
                         ),
                       ),
                       BackdropFilter(
@@ -428,8 +428,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                Colors.black.withValues(alpha: 0.3),
-                                Colors.black.withValues(alpha: 0.1),
+                                Colors.black.withOpacity(0.3),
+                                Colors.black.withOpacity(0.1),
                               ],
                             ),
                           ),
@@ -456,7 +456,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border: Border.all(color: theme.scaffoldBackgroundColor, width: 4),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
+                              color: Colors.black.withOpacity(0.2),
                               blurRadius: 15,
                               offset: const Offset(0, 5),
                             )
@@ -531,14 +531,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(_userEmail, style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6), fontSize: 14 * context.fontSizeFactor)),
+              Text(_userEmail, style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6), fontSize: 14 * context.fontSizeFactor)),
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: () => _showMyQRCode(context, state),
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: AppColors.accentTeal.withValues(alpha: 0.1),
+                    color: AppColors.accentTeal.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.qr_code_2_rounded, color: AppColors.accentTeal, size: 16 * context.fontSizeFactor),
@@ -562,7 +562,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
+              color: Colors.black.withOpacity(0.03),
               blurRadius: 20,
               offset: const Offset(0, 10),
             )
@@ -960,14 +960,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           prefixIcon: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16), 
-            borderSide: BorderSide(color: isDark == true ? Colors.white10 : Colors.grey.withValues(alpha: 0.2)),
+            borderSide: BorderSide(color: isDark == true ? Colors.white10 : Colors.grey.withOpacity(0.2)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16), 
             borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
           ),
           filled: true,
-          fillColor: isDark == true ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.05),
+          fillColor: isDark == true ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.05),
           contentPadding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 16 * context.fontSizeFactor),
         ),
       ),
@@ -981,7 +981,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02), 
+            color: Colors.black.withOpacity(0.02), 
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -1000,7 +1000,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   padding: EdgeInsets.all(10 * context.fontSizeFactor),
                   decoration: BoxDecoration(
-                    color: (isLogout ? Colors.red : AppColors.accentTeal).withValues(alpha: 0.08),
+                    color: (isLogout ? Colors.red : AppColors.accentTeal).withOpacity(0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: icon is IconData 
@@ -1010,7 +1010,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(width: 16 * context.fontSizeFactor),
                 Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15 * context.fontSizeFactor, color: isLogout ? Colors.red : null))),
                 trailing ?? const SizedBox.shrink(),
-                if (!isLogout) Icon(Icons.chevron_right_rounded, color: Colors.grey.withValues(alpha: 0.4), size: 24 * context.fontSizeFactor),
+                if (!isLogout) Icon(Icons.chevron_right_rounded, color: Colors.grey.withOpacity(0.4), size: 24 * context.fontSizeFactor),
               ],
             ),
           ),
@@ -1029,7 +1029,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02), 
+            color: Colors.black.withOpacity(0.02), 
             blurRadius: 10,
             offset: const Offset(0, 5),
           )
@@ -1040,7 +1040,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             padding: EdgeInsets.all(10 * context.fontSizeFactor),
             decoration: BoxDecoration(
-              color: AppColors.accentTeal.withValues(alpha: 0.08),
+              color: AppColors.accentTeal.withOpacity(0.08),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: AppColors.accentTeal, size: 18 * context.fontSizeFactor),
@@ -1070,12 +1070,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: EdgeInsets.all(20 * context.fontSizeFactor),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.accentTeal.withValues(alpha: 0.1), theme.colorScheme.surface],
+            colors: [AppColors.accentTeal.withOpacity(0.1), theme.colorScheme.surface],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.1)),
+          border: Border.all(color: AppColors.accentTeal.withOpacity(0.1)),
         ),
         child: Column(
           children: [
@@ -1103,7 +1103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               borderRadius: BorderRadius.circular(10),
               child: LinearProgressIndicator(
                 value: completion,
-                backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+                backgroundColor: AppColors.accentTeal.withOpacity(0.1),
                 valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
                 minHeight: 8 * context.fontSizeFactor,
               ),
@@ -1149,7 +1149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))
+          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))
         ],
       ),
       child: Column(
@@ -1158,7 +1158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Container(
                 padding: EdgeInsets.all(8 * context.fontSizeFactor),
-                decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(color: AppColors.accentTeal.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
                 child: Icon(icon, color: AppColors.accentTeal, size: 18 * context.fontSizeFactor),
               ),
               SizedBox(width: 12 * context.fontSizeFactor),
@@ -1186,7 +1186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: percent,
-              backgroundColor: Colors.grey.withValues(alpha: 0.1),
+              backgroundColor: Colors.grey.withOpacity(0.1),
               valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
               minHeight: 4 * context.fontSizeFactor,
             ),
@@ -1256,7 +1256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return Padding(
                       padding: EdgeInsets.only(bottom: 8 * context.fontSizeFactor),
                       child: Material(
-                        color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent,
+                        color: isSelected ? AppColors.accentTeal.withOpacity(0.1) : Colors.transparent,
                         borderRadius: BorderRadius.circular(16),
                         clipBehavior: Clip.antiAlias,
                         child: ListTile(
@@ -1340,7 +1340,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Padding(
       padding: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
       child: Material(
-        color: Colors.grey.withValues(alpha: 0.05),
+        color: Colors.grey.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
         clipBehavior: Clip.antiAlias,
         child: ListTile(
@@ -1515,7 +1515,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Material(
-      color: isDark ? Colors.white.withValues(alpha: 0.05) : color.withValues(alpha: 0.05),
+      color: isDark ? Colors.white.withOpacity(0.05) : color.withOpacity(0.05),
       borderRadius: BorderRadius.circular(24),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -1527,7 +1527,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
                 child: Icon(icon, color: color, size: 24),
               ),
               const SizedBox(height: 12),

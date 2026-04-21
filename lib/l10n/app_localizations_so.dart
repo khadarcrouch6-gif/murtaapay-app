@@ -112,7 +112,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get visaMastercard => 'Visa / MasterCard';
 
   @override
-  String get mobileMoney => 'Lacagta Mobilka';
+  String get mobileMoney => 'Mobile Money';
 
   @override
   String get transactionFee => 'Kharashka dhaqdhaqaaqa';
