@@ -30,6 +30,15 @@ class AppLocalizationsSo extends AppLocalizations {
   String get balance => 'Haraaga';
 
   @override
+  String get buy => 'Iibso';
+
+  @override
+  String get sell => 'Iibi';
+
+  @override
+  String get confirm => 'Xaqiiji';
+
+  @override
   String get searchTransactions => 'Raadi dhaqdhaqaaqyada...';
 
   @override
@@ -677,9 +686,6 @@ class AppLocalizationsSo extends AppLocalizations {
   @override
   String get enterWalletPinMessage =>
       'Geli 4-digit PIN-kaaga wallet-ka si aad u xaqiijiso lacag ku shubista.';
-
-  @override
-  String get confirm => 'Xaqiiji';
 
   @override
   String get submit => 'Gudbi';

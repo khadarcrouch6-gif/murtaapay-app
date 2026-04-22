@@ -30,6 +30,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get balance => 'الرصيد';
 
   @override
+  String get buy => 'Buy';
+
+  @override
+  String get sell => 'Sell';
+
+  @override
+  String get confirm => 'تأكيد';
+
+  @override
   String get searchTransactions => 'البحث في المعاملات...';
 
   @override
@@ -675,9 +684,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get enterWalletPinMessage =>
       'أدخل رمز PIN للمحفظة المكون من 4 أرقام لتفويض الشحن.';
-
-  @override
-  String get confirm => 'تأكيد';
 
   @override
   String get submit => 'إرسال';

@@ -7,6 +7,7 @@ import 'models/bank_account.dart';
 import 'models/transaction.dart';
 import 'models/quick_profile.dart';
 import '../features/cards/models/card_model.dart';
+import 'models/crypto_asset.dart';
 
 class AppState extends ChangeNotifier {
   static final AppState _instance = AppState._internal();
@@ -56,6 +57,28 @@ class AppState extends ChangeNotifier {
 
   List<VirtualCard> _cards = [];
   List<VirtualCard> get cards => _cards;
+
+  Map<String, double> _cryptoHoldings = {};
+  Map<String, double> get cryptoHoldings => _cryptoHoldings;
+
+  void _loadCryptoHoldings() {
+    final String? cryptoJson = _prefs.getString('crypto_holdings');
+    if (cryptoJson != null) {
+      final Map<String, dynamic> decoded = json.decode(cryptoJson);
+      _cryptoHoldings = decoded.map((key, value) => MapEntry(key, value.toDouble()));
+    } else {
+      // Mock initial holdings
+      _cryptoHoldings = {
+        'BTC': 0.45,
+        'ETH': 2.5,
+      };
+      _saveCryptoHoldings();
+    }
+  }
+
+  void _saveCryptoHoldings() {
+    _prefs.setString('crypto_holdings', json.encode(_cryptoHoldings));
+  }
 
   void _loadCards() {
     final List<String>? cardsJson = _prefs.getStringList('virtual_cards');
@@ -192,6 +215,7 @@ class AppState extends ChangeNotifier {
     _loadBanks();
     _loadCards();
     _loadTransactions();
+    _loadCryptoHoldings();
 
     _isInitialized = true;
     notifyListeners();
@@ -859,6 +883,106 @@ class AppState extends ChangeNotifier {
       });
     } catch (e) {
       _balance = originalBalance;
+      _transactions = originalTransactions;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  // Crypto Logic
+  Future<void> buyCrypto(CryptoAsset asset, double fiatAmount, double cryptoAmount) async {
+    if (_balance < fiatAmount) {
+      throw Exception('insufficient_funds');
+    }
+
+    _checkTransactionLimits(fiatAmount);
+
+    final double originalBalance = _balance;
+    final Map<String, double> originalHoldings = Map.from(_cryptoHoldings);
+    final List<Transaction> originalTransactions = List.from(_transactions);
+
+    try {
+      _balance -= fiatAmount;
+      _cryptoHoldings[asset.symbol] = (_cryptoHoldings[asset.symbol] ?? 0.0) + cryptoAmount;
+
+      final tx = Transaction(
+        id: "TX${DateTime.now().millisecondsSinceEpoch}",
+        title: "Bought ${asset.name}",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(fiatAmount)}",
+        numericAmount: fiatAmount,
+        isNegative: true,
+        category: "Investment",
+        status: "Success",
+        type: "crypto_buy",
+        method: "Wallet",
+        referenceId: asset.symbol,
+      );
+
+      _transactions.insert(0, tx);
+
+      await _prefs.setDouble('balance', _balance);
+      _saveCryptoHoldings();
+      _saveTransactions();
+
+      notifyListeners();
+      analytics.logEvent('crypto_buy_success', parameters: {
+        'symbol': asset.symbol,
+        'fiat_amount': fiatAmount,
+        'crypto_amount': cryptoAmount,
+      });
+    } catch (e) {
+      _balance = originalBalance;
+      _cryptoHoldings = originalHoldings;
+      _transactions = originalTransactions;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> sellCrypto(CryptoAsset asset, double cryptoAmount, double fiatAmount) async {
+    final currentHoldings = _cryptoHoldings[asset.symbol] ?? 0.0;
+    if (currentHoldings < cryptoAmount) {
+      throw Exception('insufficient_holdings');
+    }
+
+    final double originalBalance = _balance;
+    final Map<String, double> originalHoldings = Map.from(_cryptoHoldings);
+    final List<Transaction> originalTransactions = List.from(_transactions);
+
+    try {
+      _cryptoHoldings[asset.symbol] = currentHoldings - cryptoAmount;
+      _balance += fiatAmount;
+
+      final tx = Transaction(
+        id: "TX${DateTime.now().millisecondsSinceEpoch}",
+        title: "Sold ${asset.name}",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "+${NumberFormat.simpleCurrency(name: _currencyCode).format(fiatAmount)}",
+        numericAmount: fiatAmount,
+        isNegative: false,
+        category: "Investment",
+        status: "Success",
+        type: "crypto_sell",
+        method: "Wallet",
+        referenceId: asset.symbol,
+      );
+
+      _transactions.insert(0, tx);
+
+      await _prefs.setDouble('balance', _balance);
+      _saveCryptoHoldings();
+      _saveTransactions();
+
+      notifyListeners();
+      analytics.logEvent('crypto_sell_success', parameters: {
+        'symbol': asset.symbol,
+        'fiat_amount': fiatAmount,
+        'crypto_amount': cryptoAmount,
+      });
+    } catch (e) {
+      _balance = originalBalance;
+      _cryptoHoldings = originalHoldings;
       _transactions = originalTransactions;
       notifyListeners();
       rethrow;

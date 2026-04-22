@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String _displayedName = "Khadar";
   int _charIndex = 6;
   Timer? _timer;
-  final List<String> _names = ["Khadar", "Abdirahman", "Rayaale"];
+  final List<String> _names = ["Khadar", "Abdi", "Warsame"];
   
   ChartType _selectedChartType = ChartType.bar;
   final List<double> _spendingData = [45, 80, 55, 95, 70, 40, 65];

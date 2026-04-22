@@ -1,5 +1,7 @@
 {
   "ar": [
+    "buy",
+    "sell",
     "murtaaxWallet",
     "visaMastercard",
     "mobileMoney",
@@ -156,6 +158,8 @@
   ],
 
   "de": [
+    "buy",
+    "sell",
     "murtaaxWallet",
     "visaMastercard",
     "mobileMoney",
@@ -312,6 +316,8 @@
   ],
 
   "et": [
+    "buy",
+    "sell",
     "invalidAmount",
     "confirmTopUp",
     "refreshed",

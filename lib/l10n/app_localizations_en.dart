@@ -30,6 +30,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get balance => 'Balance';
 
   @override
+  String get buy => 'Buy';
+
+  @override
+  String get sell => 'Sell';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
   String get searchTransactions => 'Search transactions...';
 
   @override
@@ -676,9 +685,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get enterWalletPinMessage =>
       'Enter your 4-digit wallet PIN to authorize top-up.';
-
-  @override
-  String get confirm => 'Confirm';
 
   @override
   String get submit => 'Submit';

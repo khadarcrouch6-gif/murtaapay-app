@@ -30,6 +30,15 @@ class AppLocalizationsEt extends AppLocalizations {
   String get balance => 'Saldo';
 
   @override
+  String get buy => 'Buy';
+
+  @override
+  String get sell => 'Sell';
+
+  @override
+  String get confirm => 'Kinnita';
+
+  @override
   String get searchTransactions => 'Otsi tehinguid...';
 
   @override
@@ -677,9 +686,6 @@ class AppLocalizationsEt extends AppLocalizations {
   @override
   String get enterWalletPinMessage =>
       'Laadimise autoriseerimiseks sisesta oma 4-kohaline rahakoti PIN.';
-
-  @override
-  String get confirm => 'Kinnita';
 
   @override
   String get submit => 'Saada';

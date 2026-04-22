@@ -30,6 +30,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get balance => 'Kontostand';
 
   @override
+  String get buy => 'Buy';
+
+  @override
+  String get sell => 'Sell';
+
+  @override
+  String get confirm => 'Bestätigen';
+
+  @override
   String get searchTransactions => 'Transaktionen suchen...';
 
   @override
@@ -682,9 +691,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get enterWalletPinMessage =>
       'Geben Sie Ihre 4-stellige Wallet-PIN ein, um die Aufladung zu autorisieren.';
-
-  @override
-  String get confirm => 'Bestätigen';
 
   @override
   String get submit => 'Absenden';

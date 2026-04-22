@@ -146,6 +146,24 @@ abstract class AppLocalizations {
   /// **'Balance'**
   String get balance;
 
+  /// No description provided for @buy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get buy;
+
+  /// No description provided for @sell.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell'**
+  String get sell;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
   /// No description provided for @searchTransactions.
   ///
   /// In en, this message translates to:
@@ -1399,12 +1417,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter your 4-digit wallet PIN to authorize top-up.'**
   String get enterWalletPinMessage;
-
-  /// No description provided for @confirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm'**
-  String get confirm;
 
   /// No description provided for @submit.
   ///
