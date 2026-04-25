@@ -478,149 +478,151 @@ class _CardsScreenState extends State<CardsScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // First, verify Virtual Card PIN (1122)
-    _showPinVerification(context, state, l10n, (isVerified) {
-      if (isVerified) {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (sheetCtx) => StatefulBuilder(
-            builder: (stateCtx, setModalState) => GlassmorphicContainer(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.82,
-              borderRadius: 24,
-              blur: 30,
-              alignment: Alignment.topCenter,
-              border: 2,
-              linearGradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: isDark 
-                    ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
-                    : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
-              ),
-              borderGradient: LinearGradient(
-                colors: [
-                  (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.2), 
-                  (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.05)
-                ],
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 12),
-                  Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
-                  const SizedBox(height: 24),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          l10n.cardSettings,
-                          style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withOpacity(0.4)),
-                          ),
-                          child: Text(
-                            currentCard.isFrozen 
-                              ? l10n.frozen
-                              : l10n.active,
-                            style: TextStyle(color: currentCard.isFrozen ? Colors.orange : AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
+    // Direct access to settings without initial PIN (PIN will be asked for sensitive actions)
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (stateCtx, setModalState) => GlassmorphicContainer(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.82,
+          borderRadius: 24,
+          blur: 30,
+          alignment: Alignment.topCenter,
+          border: 2,
+          linearGradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark 
+                ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
+                : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
+          ),
+          borderGradient: LinearGradient(
+            colors: [
+              (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.2), 
+              (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.05)
+            ],
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      l10n.cardSettings,
+                      style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  const SizedBox(height: 32),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _walletSection(context, state, currentCard),
-                          const SizedBox(height: 24),
-                          _buildSectionTitle(context, l10n.security, isDark),
-                          _buildSettingsTile(
-                            context: context,
-                            isDark: isDark,
-                            icon: Icons.ac_unit_rounded,
-                            color: Colors.blue,
-                            title: currentCard.isFrozen 
-                              ? l10n.unfreezeCard
-                              : l10n.freezeCard,
-                            subtitle: l10n.temporarilyDisablePayments,
-                            onTap: () {
-                              state.updateCard(_currentIndex, currentCard.copyWith(isFrozen: !currentCard.isFrozen));
-                              setModalState(() {});
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                          _buildSectionTitle(context, l10n.cardControls, isDark),
-                          _buildSwitchTile(
-                            context: context,
-                            isDark: isDark,
-                            icon: Icons.shopping_basket_outlined,
-                            color: Colors.teal,
-                            title: l10n.onlinePayments,
-                            value: currentCard.allowOnline,
-                            onChanged: (v) {
-                              state.updateCard(_currentIndex, currentCard.copyWith(allowOnline: v));
-                              setModalState(() {});
-                            },
-                          ),
-                          _buildSwitchTile(
-                            context: context,
-                            isDark: isDark,
-                            icon: Icons.public_rounded,
-                            color: Colors.orange,
-                            title: l10n.internationalUsage,
-                            value: currentCard.allowInternational,
-                            onChanged: (v) {
-                              state.updateCard(_currentIndex, currentCard.copyWith(allowInternational: v));
-                              setModalState(() {});
-                            },
-                          ),
-                          _buildSwitchTile(
-                            context: context,
-                            isDark: isDark,
-                            icon: Icons.contactless_rounded,
-                            color: Colors.purple,
-                            title: l10n.contactlessPayments,
-                            value: currentCard.allowContactless,
-                            onChanged: (v) {
-                              state.updateCard(_currentIndex, currentCard.copyWith(allowContactless: v));
-                              setModalState(() {});
-                            },
-                          ),
-                          const SizedBox(height: 32),
-                          _buildSettingsTile(
-                            context: context,
-                            isDark: isDark,
-                            icon: Icons.delete_forever_rounded,
-                            color: Colors.redAccent,
-                            title: l10n.terminateCard,
-                            subtitle: l10n.permanentlyDeleteCard,
-                            onTap: () => _showTerminateConfirmation(context, l10n),
-                            isLast: true,
-                          ),
-                        ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withOpacity(0.4)),
+                      ),
+                      child: Text(
+                        currentCard.isFrozen 
+                          ? l10n.frozen
+                          : l10n.active,
+                        style: TextStyle(color: currentCard.isFrozen ? Colors.orange : AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+              const SizedBox(height: 32),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _walletSection(context, state, currentCard),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle(context, l10n.security, isDark),
+                      _buildSettingsTile(
+                        context: context,
+                        isDark: isDark,
+                        icon: Icons.ac_unit_rounded,
+                        color: Colors.blue,
+                        title: currentCard.isFrozen 
+                          ? l10n.unfreezeCard
+                          : l10n.freezeCard,
+                        subtitle: l10n.temporarilyDisablePayments,
+                        onTap: () {
+                          // Ask for PIN for freezing/unfreezing
+                          _showNewPinVerification(context, l10n, isTerminate: false, customAction: () {
+                            state.updateCard(_currentIndex, currentCard.copyWith(isFrozen: !currentCard.isFrozen));
+                            setModalState(() {});
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle(context, l10n.cardControls, isDark),
+                      _buildSwitchTile(
+                        context: context,
+                        isDark: isDark,
+                        icon: Icons.shopping_basket_outlined,
+                        color: Colors.teal,
+                        title: l10n.onlinePayments,
+                        value: currentCard.allowOnline,
+                        onChanged: (v) {
+                          state.updateCard(_currentIndex, currentCard.copyWith(allowOnline: v));
+                          setModalState(() {});
+                        },
+                      ),
+                      _buildSwitchTile(
+                        context: context,
+                        isDark: isDark,
+                        icon: Icons.public_rounded,
+                        color: Colors.orange,
+                        title: l10n.internationalUsage,
+                        value: currentCard.allowInternational,
+                        onChanged: (v) {
+                          state.updateCard(_currentIndex, currentCard.copyWith(allowInternational: v));
+                          setModalState(() {});
+                        },
+                      ),
+                      _buildSwitchTile(
+                        context: context,
+                        isDark: isDark,
+                        icon: Icons.contactless_rounded,
+                        color: Colors.purple,
+                        title: l10n.contactlessPayments,
+                        value: currentCard.allowContactless,
+                        onChanged: (v) {
+                          state.updateCard(_currentIndex, currentCard.copyWith(allowContactless: v));
+                          setModalState(() {});
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle(context, state.translate("Xadka Kharashka", "Spending Limit"), isDark),
+                      _buildSpendingLimitTile(context, state, currentCard, isDark, setModalState),
+                      const SizedBox(height: 32),
+                      _buildSettingsTile(
+                        context: context,
+                        isDark: isDark,
+                        icon: Icons.delete_forever_rounded,
+                        color: Colors.redAccent,
+                        title: l10n.terminateCard,
+                        subtitle: l10n.permanentlyDeleteCard,
+                        onTap: () => _showTerminateReasons(context, l10n, state),
+                        isLast: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        );
-      }
-    });
+        ),
+      ),
+    );
   }
 
   void _showPinVerification(BuildContext context, AppState state, AppLocalizations l10n, Function(bool) onResult) {
@@ -681,35 +683,124 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  void _showTerminateConfirmation(BuildContext context, AppLocalizations l10n) {
-    showDialog(
+  void _showTerminateReasons(BuildContext context, AppLocalizations l10n, AppState state) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final reasons = [
+      {"so": "Kaadhku waa iga lumay ama waa la iga xaday", "en": "I lost my card or it was stolen"},
+      {"so": "Waxaan helay adeeg ka fiican", "en": "I found a better service"},
+      {"so": "Ma isticmaalo hadda kaadhkan", "en": "I don't use this card anymore"},
+      {"so": "Lacagaha adeegga ayaa aad u sarreeya", "en": "The service fees are too high"},
+      {"so": "Waxaan qabaa walaac dhanka amniga ah", "en": "I have security concerns"},
+      {"so": "Dhibaato farsamo ayaan kala kulmay", "en": "I experienced technical issues"},
+      {"so": "Sabab kale", "en": "Other reason"},
+    ];
+
+    showModalBottomSheet(
       context: context,
-      builder: (dialogCtx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: AlertDialog(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          title: Text(l10n.terminateCard, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-          content: Text(
-            l10n.terminateCardConfirm,
-            style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogCtx),
-              child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(dialogCtx); // Close dialog
-                _processTransaction(context, l10n);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                elevation: 0,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => GlassmorphicContainer(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.75,
+        borderRadius: 24,
+        blur: 30,
+        alignment: Alignment.topCenter,
+        border: 2,
+        linearGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark 
+              ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
+              : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
+        ),
+        borderGradient: LinearGradient(
+          colors: [
+            (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.2), 
+            (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.05)
+          ],
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                state.translate("Maxaad u tirtiraysaa kaadhka?", "Why are you terminating the card?"),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20 * context.fontSizeFactor,
+                  color: isDark ? Colors.white : AppColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
               ),
-              child: Text(l10n.terminateCard, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                state.translate("Fadlan nala wadaag sababta si aan adeegga u hagaajino.", "Please share your reason with us to help us improve."),
+                style: TextStyle(
+                  fontSize: 13 * context.fontSizeFactor,
+                  color: isDark ? Colors.white70 : AppColors.textSecondary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: reasons.length,
+                itemBuilder: (context, index) {
+                  final reason = reasons[index];
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+                    ),
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.pop(sheetCtx);
+                        _showTerminationTypeSelection(context, l10n, state);
+                      },
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.accentTeal.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.help_outline_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                      ),
+                      title: Text(
+                        state.translate(reason["so"]!, reason["en"]!),
+                        style: TextStyle(
+                          fontSize: 14 * context.fontSizeFactor,
+                          fontWeight: FontWeight.w500,
+                          color: isDark ? Colors.white : AppColors.textPrimary,
+                        ),
+                      ),
+                      trailing: Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white24 : Colors.black26),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(sheetCtx),
+                      child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -717,11 +808,256 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  void _processTransaction(BuildContext context, AppLocalizations l10n) async {
+  void _showTerminationTypeSelection(BuildContext context, AppLocalizations l10n, AppState state) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final currentCard = state.cards[_currentIndex];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => GlassmorphicContainer(
+        width: double.infinity,
+        height: 480 * context.fontSizeFactor,
+        borderRadius: 24,
+        blur: 30,
+        alignment: Alignment.topCenter,
+        border: 2,
+        linearGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark 
+              ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
+              : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
+        ),
+        borderGradient: LinearGradient(
+          colors: [
+            (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.2), 
+            (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.05)
+          ],
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+            const SizedBox(height: 24),
+            Text(
+              state.translate("Dooro Nooca Action-ka", "Select Action Type"),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20 * context.fontSizeFactor,
+                color: isDark ? Colors.white : AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 32),
+            _buildTypeOption(
+              context: context,
+              isDark: isDark,
+              icon: Icons.pause_circle_outline_rounded,
+              color: Colors.orange,
+              title: state.translate("Demi Kaadhka (Temporary)", "Deactivate Card (Temporary)"),
+              description: state.translate(
+                "Tani waa muddo kooban. Kaadhkaaga waa la xidhi doonaa (Freeze), mana isticmaali kartid ilaa aad dib u furato. Lacagtaadu way ku dhex jiraysaa kaadhka.",
+                "This is temporary. Your card will be frozen, and you cannot use it until you reactivate it. Your balance stays on the card."
+              ),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _showNewPinVerification(context, l10n, isTerminate: false);
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildTypeOption(
+              context: context,
+              isDark: isDark,
+              icon: Icons.delete_forever_rounded,
+              color: Colors.redAccent,
+              title: state.translate("Tirtir Joogto ah (Permanent)", "Terminate Permanently"),
+              description: state.translate(
+                "Tani waa mid joogto ah. Kaadhkaaga waa la tirtiri doonaa, laakiin waxaad haysataa 30 casho oo aad dib ugu soo ceshan karto haddii aad ka qoomamayso. Wixii intaas ka dambeeya xogtaada waa la tirtirayaa.",
+                "This is permanent. Your card will be deleted, but you have 30 days to restore it if you change your mind. After 30 days, all data will be permanently removed."
+              ),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _showNewPinVerification(context, l10n, isTerminate: true);
+              },
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: TextButton(
+                onPressed: () => Navigator.pop(sheetCtx),
+                child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTypeOption({
+    required BuildContext context,
+    required bool isDark,
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String description,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+              child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16 * context.fontSizeFactor,
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 12 * context.fontSizeFactor,
+                      color: isDark ? Colors.white60 : AppColors.textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white24 : Colors.black26),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showNewPinVerification(BuildContext context, AppLocalizations l10n, {required bool isTerminate, VoidCallback? customAction}) {
+    final TextEditingController pinController = TextEditingController();
+    final state = Provider.of<AppState>(context, listen: false);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(sheetCtx).viewInsets.bottom),
+        child: GlassmorphicContainer(
+          width: double.infinity,
+          height: 400 * context.fontSizeFactor,
+          borderRadius: 24,
+          blur: 30,
+          alignment: Alignment.topCenter,
+          border: 2,
+          linearGradient: LinearGradient(
+            colors: isDark 
+                ? [AppColors.primaryDark.withOpacity(0.95), AppColors.primaryDark.withOpacity(0.85)]
+                : [Colors.white.withOpacity(0.95), Colors.white.withOpacity(0.9)],
+          ),
+          borderGradient: LinearGradient(
+            colors: [Colors.white.withOpacity(0.2), Colors.white.withOpacity(0.05)],
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+              const SizedBox(height: 24),
+              Icon(Icons.lock_outline_rounded, color: isTerminate ? Colors.redAccent : Colors.orange, size: 48 * context.fontSizeFactor),
+              const SizedBox(height: 16),
+              Text(
+                state.translate("Gali PIN-ka Kaadhka", "Enter Card PIN"),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                state.translate("Fadlan geli PIN-kaaga si aad u xaqiijiso talaabadan.", "Please enter your PIN to confirm this action."),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: 220 * context.fontSizeFactor,
+                child: TextField(
+                  controller: pinController,
+                  obscureText: true,
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(fontSize: 28 * context.fontSizeFactor, letterSpacing: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: "****",
+                    hintStyle: TextStyle(letterSpacing: 20 * context.fontSizeFactor, fontSize: 28 * context.fontSizeFactor, color: isDark ? Colors.white24 : Colors.black12),
+                    filled: true,
+                    fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                  ),
+                  onChanged: (value) {
+                    if (value.length == 4) {
+                      if (state.verifyCardPin(value)) {
+                        Navigator.pop(sheetCtx);
+                        if (customAction != null) {
+                          customAction();
+                        } else {
+                          _processTransaction(context, l10n, isTerminate: isTerminate);
+                        }
+                      } else {
+                        HapticFeedback.vibrate();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.translate("PIN-kaagu waa khalad.", "Incorrect PIN.")),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        pinController.clear();
+                      }
+                    }
+                  },
+                ),
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: TextButton(
+                  onPressed: () => Navigator.pop(sheetCtx),
+                  child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _processTransaction(BuildContext context, AppLocalizations l10n, {required bool isTerminate}) async {
     final theme = Theme.of(context);
     final appState = Provider.of<AppState>(context, listen: false);
     
-    // Add haptic feedback start
     HapticFeedback.heavyImpact();
 
     showDialog(
@@ -739,13 +1075,7 @@ class _CardsScreenState extends State<CardsScreen> {
               decoration: BoxDecoration(
                 color: theme.scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(32),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  )
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -756,37 +1086,20 @@ class _CardsScreenState extends State<CardsScreen> {
                       SizedBox(
                         width: 65 * context.fontSizeFactor,
                         height: 65 * context.fontSizeFactor,
-                        child: const CircularProgressIndicator(
-                          color: AppColors.accentTeal,
-                          strokeWidth: 3,
-                        ),
+                        child: CircularProgressIndicator(color: isTerminate ? Colors.redAccent : Colors.orange, strokeWidth: 3),
                       ),
-                      Icon(
-                        Icons.bolt_rounded,
-                        color: AppColors.accentTeal,
-                        size: 32 * context.fontSizeFactor,
-                      ),
+                      Icon(isTerminate ? Icons.delete_sweep_rounded : Icons.pause_circle_filled_rounded, color: isTerminate ? Colors.redAccent : Colors.orange, size: 32 * context.fontSizeFactor),
                     ],
                   ),
                   SizedBox(height: 24 * context.fontSizeFactor),
                   Text(
                     l10n.processing, 
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18 * context.fontSizeFactor,
-                      color: theme.textTheme.bodyLarge?.color,
-                      decoration: TextDecoration.none,
-                    )
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, decoration: TextDecoration.none)
                   ),
                   SizedBox(height: 8 * context.fontSizeFactor),
                   Text(
                     l10n.justAMoment,
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 13 * context.fontSizeFactor,
-                      color: AppColors.grey,
-                      decoration: TextDecoration.none,
-                    )
+                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey, decoration: TextDecoration.none)
                   ),
                 ],
               ),
@@ -799,50 +1112,71 @@ class _CardsScreenState extends State<CardsScreen> {
     await Future.delayed(const Duration(seconds: 2));
 
     if (!context.mounted) return;
-    
-    // Success haptic and sound
     HapticFeedback.vibrate();
     _audioPlayer.play(AssetSource('sounds/success.mp3'));
-
     Navigator.of(context, rootNavigator: true).pop();
 
-    // Refund card balance to wallet before removing the card
-    final oldIndex = _currentIndex;
-    final cardToTerminate = appState.cards[oldIndex];
-    final refundAmount = cardToTerminate.balance;
-    appState.addBalance(refundAmount);
-    
-    // Use AppState to remove the card permanently
-    appState.removeCard(oldIndex);
-    
-    if (!context.mounted) return;
-    setState(() {
-      if (_currentIndex >= appState.cards.length && appState.cards.isNotEmpty) {
-        _currentIndex = appState.cards.length - 1;
-      } else if (appState.cards.isEmpty) {
-        _currentIndex = 0;
+    if (isTerminate) {
+      final oldIndex = _currentIndex;
+      final cardToTerminate = appState.cards[oldIndex];
+      final refundAmount = cardToTerminate.balance;
+      
+      // Update app state first
+      appState.addBalance(refundAmount);
+      appState.removeCard(oldIndex);
+      
+      // Update local index to prevent out-of-bounds
+      if (mounted) {
+        setState(() {
+          if (_currentIndex >= appState.cards.length && appState.cards.isNotEmpty) {
+            _currentIndex = appState.cards.length - 1;
+          } else if (appState.cards.isEmpty) {
+            _currentIndex = 0;
+          }
+        });
       }
-    });
-    
-    if (!context.mounted) return;
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context); // Close settings bottom sheet
-    }
-
-    if (!context.mounted) return;
-    final currencyFormatter = NumberFormat.currency(symbol: '\$');
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SuccessScreen(
-          title: l10n.cardTerminated,
-          message: l10n.cardTerminatedSuccess,
-          subMessage: l10n.newBalance(currencyFormatter.format(appState.balance)),
-          buttonText: l10n.backToHome,
-          onPressed: () => appState.setNavIndex(3),
+      
+      final currencyFormatter = NumberFormat.currency(symbol: '\$');
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SuccessScreen(
+            title: l10n.cardTerminated,
+            message: l10n.cardTerminatedSuccess,
+            subMessage: l10n.newBalance(currencyFormatter.format(appState.balance)),
+            buttonText: l10n.backToHome,
+            onPressed: () {
+              appState.setNavIndex(0); // 0 is Home
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+          ),
         ),
-      ),
-    );
+        (route) => false,
+      );
+    } else {
+      final currentCard = appState.cards[_currentIndex];
+      appState.updateCard(_currentIndex, currentCard.copyWith(isFrozen: true));
+      
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SuccessScreen(
+            title: appState.translate("Waa la Demiya", "Card Deactivated"),
+            message: appState.translate("Kaadhkaaga si guul leh ayaa loo demiyay.", "Your card has been successfully deactivated."),
+            buttonText: l10n.backToHome,
+            onPressed: () {
+              appState.setNavIndex(0); // 0 is Home
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+          ),
+        ),
+        (route) => false,
+      );
+    }
+  }
+
+  void _showTerminateConfirmation(BuildContext context, AppLocalizations l10n) {
+    // This is now handled through PIN verification flow
   }
 
   Widget _buildBalanceDisplay(BuildContext context, AppState state, ThemeData theme) {
@@ -922,6 +1256,58 @@ class _CardsScreenState extends State<CardsScreen> {
         ),
         if (!isLast) Divider(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05), indent: 64),
       ],
+    );
+  }
+
+  Widget _buildSpendingLimitTile(BuildContext context, AppState state, VirtualCard card, bool isDark, StateSetter setModalState) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                state.translate("Xadka Maalinlaha ah", "Daily Limit"),
+                style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 14 * context.fontSizeFactor),
+              ),
+              Text(
+                "\$${card.dailyLimit.toStringAsFixed(0)}",
+                style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: AppColors.accentTeal,
+              inactiveTrackColor: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+              thumbColor: AppColors.accentTeal,
+              overlayColor: AppColors.accentTeal.withOpacity(0.2),
+              trackHeight: 4,
+            ),
+            child: Slider(
+              value: card.dailyLimit,
+              min: 100,
+              max: 5000,
+              divisions: 49,
+              onChanged: (value) {
+                state.updateCard(_currentIndex, card.copyWith(dailyLimit: value));
+                setModalState(() {});
+              },
+            ),
+          ),
+          Text(
+            state.translate("Waxaad isticmaashay \$${card.currentSpending.toStringAsFixed(0)} maanta", "You've used \$${card.currentSpending.toStringAsFixed(0)} today"),
+            style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor),
+          ),
+        ],
+      ),
     );
   }
 

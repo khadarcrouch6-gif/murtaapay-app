@@ -10,6 +10,7 @@ import 'dart:ui' as ui;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/widgets/success_screen.dart';
+import '../../core/models/savings_goal.dart';
 
 class SavingsScreen extends StatefulWidget {
   final bool isTab;
@@ -20,50 +21,10 @@ class SavingsScreen extends StatefulWidget {
 }
 
 class _SavingsScreenState extends State<SavingsScreen> {
-  final List<Map<String, dynamic>> _goals = [
-    {
-      "title": "Hajj Fund",
-      "soTitle": "Sanduuqa Xajka",
-      "arTitle": "صندوق الحج",
-      "deTitle": "Hajj-Fonds",
-      "saved": 1200.0,
-      "target": 5000.0,
-      "deadline": "Dec 2025",
-      "icon": Icons.mosque_rounded,
-      "color": AppColors.accentTeal,
-      "delay": 100,
-      "isPaused": false,
-    },
-    {
-      "title": "New Car",
-      "soTitle": "Gaadhi Cusub",
-      "arTitle": "سيارة جديدة",
-      "deTitle": "Neues Auto",
-      "saved": 4500.0,
-      "target": 15000.0,
-      "deadline": "Jun 2026",
-      "icon": Icons.directions_car_rounded,
-      "color": const Color(0xFF6366F1),
-      "delay": 200,
-      "isPaused": false,
-    },
-    {
-      "title": "Emergency Fund",
-      "soTitle": "Sanduuqa Degdegga",
-      "arTitle": "صندوق الطوارئ",
-      "deTitle": "Notfallfonds",
-      "saved": 850.0,
-      "target": 2000.0,
-      "deadline": "Ongoing",
-      "icon": Icons.health_and_safety_rounded,
-      "color": const Color(0xFFF43F5E),
-      "delay": 300,
-      "isPaused": true,
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
+    final state = Provider.of<AppState>(context);
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isRtl = Directionality.of(context) == ui.TextDirection.rtl;
@@ -113,8 +74,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _goals.length,
-                    itemBuilder: (context, index) => _buildSavingsGoalCard(context: context, l10n: l10n, index: index, goal: _goals[index]),
+                    itemCount: state.savingsGoals.length,
+                    itemBuilder: (context, index) => _buildSavingsGoalCard(context: context, l10n: l10n, index: index, goal: state.savingsGoals[index]),
                   ),
                   const SizedBox(height: 24),
                   Text(l10n.recentSavingsActivity, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor, letterSpacing: -0.5)),
@@ -755,7 +716,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  Future<void> _processDeposit(BuildContext context, AppLocalizations l10n, String amountStr, {String? fromCardId, String? goalName}) async {
+  Future<void> _processDeposit(BuildContext context, AppLocalizations l10n, String amountStr, {String? fromCardId, String? goalName, String? goalId}) async {
     final theme = Theme.of(context);
     final state = Provider.of<AppState>(context, listen: false);
     final double amount = double.tryParse(amountStr) ?? 0;
@@ -789,7 +750,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
     try {
       await Future.delayed(const Duration(milliseconds: 1500));
-      await state.transferToSavings(amount, fromCardId: fromCardId, goalName: goalName);
+      await state.transferToSavings(amount, fromCardId: fromCardId, goalName: goalName, goalId: goalId);
       if (!context.mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
       
@@ -840,14 +801,14 @@ class _SavingsScreenState extends State<SavingsScreen> {
     required BuildContext context,
     required AppLocalizations l10n,
     required int index,
-    required Map<String, dynamic> goal,
+    required SavingsGoal goal,
   }) {
     final theme = Theme.of(context);
-    double progress = (goal['saved'] / goal['target']).clamp(0.0, 1.0);
-    bool isPaused = goal['isPaused'] ?? false;
+    double progress = (goal.saved / goal.target).clamp(0.0, 1.0);
+    bool isPaused = goal.isPaused;
 
     return FadeInUp(
-      delay: Duration(milliseconds: goal['delay']),
+      delay: Duration(milliseconds: goal.delay),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(color: theme.cardColor, borderRadius: BorderRadius.circular(24), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))]),
@@ -857,7 +818,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
               padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
-                  Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: goal['color'].withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)), child: Icon(goal['icon'], color: goal['color'], size: 28)),
+                  Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: goal.color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)), child: Icon(goal.icon, color: goal.color, size: 28)),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -865,7 +826,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       children: [
                         Row(
                           children: [
-                            Text(goal['title'], style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, letterSpacing: -0.2)),
+                            Text(goal.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, letterSpacing: -0.2)),
                             if (isPaused)
                               Container(
                                 margin: const EdgeInsets.only(left: 8),
@@ -876,7 +837,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Text("${l10n.targetWithColon}${NumberFormat.simpleCurrency(name: 'USD').format(goal['target'])} • ${goal['deadline']}", style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.w500)),
+                        Text("${l10n.targetWithColon}${NumberFormat.simpleCurrency(name: 'USD').format(goal.target)} • ${goal.deadline}", style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.w500)),
                       ],
                     ),
                   ),
@@ -891,7 +852,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(NumberFormat.simpleCurrency(name: 'USD').format(goal['saved']), style: TextStyle(color: goal['color'], fontWeight: FontWeight.w900, fontSize: 18)),
+                      Text(NumberFormat.simpleCurrency(name: 'USD').format(goal.saved), style: TextStyle(color: goal.color, fontWeight: FontWeight.w900, fontSize: 18)),
                       Text("${(progress * 100).toInt()}%", style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 13)),
                     ],
                   ),
@@ -899,7 +860,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   Stack(
                     children: [
                       Container(height: 10, width: double.infinity, decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(10))),
-                      AnimatedContainer(duration: const Duration(seconds: 1), curve: Curves.easeOutCubic, height: 10, width: MediaQuery.of(context).size.width * 0.7 * progress, decoration: BoxDecoration(gradient: LinearGradient(colors: [goal['color'], goal['color'].withValues(alpha: 0.7)]), borderRadius: BorderRadius.circular(10), boxShadow: [BoxShadow(color: goal['color'].withValues(alpha: 0.3), blurRadius: 6, offset: const Offset(0, 2))])),
+                      AnimatedContainer(duration: const Duration(seconds: 1), curve: Curves.easeOutCubic, height: 10, width: MediaQuery.of(context).size.width * 0.7 * progress, decoration: BoxDecoration(gradient: LinearGradient(colors: [goal.color, goal.color.withValues(alpha: 0.7)]), borderRadius: BorderRadius.circular(10), boxShadow: [BoxShadow(color: goal.color.withValues(alpha: 0.3), blurRadius: 6, offset: const Offset(0, 2))])),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -908,8 +869,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: isPaused ? null : () => _showAddFundsDialog(context, l10n, index),
-                          style: OutlinedButton.styleFrom(side: BorderSide(color: goal['color'].withValues(alpha: 0.2)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)), padding: const EdgeInsets.symmetric(vertical: 12)),
-                          child: Text(l10n.addFunds, style: TextStyle(color: goal['color'], fontWeight: FontWeight.w700)),
+                          style: OutlinedButton.styleFrom(side: BorderSide(color: goal.color.withValues(alpha: 0.2)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)), padding: const EdgeInsets.symmetric(vertical: 12)),
+                          child: Text(l10n.addFunds, style: TextStyle(color: goal.color, fontWeight: FontWeight.w700)),
                         ),
                       ),
                     ],
@@ -923,18 +884,19 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  Widget _buildGoalOptions(BuildContext context, AppLocalizations l10n, int index, Map<String, dynamic> goal) {
+  Widget _buildGoalOptions(BuildContext context, AppLocalizations l10n, int index, SavingsGoal goal) {
+    final state = Provider.of<AppState>(context, listen: false);
     return PopupMenuButton<String>(
       icon: Icon(Icons.more_vert_rounded, color: AppColors.grey),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       onSelected: (value) {
         if (value == 'edit') _showEditGoalDialog(context, l10n, index, goal);
-        if (value == 'pause') setState(() => _goals[index]['isPaused'] = !(_goals[index]['isPaused'] ?? false));
+        if (value == 'pause') state.updateSavingsGoal(index, goal.copyWith(isPaused: !goal.isPaused));
         if (value == 'delete') _showDeleteConfirmDialog(context, l10n, index);
       },
       itemBuilder: (context) => [
         PopupMenuItem(value: 'edit', child: Row(children: [const Icon(Icons.edit_rounded, size: 20), const SizedBox(width: 12), Text(l10n.edit)])),
-        PopupMenuItem(value: 'pause', child: Row(children: [Icon(goal['isPaused'] == true ? Icons.play_arrow_rounded : Icons.pause_rounded, size: 20), const SizedBox(width: 12), Text(goal['isPaused'] == true ? l10n.resume : l10n.pause)])),
+        PopupMenuItem(value: 'pause', child: Row(children: [Icon(goal.isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded, size: 20), const SizedBox(width: 12), Text(goal.isPaused ? l10n.resume : l10n.pause)])),
         const PopupMenuDivider(),
         PopupMenuItem(value: 'delete', child: Row(children: [const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red), const SizedBox(width: 12), Text(l10n.delete, style: const TextStyle(color: Colors.red))])),
       ],
@@ -1010,10 +972,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
                 if (amount > 0 && amount <= sourceBalance) {
                   Navigator.pop(context);
-                  await _processDeposit(this.context, l10n, amountController.text, fromCardId: cardId, goalName: _goals[index]['title']);
-                  setState(() {
-                    _goals[index]['saved'] += amount;
-                  });
+                  final goal = state.savingsGoals[index];
+                  await _processDeposit(this.context, l10n, amountController.text, fromCardId: cardId, goalName: goal.title, goalId: goal.id);
                 } else if (amount > sourceBalance) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
                 }
@@ -1038,7 +998,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
           TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey))),
           TextButton(
             onPressed: () {
-              setState(() => _goals.removeAt(index));
+              Provider.of<AppState>(context, listen: false).removeSavingsGoal(index);
               Navigator.pop(context);
             },
             child: Text(l10n.delete, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
@@ -1239,9 +1199,17 @@ class _SavingsScreenState extends State<SavingsScreen> {
     await Future.delayed(const Duration(milliseconds: 1500));
     if (!context.mounted) return;
 
-    setState(() {
-      _goals.add({"title": title, "saved": 0.0, "target": double.tryParse(amount) ?? 0.0, "deadline": deadline.isNotEmpty ? deadline : "Ongoing", "icon": icon, "color": color, "delay": 0, "isPaused": false});
-    });
+    state.addSavingsGoal(SavingsGoal(
+      id: "G${DateTime.now().millisecondsSinceEpoch}",
+      title: title, 
+      saved: 0.0, 
+      target: double.tryParse(amount) ?? 0.0, 
+      deadline: deadline.isNotEmpty ? deadline : "Ongoing", 
+      icon: icon, 
+      color: color, 
+      delay: 0, 
+      isPaused: false
+    ));
 
     Navigator.of(context, rootNavigator: true).pop();
 
@@ -1258,12 +1226,12 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  void _showEditGoalDialog(BuildContext context, AppLocalizations l10n, int index, Map<String, dynamic> goal) {
-    final TextEditingController titleController = TextEditingController(text: goal['title']);
-    final TextEditingController amountController = TextEditingController(text: goal['target'].toString());
-    final TextEditingController deadlineController = TextEditingController(text: goal['deadline']);
-    IconData selectedIcon = goal['icon'];
-    Color selectedColor = goal['color'];
+  void _showEditGoalDialog(BuildContext context, AppLocalizations l10n, int index, SavingsGoal goal) {
+    final TextEditingController titleController = TextEditingController(text: goal.title);
+    final TextEditingController amountController = TextEditingController(text: goal.target.toString());
+    final TextEditingController deadlineController = TextEditingController(text: goal.deadline);
+    IconData selectedIcon = goal.icon;
+    Color selectedColor = goal.color;
 
     final List<IconData> goalIcons = [Icons.star_rounded, Icons.flight_rounded, Icons.home_rounded, Icons.directions_car_rounded, Icons.school_rounded, Icons.shopping_bag_rounded, Icons.favorite_rounded, Icons.mosque_rounded];
     final List<Color> goalColors = [AppColors.accentTeal, const Color(0xFF6366F1), const Color(0xFFF43F5E), const Color(0xFFF59E0B), const Color(0xFF10B981), const Color(0xFF8B5CF6), const Color(0xFFEC4899), const Color(0xFF0EA5E9)];
@@ -1354,13 +1322,16 @@ class _SavingsScreenState extends State<SavingsScreen> {
             ElevatedButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
-                  setState(() {
-                    _goals[index]['title'] = titleController.text;
-                    _goals[index]['target'] = double.tryParse(amountController.text) ?? goal['target'];
-                    _goals[index]['deadline'] = deadlineController.text;
-                    _goals[index]['icon'] = selectedIcon;
-                    _goals[index]['color'] = selectedColor;
-                  });
+                  Provider.of<AppState>(context, listen: false).updateSavingsGoal(
+                    index, 
+                    goal.copyWith(
+                      title: titleController.text,
+                      target: double.tryParse(amountController.text) ?? goal.target,
+                      deadline: deadlineController.text,
+                      icon: selectedIcon,
+                      color: selectedColor,
+                    )
+                  );
                   Navigator.pop(context);
                 }
               },
