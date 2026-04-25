@@ -80,7 +80,7 @@ class ReceiptView extends StatelessWidget {
                 _pdfRow(l10n.receiverSource, transaction['title'] ?? ""),
                 if (transaction['purpose'] != null)
                   _pdfRow(purposeLabel, transaction['purpose'].toString()),
-                _pdfRow(l10n.transactionId, "#MTX-98234-AX"),
+                _pdfRow(l10n.transactionId, transaction['transactionId'] ?? transaction['id'] ?? "#MTX-98234-AX"),
                 _pdfRow(l10n.date, transaction['date'] ?? ""),
                 _pdfRow(l10n.paymentMethod, transaction['method'] ?? "Wallet"),
                 pw.Divider(),
@@ -264,7 +264,7 @@ class ReceiptView extends StatelessWidget {
           _buildDetailRow(theme, l10n.receiverSource, transaction['title'] ?? ""),
           if (transaction['purpose'] != null)
             _buildDetailRow(theme, state.translate("Purpose", "Ujeedada"), transaction['purpose'].toString()),
-          _buildDetailRow(theme, l10n.transactionId, "#MTX-98234-AX"),
+          _buildDetailRow(theme, l10n.transactionId, transaction['transactionId'] ?? transaction['id'] ?? "#MTX-98234-AX"),
           _buildDetailRow(theme, l10n.date, transaction['date'] ?? ""),
           _buildDetailRow(theme, l10n.paymentMethod, methodTitle),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -63,13 +64,10 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isRtl = Directionality.of(context) == ui.TextDirection.rtl;
-    return ListenableBuilder(
-      listenable: state,
-      builder: (context, child) => Scaffold(
+    return Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         appBar: widget.isTab ? null : AppBar(
           backgroundColor: Colors.transparent,
@@ -163,12 +161,11 @@ class _SavingsScreenState extends State<SavingsScreen> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      ),
     );
   }
 
   Widget _buildTotalSavings(BuildContext context, AppLocalizations l10n) {
-    final state = AppState();
+    final state = Provider.of<AppState>(context);
     return FadeInDown(
       duration: const Duration(milliseconds: 500),
       child: Container(
@@ -274,7 +271,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
   }
 
   void _showWalletWithdrawDialog(BuildContext context, AppLocalizations l10n) {
-    final state = AppState();
+    final state = Provider.of<AppState>(context, listen: false);
     final TextEditingController amountController = TextEditingController();
     final TextEditingController pinController = TextEditingController();
 
@@ -329,7 +326,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       return;
                     }
                     Navigator.pop(context);
-                    await _processWithdrawal(this.context, l10n, amountController.text, toCard: false);
+                    await _processWithdrawal(this.context, l10n, amountController.text);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-kaagu waa khalad.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red));
                   }
@@ -345,9 +342,10 @@ class _SavingsScreenState extends State<SavingsScreen> {
   }
 
   void _showCardWithdrawDialog(BuildContext context, AppLocalizations l10n) {
-    final state = AppState();
+    final state = Provider.of<AppState>(context, listen: false);
     final TextEditingController amountController = TextEditingController();
     final TextEditingController pinController = TextEditingController();
+    int selectedCardIdx = state.selectedCardIndex < state.cards.length ? state.selectedCardIndex : 0;
 
     showDialog(
       context: context,
@@ -362,18 +360,60 @@ class _SavingsScreenState extends State<SavingsScreen> {
               children: [
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
                   decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF1A1F71), Color(0xFF000000)], begin: Alignment.topLeft, end: Alignment.bottomRight)),
                   child: Column(
                     children: [
-                      Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle), child: const FaIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 32)),
-                      const SizedBox(height: 16),
+                      Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle), child: const FaIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 24)),
+                      const SizedBox(height: 12),
                       Text(l10n.savingsBalanceLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
                       const SizedBox(height: 4),
-                      FittedBox(fit: BoxFit.scaleDown, child: ListenableBuilder(listenable: state, builder: (context, _) => Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.savingsBalance), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900)))),
+                      FittedBox(fit: BoxFit.scaleDown, child: ListenableBuilder(listenable: state, builder: (context, _) => Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.savingsBalance), style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900)))),
                     ],
                   ),
                 ),
+                if (state.cards.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(state.translate("Select Card", "Dooro Kaarka"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey)),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: 60,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: state.cards.length,
+                            itemBuilder: (context, index) {
+                              final card = state.cards[index];
+                              bool isSelected = selectedCardIdx == index;
+                              return GestureDetector(
+                                onTap: () => setDialogState(() => selectedCardIdx = index),
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 12),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).colorScheme.surface,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("**** ${card.cardNumber.substring(card.cardNumber.length - 4)}", style: TextStyle(color: isSelected ? Colors.white : null, fontWeight: FontWeight.bold, fontSize: 13)),
+                                      Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance), style: TextStyle(color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.grey, fontSize: 11)),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
@@ -392,7 +432,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 8, bottom: 8),
               child: ElevatedButton(
-                onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
+                onPressed: (amountController.text.isEmpty || pinController.text.length < 4 || state.cards.isEmpty) ? null : () async {
                   if (state.verifyCardPin(pinController.text)) {
                     final double amount = double.tryParse(amountController.text) ?? 0.0;
                     if (amount > state.savingsBalance) {
@@ -400,7 +440,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       return;
                     }
                     Navigator.pop(context);
-                    await _processWithdrawal(this.context, l10n, amountController.text, toCard: true);
+                    await _processWithdrawal(this.context, l10n, amountController.text, toCardId: state.cards[selectedCardIdx].id);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-ka kaarkaagu waa khalad.", "PIN-ka kaarkaagu waa khalad.")), backgroundColor: Colors.red));
                   }
@@ -415,9 +455,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  Future<void> _processWithdrawal(BuildContext context, AppLocalizations l10n, String amountStr, {bool toCard = false}) async {
+  Future<void> _processWithdrawal(BuildContext context, AppLocalizations l10n, String amountStr, {String? toCardId}) async {
     final theme = Theme.of(context);
-    final state = AppState();
+    final state = Provider.of<AppState>(context, listen: false);
     final double amount = double.tryParse(amountStr) ?? 0;
 
     showDialog(
@@ -449,7 +489,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
     try {
       await Future.delayed(const Duration(milliseconds: 1500));
-      await state.withdrawFromSavings(amount, toCard: toCard);
+      await state.withdrawFromSavings(amount, toCardId: toCardId);
       if (!context.mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
       
@@ -472,7 +512,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
   }
 
   void _showDepositMethodDialog(BuildContext context, AppLocalizations l10n) {
-    final state = AppState();
+    final state = Provider.of<AppState>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -579,7 +619,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       return;
                     }
                     Navigator.pop(context);
-                    await _processDeposit(this.context, l10n, amountController.text, fromCard: false);
+                    await _processDeposit(this.context, l10n, amountController.text);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-kaagu waa khalad.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red));
                   }
@@ -597,6 +637,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
   void _showCardDepositDialog(BuildContext context, AppState state, AppLocalizations l10n) {
     final TextEditingController amountController = TextEditingController();
     final TextEditingController pinController = TextEditingController();
+    int selectedCardIdx = state.selectedCardIndex < state.cards.length ? state.selectedCardIndex : 0;
 
     showDialog(
       context: context,
@@ -611,23 +652,65 @@ class _SavingsScreenState extends State<SavingsScreen> {
               children: [
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
                   decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF1A1F71), Color(0xFF000000)], begin: Alignment.topLeft, end: Alignment.bottomRight)),
                   child: Column(
                     children: [
-                      Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle), child: const FaIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 32)),
-                      const SizedBox(height: 16),
+                      Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle), child: const FaIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 24)),
+                      const SizedBox(height: 12),
                       Text(l10n.virtualCardBalance, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
                       const SizedBox(height: 4),
                       FittedBox(fit: BoxFit.scaleDown, child: ListenableBuilder(listenable: state, builder: (context, _) {
                         final currentCardBalance = state.cards.isNotEmpty 
-                            ? state.cards[state.selectedCardIndex < state.cards.length ? state.selectedCardIndex : 0].balance 
+                            ? state.cards[selectedCardIdx].balance 
                             : 0.0;
-                        return Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(currentCardBalance), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900));
+                        return Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(currentCardBalance), style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900));
                       })),
                     ],
                   ),
                 ),
+                if (state.cards.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(state.translate("Select Card", "Dooro Kaarka"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey)),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: 60,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: state.cards.length,
+                            itemBuilder: (context, index) {
+                              final card = state.cards[index];
+                              bool isSelected = selectedCardIdx == index;
+                              return GestureDetector(
+                                onTap: () => setDialogState(() => selectedCardIdx = index),
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 12),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).colorScheme.surface,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("**** ${card.cardNumber.substring(card.cardNumber.length - 4)}", style: TextStyle(color: isSelected ? Colors.white : null, fontWeight: FontWeight.bold, fontSize: 13)),
+                                      Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance), style: TextStyle(color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.grey, fontSize: 11)),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
@@ -646,18 +729,18 @@ class _SavingsScreenState extends State<SavingsScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 8, bottom: 8),
               child: ElevatedButton(
-                onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
+                onPressed: (amountController.text.isEmpty || pinController.text.length < 4 || state.cards.isEmpty) ? null : () async {
                   if (state.verifyCardPin(pinController.text)) {
                     final double amount = double.tryParse(amountController.text) ?? 0.0;
                     final currentCardBalance = state.cards.isNotEmpty 
-                        ? state.cards[state.selectedCardIndex < state.cards.length ? state.selectedCardIndex : 0].balance 
+                        ? state.cards[selectedCardIdx].balance 
                         : 0.0;
                     if (amount > currentCardBalance) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
                       return;
                     }
                     Navigator.pop(context);
-                    await _processDeposit(this.context, l10n, amountController.text, fromCard: true);
+                    await _processDeposit(this.context, l10n, amountController.text, fromCardId: state.cards[selectedCardIdx].id);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-ka kaarkaagu waa khalad.", "PIN-ka kaarkaagu waa khalad.")), backgroundColor: Colors.red));
                   }
@@ -672,9 +755,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  Future<void> _processDeposit(BuildContext context, AppLocalizations l10n, String amountStr, {bool fromCard = false}) async {
+  Future<void> _processDeposit(BuildContext context, AppLocalizations l10n, String amountStr, {String? fromCardId, String? goalName}) async {
     final theme = Theme.of(context);
-    final state = AppState();
+    final state = Provider.of<AppState>(context, listen: false);
     final double amount = double.tryParse(amountStr) ?? 0;
 
     showDialog(
@@ -706,7 +789,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
     try {
       await Future.delayed(const Duration(milliseconds: 1500));
-      await state.transferToSavings(amount, fromCard: fromCard);
+      await state.transferToSavings(amount, fromCardId: fromCardId, goalName: goalName);
       if (!context.mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
       
@@ -859,32 +942,87 @@ class _SavingsScreenState extends State<SavingsScreen> {
   }
 
   void _showAddFundsDialog(BuildContext context, AppLocalizations l10n, int index) {
-    final state = AppState();
+    final state = Provider.of<AppState>(context, listen: false);
     final TextEditingController amountController = TextEditingController();
+    int selectedCardIdx = 0; // Default to Wallet (internal representation)
+    
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(l10n.addFunds, style: const TextStyle(fontWeight: FontWeight.bold)),
-        content: _dialogInputField(context, l10n.amountToAdd, Icons.add_circle_outline_rounded, amountController, isNumber: true),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey))),
-          ElevatedButton(
-            onPressed: () {
-              final amount = double.tryParse(amountController.text) ?? 0;
-              if (amount > 0 && amount <= state.balance) {
-                setState(() {
-                  _goals[index]['saved'] += amount;
-                });
-                state.transferToSavings(amount, goalName: _goals[index]['title']);
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.fundsAddedSuccess), backgroundColor: AppColors.accentTeal, behavior: SnackBarBehavior.floating));
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            child: Text(l10n.add),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Text(l10n.addFunds, style: const TextStyle(fontWeight: FontWeight.bold)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _dialogInputField(context, l10n.amountToAdd, Icons.add_circle_outline_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState((){})),
+              const SizedBox(height: 16),
+              Align(alignment: Alignment.centerLeft, child: Text(state.translate("Select Source", "Dooro Isha"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.grey))),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 50,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    GestureDetector(
+                      onTap: () => setDialogState(() => selectedCardIdx = 0),
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: selectedCardIdx == 0 ? AppColors.accentTeal : Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: selectedCardIdx == 0 ? AppColors.accentTeal : Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                        ),
+                        child: Center(child: Text(state.translate("Wallet", "Boorsada"), style: TextStyle(color: selectedCardIdx == 0 ? Colors.white : null, fontWeight: FontWeight.bold, fontSize: 12))),
+                      ),
+                    ),
+                    ...List.generate(state.cards.length, (i) {
+                      final card = state.cards[i];
+                      bool isSelected = selectedCardIdx == i + 1;
+                      return GestureDetector(
+                        onTap: () => setDialogState(() => selectedCardIdx = i + 1),
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).colorScheme.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                          ),
+                          child: Center(child: Text("**** ${card.cardNumber.substring(card.cardNumber.length - 4)}", style: TextStyle(color: isSelected ? Colors.white : null, fontWeight: FontWeight.bold, fontSize: 12))),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey))),
+            ElevatedButton(
+              onPressed: amountController.text.isEmpty ? null : () async {
+                final amount = double.tryParse(amountController.text) ?? 0;
+                final bool isFromCard = selectedCardIdx > 0;
+                final String? cardId = isFromCard ? state.cards[selectedCardIdx - 1].id : null;
+                final sourceBalance = isFromCard ? state.cards[selectedCardIdx - 1].balance : state.balance;
+
+                if (amount > 0 && amount <= sourceBalance) {
+                  Navigator.pop(context);
+                  await _processDeposit(this.context, l10n, amountController.text, fromCardId: cardId, goalName: _goals[index]['title']);
+                  setState(() {
+                    _goals[index]['saved'] += amount;
+                  });
+                } else if (amount > sourceBalance) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              child: Text(l10n.add),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -911,7 +1049,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
   }
 
   Widget _buildRecentActivity(BuildContext context, AppLocalizations l10n) {
-    final state = AppState();
+    final state = Provider.of<AppState>(context);
     final savingsTxs = state.transactions.where((tx) => tx.category == "Savings").toList();
 
     if (savingsTxs.isEmpty) {
@@ -1069,7 +1207,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
   Future<void> _processCreateGoal(BuildContext context, AppLocalizations l10n, String title, String amount, String deadline, IconData icon, Color color) async {
     final theme = Theme.of(context);
-    final state = AppState();
+    final state = Provider.of<AppState>(context, listen: false);
 
     showDialog(
       context: context,

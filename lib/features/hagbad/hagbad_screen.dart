@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../core/widgets/detail_row.dart';
 import '../../core/app_state.dart';
 import '../../core/widgets/success_screen.dart';
+import '../../core/widgets/receipt_view.dart';
 import '../../core/models/transaction.dart' as model;
 
 enum HagbadStatus { active, inactive, failed }
@@ -980,8 +981,14 @@ class _HagbadScreenState extends State<HagbadScreen> {
   }
 
   Widget _buildSummaryCard(bool isDark, AppLocalizations l10n) {
-    final appState = Provider.of<AppState>(context);
     final currencyFormatter = NumberFormat.currency(symbol: '\$');
+    
+    // Calculate total money currently sitting in all Hagbad groups
+    final totalHagbadPot = _groups.fold(0.0, (sum, group) => sum + group.currentBalance);
+    
+    // Calculate total payout expected if you win next (Average of active groups)
+    final totalExpectedPayout = _groups.where((g) => g.status == HagbadStatus.active)
+        .fold(0.0, (sum, group) => sum + (group.totalPayout - group.serviceFee));
 
     return Container(
       width: double.infinity,
@@ -1001,12 +1008,12 @@ class _HagbadScreenState extends State<HagbadScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.totalSavingsPot,
+            l10n.totalSavingsPot, // This will now refer to total money in Hagbad groups
             style: TextStyle(color: Colors.white70, fontSize: 14 * context.fontSizeFactor),
           ),
           const SizedBox(height: 8),
           Text(
-            currencyFormatter.format(appState.balance),
+            currencyFormatter.format(totalHagbadPot),
             style: TextStyle(
               color: Colors.white,
               fontSize: 32 * context.fontSizeFactor,
@@ -1020,7 +1027,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
             alignment: WrapAlignment.spaceBetween,
             children: [
               _buildSummaryStat(l10n.activeGroups, "${_groups.where((g) => g.status == HagbadStatus.active).length}", Icons.groups_rounded),
-              _buildSummaryStat(l10n.nextPayout, "12 ${l10n.days}", Icons.event_repeat_rounded),
+              _buildSummaryStat(l10n.payoutMethod, currencyFormatter.format(totalExpectedPayout), Icons.stars_rounded),
             ],
           )
         ],
@@ -1330,18 +1337,15 @@ class _HagbadScreenState extends State<HagbadScreen> {
                               if (group.adminName == "Khadar Abdi") {
                                  _showPenaltyDialog(group, group.members.indexWhere((m) => m.name == "Maryan"));
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Row(
-                                      children: [
-                                        const Icon(Icons.check_circle, color: Colors.white, size: 20),
-                                        const SizedBox(width: 12),
-                                        Text(l10n.receiptDownloaded),
-                                      ],
-                                    ),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
+                                ReceiptView.show(context, {
+                                  'title': 'Hagbad Payment',
+                                  'amount': '\$${group.amount.toStringAsFixed(2)}',
+                                  'date': DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now()),
+                                  'category': 'Hagbad',
+                                  'isNegative': true,
+                                  'id': 'HG-${group.id}-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
+                                  'recipient': group.name,
+                                });
                               }
                             },
                             icon: Icon(Icons.download_rounded, size: 20 * context.fontSizeFactor),
@@ -1443,7 +1447,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     children: [
                       const Icon(Icons.verified_user, color: Colors.white),
                       const SizedBox(width: 12),
-                      const Text("Dhaarta waa la aqbalay! Hadda waxaad tahay xubin rasmi ah."),
+                      const Expanded(
+                        child: Text("Dhaarta waa la aqbalay! Hadda waxaad tahay xubin rasmi ah."),
+                      ),
                     ],
                   ),
                   backgroundColor: Colors.purple,
@@ -1497,70 +1503,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
       case HagbadFrequency.yearly:
         return l10n.turnWithNumber(order);
     }
-  }
-
-  void _swapMemberTurn(HagbadGroup group, int index1, int index2) {
-    if (group.members[index1].hasReceived || group.members[index2].hasReceived) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.cannotSwapReceived),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    setState(() {
-      final member1 = group.members[index1];
-      final member2 = group.members[index2];
-
-      // Swap the payoutOrder logic
-      final tempOrder = member1.payoutOrder;
-      
-      // We need to create new objects because fields are final
-      group.members[index1] = HagbadMember(
-        name: member1.name,
-        avatar: member1.avatar,
-        payoutOrder: member2.payoutOrder,
-        paidAmount: member1.paidAmount,
-        hasReceived: member1.hasReceived,
-        guarantorName: member1.guarantorName,
-        isTrusted: member1.isTrusted,
-      );
-
-      group.members[index2] = HagbadMember(
-        name: member2.name,
-        avatar: member2.avatar,
-        payoutOrder: tempOrder,
-        paidAmount: member2.paidAmount,
-        hasReceived: member2.hasReceived,
-        guarantorName: member2.guarantorName,
-        isTrusted: member2.isTrusted,
-      );
-
-      // Re-sort the list by payoutOrder to reflect the UI change
-      group.members.sort((a, b) => a.payoutOrder.compareTo(b.payoutOrder));
-    });
-  }
-
-  double calculateCurrentPenalty(HagbadGroup group, HagbadMember member) {
-    if (member.paidAmount >= group.amount) return member.penaltyAmount;
-
-    // Calculate due date for current cycle
-    final dueDate = switch (group.frequency) {
-      HagbadFrequency.daily => group.startDate.add(Duration(days: group.currentCycle)),
-      HagbadFrequency.weekly => group.startDate.add(Duration(days: group.currentCycle * 7)),
-      HagbadFrequency.tenDays => group.startDate.add(Duration(days: group.currentCycle * 10)),
-      HagbadFrequency.monthly => DateTime(group.startDate.year, group.startDate.month + group.currentCycle, group.startDate.day),
-      HagbadFrequency.yearly => DateTime(group.startDate.year + group.currentCycle, group.startDate.month, group.startDate.day),
-    };
-
-    final now = DateTime.now();
-    if (now.isAfter(dueDate)) {
-      final daysLate = now.difference(dueDate).inDays;
-      return member.penaltyAmount + (daysLate * group.penaltyPerDay);
-    }
-    return member.penaltyAmount;
   }
 
   void _showPenaltyDialog(HagbadGroup group, int index) {
@@ -1624,78 +1566,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
     );
   }
 
-  void _showReplaceMemberDialog(HagbadGroup group, int index) {
-    final l10n = AppLocalizations.of(context)!;
-    final nameController = TextEditingController();
-    final phoneController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.replaceMember),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("${l10n.enterNewMemberDetails} for position ${index + 1}", style: const TextStyle(fontSize: 12)),
-            const SizedBox(height: 16),
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(labelText: l10n.fullName, border: const OutlineInputBorder()),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: phoneController,
-              decoration: InputDecoration(labelText: l10n.phoneNumber, border: const OutlineInputBorder()),
-              keyboardType: TextInputType.phone,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
-          ElevatedButton(
-            onPressed: () {
-              if (nameController.text.isNotEmpty) {
-                setState(() {
-                  group.members[index] = HagbadMember(
-                    name: nameController.text,
-                    walletId: "MX-${phoneController.text.padLeft(6, '0')}",
-                    avatar: nameController.text[0].toUpperCase(),
-                    payoutOrder: index + 1,
-                    paidAmount: 0.0, // New member starts fresh
-                    hasReceived: false,
-                    isTrusted: false,
-                  );
-                });
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.memberReplaced), backgroundColor: Colors.green),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark),
-            child: Text(l10n.replaceMember, style: const TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _remindMember(HagbadMember member) {
-    final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.notifications_active, color: Colors.white, size: 20),
-            const SizedBox(width: 12),
-            Text(l10n.reminderSent(member.name)),
-          ],
-        ),
-        backgroundColor: Colors.orange,
-      ),
-    );
-  }
-
   void _remindAllPending(HagbadGroup group) {
     final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1710,71 +1580,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
         backgroundColor: Colors.orange,
       ),
     );
-  }
-
-  void _showSwapOptions(HagbadGroup group, int currentIndex) {
-    final l10n = AppLocalizations.of(context)!;
-
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              l10n.swapTurn,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: group.members.length,
-                itemBuilder: (context, index) {
-                  final m = group.members[index];
-                  // Can only swap with someone who hasn't received yet and is not yourself
-                  if (index == currentIndex || m.hasReceived) return const SizedBox.shrink();
-
-                  return ListTile(
-                    leading: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: AppColors.primaryDark.withValues(alpha: 0.1),
-                      child: Text(m.avatar, style: const TextStyle(fontSize: 10, color: AppColors.primaryDark)),
-                    ),
-                    title: Text(l10n.swapWith(m.name)),
-                    onTap: () {
-                      Navigator.pop(context);
-                      _swapMemberTurn(group, currentIndex, index);
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  int _calculateDaysUntilTurn(HagbadGroup group, int payoutOrder) {
-    if (payoutOrder < group.currentCycle) return -1; // Already passed
-    if (payoutOrder == group.currentCycle) return 0; // Today
-
-    int diff = payoutOrder - group.currentCycle;
-    switch (group.frequency) {
-      case HagbadFrequency.daily:
-        return diff;
-      case HagbadFrequency.weekly:
-        return diff * 7;
-      case HagbadFrequency.tenDays:
-        return diff * 10;
-      case HagbadFrequency.monthly:
-        return diff * 30;
-      case HagbadFrequency.yearly:
-        return diff * 365;
-    }
   }
 
   Widget _buildPaymentHistory(HagbadGroup group, AppLocalizations l10n, bool isDark) {
@@ -1869,42 +1674,41 @@ class _HagbadScreenState extends State<HagbadScreen> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 4,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      member.name == "You" ? l10n.you : member.name,
-                      style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: theme.colorScheme.onSurface, fontWeight: FontWeight.w500),
-                      overflow: TextOverflow.ellipsis,
+                    Flexible(
+                      child: Text(
+                        member.name == "You" ? l10n.you : member.name,
+                        style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: theme.colorScheme.onSurface, fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     if (member.isTrusted)
-                      Tooltip(
-                        message: l10n.trustedMember,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
                         child: Icon(Icons.verified_rounded, size: 14 * context.fontSizeFactor, color: Colors.blue),
                       ),
                     if (member.isConfirmed)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                        decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
-                        child: Text("Aqbalay", style: TextStyle(fontSize: 8 * context.fontSizeFactor, color: Colors.green, fontWeight: FontWeight.bold)),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                          decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
+                          child: Text("Aqbalay", style: TextStyle(fontSize: 8 * context.fontSizeFactor, color: Colors.green, fontWeight: FontWeight.bold)),
+                        ),
                       ),
                   ],
                 ),
                 if (member.guarantorName != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
-                    child: Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Icon(Icons.verified_user_outlined, size: 10 * context.fontSizeFactor, color: Colors.orange),
-                        const SizedBox(width: 4),
-                        Text(
-                          "Uul: ${member.guarantorName} (${member.guarantorId})",
-                          style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: Colors.orange, fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                    child: Text(
+                      "Uul: ${member.guarantorName}",
+                      style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: Colors.orange, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 Text(
@@ -1918,362 +1722,145 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (!member.isConfirmed)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.withValues(alpha: 0.05),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.blue.withValues(alpha: 0.1)),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  int idx = group.members.indexOf(member);
+                                  group.members[idx] = HagbadMember(
+                                    name: member.name,
+                                    walletId: member.walletId,
+                                    avatar: member.avatar,
+                                    payoutOrder: member.payoutOrder,
+                                    paidAmount: member.paidAmount,
+                                    hasReceived: member.hasReceived,
+                                    isTrusted: member.isTrusted,
+                                    isConfirmed: true,
+                                    hasSignedOath: member.hasSignedOath,
+                                    guarantorName: member.guarantorName,
+                                    guarantorId: member.guarantorId,
+                                    isGuarantorConfirmed: member.isGuarantorConfirmed,
+                                  );
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                minimumSize: const Size(0, 32),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.mail_outline_rounded, size: 16, color: Colors.blue),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          l10n.invitationReceived, 
-                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.blue),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(l10n.invitationDesc(group.adminName, group.amount.toStringAsFixed(0)), style: const TextStyle(fontSize: 11)),
-                                  const SizedBox(height: 12),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      setState(() {
-                                        int idx = group.members.indexOf(member);
-                                        group.members[idx] = HagbadMember(
-                                          name: member.name,
-                                          walletId: member.walletId,
-                                          avatar: member.avatar,
-                                          payoutOrder: member.payoutOrder,
-                                          paidAmount: member.paidAmount,
-                                          hasReceived: member.hasReceived,
-                                          isTrusted: member.isTrusted,
-                                          isConfirmed: true,
-                                          hasSignedOath: member.hasSignedOath,
-                                          guarantorName: member.guarantorName,
-                                          guarantorId: member.guarantorId,
-                                          isGuarantorConfirmed: member.isGuarantorConfirmed,
-                                        );
-                                      });
-                                    },
-                                    icon: const Icon(Icons.check_circle_outline, size: 14),
-                                    label: Text(l10n.acceptInvite, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                                      minimumSize: const Size(0, 32),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              child: Text(l10n.acceptInvite, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                             ),
                           ),
                         if (member.isConfirmed && !member.hasSignedOath)
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.purple.withValues(alpha: 0.05),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.purple.withValues(alpha: 0.1)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.mosque_rounded, size: 16, color: Colors.purple),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        l10n.religiousOathRequired, 
-                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.purple),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Text(l10n.oathRequirementDesc, style: const TextStyle(fontSize: 11)),
-                                const SizedBox(height: 12),
-                                ElevatedButton.icon(
-                                  onPressed: () => _showDhaarDialog(group, member),
-                                  icon: const Icon(Icons.menu_book_rounded, size: 14),
-                                  label: Text(l10n.signOathNow, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.purple,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                                    minimumSize: const Size(0, 32),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  ),
-                                ),
-                              ],
+                          ElevatedButton.icon(
+                            onPressed: () => _showDhaarDialog(group, member),
+                            icon: const Icon(Icons.menu_book_rounded, size: 14),
+                            label: Text(l10n.signOathNow, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.purple,
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size(0, 32),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                             ),
                           ),
+                        if (group.members.any((m) => m.guarantorId == "Admin-ID" && !m.isGuarantorConfirmed && m.name != "You" && member.name == "You"))
+                           ...group.members.where((m) => m.guarantorId == "Admin-ID" && !m.isGuarantorConfirmed).map((m) => Padding(
+                             padding: const EdgeInsets.only(top: 8),
+                             child: Container(
+                               padding: const EdgeInsets.all(12),
+                               decoration: BoxDecoration(
+                                 color: Colors.orange.withValues(alpha: 0.1),
+                                 borderRadius: BorderRadius.circular(12),
+                                 border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
+                               ),
+                               child: Column(
+                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                 children: [
+                                   Text("Codsiga Uul (Guarantor)", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.orange.shade900)),
+                                   const SizedBox(height: 4),
+                                   Text("Waxaad u damaanad qaadaysaa ${m.name} kooxda ${group.name}.", style: const TextStyle(fontSize: 11)),
+                                   const SizedBox(height: 8),
+                                   Row(
+                                     children: [
+                                       ElevatedButton(
+                                         onPressed: () {
+                                           setState(() {
+                                             int idx = group.members.indexOf(m);
+                                             group.members[idx] = HagbadMember(
+                                               name: m.name,
+                                               walletId: m.walletId,
+                                               avatar: m.avatar,
+                                               payoutOrder: m.payoutOrder,
+                                               paidAmount: m.paidAmount,
+                                               hasReceived: m.hasReceived,
+                                               isTrusted: m.isTrusted,
+                                               isConfirmed: m.isConfirmed,
+                                               hasSignedOath: m.hasSignedOath,
+                                               guarantorName: m.guarantorName,
+                                               guarantorId: m.guarantorId,
+                                               isGuarantorConfirmed: true,
+                                             );
+                                           });
+                                         },
+                                         style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white, minimumSize: const Size(0, 28)),
+                                         child: const Text("Aqbal", style: TextStyle(fontSize: 10)),
+                                       ),
+                                       const SizedBox(width: 8),
+                                       TextButton(
+                                         onPressed: () {
+                                           setState(() {
+                                              int idx = group.members.indexOf(m);
+                                              group.members[idx] = HagbadMember(
+                                               name: m.name,
+                                               walletId: m.walletId,
+                                               avatar: m.avatar,
+                                               payoutOrder: m.payoutOrder,
+                                               paidAmount: m.paidAmount,
+                                               hasReceived: m.hasReceived,
+                                               isTrusted: m.isTrusted,
+                                               isConfirmed: m.isConfirmed,
+                                               hasSignedOath: m.hasSignedOath,
+                                               guarantorName: null,
+                                               guarantorId: null,
+                                               isGuarantorConfirmed: false,
+                                             );
+                                           });
+                                         },
+                                         child: const Text("Diid", style: TextStyle(fontSize: 10, color: Colors.red)),
+                                       ),
+                                     ],
+                                   ),
+                                 ],
+                               ),
+                             ),
+                           )),
                       ],
                     ),
                   ),
-                // NEW: Guarantor Invitation Logic for "You"
-                if (group.members.any((m) => m.guarantorName == "You" && !m.isGuarantorConfirmed))
-                  Builder(builder: (context) {
-                    final memberBeingGuaranteed = group.members.firstWhere((m) => m.guarantorName == "You" && !m.isGuarantorConfirmed);
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.orange.withValues(alpha: 0.1)),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.verified_user_outlined, size: 16, color: Colors.orange),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    "Codsi Uulnimo (Guarantor)", 
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.orange),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text("${memberBeingGuaranteed.name} ayaa kaa codsaday inaad u noqoto Uul (Dammaanad) kooxdan.", style: const TextStyle(fontSize: 11)),
-                            const SizedBox(height: 12),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    setState(() {
-                                      int idx = group.members.indexOf(memberBeingGuaranteed);
-                                      group.members[idx] = HagbadMember(
-                                        name: memberBeingGuaranteed.name,
-                                        walletId: memberBeingGuaranteed.walletId,
-                                        avatar: memberBeingGuaranteed.avatar,
-                                        payoutOrder: memberBeingGuaranteed.payoutOrder,
-                                        paidAmount: memberBeingGuaranteed.paidAmount,
-                                        hasReceived: memberBeingGuaranteed.hasReceived,
-                                        isTrusted: memberBeingGuaranteed.isTrusted,
-                                        isConfirmed: memberBeingGuaranteed.isConfirmed,
-                                        hasSignedOath: memberBeingGuaranteed.hasSignedOath,
-                                        guarantorName: memberBeingGuaranteed.guarantorName,
-                                        guarantorId: memberBeingGuaranteed.guarantorId,
-                                        isGuarantorConfirmed: true, // YOU ACCEPTED
-                                      );
-                                    });
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("Waad aqbashay inaad u noqoto Uul ${memberBeingGuaranteed.name}."), backgroundColor: Colors.orange),
-                                    );
-                                  },
-                                  icon: const Icon(Icons.check, size: 14),
-                                  label: const Text("Aqbal Uulnimada", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orange,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                    minimumSize: const Size(0, 32),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {}, // Handle rejection if needed
-                                  style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                    minimumSize: const Size(0, 32),
-                                  ),
-                                  child: const Text("Diid", style: TextStyle(color: Colors.red, fontSize: 10)),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-                if (member.name == "You" && !member.hasReceived)
-                  Builder(builder: (context) {
-                    final days = _calculateDaysUntilTurn(group, member.payoutOrder);
-                    if (days < 0) return const SizedBox.shrink();
-                    
-                    String message;
-                    if (days == 0) {
-                      message = l10n.yourTurnToday;
-                    } else if (days == 1) {
-                      message = l10n.yourTurnTomorrow;
-                    } else {
-                      message = l10n.yourTurnInDays(days);
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        message,
-                        style: const TextStyle(fontSize: 10, color: AppColors.primaryDark, fontWeight: FontWeight.bold),
-                      ),
-                    );
-                  }),
               ],
             ),
           ),
+          const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              if (member.hasSignedOath)
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Row(
-                    children: [
-                      Icon(Icons.menu_book_rounded, size: 12, color: Colors.purple),
-                      SizedBox(width: 4),
-                      Text("Wuu Dhaartay", style: TextStyle(fontSize: 10, color: Colors.purple, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                ),
-              if (!member.isFullyPaid(group.amount) && group.adminName == l10n.youAdmin && member.name != "You")
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.money_off_csred_rounded, size: 18, color: Colors.red),
-                      onPressed: () => _showPenaltyDialog(group, index),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      tooltip: l10n.applyPenalty,
-                    ),
-                    const SizedBox(width: 4),
-                    IconButton(
-                      icon: const Icon(Icons.notification_add_outlined, size: 18, color: Colors.orange),
-                      onPressed: () => _remindMember(member),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      tooltip: l10n.remindMember,
-                    ),
-                  ],
-                ),
-              if (!member.hasReceived && group.adminName == l10n.youAdmin)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.person_remove_outlined, size: 18, color: Colors.redAccent),
-                      onPressed: () => _showReplaceMemberDialog(group, index),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      tooltip: l10n.replaceMember,
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      icon: const Icon(Icons.swap_vert_rounded, size: 18, color: AppColors.primaryDark),
-                      onPressed: () => _showSwapOptions(group, index),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                  ],
-                ),
               if (member.isFullyPaid(group.amount))
                 const Icon(Icons.check_circle, color: Colors.green, size: 20)
               else
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Icon(Icons.radio_button_unchecked, color: isDark ? Colors.white24 : Colors.grey, size: 20),
-                    if (member.penaltyAmount > 0)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Text(
-                          "+ \$${member.penaltyAmount.toStringAsFixed(0)} ${l10n.lateFee}",
-                          style: const TextStyle(fontSize: 8, color: Colors.red, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    if (member.paidAmount > 0)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Text(
-                          "${l10n.remaining}: \$${(group.amount + member.penaltyAmount - member.paidAmount).toStringAsFixed(0)}",
-                          style: const TextStyle(fontSize: 8, color: Colors.orange, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                  ],
-                ),
+                Icon(Icons.radio_button_unchecked, color: isDark ? Colors.white24 : Colors.grey, size: 20),
               if (member.hasReceived)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        l10n.received,
-                        style: const TextStyle(color: Colors.blue, fontSize: 10, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    if (member.guarantorName != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.verified_user_outlined, size: 10, color: Colors.grey),
-                            const SizedBox(width: 2),
-                            Text(
-                              member.guarantorName!,
-                              style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                      )
-                    else
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.warning_amber_rounded, size: 10, color: Colors.orange),
-                            const SizedBox(width: 2),
-                            Text(
-                              l10n.guarantor,
-                              style: const TextStyle(fontSize: 9, color: Colors.orange, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          l10n.debtor.toUpperCase(),
-                          style: const TextStyle(color: Colors.red, fontSize: 8, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
+                Container(
+                  margin: const EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(color: Colors.blue.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
+                  child: Text(l10n.received, style: const TextStyle(color: Colors.blue, fontSize: 8, fontWeight: FontWeight.bold)),
                 ),
             ],
           ),

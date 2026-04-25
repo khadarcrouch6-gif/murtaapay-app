@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'models/bank_account.dart';
 import 'models/transaction.dart';
 import 'models/quick_profile.dart';
+import 'models/savings_goal.dart';
 import '../features/cards/models/card_model.dart';
 import 'models/crypto_asset.dart';
 
@@ -57,6 +58,9 @@ class AppState extends ChangeNotifier {
 
   List<VirtualCard> _cards = [];
   List<VirtualCard> get cards => _cards;
+
+  List<SavingsGoal> _savingsGoals = [];
+  List<SavingsGoal> get savingsGoals => _savingsGoals;
 
   Map<String, double> _cryptoHoldings = {};
   Map<String, double> get cryptoHoldings => _cryptoHoldings;
@@ -216,6 +220,7 @@ class AppState extends ChangeNotifier {
     _loadCards();
     _loadTransactions();
     _loadCryptoHoldings();
+    _loadSavingsGoals();
 
     _isInitialized = true;
     notifyListeners();
@@ -336,6 +341,81 @@ class AppState extends ChangeNotifier {
   void _saveTransactions() {
     final List<String> txJson = _transactions.map((e) => json.encode(e.toJson())).toList();
     _prefs.setStringList('transactions', txJson);
+  }
+
+  void _loadSavingsGoals() {
+    final List<String>? goalsJson = _prefs.getStringList('savings_goals');
+    if (goalsJson != null) {
+      _savingsGoals = goalsJson.map((e) => SavingsGoal.fromJson(json.decode(e))).toList();
+    } else {
+      // Mock initial goals
+      _savingsGoals = [
+        SavingsGoal(
+          id: "1",
+          title: "Hajj Fund",
+          soTitle: "Sanduuqa Xajka",
+          arTitle: "صندوق الحج",
+          deTitle: "Hajj-Fonds",
+          saved: 1200.0,
+          target: 5000.0,
+          deadline: "Dec 2025",
+          icon: Icons.mosque_rounded,
+          color: const Color(0xFF009688),
+          delay: 100,
+        ),
+        SavingsGoal(
+          id: "2",
+          title: "New Car",
+          soTitle: "Gaadhi Cusub",
+          arTitle: "سيارة جديدة",
+          deTitle: "Neues Auto",
+          saved: 4500.0,
+          target: 15000.0,
+          deadline: "Jun 2026",
+          icon: Icons.directions_car_rounded,
+          color: const Color(0xFF6366F1),
+          delay: 200,
+        ),
+        SavingsGoal(
+          id: "3",
+          title: "Emergency Fund",
+          soTitle: "Sanduuqa Degdegga",
+          arTitle: "صندوق الطوارئ",
+          deTitle: "Notfallfonds",
+          saved: 850.0,
+          target: 2000.0,
+          deadline: "Ongoing",
+          icon: Icons.health_and_safety_rounded,
+          color: const Color(0xFFF43F5E),
+          delay: 300,
+          isPaused: true,
+        ),
+      ];
+      _saveSavingsGoals();
+    }
+  }
+
+  void _saveSavingsGoals() {
+    final List<String> goalsJson = _savingsGoals.map((e) => json.encode(e.toJson())).toList();
+    _prefs.setStringList('savings_goals', goalsJson);
+  }
+
+  void addSavingsGoal(SavingsGoal goal) {
+    _savingsGoals.add(goal);
+    _saveSavingsGoals();
+    notifyListeners();
+  }
+
+  void updateSavingsGoal(int index, SavingsGoal goal) {
+    _savingsGoals[index] = goal;
+    _saveSavingsGoals();
+    notifyListeners();
+  }
+
+  void removeSavingsGoal(int index) {
+    _savingsGoals.removeAt(index);
+    _saveSavingsGoals();
+    notifyListeners();
   }
 
   void _loadBanks() {
@@ -560,7 +640,7 @@ class AppState extends ChangeNotifier {
   }
 
   // Savings Logic
-  Future<void> transferToSavings(double amount, {String? fromCardId, bool? fromCard, String? goalName}) async {
+  Future<void> transferToSavings(double amount, {String? fromCardId, bool? fromCard, String? goalName, String? goalId}) async {
     final bool isFromCard = fromCardId != null || (fromCard ?? false);
     final String? effectiveFromCardId = fromCardId ?? ((fromCard ?? false) && _cards.isNotEmpty ? _cards.first.id : null);
 
@@ -581,6 +661,7 @@ class AppState extends ChangeNotifier {
     final List<VirtualCard> originalCards = List.from(_cards.map((e) => e.copyWith()));
     final double originalSavingsBalance = _savingsBalance;
     final List<Transaction> originalTransactions = List.from(_transactions);
+    final List<SavingsGoal> originalGoals = List.from(_savingsGoals.map((e) => e.copyWith()));
 
     try {
       if (isFromCard) {
@@ -590,6 +671,15 @@ class AppState extends ChangeNotifier {
         _balance -= amount;
       }
       _savingsBalance += amount;
+
+      if (goalId != null) {
+        final goalIndex = _savingsGoals.indexWhere((g) => g.id == goalId);
+        if (goalIndex != -1) {
+          _savingsGoals[goalIndex] = _savingsGoals[goalIndex].copyWith(
+            saved: _savingsGoals[goalIndex].saved + amount,
+          );
+        }
+      }
 
       final tx = Transaction(
         id: "TX${DateTime.now().millisecondsSinceEpoch}",
@@ -612,6 +702,7 @@ class AppState extends ChangeNotifier {
       _saveCards();
       await _prefs.setDouble('savings_balance', _savingsBalance);
       _saveTransactions();
+      _saveSavingsGoals();
 
       notifyListeners();
       analytics.logEvent('savings_deposit_success', parameters: {'amount': amount, 'from_card': isFromCard, 'goal': goalName});
@@ -621,12 +712,13 @@ class AppState extends ChangeNotifier {
       _cards = originalCards;
       _savingsBalance = originalSavingsBalance;
       _transactions = originalTransactions;
+      _savingsGoals = originalGoals;
       notifyListeners();
       rethrow;
     }
   }
 
-  Future<void> withdrawFromSavings(double amount, {String? toCardId, bool? toCard, String? goalName}) async {
+  Future<void> withdrawFromSavings(double amount, {String? toCardId, bool? toCard, String? goalName, String? goalId}) async {
     if (_savingsBalance < amount) {
       throw Exception('insufficient_savings');
     }
@@ -639,6 +731,7 @@ class AppState extends ChangeNotifier {
     final List<VirtualCard> originalCards = List.from(_cards.map((e) => e.copyWith()));
     final double originalSavingsBalance = _savingsBalance;
     final List<Transaction> originalTransactions = List.from(_transactions);
+    final List<SavingsGoal> originalGoals = List.from(_savingsGoals.map((e) => e.copyWith()));
 
     try {
       _savingsBalance -= amount;
@@ -647,6 +740,15 @@ class AppState extends ChangeNotifier {
         _cards[index] = _cards[index].copyWith(balance: _cards[index].balance + amount);
       } else {
         _balance += amount;
+      }
+
+      if (goalId != null) {
+        final goalIndex = _savingsGoals.indexWhere((g) => g.id == goalId);
+        if (goalIndex != -1) {
+          _savingsGoals[goalIndex] = _savingsGoals[goalIndex].copyWith(
+            saved: (_savingsGoals[goalIndex].saved - amount).clamp(0, double.infinity),
+          );
+        }
       }
 
       final tx = Transaction(
@@ -670,6 +772,7 @@ class AppState extends ChangeNotifier {
       _saveCards();
       await _prefs.setDouble('savings_balance', _savingsBalance);
       _saveTransactions();
+      _saveSavingsGoals();
 
       notifyListeners();
       analytics.logEvent('savings_withdraw_success', parameters: {'amount': amount, 'to_card': isToCard});
@@ -679,6 +782,7 @@ class AppState extends ChangeNotifier {
       _cards = originalCards;
       _savingsBalance = originalSavingsBalance;
       _transactions = originalTransactions;
+      _savingsGoals = originalGoals;
       notifyListeners();
       rethrow;
     }
