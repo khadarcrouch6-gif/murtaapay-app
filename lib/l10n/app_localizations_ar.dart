@@ -24,6 +24,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sendMoney => 'إرسال الأموال';
 
   @override
+  String get requestMoney => 'Request Money';
+
+  @override
+  String get requestMoneyDesc => 'Request funds from your contacts instantly.';
+
+  @override
+  String get recurringPayments => 'المدفوعات المتكررة';
+
+  @override
+  String get recurringPaymentsDesc =>
+      'جدولة المدفوعات التلقائية (مثل إرسال الأموال إلى العائلة في الأول من كل شهر).';
+
+  @override
   String get receiveMoney => 'استلام';
 
   @override

@@ -103,10 +103,10 @@ class ReviewScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(24),
-                            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5),
+                            border: Border.all(color: theme.dividerColor.withOpacity(0.1), width: 1.5),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.03),
+                                color: Colors.black.withOpacity(0.03),
                                 blurRadius: 15,
                                 offset: const Offset(0, 8),
                               ),
@@ -198,9 +198,9 @@ class ReviewScreen extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.errorContainer.withValues(alpha: 0.1),
+                                color: theme.colorScheme.errorContainer.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: theme.colorScheme.errorContainer.withValues(alpha: 0.2)),
+                                border: Border.all(color: theme.colorScheme.errorContainer.withOpacity(0.2)),
                               ),
                               child: Row(
                                 children: [
@@ -256,7 +256,7 @@ class ReviewScreen extends StatelessWidget {
                                   foregroundColor: theme.colorScheme.onSecondary,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                   elevation: 4,
-                                  shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
+                                  shadowColor: theme.colorScheme.secondary.withOpacity(0.3),
                                 ),
                                 child: Text(
                                   "${l10n.confirmAndPay} (${NumberFormat.simpleCurrency(name: currencyCode).format(total)})",
@@ -282,9 +282,9 @@ class ReviewScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
-        _limitItem(l10n.dailyLimit, state.getDailyRemaining(), AppState.dailyLimit, state.currencyCode),
+        _limitItem(l10n.dailyLimit, state.getDailyRemaining(), state.dailyLimit, state.currencyCode),
         const SizedBox(height: 8),
-        _limitItem(l10n.monthlyLimit, state.getMonthlyRemaining(), AppState.monthlyLimit, state.currencyCode),
+        _limitItem(l10n.monthlyLimit, state.getMonthlyRemaining(), state.monthlyLimit, state.currencyCode),
       ],
     );
   }
@@ -310,7 +310,7 @@ class ReviewScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(2),
           child: LinearProgressIndicator(
             value: percent,
-            backgroundColor: AppColors.grey.withValues(alpha: 0.1),
+            backgroundColor: AppColors.grey.withOpacity(0.1),
             valueColor: AlwaysStoppedAnimation<Color>(isLow ? Colors.orange : AppColors.accentTeal),
             minHeight: 3,
           ),
@@ -340,7 +340,7 @@ class ReviewScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -513,8 +513,8 @@ class ReviewScreen extends StatelessWidget {
   Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
     final theme = Theme.of(context);
     Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : theme.dividerColor.withValues(alpha: 0.1);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : theme.textTheme.bodySmall?.color ?? Colors.grey);
+    Color inactiveColor = isHeader ? Colors.white.withOpacity(0.3) : theme.dividerColor.withOpacity(0.1);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withOpacity(0.6)) : (isActive ? theme.colorScheme.secondary : theme.textTheme.bodySmall?.color ?? Colors.grey);
 
     return Column(
       children: [
@@ -523,7 +523,7 @@ class ReviewScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: isActive || isCompleted ? activeColor : inactiveColor, 
             shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
+            border: isActive ? Border.all(color: activeColor.withOpacity(0.2), width: 4) : null
           ),
           child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
         ),
@@ -539,8 +539,8 @@ class ReviewScreen extends StatelessWidget {
   Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
     final theme = Theme.of(context);
     Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
-      : (isCompleted ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1));
+      ? (isCompleted ? Colors.white : Colors.white.withOpacity(0.3)) 
+      : (isCompleted ? theme.colorScheme.secondary : theme.dividerColor.withOpacity(0.1));
     return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
   }
 

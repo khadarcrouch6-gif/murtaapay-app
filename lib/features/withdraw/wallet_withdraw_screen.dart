@@ -232,7 +232,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                 _buildLimitHeadroom(
                                   l10n.dailyLimit, 
                                   state.getDailyRemaining(), 
-                                  AppState.dailyLimit,
+                                  state.dailyLimit,
                                   state.currencyCode,
                                   theme,
                                 ),
@@ -240,7 +240,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                 _buildLimitHeadroom(
                                   l10n.monthlyLimit, 
                                   state.getMonthlyRemaining(), 
-                                  AppState.monthlyLimit,
+                                  state.monthlyLimit,
                                   state.currencyCode,
                                   theme,
                                 ),
@@ -1036,7 +1036,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
             )
           : Icon(icon, color: AppColors.grey),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.1))),
       ),
       onChanged: (val) {
         if (onChanged != null) {

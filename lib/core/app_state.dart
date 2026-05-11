@@ -9,6 +9,8 @@ import 'models/quick_profile.dart';
 import 'models/savings_goal.dart';
 import '../features/cards/models/card_model.dart';
 import 'models/crypto_asset.dart';
+import 'models/hagbad_model.dart';
+import 'models/recurring_payment_model.dart';
 
 class AppState extends ChangeNotifier {
   static final AppState _instance = AppState._internal();
@@ -64,6 +66,255 @@ class AppState extends ChangeNotifier {
 
   Map<String, double> _cryptoHoldings = {};
   Map<String, double> get cryptoHoldings => _cryptoHoldings;
+
+  List<HagbadGroup> _hagbadGroups = [];
+  List<HagbadGroup> get hagbadGroups => _hagbadGroups;
+
+  List<RecurringPayment> _recurringPayments = [];
+  List<RecurringPayment> get recurringPayments => _recurringPayments;
+
+  void _loadRecurringPayments() {
+    final List<String>? paymentsJson = _prefs.getStringList('recurring_payments');
+    if (paymentsJson != null) {
+      _recurringPayments = paymentsJson.map((e) => RecurringPayment.fromJson(json.decode(e))).toList();
+    } else {
+      // Mock initial recurring payments
+      _recurringPayments = [
+        RecurringPayment(
+          id: '1',
+          title: "Family Support (Hooyo)",
+          receiverId: "615123456",
+          receiverName: "Hooyo",
+          amount: 200.0,
+          frequency: RecurringFrequency.monthly,
+          startDate: DateTime.now().subtract(const Duration(days: 15)),
+          nextPaymentDate: DateTime.now().add(const Duration(days: 15)),
+          status: RecurringStatus.active,
+          category: "Transfer",
+        ),
+      ];
+      _saveRecurringPayments();
+    }
+  }
+
+  void _saveRecurringPayments() {
+    final List<String> paymentsJson = _recurringPayments.map((e) => json.encode(e.toJson())).toList();
+    _prefs.setStringList('recurring_payments', paymentsJson);
+  }
+
+  void addRecurringPayment(RecurringPayment payment) {
+    _recurringPayments.add(payment);
+    _saveRecurringPayments();
+    notifyListeners();
+  }
+
+  void updateRecurringPayment(int index, RecurringPayment payment) {
+    _recurringPayments[index] = payment;
+    _saveRecurringPayments();
+    notifyListeners();
+  }
+
+  void deleteRecurringPayment(int index) {
+    _recurringPayments.removeAt(index);
+    _saveRecurringPayments();
+    notifyListeners();
+  }
+
+  void _loadHagbadGroups() {
+    final List<String>? groupsJson = _prefs.getStringList('hagbad_groups');
+    if (groupsJson != null) {
+      _hagbadGroups = groupsJson.map((e) => HagbadGroup.fromJson(json.decode(e))).toList();
+    } else {
+      // Mock initial group
+      _hagbadGroups = [
+        HagbadGroup(
+          id: '1',
+          name: "Qoyska & Asxaabta",
+          adminName: "Khadar Abdi",
+          amount: 50.0,
+          frequency: HagbadFrequency.monthly,
+          status: HagbadStatus.active,
+          startDate: DateTime.now().subtract(const Duration(days: 45)),
+          totalCycles: 12,
+          currentCycle: 3,
+          members: [
+            HagbadMember(name: "Khadar", paidAmount: 150.0, hasReceived: true, isTrusted: true, avatar: "K", payoutOrder: 1, isConfirmed: true, hasSignedOath: true),
+            HagbadMember(name: "Ahmed", paidAmount: 150.0, hasReceived: false, isTrusted: true, avatar: "A", payoutOrder: 2, isConfirmed: true, hasSignedOath: true),
+            HagbadMember(name: "Fardowsa", paidAmount: 100.0, hasReceived: false, isTrusted: false, avatar: "F", payoutOrder: 3, guarantorName: "Khadar Abdi", isConfirmed: true),
+            HagbadMember(name: "Mustafe", paidAmount: 100.0, hasReceived: false, isTrusted: true, avatar: "M", payoutOrder: 4, isConfirmed: false),
+          ],
+        ),
+      ];
+      _saveHagbadGroups();
+    }
+  }
+
+  void _saveHagbadGroups() {
+    final List<String> groupsJson = _hagbadGroups.map((e) => json.encode(e.toJson())).toList();
+    _prefs.setStringList('hagbad_groups', groupsJson);
+  }
+
+  void createHagbadGroup(HagbadGroup group) {
+    _hagbadGroups.add(group);
+    _saveHagbadGroups();
+    notifyListeners();
+  }
+
+  void updateHagbadMember(String groupId, int memberIndex, HagbadMember member) {
+    final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
+    if (gIdx != -1) {
+      final updatedMembers = List<HagbadMember>.from(_hagbadGroups[gIdx].members);
+      updatedMembers[memberIndex] = member;
+      _hagbadGroups[gIdx] = _hagbadGroups[gIdx].copyWith(members: updatedMembers);
+      _saveHagbadGroups();
+      notifyListeners();
+    }
+  }
+
+  void addHagbadMember(String groupId, HagbadMember member) {
+    final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
+    if (gIdx != -1) {
+      final group = _hagbadGroups[gIdx];
+      final updatedMembers = List<HagbadMember>.from(group.members)..add(member);
+      _hagbadGroups[gIdx] = group.copyWith(members: updatedMembers);
+      _saveHagbadGroups();
+      notifyListeners();
+    }
+  }
+
+  void randomizeHagbadTurns(String groupId) {
+    final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
+    if (gIdx != -1) {
+      final group = _hagbadGroups[gIdx];
+      final members = List<HagbadMember>.from(group.members);
+      final received = members.where((m) => m.hasReceived).toList();
+      final remaining = members.where((m) => !m.hasReceived).toList();
+      remaining.shuffle();
+      
+      for (int i = 0; i < remaining.length; i++) {
+        int mIdx = members.indexOf(remaining[i]);
+        members[mIdx] = remaining[i].copyWith(payoutOrder: received.length + i + 1);
+      }
+      
+      members.sort((a, b) => a.payoutOrder.compareTo(b.payoutOrder));
+      _hagbadGroups[gIdx] = group.copyWith(
+        members: members,
+        status: group.status == HagbadStatus.pending ? HagbadStatus.active : group.status,
+      );
+      _saveHagbadGroups();
+      notifyListeners();
+    }
+  }
+
+  Future<void> payHagbad(String groupId, int memberIndex, double amount) async {
+    if (_balance < amount) throw Exception('insufficient_funds');
+
+    final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
+    if (gIdx != -1) {
+      _balance -= amount;
+      final group = _hagbadGroups[gIdx];
+      final updatedMembers = List<HagbadMember>.from(group.members);
+      final member = updatedMembers[memberIndex];
+      
+      updatedMembers[memberIndex] = member.copyWith(
+        paidAmount: member.paidAmount + amount,
+        lastPaymentDate: DateTime.now(),
+      );
+      
+      _hagbadGroups[gIdx] = group.copyWith(members: updatedMembers);
+
+      final tx = Transaction(
+        id: "TX-HAG-${DateTime.now().millisecondsSinceEpoch}",
+        title: "Hagbad: ${group.name}",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(amount)}",
+        numericAmount: amount,
+        isNegative: true,
+        category: "Hagbad",
+        status: "Success",
+        type: "transfer_out",
+        method: "Wallet",
+        referenceId: groupId,
+      );
+      _transactions.insert(0, tx);
+
+      await _prefs.setDouble('balance', _balance);
+      _saveTransactions();
+      _saveHagbadGroups();
+      notifyListeners();
+    }
+  }
+
+  Future<void> processHagbadPayout(String groupId) async {
+    final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
+    if (gIdx == -1) return;
+
+    final group = _hagbadGroups[gIdx];
+    final currentOrder = group.currentCycle;
+    final mIdx = group.members.indexWhere((m) => m.payoutOrder == currentOrder);
+
+    if (mIdx == -1) throw Exception('Member for current turn not found');
+
+    final member = group.members[mIdx];
+    if (member.hasReceived) throw Exception('Payout already received for this turn');
+
+    // Calculate total payout (amount * members)
+    final payoutAmount = group.totalPayout - group.serviceFee;
+
+    // Start Transaction
+    final double originalBalance = _balance;
+    final List<Transaction> originalTransactions = List.from(_transactions);
+
+    try {
+      final updatedMembers = List<HagbadMember>.from(group.members);
+      updatedMembers[mIdx] = member.copyWith(hasReceived: true);
+
+      // If it's "Me", update balance
+      if (member.name == "Me" || member.name == "Khadar") {
+        _balance += payoutAmount;
+        await _prefs.setDouble('balance', _balance);
+      }
+
+      final tx = Transaction(
+        id: "TX-PAYOUT-${DateTime.now().millisecondsSinceEpoch}",
+        title: "Hagbad Payout: ${group.name}",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "+${NumberFormat.simpleCurrency(name: _currencyCode).format(payoutAmount)}",
+        numericAmount: payoutAmount,
+        isNegative: false,
+        category: "Hagbad",
+        status: "Success",
+        type: "payout",
+        method: "Wallet",
+        referenceId: groupId,
+      );
+      _transactions.insert(0, tx);
+
+      // Progress cycle if not last
+      int nextCycle = group.currentCycle;
+      HagbadStatus nextStatus = group.status;
+      if (group.currentCycle < group.totalCycles) {
+        nextCycle++;
+      } else {
+        nextStatus = HagbadStatus.completed;
+      }
+
+      _hagbadGroups[gIdx] = group.copyWith(
+        members: updatedMembers,
+        currentCycle: nextCycle,
+        status: nextStatus,
+      );
+
+      _saveTransactions();
+      _saveHagbadGroups();
+      notifyListeners();
+    } catch (e) {
+      _balance = originalBalance;
+      _transactions = originalTransactions;
+      notifyListeners();
+      rethrow;
+    }
+  }
 
   void _loadCryptoHoldings() {
     final String? cryptoJson = _prefs.getString('crypto_holdings');
@@ -196,7 +447,13 @@ class AppState extends ChangeNotifier {
     '401122': 'Hassan Mohamud',
     '505566': 'Aminat Yusuf',
     '606677': 'Jama Ahmed',
+    '615123456': 'Mohamed Hassan Ali', // EVC Plus mock
+    '634987654': 'Ahmed Ismail Hersi', // ZAAD mock
+    '615112233': 'Aisha Farah',
+    '615445566': 'Omar Dheere',
   };
+
+  Map<String, String> get mockUsers => _mockUsers;
 
   Future<void> init() async {
     if (_isInitialized) return;
@@ -221,6 +478,11 @@ class AppState extends ChangeNotifier {
     _loadTransactions();
     _loadCryptoHoldings();
     _loadSavingsGoals();
+    _loadHagbadGroups();
+    _loadRecurringPayments();
+    
+    _userDailyLimit = _prefs.getDouble('daily_limit') ?? 5000.0;
+    _userMonthlyLimit = _prefs.getDouble('monthly_limit') ?? 20000.0;
 
     _isInitialized = true;
     notifyListeners();
@@ -563,8 +825,23 @@ class AppState extends ChangeNotifier {
   }
 
   // Security Limits
-  static const double dailyLimit = 50000.0;
-  static const double monthlyLimit = 100000.0;
+  double _userDailyLimit = 5000.0;
+  double _userMonthlyLimit = 20000.0;
+  
+  double get dailyLimit => _userDailyLimit;
+  double get monthlyLimit => _userMonthlyLimit;
+
+  Future<void> updateDailyLimit(double newLimit) async {
+    _userDailyLimit = newLimit;
+    await _prefs.setDouble('daily_limit', newLimit);
+    notifyListeners();
+  }
+
+  Future<void> updateMonthlyLimit(double newLimit) async {
+    _userMonthlyLimit = newLimit;
+    await _prefs.setDouble('monthly_limit', newLimit);
+    notifyListeners();
+  }
 
   double getDailyRemaining() {
     final now = DateTime.now();

@@ -542,5 +542,7 @@
   "zaad": "ZAAD",
   "sahal": "Sahal",
   "recentSavingsActivity": "Letzte Sparaktivität",
-  "noActivityYet": "Noch keine Aktivität"
+  "noActivityYet": "Noch keine Aktivität",
+  "recurringPayments": "Daueraufträge",
+  "recurringPaymentsDesc": "Automatische Zahlungen planen (z. B. jeden 1. des Monats Geld an die Familie senden)."
 }

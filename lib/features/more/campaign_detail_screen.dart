@@ -115,7 +115,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    Divider(color: theme.dividerColor.withOpacity(0.1)),
+                    Divider(color: theme.dividerColor.withValues(alpha: 0.1)),
                     const SizedBox(height: 32),
                     FadeInUp(
                       delay: const Duration(milliseconds: 600),
@@ -160,7 +160,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: theme.dividerColor.withOpacity(isDark ? 0.1 : 0.05)),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: isDark ? 0.1 : 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,12 +206,12 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primaryDark.withOpacity(0.03), AppColors.primaryDark.withOpacity(0.01)],
+          colors: [AppColors.primaryDark.withValues(alpha: 0.03), AppColors.primaryDark.withValues(alpha: 0.01)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: theme.dividerColor.withOpacity(0.05)),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
       ),
       child: Column(
         children: [
@@ -230,7 +230,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
       children: [
         Container(
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(color: AppColors.accentTeal.withOpacity(0.1), shape: BoxShape.circle),
+          decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle),
           child: Icon(icon, color: AppColors.accentTeal, size: 20),
         ),
         const SizedBox(width: 16),
@@ -269,7 +269,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: AppColors.grey.withOpacity(0.1), borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(color: AppColors.grey.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)),
               child: Row(
                 children: [
                   const Expanded(child: Text("https://murtaaxpay.app/donate/ahmed-surgery", style: TextStyle(color: AppColors.grey, fontSize: 12), overflow: TextOverflow.ellipsis)),
@@ -289,7 +289,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
       children: [
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+          decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
           child: Icon(icon, color: color, size: 30),
         ),
         const SizedBox(height: 8),
@@ -315,7 +315,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundColor: AppColors.accentTeal.withOpacity(0.1),
+                backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                 child: Text(donor["name"].toString().substring(0, 1), style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
               ),
               const SizedBox(width: 16),
@@ -354,14 +354,14 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
             color: theme.colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 40, offset: const Offset(0, -10)),
+              BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 40, offset: const Offset(0, -10)),
             ],
           ),
           padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: Column(
             children: [
               const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(2))),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.grey.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(2))),
               const SizedBox(height: 24),
               Row(
                 children: [
@@ -464,14 +464,14 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
               decoration: BoxDecoration(
-                color: selectedAmount == amounts[index] ? AppColors.accentTeal.withOpacity(0.12) : theme.colorScheme.surface,
+                color: selectedAmount == amounts[index] ? AppColors.accentTeal.withValues(alpha: 0.12) : theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: selectedAmount == amounts[index] ? AppColors.accentTeal : theme.dividerColor.withOpacity(0.1),
+                  color: selectedAmount == amounts[index] ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.1),
                   width: selectedAmount == amounts[index] ? 2 : 1,
                 ),
                 boxShadow: selectedAmount == amounts[index] 
-                  ? [BoxShadow(color: AppColors.accentTeal.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4))]
+                  ? [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 4))]
                   : [],
               ),
               alignment: Alignment.center,
@@ -480,7 +480,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold, 
                   fontSize: 16,
-                  color: selectedAmount == amounts[index] ? AppColors.accentTeal : theme.colorScheme.primary.withOpacity(0.7),
+                  color: selectedAmount == amounts[index] ? AppColors.accentTeal : theme.colorScheme.primary.withValues(alpha: 0.7),
                 ),
               ),
             ),
@@ -515,10 +515,10 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: selectedMethod == m["id"] ? AppColors.accentTeal.withOpacity(0.08) : theme.colorScheme.surface,
+            color: selectedMethod == m["id"] ? AppColors.accentTeal.withValues(alpha: 0.08) : theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: selectedMethod == m["id"] ? AppColors.accentTeal : theme.dividerColor.withOpacity(0.1),
+              color: selectedMethod == m["id"] ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.1),
               width: selectedMethod == m["id"] ? 1.5 : 1,
             ),
           ),
@@ -527,7 +527,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: selectedMethod == m["id"] ? AppColors.accentTeal.withOpacity(0.1) : theme.dividerColor.withOpacity(0.05),
+                  color: selectedMethod == m["id"] ? AppColors.accentTeal.withValues(alpha: 0.1) : theme.dividerColor.withValues(alpha: 0.05),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(m["icon"] as IconData, color: selectedMethod == m["id"] ? AppColors.accentTeal : AppColors.grey, size: 20),
@@ -603,7 +603,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   Widget _buildProviderLogo(String name, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12), border: Border.all(color: color.withOpacity(0.5))),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12), border: Border.all(color: color.withValues(alpha: 0.5))),
       child: Text(name, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12)),
     );
   }

@@ -134,6 +134,30 @@ abstract class AppLocalizations {
   /// **'Send Money'**
   String get sendMoney;
 
+  /// No description provided for @requestMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Money'**
+  String get requestMoney;
+
+  /// No description provided for @requestMoneyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Request funds from your contacts instantly.'**
+  String get requestMoneyDesc;
+
+  /// No description provided for @recurringPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring Payments'**
+  String get recurringPayments;
+
+  /// No description provided for @recurringPaymentsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule automatic payments (e.g. send money to family on the 1st of every month).'**
+  String get recurringPaymentsDesc;
+
   /// No description provided for @receiveMoney.
   ///
   /// In en, this message translates to:

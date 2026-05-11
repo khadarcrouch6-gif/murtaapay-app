@@ -7,6 +7,7 @@ import '../../core/models/transaction.dart' as model;
 
 import '../../core/widgets/transaction_item.dart';
 import '../../core/widgets/wallet_receipt_view.dart';
+import '../../core/utils/export_helper.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -72,14 +73,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 const SizedBox(height: 16),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-                  child: Text(
-                    state.translate("Transaction History", "Taariikhda Lacagaha", ar: "سجل المعاملات", de: "Transaktionsverlauf", et: "Tehingute ajalugu"),
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24 * context.fontSizeFactor,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        state.translate("Transaction History", "Taariikhda Lacagaha", ar: "سجل المعاملات", de: "Transaktionsverlauf", et: "Tehingute ajalugu"),
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24 * context.fontSizeFactor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      IconButton(
+                        onPressed: () => _showExportOptions(context, state, filteredTransactions),
+                        icon: const Icon(Icons.download_rounded, color: AppColors.secondary),
+                        tooltip: state.translate("Export", "Soo deji", ar: "تصدير", de: "Exportieren", et: "Eksport"),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -157,7 +168,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         decoration: BoxDecoration(
           color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? theme.colorScheme.primary : AppColors.grey.withValues(alpha: 0.2)),
+          border: Border.all(color: isSelected ? theme.colorScheme.primary : AppColors.grey.withOpacity(0.2)),
         ),
         child: Text(label, style: TextStyle(color: isSelected ? Colors.white : theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 12)),
       ),
@@ -176,7 +187,44 @@ class _HistoryScreenState extends State<HistoryScreen> {
     });
   }
 
+  void _showExportOptions(BuildContext context, AppState state, List<model.Transaction> transactions) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              state.translate("Export History", "Soo deji Taariikhda", ar: "تصدير السجل", de: "Verlauf exportieren", et: "Ekspordi ajalugu"),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+              title: const Text("PDF Document"),
+              onTap: () {
+                Navigator.pop(context);
+                ExportHelper.exportToPdf(transactions);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.table_chart, color: Colors.green),
+              title: const Text("CSV Spreadsheet"),
+              onTap: () {
+                Navigator.pop(context);
+                ExportHelper.exportToCsv(transactions);
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context, AppState state) {
-    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.search_off_rounded, size: 80, color: AppColors.grey.withValues(alpha: 0.5)), const SizedBox(height: 16), Text(state.translate("No transactions found", "Dhaqdhaqaaq lama hayo", ar: "لم يتم العثور على معاملات", de: "Keine Transaktionen gefunden", et: "Tehinguid ei leitud"), style: const TextStyle(color: AppColors.grey))]));
+    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.search_off_rounded, size: 80, color: AppColors.grey.withOpacity(0.5)), const SizedBox(height: 16), Text(state.translate("No transactions found", "Dhaqdhaqaaq lama hayo", ar: "لم يتم العثور على معاملات", de: "Keine Transaktionen gefunden", et: "Tehinguid ei leitud"), style: const TextStyle(color: AppColors.grey))]));
   }
 }

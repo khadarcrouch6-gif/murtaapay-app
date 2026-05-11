@@ -594,5 +594,7 @@
   "zaad": "ZAAD",
   "sahal": "Sahal",
   "recentSavingsActivity": "Viimased säästutegevused",
-  "noActivityYet": "Tegevusi veel pole"
+  "noActivityYet": "Tegevusi veel pole",
+  "recurringPayments": "Püsikorraldused",
+  "recurringPaymentsDesc": "Graafikujärgsed automaatsed maksed (nt raha saatmine perele iga kuu 1. kuupäeval)."
 }

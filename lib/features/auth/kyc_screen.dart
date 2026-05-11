@@ -392,7 +392,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
       ), 
       child: Row(
         children: [
-          Icon(icon, color: theme.iconTheme.color?.withValues(alpha: 0.5)), 
+          Icon(icon, color: theme.iconTheme.color?.withValues(alpha: 0.5)),
           const SizedBox(width: 16), 
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: const TextStyle(fontWeight: FontWeight.bold)), Text(sub, style: TextStyle(fontSize: 12, color: theme.textTheme.bodySmall?.color))]), 
           const Spacer(), 

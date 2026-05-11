@@ -24,6 +24,20 @@ class AppLocalizationsSo extends AppLocalizations {
   String get sendMoney => 'Lacag Dir';
 
   @override
+  String get requestMoney => 'Codso Lacag';
+
+  @override
+  String get requestMoneyDesc =>
+      'Si degdeg ah lacag uga codso dadka kugu jira.';
+
+  @override
+  String get recurringPayments => 'Lacag Diris Joogto ah';
+
+  @override
+  String get recurringPaymentsDesc =>
+      'Habka lacag dirista ee joogtada ah (tusaale: bil kasta 1-deeda lacag u dir qoyska).';
+
+  @override
   String get receiveMoney => 'Lacag Hel';
 
   @override

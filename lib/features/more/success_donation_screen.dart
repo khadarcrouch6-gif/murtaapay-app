@@ -53,7 +53,7 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
                 width: 300,
                 height: 300,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(0.05),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.05),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -68,7 +68,7 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
                 width: 200,
                 height: 200,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(0.03),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.03),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -90,7 +90,7 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF10B981).withOpacity(0.3),
+                            color: const Color(0xFF10B981).withValues(alpha: 0.3),
                             blurRadius: 30,
                             spreadRadius: 10,
                           ),
@@ -117,7 +117,7 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.05),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(

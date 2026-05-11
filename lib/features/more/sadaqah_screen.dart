@@ -126,7 +126,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
           height: 400,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(32),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10))],
           ),
           clipBehavior: Clip.antiAlias,
           child: Stack(
@@ -138,12 +138,12 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                 errorBuilder: (context, error, stackTrace) => Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primaryDark, AppColors.primaryDark.withOpacity(0.8)],
+                      colors: [AppColors.primaryDark, AppColors.primaryDark.withValues(alpha: 0.8)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                   ),
-                  child: Center(child: Icon(featured.icon, size: 60, color: Colors.white.withOpacity(0.2))),
+                  child: Center(child: Icon(featured.icon, size: 60, color: Colors.white.withValues(alpha: 0.2))),
                 ),
               ),
               Container(
@@ -152,9 +152,9 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withOpacity(0.1),
-                      Colors.black.withOpacity(0.4),
-                      Colors.black.withOpacity(0.9),
+                      Colors.black.withValues(alpha: 0.1),
+                      Colors.black.withValues(alpha: 0.4),
+                      Colors.black.withValues(alpha: 0.9),
                     ],
                   ),
                 ),
@@ -172,7 +172,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Colors.black.withOpacity(0.3)],
+                          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.3)],
                         ),
                       ),
                     ),
@@ -206,7 +206,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                       borderRadius: BorderRadius.circular(10),
                       child: LinearProgressIndicator(
                         value: progress,
-                        backgroundColor: Colors.white.withOpacity(0.2),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
                         valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
                         minHeight: 8,
                       ),
@@ -231,21 +231,21 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.accentTeal.withOpacity(0.15), AppColors.accentTeal.withOpacity(0.05)],
+            colors: [AppColors.accentTeal.withValues(alpha: 0.15), AppColors.accentTeal.withValues(alpha: 0.05)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.accentTeal.withOpacity(0.2)),
+          border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2)),
           boxShadow: [
-            BoxShadow(color: AppColors.accentTeal.withOpacity(0.05), blurRadius: 15, offset: const Offset(0, 5)),
+            BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.05), blurRadius: 15, offset: const Offset(0, 5)),
           ],
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: AppColors.accentTeal.withOpacity(0.1), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle),
               child: const Icon(Icons.verified_user_rounded, color: AppColors.accentTeal, size: 22),
             ),
             const SizedBox(width: 16),
@@ -285,8 +285,8 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
               selected: isSelected,
               label: Text(state.translate(cat, _getSoCategory(cat))),
               onSelected: (val) => setState(() => _selectedCategory = cat),
-              backgroundColor: isDark ? Colors.white.withOpacity(0.03) : Colors.grey.withOpacity(0.05),
-              selectedColor: AppColors.accentTeal.withOpacity(0.15),
+              backgroundColor: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.grey.withValues(alpha: 0.05),
+              selectedColor: AppColors.accentTeal.withValues(alpha: 0.15),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               side: BorderSide(color: isSelected ? AppColors.accentTeal : Colors.transparent),
               labelStyle: TextStyle(
@@ -393,15 +393,15 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: theme.dividerColor.withOpacity(isDark ? 0.08 : 0.05)),
+            border: Border.all(color: theme.dividerColor.withValues(alpha: isDark ? 0.08 : 0.05)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.25 : 0.03),
+                color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
                 blurRadius: 30,
                 offset: const Offset(0, 15),
               ),
               BoxShadow(
-                color: AppColors.accentTeal.withOpacity(isDark ? 0.05 : 0.01),
+                color: AppColors.accentTeal.withValues(alpha: isDark ? 0.05 : 0.01),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -426,8 +426,8 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                             errorBuilder: (context, error, stackTrace) => Container(
                               height: 280 * context.fontSizeFactor,
                               width: double.infinity,
-                              color: theme.colorScheme.primary.withOpacity(0.05),
-                              child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withOpacity(0.2)),
+                              color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                              child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
                             ),
                           ),
                           _buildVerifiedBadge(context, l10n),
@@ -458,8 +458,8 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                         errorBuilder: (context, error, stackTrace) => Container(
                           height: 180 * context.fontSizeFactor,
                           width: double.infinity,
-                          color: theme.colorScheme.primary.withOpacity(0.05),
-                          child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withOpacity(0.2)),
+                          color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                          child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
                         ),
                       ),
                       _buildVerifiedBadge(context, l10n),
@@ -524,7 +524,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
           borderRadius: BorderRadius.circular(10),
           child: LinearProgressIndicator(
             value: progress,
-            backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.1),
+            backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.1),
             valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
             minHeight: 8,
           ),
@@ -538,15 +538,15 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
           ],
         ),
         const SizedBox(height: 12),
-        Divider(color: theme.dividerColor.withOpacity(0.1), height: 1),
+        Divider(color: theme.dividerColor.withValues(alpha: 0.1), height: 1),
         const SizedBox(height: 12),
         Row(
           children: [
-            Icon(Icons.people_outline_rounded, size: 16, color: AppColors.grey.withOpacity(0.8)),
+            Icon(Icons.people_outline_rounded, size: 16, color: AppColors.grey.withValues(alpha: 0.8)),
             const SizedBox(width: 6),
             Text(
               "${campaign.donorCount} ${AppState().translate("donations", "deeqoodo")}",
-              style: TextStyle(color: AppColors.grey.withOpacity(0.8), fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w500),
+              style: TextStyle(color: AppColors.grey.withValues(alpha: 0.8), fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w500),
             ),
           ],
         ),

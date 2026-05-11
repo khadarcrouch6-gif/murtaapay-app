@@ -934,7 +934,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         decoration: BoxDecoration(
                           color: selectedCardIdx == 0 ? AppColors.accentTeal : Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: selectedCardIdx == 0 ? AppColors.accentTeal : Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                          border: Border.all(color: selectedCardIdx == 0 ? AppColors.accentTeal : Theme.of(context).dividerColor.withOpacity(0.1)),
                         ),
                         child: Center(child: Text(state.translate("Wallet", "Boorsada"), style: TextStyle(color: selectedCardIdx == 0 ? Colors.white : null, fontWeight: FontWeight.bold, fontSize: 12))),
                       ),
@@ -950,7 +950,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                           decoration: BoxDecoration(
                             color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).colorScheme.surface,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                            border: Border.all(color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).dividerColor.withOpacity(0.1)),
                           ),
                           child: Center(child: Text("**** ${card.cardNumber.substring(card.cardNumber.length - 4)}", style: TextStyle(color: isSelected ? Colors.white : null, fontWeight: FontWeight.bold, fontSize: 12))),
                         ),

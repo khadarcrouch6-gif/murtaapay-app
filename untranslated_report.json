@@ -1,5 +1,7 @@
 {
   "ar": [
+    "requestMoney",
+    "requestMoneyDesc",
     "buy",
     "sell",
     "murtaaxWallet",
@@ -158,6 +160,8 @@
   ],
 
   "de": [
+    "requestMoney",
+    "requestMoneyDesc",
     "buy",
     "sell",
     "murtaaxWallet",
@@ -316,6 +320,8 @@
   ],
 
   "et": [
+    "requestMoney",
+    "requestMoneyDesc",
     "buy",
     "sell",
     "invalidAmount",

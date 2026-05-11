@@ -220,7 +220,7 @@ class ChatMessageWidget extends StatelessWidget {
                 ? AppLocalizations.of(context)!.youSentMoney 
                 : AppLocalizations.of(context)!.youReceivedMoney,
             style: TextStyle(
-              color: isCurrentUser ? Colors.white.withValues(alpha: 0.9) : theme.textTheme.bodySmall?.color,
+              color: isCurrentUser ? Colors.white.withOpacity(0.9) : theme.textTheme.bodySmall?.color,
               fontSize: 12 * context.fontSizeFactor,
               fontWeight: FontWeight.w500,
             ),

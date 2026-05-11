@@ -140,7 +140,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
         borderRadius: BorderRadius.circular(16 * scale),
         boxShadow: [
           BoxShadow(
-            color: cardGradient[0].withValues(alpha: 0.4),
+            color: cardGradient[0].withOpacity(0.4),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -235,7 +235,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -387,9 +387,9 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                           child: Container(
                             padding: EdgeInsets.all(16 * scale),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                              color: theme.colorScheme.secondary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12 * scale),
-                              border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.3)),
+                              border: Border.all(color: theme.colorScheme.secondary.withOpacity(0.3)),
                             ),
                             child: Row(
                               children: [
@@ -457,7 +457,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale)),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16 * scale),
-                                    borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+                                    borderSide: BorderSide(color: Colors.grey.withOpacity(0.1)),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16 * scale),
@@ -504,7 +504,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale)),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16 * scale),
-                                    borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+                                    borderSide: BorderSide(color: Colors.grey.withOpacity(0.1)),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16 * scale),
@@ -552,7 +552,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale)),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(16 * scale),
-                                          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+                                          borderSide: BorderSide(color: Colors.grey.withOpacity(0.1)),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(16 * scale),
@@ -595,7 +595,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale)),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(16 * scale),
-                                          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+                                          borderSide: BorderSide(color: Colors.grey.withOpacity(0.1)),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(16 * scale),
@@ -627,9 +627,9 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * scale)),
                               elevation: 4,
-                              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
+                              shadowColor: theme.colorScheme.secondary.withOpacity(0.3),
                               disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
-                              disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
+                              disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.3) : Colors.white70,
                             ),
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
@@ -657,8 +657,8 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
     final theme = Theme.of(context);
     final scale = context.fontSizeFactor;
     Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
+    Color inactiveColor = isHeader ? Colors.white.withOpacity(0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withOpacity(0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
 
     return Column(
       children: [
@@ -667,7 +667,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
           decoration: BoxDecoration(
             color: isActive || isCompleted ? activeColor : inactiveColor, 
             shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4 * scale) : null
+            border: isActive ? Border.all(color: activeColor.withOpacity(0.2), width: 4 * scale) : null
           ),
           child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18 * scale) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14 * scale, fontWeight: FontWeight.w900))),
         ),
@@ -680,7 +680,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
   Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
     final theme = Theme.of(context);
     Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
+      ? (isCompleted ? Colors.white : Colors.white.withOpacity(0.3))
       : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
     return Expanded(child: Container(height: 3, margin: EdgeInsets.symmetric(horizontal: 6 * context.fontSizeFactor), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
   }

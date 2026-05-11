@@ -128,7 +128,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                       Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.4),
+                          color: Colors.black.withValues(alpha: 0.4),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Row(
@@ -145,7 +145,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                                 duration: const Duration(milliseconds: 200),
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: !_isReceiveMode ? Colors.white.withOpacity(0.2) : Colors.transparent,
+                                  color: !_isReceiveMode ? Colors.white.withValues(alpha: 0.2) : Colors.transparent,
                                   borderRadius: BorderRadius.circular(26),
                                 ),
                                 child: Text(
@@ -169,7 +169,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                                 duration: const Duration(milliseconds: 200),
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: _isReceiveMode ? Colors.white.withOpacity(0.2) : Colors.transparent,
+                                  color: _isReceiveMode ? Colors.white.withValues(alpha: 0.2) : Colors.transparent,
                                   borderRadius: BorderRadius.circular(26),
                                 ),
                                 child: Text(
@@ -241,9 +241,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -279,12 +279,12 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
           margin: const EdgeInsets.symmetric(horizontal: 24),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: Colors.white.withOpacity(0.15)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 30,
                 offset: const Offset(0, 10),
               ),
@@ -301,7 +301,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                   borderRadius: BorderRadius.circular(32),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -334,7 +334,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                         border: Border.all(color: Colors.white, width: 4),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 8,
                             spreadRadius: 2,
                           )
@@ -376,7 +376,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                   "Scan to get paid by anyone, even if they are not on MurtaaxPay",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                     fontSize: 14,
                     height: 1.5,
                   ),
@@ -421,7 +421,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
         // Darkened background with a hole
         ColorFiltered(
           colorFilter: ColorFilter.mode(
-            Colors.black.withOpacity(0.6),
+            Colors.black.withValues(alpha: 0.6),
             BlendMode.srcOut,
           ),
           child: Stack(
@@ -517,9 +517,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
             ),
             child: Icon(icon, color: Colors.white, size: 20),
           ),
@@ -575,13 +575,13 @@ class _ScanLineState extends State<_ScanLine> with SingleTickerProviderStateMixi
                   gradient: LinearGradient(
                     colors: [
                       Colors.transparent,
-                      Colors.white.withOpacity(0.8),
+                      Colors.white.withValues(alpha: 0.8),
                       Colors.transparent,
                     ],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                       blurRadius: 10,
                       spreadRadius: 2,
                     ),

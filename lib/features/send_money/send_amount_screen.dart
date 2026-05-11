@@ -111,7 +111,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     return _totalToPay <= balanceInCurrentCurrency;
   }
   
-  double get _maxLimitInCurrentCurrency => AppState.dailyLimit * (rates[_sendCurrency] ?? 1.0);
+  double get _maxLimitInCurrentCurrency => state.dailyLimit * (rates[_sendCurrency] ?? 1.0);
   double get _minLimitInCurrentCurrency => 10 * (rates[_sendCurrency] ?? 1.0);
 
   bool get _isAmountValid {
@@ -380,7 +380,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                         label: Text("+ ${_getCurrencySymbol(_sendCurrency)} $amt", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
                                         onPressed: () => _addQuickAmount(amt),
                                         backgroundColor: theme.colorScheme.surface,
-                                        side: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1), width: 1),
+                                        side: BorderSide(color: theme.dividerColor.withOpacity(0.1), width: 1),
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                       ),
@@ -401,7 +401,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                           _updateReceiveAmount(_sendController.text);
                                         });
                                       },
-                                      child: Container(padding: const EdgeInsets.all(4), decoration: BoxDecoration(color: theme.colorScheme.primary, shape: BoxShape.circle, boxShadow: [BoxShadow(color: theme.colorScheme.primary.withValues(alpha: 0.2), blurRadius: 8)]), child: const Icon(Icons.swap_vert_rounded, color: Colors.white, size: 20)),
+                                      child: Container(padding: const EdgeInsets.all(4), decoration: BoxDecoration(color: theme.colorScheme.primary, shape: BoxShape.circle, boxShadow: [BoxShadow(color: theme.colorScheme.primary.withOpacity(0.2), blurRadius: 8)]), child: const Icon(Icons.swap_vert_rounded, color: Colors.white, size: 20)),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
@@ -412,7 +412,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text("${l10n.refreshed}: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 10, color: AppColors.grey.withValues(alpha: 0.7), fontWeight: FontWeight.bold)),
+                                          Text("${l10n.refreshed}: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 10, color: AppColors.grey.withOpacity(0.7), fontWeight: FontWeight.bold)),
                                           const SizedBox(width: 4),
                                           _isRefreshing ? const SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1.5)) : Icon(Icons.auto_awesome, size: 10, color: theme.colorScheme.secondary),
                                         ],
@@ -441,7 +441,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                               // Fee Toggle
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), // Padding-ka waa la yareeyay
-                                decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5)),
+                                decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: theme.dividerColor.withOpacity(0.1), width: 1.5)),
                                 child: Row(
                                   children: [
                                     Icon(Icons.receipt_long_rounded, color: theme.colorScheme.secondary, size: 20),
@@ -485,8 +485,8 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                 decoration: BoxDecoration(
                                   color: theme.colorScheme.surface,
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: !hasSufficient ? Colors.red.withValues(alpha: 0.8) : theme.dividerColor.withValues(alpha: 0.1), width: 2),
-                                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 4))],
+                                  border: Border.all(color: !hasSufficient ? Colors.red.withOpacity(0.8) : theme.dividerColor.withOpacity(0.1), width: 2),
+                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4))],
                                 ),
                                 child: Column(
                                   children: [
@@ -524,9 +524,9 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                     foregroundColor: theme.colorScheme.onSecondary,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                     elevation: 4,
-                                    shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
+                                    shadowColor: theme.colorScheme.secondary.withOpacity(0.3),
                                     disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
-                                    disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
+                                    disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.3) : Colors.white70,
                                   ),
                                   child: Text(l10n.continueLabel, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
                                 ),
@@ -597,8 +597,8 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
     final theme = Theme.of(context);
     Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : theme.dividerColor.withValues(alpha: 0.1);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : theme.textTheme.bodySmall?.color ?? Colors.grey);
+    Color inactiveColor = isHeader ? Colors.white.withOpacity(0.3) : theme.dividerColor.withOpacity(0.1);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withOpacity(0.6)) : (isActive ? theme.colorScheme.secondary : theme.textTheme.bodySmall?.color ?? Colors.grey);
 
     return Column(
       children: [
@@ -607,7 +607,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           decoration: BoxDecoration(
             color: isActive || isCompleted ? activeColor : inactiveColor, 
             shape: BoxShape.circle, 
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
+            border: isActive ? Border.all(color: activeColor.withOpacity(0.2), width: 4) : null
           ),
           child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
         ),
@@ -623,8 +623,8 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
     final theme = Theme.of(context);
     Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
-      : (isCompleted ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1));
+      ? (isCompleted ? Colors.white : Colors.white.withOpacity(0.3)) 
+      : (isCompleted ? theme.colorScheme.secondary : theme.dividerColor.withOpacity(0.1));
     return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
   }
 
@@ -642,10 +642,10 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: isError ? Colors.red.withValues(alpha: 0.05) : Theme.of(context).colorScheme.surface,
+            color: isError ? Colors.red.withOpacity(0.05) : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isError ? Colors.red : (isFocused ? Theme.of(context).colorScheme.secondary : Theme.of(context).dividerColor.withValues(alpha: 0.1)), width: isFocused ? 2 : 1.5),
-            boxShadow: isFocused ? [BoxShadow(color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10, spreadRadius: 1)] : null,
+            border: Border.all(color: isError ? Colors.red : (isFocused ? Theme.of(context).colorScheme.secondary : Theme.of(context).dividerColor.withOpacity(0.1)), width: isFocused ? 2 : 1.5),
+            boxShadow: isFocused ? [BoxShadow(color: Theme.of(context).colorScheme.secondary.withOpacity(0.08), blurRadius: 10, spreadRadius: 1)] : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -691,7 +691,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                 borderRadius: BorderRadius.circular(8),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
+                                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
                                     blurRadius: 4,
                                   ),
                                 ],
@@ -729,7 +729,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(color: Theme.of(context).dividerColor.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(12), border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.08))),
+                      decoration: BoxDecoration(color: Theme.of(context).dividerColor.withOpacity(0.06), borderRadius: BorderRadius.circular(12), border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.08))),
                       child: Row(
                         children: [
                           ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.network("https://flagcdn.com/w40/${_getFlagCode(currency)}.png", width: 22, height: 15, fit: BoxFit.cover, errorBuilder: (c, e, s) => const Icon(Icons.flag, size: 16))),
@@ -788,7 +788,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                   selectedColor: theme.colorScheme.secondary,
                   backgroundColor: theme.colorScheme.surface,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  side: BorderSide(color: isCatSelected ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1)),
+                  side: BorderSide(color: isCatSelected ? theme.colorScheme.secondary : theme.dividerColor.withOpacity(0.1)),
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   visualDensity: VisualDensity.compact,
                   showCheckmark: false,
@@ -822,15 +822,15 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                     decoration: BoxDecoration(
                       color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.surface,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: isSelected ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.15), width: 2),
-                      boxShadow: isSelected ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 4))] : null,
+                      border: Border.all(color: isSelected ? theme.colorScheme.secondary : theme.dividerColor.withOpacity(0.15), width: 2),
+                      boxShadow: isSelected ? [BoxShadow(color: theme.colorScheme.secondary.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 4))] : null,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
                           padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(color: isSelected ? Colors.white.withValues(alpha: 0.2) : theme.dividerColor.withValues(alpha: 0.05), shape: BoxShape.circle),
+                          decoration: BoxDecoration(color: isSelected ? Colors.white.withOpacity(0.2) : theme.dividerColor.withOpacity(0.05), shape: BoxShape.circle),
                           child: Image.asset(method["image"]!, width: 22, height: 22, errorBuilder: (c, e, s) => Icon(Icons.payment, size: 20, color: isSelected ? Colors.white : AppColors.grey)),
                         ),
                         const SizedBox(width: 10),
@@ -930,7 +930,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
             width: 50,
             height: 6,
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[300],
+              color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[300],
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -945,10 +945,10 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
               ),
               decoration: InputDecoration(
                 hintText: widget.searchHint,
-                hintStyle: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.grey),
-                prefixIcon: Icon(Icons.search, size: 28, color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.grey),
+                hintStyle: TextStyle(color: isDark ? Colors.white.withOpacity(0.5) : Colors.grey),
+                prefixIcon: Icon(Icons.search, size: 28, color: isDark ? Colors.white.withOpacity(0.5) : Colors.grey),
                 filled: true,
-                fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[100],
+                fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
               ),
@@ -990,7 +990,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.grey,
+                      color: isDark ? Colors.white.withOpacity(0.5) : Colors.grey,
                     ),
                   ),
                   onTap: () {

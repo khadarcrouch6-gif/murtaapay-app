@@ -542,5 +542,7 @@
   "zaad": "ZAAD",
   "sahal": "Sahal",
   "recentSavingsActivity": "نشاط الادخار الأخير",
-  "noActivityYet": "لا يوجد نشاط بعد"
+  "noActivityYet": "لا يوجد نشاط بعد",
+  "recurringPayments": "المدفوعات المتكررة",
+  "recurringPaymentsDesc": "جدولة المدفوعات التلقائية (مثل إرسال الأموال إلى العائلة في الأول من كل شهر)."
 }

@@ -4,6 +4,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/app_colors.dart';
+import '../../core/widgets/contact_sync_list.dart';
 import '../../l10n/app_localizations.dart';
 import 'payment_screen.dart';
 
@@ -154,75 +155,56 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
 
 
   Future<void> _pickContact() async {
-    final l10n = AppLocalizations.of(context)!;
-    final status = await Permission.contacts.request();
-    
-    if (status.isGranted) {
-      final contactId = await FlutterContacts.native.showPicker();
-      if (contactId != null) {
-        final fullContact = await FlutterContacts.get(contactId);
-        if (fullContact != null && fullContact.phones.isNotEmpty) {
-          String phone = fullContact.phones.first.number.replaceAll(RegExp(r'[\s\-\(\)]'), '');
-            
-          // Clean phone number from country code if it matches current selection or any other
-          for (var c in _countries) {
-            if (phone.startsWith(c["code"]!)) {
-              setState(() {
-                _selectedCountryCode = c["code"]!;
-                _selectedFlag = c["flag"]!;
-              });
-              phone = phone.substring(c["code"]!.length);
-              break;
-            } else if (phone.startsWith(c["code"]!.substring(1))) {
-              setState(() {
-                _selectedCountryCode = c["code"]!;
-                _selectedFlag = c["flag"]!;
-              });
-              phone = phone.substring(c["code"]!.length - 1);
-              break;
-            }
-          }
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (context) => SizedBox(
+        height: MediaQuery.of(context).size.height * 0.85,
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ContactSyncList(
+                onContactSelected: (contact, murtaaxName) {
+                  if (contact.phones.isNotEmpty) {
+                    String phone = contact.phones.first.number.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+                    
+                    // Clean phone number from country code
+                    for (var c in _countries) {
+                      if (phone.startsWith(c["code"]!)) {
+                        setState(() {
+                          _selectedCountryCode = c["code"]!;
+                          _selectedFlag = c["flag"]!;
+                        });
+                        phone = phone.substring(c["code"]!.length);
+                        break;
+                      } else if (phone.startsWith(c["code"]!.substring(1))) {
+                        setState(() {
+                          _selectedCountryCode = c["code"]!;
+                          _selectedFlag = c["flag"]!;
+                        });
+                        phone = phone.substring(c["code"]!.length - 1);
+                        break;
+                      }
+                    }
 
-          setState(() {
-            _idController.text = phone;
-            _nameController.text = fullContact.displayName ?? '';
-          });
-          
-          // Trigger provider detection
-          _idFocus.requestFocus();
-          _idFocus.unfocus();
-        }
-      }
-    } else if (status.isPermanentlyDenied) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l10n.contact),
-            content: Text(l10n.contactPermissionRequired),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(l10n.cancel),
-              ),
-              TextButton(
-                onPressed: () {
-                  openAppSettings();
+                    setState(() {
+                      _idController.text = phone;
+                      _nameController.text = murtaaxName ?? contact.displayName ?? "";
+                    });
+                  }
                   Navigator.pop(context);
                 },
-                child: Text(l10n.openSettings),
               ),
-            ],
-          ),
-        );
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.contactPermissionRequired)),
-        );
-      }
-    }
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   final List<Map<String, String>> _banks = [
@@ -388,7 +370,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                                   const SizedBox(width: 4),
                                   Text(_selectedCountryCode, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
                                   const Icon(Icons.arrow_drop_down, size: 20),
-                                  Container(width: 1, height: 24, color: theme.dividerColor.withValues(alpha: 0.2), margin: const EdgeInsets.symmetric(horizontal: 8)),
+                                  Container(width: 1, height: 24, color: theme.dividerColor.withOpacity(0.2), margin: const EdgeInsets.symmetric(horizontal: 8)),
                                 ],
                               ),
                             ),
@@ -472,7 +454,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                               elevation: 4,
-                              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
+                              shadowColor: theme.colorScheme.secondary.withOpacity(0.3),
                               disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
                             ),
                             child: Text(
@@ -500,7 +482,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
+          color: theme.dividerColor.withOpacity(0.1),
           width: 2,
         ),
       ),
@@ -540,7 +522,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
+          color: theme.dividerColor.withOpacity(0.1),
           width: 2,
         ),
       ),
@@ -570,8 +552,8 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
   Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
     final theme = Theme.of(context);
     Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
+    Color inactiveColor = isHeader ? Colors.white.withOpacity(0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withOpacity(0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
 
     return Column(
       children: [
@@ -580,7 +562,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
           decoration: BoxDecoration(
             color: isActive || isCompleted ? activeColor : inactiveColor, 
             shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
+            border: isActive ? Border.all(color: activeColor.withOpacity(0.2), width: 4) : null
           ),
           child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
         ),
@@ -596,7 +578,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
   Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
     final theme = Theme.of(context);
     Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
+      ? (isCompleted ? Colors.white : Colors.white.withOpacity(0.3)) 
       : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
     return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
   }
@@ -623,10 +605,10 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1),
+              color: hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withOpacity(0.1),
               width: 2,
             ),
-            boxShadow: hasFocus ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10)] : null,
+            boxShadow: hasFocus ? [BoxShadow(color: theme.colorScheme.secondary.withOpacity(0.08), blurRadius: 10)] : null,
           ),
           child: TextField(
             controller: controller,
@@ -660,11 +642,11 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
   Widget _buildRecentItem(ThemeData theme, String name, String detail) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5)),
+      decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: theme.dividerColor.withOpacity(0.1), width: 1.5)),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         leading: CircleAvatar(
-          backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
+          backgroundColor: theme.primaryColor.withOpacity(0.1),
           child: Text(name[0], style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.w900)),
         ),
         title: Text(name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),

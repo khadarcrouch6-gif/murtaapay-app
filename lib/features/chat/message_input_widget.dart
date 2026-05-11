@@ -198,8 +198,8 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
-        border: isDark ? Border(top: BorderSide(color: theme.dividerColor.withOpacity(0.1))) : null,
+        boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
+        border: isDark ? Border(top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))) : null,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -227,7 +227,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                     height: 40 * context.fontSizeFactor,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: _showMediaOptions ? AppColors.accentTeal : AppColors.accentTeal.withOpacity(0.1),
+                      color: _showMediaOptions ? AppColors.accentTeal : AppColors.accentTeal.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: AdaptiveIcon(
@@ -326,7 +326,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
       padding: EdgeInsets.fromLTRB(20 * context.fontSizeFactor, 12 * context.fontSizeFactor, 20 * context.fontSizeFactor, 4 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        border: Border(bottom: BorderSide(color: theme.dividerColor.withOpacity(0.1))),
+        border: Border(bottom: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -414,7 +414,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
             height: 56 * context.fontSizeFactor,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: AdaptiveIcon(

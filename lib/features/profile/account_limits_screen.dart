@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -11,47 +12,52 @@ class AccountLimitsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final state = AppState();
     final isDark = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(state.translate("Account Limits", "Xadka Akooonka", ar: "حدود الحساب")),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.all(context.horizontalPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeaderCard(context, state, isDark),
-            const SizedBox(height: 32),
-            _buildLimitSection(
-              context,
-              state.translate("Daily Limit", "Xadka Maalinta", ar: "الحد اليومي"),
-              state.getDailyRemaining(),
-              5000.0,
-              Icons.today_rounded,
-              isDark,
+    return Consumer<AppState>(
+      builder: (context, state, child) {
+        return Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          appBar: AppBar(
+            title: Text(state.translate("Account Limits", "Xadka Akooonka", ar: "حدود الحساب")),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          body: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.all(context.horizontalPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeaderCard(context, state, isDark),
+                const SizedBox(height: 32),
+                _buildLimitSection(
+                  context,
+                  state.translate("Daily Limit", "Xadka Maalinta", ar: "الحد اليومي"),
+                  state.getDailyRemaining(),
+                  state.dailyLimit,
+                  Icons.today_rounded,
+                  isDark,
+                  () => _showEditLimitDialog(context, state, true),
+                ),
+                const SizedBox(height: 24),
+                _buildLimitSection(
+                  context,
+                  state.translate("Monthly Limit", "Xadka Bisaha", ar: "الحد الشهري"),
+                  state.getMonthlyRemaining(),
+                  state.monthlyLimit,
+                  Icons.calendar_month_rounded,
+                  isDark,
+                  () => _showEditLimitDialog(context, state, false),
+                ),
+                const SizedBox(height: 40),
+                _buildUpgradeCard(context, state, isDark),
+                const SizedBox(height: 100),
+              ],
             ),
-            const SizedBox(height: 24),
-            _buildLimitSection(
-              context,
-              state.translate("Monthly Limit", "Xadka Bisaha", ar: "الحد الشهري"),
-              state.getMonthlyRemaining(),
-              20000.0,
-              Icons.calendar_month_rounded,
-              isDark,
-            ),
-            const SizedBox(height: 40),
-            _buildUpgradeCard(context, state, isDark),
-            const SizedBox(height: 100),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -65,7 +71,7 @@ class AccountLimitsScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryDark.withValues(alpha: 0.3),
+              color: AppColors.primaryDark.withOpacity(0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
             )
@@ -76,7 +82,7 @@ class AccountLimitsScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.speed_rounded, color: AppColors.accentTeal, size: 40),
@@ -94,7 +100,7 @@ class AccountLimitsScreen extends StatelessWidget {
                 ar: "حسابك له حدود قياسية. أكمل KYC للحصول على حدود أعلى."
               ),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13, fontWeight: FontWeight.w500),
+              style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -102,18 +108,18 @@ class AccountLimitsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLimitSection(BuildContext context, String title, double remaining, double total, IconData icon, bool isDark) {
+  Widget _buildLimitSection(BuildContext context, String title, double remaining, double total, IconData icon, bool isDark, VoidCallback onEdit) {
     final used = total - remaining;
-    final percent = (used / total).clamp(0.0, 1.0);
+    final percent = total > 0 ? (used / total).clamp(0.0, 1.0) : 0.0;
     final currencyFormat = NumberFormat.currency(symbol: r"$", decimalDigits: 0);
 
     return FadeInUp(
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? AppColors.primaryDark.withValues(alpha: 0.5) : Colors.white,
+          color: isDark ? AppColors.primaryDark.withOpacity(0.5) : Colors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.1)),
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.1)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,10 +130,17 @@ class AccountLimitsScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
                 const Spacer(),
+                IconButton(
+                  onPressed: onEdit,
+                  icon: const Icon(Icons.edit_rounded, size: 20, color: AppColors.primary),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.secondary.withValues(alpha: 0.1),
+                    color: AppColors.secondary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -186,9 +199,9 @@ class AccountLimitsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.accentTeal.withValues(alpha: 0.1),
+        color: AppColors.accentTeal.withOpacity(0.1),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2)),
+        border: Border.all(color: AppColors.accentTeal.withOpacity(0.2)),
       ),
       child: Row(
         children: [
@@ -210,6 +223,59 @@ class AccountLimitsScreen extends StatelessWidget {
             ),
           ),
           const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.accentTeal),
+        ],
+      ),
+    );
+  }
+
+  void _showEditLimitDialog(BuildContext context, AppState state, bool isDaily) {
+    final controller = TextEditingController(text: (isDaily ? state.dailyLimit : state.monthlyLimit).toStringAsFixed(0));
+    final title = isDaily 
+        ? state.translate("Set Daily Limit", "Xaddid Maalinta", ar: "تعيين الحد اليومي")
+        : state.translate("Set Monthly Limit", "Xaddid Bisha", ar: "تعيين الحد الشهري");
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                prefixText: r"$ ",
+                border: OutlineInputBorder(),
+                labelText: "Amount",
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              state.translate(
+                "Lowering your limit takes effect immediately. Increasing it may require verification.",
+                "Yaraynta xadkaaga isla markiiba ayay dhaqan gelaysaa. Kordhintiisu waxay u baahan kartaa xaqiijin.",
+                ar: "يؤدي خفض الحد الخاص بك إلى تفعيله على الفور. قد يتطلب زيادته التحقق."
+              ),
+              style: const TextStyle(fontSize: 11, color: Colors.grey),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(state.translate("Cancel", "Jooji", ar: "إلغاء"))),
+          ElevatedButton(
+            onPressed: () {
+              final newLimit = double.tryParse(controller.text) ?? 0.0;
+              if (isDaily) {
+                state.updateDailyLimit(newLimit);
+              } else {
+                state.updateMonthlyLimit(newLimit);
+              }
+              Navigator.pop(context);
+            },
+            child: Text(state.translate("Save", "Kaydi", ar: "حفظ")),
+          ),
         ],
       ),
     );

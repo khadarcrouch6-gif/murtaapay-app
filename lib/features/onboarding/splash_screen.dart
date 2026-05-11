@@ -62,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: 300,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05),
+                  color: (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.05),
                 ),
               ),
             ),
@@ -74,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.03),
+                  color: (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.03),
                 ),
               ),
             ),
@@ -101,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen> {
                                 color: isDark ? const Color(0xFF0B121F) : Colors.white,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
+                                    color: Colors.black.withOpacity(0.1),
                                     blurRadius: 40,
                                     spreadRadius: 2,
                                   ),
@@ -141,7 +141,7 @@ class _SplashScreenState extends State<SplashScreen> {
                             l10n.splashSubtitle,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: (isDark ? Colors.white : AppColors.textSecondary).withValues(alpha: 0.8),
+                              color: (isDark ? Colors.white : AppColors.textSecondary).withOpacity(0.8),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1.5,
@@ -155,7 +155,7 @@ class _SplashScreenState extends State<SplashScreen> {
                             width: 40,
                             height: 4,
                             child: LinearProgressIndicator(
-                              backgroundColor: isDark ? Colors.white24 : AppColors.primaryDark.withValues(alpha: 0.1),
+                              backgroundColor: isDark ? Colors.white24 : AppColors.primaryDark.withOpacity(0.1),
                               valueColor: AlwaysStoppedAnimation<Color>(isDark ? Colors.white : AppColors.primaryDark),
                             ),
                           ),
@@ -178,7 +178,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   "v1.0.0",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: (isDark ? Colors.white : AppColors.textSecondary).withValues(alpha: 0.5),
+                    color: (isDark ? Colors.white : AppColors.textSecondary).withOpacity(0.5),
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),

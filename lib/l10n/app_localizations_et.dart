@@ -24,6 +24,19 @@ class AppLocalizationsEt extends AppLocalizations {
   String get sendMoney => 'Saada raha';
 
   @override
+  String get requestMoney => 'Request Money';
+
+  @override
+  String get requestMoneyDesc => 'Request funds from your contacts instantly.';
+
+  @override
+  String get recurringPayments => 'Püsikorraldused';
+
+  @override
+  String get recurringPaymentsDesc =>
+      'Graafikujärgsed automaatsed maksed (nt raha saatmine perele iga kuu 1. kuupäeval).';
+
+  @override
   String get receiveMoney => 'Võta vastu';
 
   @override

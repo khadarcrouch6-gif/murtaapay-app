@@ -133,7 +133,7 @@ class _CardsScreenState extends State<CardsScreen> {
                     onPressed: () => _showCardSettings(context, state),
                     icon: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: theme.colorScheme.primary.withOpacity(0.1), shape: BoxShape.circle),
+                      decoration: BoxDecoration(color: theme.colorScheme.primary.withValues(alpha: 0.1), shape: BoxShape.circle),
                       child: Icon(Icons.settings_outlined, color: theme.colorScheme.primary, size: 22 * context.fontSizeFactor),
                     ),
                   ),
@@ -163,7 +163,7 @@ class _CardsScreenState extends State<CardsScreen> {
                 child: ElevatedButton(
                   onPressed: () => _showNewCardDialog(context, state),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentTeal.withOpacity(0.1),
+                    backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                     foregroundColor: AppColors.accentTeal,
                     elevation: 0,
                     side: const BorderSide(color: AppColors.accentTeal, width: 1.5),
@@ -192,12 +192,12 @@ class _CardsScreenState extends State<CardsScreen> {
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Colors.grey.withOpacity(0.1)),
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.credit_card_off_rounded, size: 48 * context.fontSizeFactor, color: Colors.grey.withOpacity(0.3)),
+                    Icon(Icons.credit_card_off_rounded, size: 48 * context.fontSizeFactor, color: Colors.grey.withValues(alpha: 0.3)),
                     const SizedBox(height: 16),
                     Text(l10n.noActiveCards, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
                   ],
@@ -441,7 +441,7 @@ class _CardsScreenState extends State<CardsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)), 
+            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)), 
             const SizedBox(height: 8), 
             Flexible(child: Text(translatedTitle, style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis))
           ],
@@ -459,7 +459,7 @@ class _CardsScreenState extends State<CardsScreen> {
         decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20)),
         child: Row(
           children: [
-            Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: neg ? Colors.red.withOpacity(0.1) : AppColors.accentTeal.withOpacity(0.1), shape: BoxShape.circle), child: Icon(neg ? Icons.shopping_bag_outlined : Icons.add_circle_outline, color: neg ? Colors.red : AppColors.accentTeal, size: 20 * context.fontSizeFactor)),
+            Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: neg ? Colors.red.withValues(alpha: 0.1) : AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(neg ? Icons.shopping_bag_outlined : Icons.add_circle_outline, color: neg ? Colors.red : AppColors.accentTeal, size: 20 * context.fontSizeFactor)),
             const SizedBox(width: 16),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)), Text(date, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor))])),
             Text(amt, style: TextStyle(fontWeight: FontWeight.bold, color: neg ? null : AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor)),
@@ -469,7 +469,7 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label, bool sel, ValueChanged<bool> onSelected) => Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: onSelected, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), selectedColor: AppColors.accentTeal.withOpacity(0.2), checkmarkColor: AppColors.accentTeal));
+  Widget _buildFilterChip(String label, bool sel, ValueChanged<bool> onSelected) => Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: onSelected, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), selectedColor: AppColors.accentTeal.withValues(alpha: 0.2), checkmarkColor: AppColors.accentTeal));
 
   void _showCardSettings(BuildContext context, AppState state) {
     if (state.cards.isEmpty) return;
@@ -500,8 +500,8 @@ class _CardsScreenState extends State<CardsScreen> {
           ),
           borderGradient: LinearGradient(
             colors: [
-              (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.2), 
-              (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.05)
+              (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.2), 
+              (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05)
             ],
           ),
           child: Column(
@@ -521,9 +521,9 @@ class _CardsScreenState extends State<CardsScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withOpacity(0.2),
+                        color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withOpacity(0.4)),
+                        border: Border.all(color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.4)),
                       ),
                       child: Text(
                         currentCard.isFrozen 
@@ -715,8 +715,8 @@ class _CardsScreenState extends State<CardsScreen> {
         ),
         borderGradient: LinearGradient(
           colors: [
-            (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.2), 
-            (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.05)
+            (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.2), 
+            (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05)
           ],
         ),
         child: Column(
@@ -758,9 +758,9 @@ class _CardsScreenState extends State<CardsScreen> {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+                      border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
                     ),
                     child: ListTile(
                       onTap: () {
@@ -770,7 +770,7 @@ class _CardsScreenState extends State<CardsScreen> {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppColors.accentTeal.withOpacity(0.1),
+                          color: AppColors.accentTeal.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(Icons.help_outline_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
@@ -832,8 +832,8 @@ class _CardsScreenState extends State<CardsScreen> {
         ),
         borderGradient: LinearGradient(
           colors: [
-            (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.2), 
-            (isDark ? Colors.white : AppColors.primaryDark).withOpacity(0.05)
+            (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.2), 
+            (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05)
           ],
         ),
         child: Column(
@@ -910,16 +910,16 @@ class _CardsScreenState extends State<CardsScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
               child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
             ),
             const SizedBox(width: 16),
@@ -975,8 +975,8 @@ class _CardsScreenState extends State<CardsScreen> {
           border: 2,
           linearGradient: LinearGradient(
             colors: isDark 
-                ? [AppColors.primaryDark.withOpacity(0.95), AppColors.primaryDark.withOpacity(0.85)]
-                : [Colors.white.withOpacity(0.95), Colors.white.withOpacity(0.9)],
+                ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
+                : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
           ),
           borderGradient: LinearGradient(
             colors: [Colors.white.withOpacity(0.2), Colors.white.withOpacity(0.05)],
@@ -1013,7 +1013,7 @@ class _CardsScreenState extends State<CardsScreen> {
                     hintText: "****",
                     hintStyle: TextStyle(letterSpacing: 20 * context.fontSizeFactor, fontSize: 28 * context.fontSizeFactor, color: isDark ? Colors.white24 : Colors.black12),
                     filled: true,
-                    fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+                    fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                   ),
                   onChanged: (value) {
@@ -1075,7 +1075,7 @@ class _CardsScreenState extends State<CardsScreen> {
               decoration: BoxDecoration(
                 color: theme.scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(32),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10))],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1239,7 +1239,7 @@ class _CardsScreenState extends State<CardsScreen> {
       padding: const EdgeInsets.only(left: 12, bottom: 12),
       child: Text(
         title.toUpperCase(),
-        style: TextStyle(color: isDark ? Colors.white.withOpacity(0.4) : Colors.black45, fontSize: 10 * context.fontSizeFactor, letterSpacing: 1.5, fontWeight: FontWeight.bold),
+        style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.4) : Colors.black45, fontSize: 10 * context.fontSizeFactor, letterSpacing: 1.5, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -1249,12 +1249,12 @@ class _CardsScreenState extends State<CardsScreen> {
       children: [
         ListTile(
           onTap: onTap,
-          leading: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)),
+          leading: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)),
           title: Text(title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-          subtitle: Text(subtitle, style: TextStyle(color: isDark ? Colors.white.withOpacity(0.5) : AppColors.textSecondary, fontSize: 11 * context.fontSizeFactor)),
-          trailing: Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white.withOpacity(0.2) : Colors.black26, size: 24 * context.fontSizeFactor),
+          subtitle: Text(subtitle, style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary, fontSize: 11 * context.fontSizeFactor)),
+          trailing: Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white.withValues(alpha: 0.2) : Colors.black26, size: 24 * context.fontSizeFactor),
         ),
-        if (!isLast) Divider(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05), indent: 64),
+        if (!isLast) Divider(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05), indent: 64),
       ],
     );
   }
@@ -1263,7 +1263,7 @@ class _CardsScreenState extends State<CardsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -1286,9 +1286,9 @@ class _CardsScreenState extends State<CardsScreen> {
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: AppColors.accentTeal,
-              inactiveTrackColor: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+              inactiveTrackColor: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
               thumbColor: AppColors.accentTeal,
-              overlayColor: AppColors.accentTeal.withOpacity(0.2),
+              overlayColor: AppColors.accentTeal.withValues(alpha: 0.2),
               trackHeight: 4,
             ),
             child: Slider(
@@ -1317,11 +1317,11 @@ class _CardsScreenState extends State<CardsScreen> {
         SwitchListTile(
           value: value,
           onChanged: onChanged,
-          secondary: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)),
+          secondary: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)),
           title: Text(title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           activeTrackColor: AppColors.accentTeal,
         ),
-        Divider(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05), indent: 64),
+        Divider(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05), indent: 64),
       ],
     );
   }
@@ -1338,8 +1338,8 @@ class _CardsScreenState extends State<CardsScreen> {
         blur: 30,
         alignment: Alignment.topCenter,
         border: 2,
-        linearGradient: LinearGradient(colors: [AppColors.primaryDark.withOpacity(0.95), AppColors.primaryDark.withOpacity(0.85)]),
-        borderGradient: LinearGradient(colors: [Colors.white.withOpacity(0.2), Colors.white.withOpacity(0.05)]),
+        linearGradient: LinearGradient(colors: [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]),
+        borderGradient: LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)]),
         child: Column(
           children: [
             const SizedBox(height: 12),

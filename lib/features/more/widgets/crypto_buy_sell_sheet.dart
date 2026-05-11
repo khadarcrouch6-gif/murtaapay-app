@@ -153,7 +153,7 @@ class _CryptoBuySellSheetState extends State<CryptoBuySellSheet> {
             width: 40,
             height: 4,
             margin: const EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(color: theme.dividerColor.withOpacity(0.2), borderRadius: BorderRadius.circular(2)),
+            decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(2)),
           ),
           Text(
             widget.isBuy ? "${l10n.buy} ${widget.asset.name}" : "${l10n.sell} ${widget.asset.name}",
@@ -211,7 +211,7 @@ class _CryptoBuySellSheetState extends State<CryptoBuySellSheet> {
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 elevation: 0,
-                disabledBackgroundColor: theme.dividerColor.withOpacity(0.1),
+                disabledBackgroundColor: theme.dividerColor.withValues(alpha: 0.1),
               ),
               child: _isProcessing
                   ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))

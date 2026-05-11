@@ -403,7 +403,7 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
             border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.1 : 0.02), 
+                color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.1 : 0.02),
                 blurRadius: 15, 
                 offset: const Offset(0, 6)
               )

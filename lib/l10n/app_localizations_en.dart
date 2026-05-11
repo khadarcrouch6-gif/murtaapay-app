@@ -24,6 +24,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendMoney => 'Send Money';
 
   @override
+  String get requestMoney => 'Request Money';
+
+  @override
+  String get requestMoneyDesc => 'Request funds from your contacts instantly.';
+
+  @override
+  String get recurringPayments => 'Recurring Payments';
+
+  @override
+  String get recurringPaymentsDesc =>
+      'Schedule automatic payments (e.g. send money to family on the 1st of every month).';
+
+  @override
   String get receiveMoney => 'Receive';
 
   @override

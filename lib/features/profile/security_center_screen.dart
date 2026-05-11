@@ -103,9 +103,9 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: Colors.white.withOpacity(0.1),
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.3), width: 2),
+                  border: Border.all(color: AppColors.accentTeal.withOpacity(0.3), width: 2),
                 ),
                 child: const Icon(Icons.shield_rounded, color: AppColors.accentTeal, size: 64),
               ),
@@ -119,7 +119,7 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
             Text(
               state.translate("Enable 2FA to achieve 100% security coverage.", "Daar 2FA si aad u hesho 100% ammaan.", ar: "قم بتفعيل 2FA لتحقيق تغطية أمنية بنسبة 100%.", de: "Aktivieren Sie 2FA, um eine 100%ige Sicherheitsabdeckung zu erreichen.", et: "Lülitage sisse 2FA, et saavutada 100% turvalisus."),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13),
+              style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 13),
             ),
           ],
         ),
@@ -150,7 +150,7 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: AppColors.primaryDark.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(color: AppColors.primaryDark.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
             child: Icon(icon, color: AppColors.primaryDark, size: 20),
           ),
           const SizedBox(width: 16),
@@ -181,7 +181,7 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
           children: [
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: AppColors.primaryDark.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(color: AppColors.primaryDark.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
               child: Icon(icon, color: AppColors.primaryDark, size: 20),
             ),
             const SizedBox(width: 16),
@@ -206,7 +206,7 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: isCurrent ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: isCurrent ? AppColors.accentTeal.withOpacity(0.1) : Colors.grey.withOpacity(0.1), shape: BoxShape.circle),
             child: Icon(isCurrent ? Icons.phone_iphone_rounded : Icons.laptop_mac_rounded, color: isCurrent ? AppColors.accentTeal : Colors.grey),
           ),
           const SizedBox(width: 16),

@@ -65,7 +65,7 @@ class _StripeScreenState extends State<StripeScreen> {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -241,7 +241,7 @@ class _StripeScreenState extends State<StripeScreen> {
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * scale)),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12 * scale),
-                              borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
+                              borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.1)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12 * scale),
@@ -263,7 +263,7 @@ class _StripeScreenState extends State<StripeScreen> {
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12 * scale),
-                            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                            border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
                             color: theme.colorScheme.surface,
                           ),
                           child: Column(
@@ -283,7 +283,7 @@ class _StripeScreenState extends State<StripeScreen> {
                                   border: InputBorder.none,
                                 ),
                               ),
-                              Divider(height: 1, color: theme.dividerColor.withValues(alpha: 0.1)),
+                              Divider(height: 1, color: theme.dividerColor.withOpacity(0.1)),
                               Row(
                                 children: [
                                   Expanded(
@@ -302,7 +302,7 @@ class _StripeScreenState extends State<StripeScreen> {
                                       ),
                                     ),
                                   ),
-                                  Container(width: 1, height: 48 * scale, color: theme.dividerColor.withValues(alpha: 0.1)),
+                                  Container(width: 1, height: 48 * scale, color: theme.dividerColor.withOpacity(0.1)),
                                   Expanded(
                                     child: TextField(
                                       controller: _cvcController,
@@ -380,8 +380,8 @@ class _StripeScreenState extends State<StripeScreen> {
     final theme = Theme.of(context);
     final scale = context.fontSizeFactor;
     Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
+    Color inactiveColor = isHeader ? Colors.white.withOpacity(0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withOpacity(0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
 
     return Column(
       children: [
@@ -390,7 +390,7 @@ class _StripeScreenState extends State<StripeScreen> {
           decoration: BoxDecoration(
             color: isActive || isCompleted ? activeColor : inactiveColor, 
             shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4 * scale) : null
+            border: isActive ? Border.all(color: activeColor.withOpacity(0.2), width: 4 * scale) : null
           ),
           child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18 * scale) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14 * scale, fontWeight: FontWeight.w900))),
         ),
@@ -403,7 +403,7 @@ class _StripeScreenState extends State<StripeScreen> {
   Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
     final theme = Theme.of(context);
     Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
+      ? (isCompleted ? Colors.white : Colors.white.withOpacity(0.3))
       : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
     return Expanded(child: Container(height: 3, margin: EdgeInsets.symmetric(horizontal: 6 * context.fontSizeFactor), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
   }

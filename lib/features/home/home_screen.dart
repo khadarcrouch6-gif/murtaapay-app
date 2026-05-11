@@ -32,6 +32,7 @@ import '../../core/widgets/receipt_view.dart';
 import '../withdraw/withdraw_screen.dart';
 import '../withdraw/wallet_withdraw_screen.dart';
 import '../scan/qr_scanner_screen.dart';
+import '../request_money/request_money_screen.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/success_screen.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -145,11 +146,27 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     }
   }
 
+  List<double> _getWeeklySpendingData(AppState state) {
+    final now = DateTime.now();
+    final List<double> dailyTotals = List.filled(7, 0.0);
+    
+    for (var tx in state.transactions.where((t) => t.isNegative)) {
+      final diff = now.difference(tx.timestamp).inDays;
+      if (diff >= 0 && diff < 7) {
+        dailyTotals[6 - diff] += tx.numericAmount;
+      }
+    }
+    // Scale for chart if needed, or use raw values
+    return dailyTotals;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final state = Provider.of<AppState>(context);
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    
+    final weeklyData = _getWeeklySpendingData(state);
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -171,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         SizedBox(height: context.verticalPadding),
                         _buildQuickSend(context, state, l10n, theme),
                         SizedBox(height: context.verticalPadding),
-                        _buildSpendingAnalysis(context, state, l10n, theme),
+                        _buildSpendingAnalysis(context, state, l10n, theme, weeklyData),
                         SizedBox(height: context.verticalPadding),
                         _buildQuickActions(context, state, l10n, theme),
                         SizedBox(height: context.verticalPadding),
@@ -243,10 +260,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 2),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           )
@@ -266,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         children: [
                           Text(
                             l10n.welcome,
-                            style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13 * context.fontSizeFactor),
+                            style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
@@ -416,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           )
@@ -492,7 +509,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               Text(
                                 "${l10n.walletId}: 102234",
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.5),
+                                  color: Colors.white.withValues(alpha: 0.5),
                                   fontSize: 11 * context.fontSizeFactor,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.5
@@ -518,11 +535,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
-                    child: _buildActionButton(context, l10n.add, FontAwesomeIcons.circlePlus, LinearGradient(colors: [Colors.white.withOpacity(0.2), Colors.white.withOpacity(0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
+                    child: _buildActionButton(context, l10n.add, FontAwesomeIcons.circlePlus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
-                    child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.circleArrowUp, LinearGradient(colors: [Colors.white.withOpacity(0.2), Colors.white.withOpacity(0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletWithdrawScreen()))),
+                    child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.circleArrowUp, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletWithdrawScreen()))),
+                  ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
+                    child: _buildActionButton(context, l10n.requestMoney, FontAwesomeIcons.handHoldingDollar, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestMoneyScreen()))),
                   ),
                 ],
               ),
@@ -533,7 +554,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildSpendingAnalysis(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {
+  Widget _buildSpendingAnalysis(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme, List<double> weeklyData) {
+    // Calculate category totals for stats
+    final categoryTotals = <String, double>{};
+    for (var tx in state.transactions.where((t) => t.isNegative)) {
+       categoryTotals[tx.category] = (categoryTotals[tx.category] ?? 0) + tx.numericAmount;
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
       child: GestureDetector(
@@ -543,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           decoration: BoxDecoration(
             color: theme.colorScheme.surface, 
             borderRadius: BorderRadius.circular(24), 
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15, offset: const Offset(0, 8))]
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 8))]
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -581,28 +608,28 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   if (!isVerySmall) ...[
                     SizedBox(
                       height: constraints.maxWidth > 600 ? 250 : 180,
-                      child: _buildSelectedChart(theme),
+                      child: _buildSelectedChart(theme, weeklyData, categoryTotals),
                     ),
                     const SizedBox(height: 24),
                   ],
                   if (isSmall) 
                     Column(
                       children: [
-                        _buildStatItem(context, l10n.send, r"$4,250", Colors.blue, isList: true),
+                        _buildStatItem(context, l10n.send, NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Transfer'] ?? 0), Colors.blue, isList: true),
                         const SizedBox(height: 12),
-                        _buildStatItem(context, l10n.bills, r"$1,120", Colors.orange, isList: true),
+                        _buildStatItem(context, "Hagbad", NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Hagbad'] ?? 0), Colors.orange, isList: true),
                         const SizedBox(height: 12),
-                        _buildStatItem(context, l10n.sadaqah, r"$450", AppColors.accentTeal, isList: true),
+                        _buildStatItem(context, "Shopping", NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Shopping'] ?? 0), AppColors.accentTeal, isList: true),
                       ],
                     )
                   else
                     Row(
                       children: [
-                        Expanded(child: _buildStatItem(context, l10n.send, r"$4,250", Colors.blue)),
+                        Expanded(child: _buildStatItem(context, l10n.send, NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Transfer'] ?? 0), Colors.blue)),
                         const SizedBox(width: 16),
-                        Expanded(child: _buildStatItem(context, l10n.bills, r"$1,120", Colors.orange)),
+                        Expanded(child: _buildStatItem(context, "Hagbad", NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Hagbad'] ?? 0), Colors.orange)),
                         const SizedBox(width: 16),
-                        Expanded(child: _buildStatItem(context, l10n.sadaqah, r"$450", AppColors.accentTeal)),
+                        Expanded(child: _buildStatItem(context, "Shop", NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Shopping'] ?? 0), AppColors.accentTeal)),
                       ],
                     ),
                 ],
@@ -669,13 +696,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
                         child: Text("PREMIUM", style: TextStyle(color: Colors.white70, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 1)),
                       ),
                       const SizedBox(height: 12),
                       Text(l10n.virtualCard, style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
                       const SizedBox(height: 4),
-                      Text(l10n.virtualCardDesc, style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 12 * context.fontSizeFactor)),
+                      Text(l10n.virtualCardDesc, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
                     ],
                   ),
                 ),
@@ -780,7 +807,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               child: FittedBox(
                 child: Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+                  decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
                   child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor),
                 ),
               ),
@@ -806,25 +833,27 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: Container(
         padding: EdgeInsets.all(isSmall ? 4 : 6),
         margin: const EdgeInsets.only(left: 4),
-        decoration: BoxDecoration(color: isSelected ? AppColors.primaryDark.withOpacity(0.1) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(color: isSelected ? AppColors.primaryDark.withValues(alpha: 0.1) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
         child: AdaptiveIcon(icon, size: isSmall ? 14 : 16, color: isSelected ? AppColors.primaryDark : Colors.grey),
       ),
     );
   }
 
-  Widget _buildSelectedChart(ThemeData theme) {
+  Widget _buildSelectedChart(ThemeData theme, List<double> weeklyData, Map<String, double> categoryTotals) {
     switch (_selectedChartType) {
-      case ChartType.bar: return _buildBarChart(theme);
-      case ChartType.line: return _buildLineChart(theme);
-      case ChartType.pie: return _buildPieChart(theme);
+      case ChartType.bar: return _buildBarChart(theme, weeklyData);
+      case ChartType.line: return _buildLineChart(theme, weeklyData);
+      case ChartType.pie: return _buildPieChart(theme, categoryTotals);
     }
   }
 
-  Widget _buildBarChart(ThemeData theme) {
+  Widget _buildBarChart(ThemeData theme, List<double> weeklyData) {
+    final double maxVal = weeklyData.fold(50.0, (prev, element) => element > prev ? element : prev);
+    
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
-        maxY: 100,
+        maxY: maxVal * 1.2,
         barTouchData: BarTouchData(
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
@@ -852,12 +881,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ),
         gridData: const FlGridData(show: false),
         borderData: FlBorderData(show: false),
-        barGroups: List.generate(_spendingData.length, (i) => BarChartGroupData(x: i, barRods: [BarChartRodData(toY: _spendingData[i], gradient: AppColors.primaryGradient, width: 12, borderRadius: BorderRadius.circular(4))])),
+        barGroups: List.generate(weeklyData.length, (i) => BarChartGroupData(x: i, barRods: [BarChartRodData(toY: weeklyData[i] == 0 ? 2 : weeklyData[i], gradient: AppColors.primaryGradient, width: 12, borderRadius: BorderRadius.circular(4))])),
       ),
     );
   }
 
-  Widget _buildLineChart(ThemeData theme) {
+  Widget _buildLineChart(ThemeData theme, List<double> weeklyData) {
     return LineChart(
       LineChartData(
         lineTouchData: LineTouchData(
@@ -885,29 +914,44 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         borderData: FlBorderData(show: false),
         lineBarsData: [
           LineChartBarData(
-            spots: List.generate(_spendingData.length, (i) => FlSpot(i.toDouble(), _spendingData[i])),
+            spots: List.generate(weeklyData.length, (i) => FlSpot(i.toDouble(), weeklyData[i])),
             isCurved: true,
             gradient: AppColors.primaryGradient,
             barWidth: 4,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(show: true, gradient: LinearGradient(colors: [AppColors.primaryDark.withOpacity(0.2), AppColors.primaryDark.withOpacity(0)])),
+            belowBarData: BarAreaData(show: true, gradient: LinearGradient(colors: [AppColors.primaryDark.withValues(alpha: 0.2), AppColors.primaryDark.withValues(alpha: 0)])),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPieChart(ThemeData theme) {
+  Widget _buildPieChart(ThemeData theme, Map<String, double> categoryTotals) {
+    if (categoryTotals.isEmpty) {
+      return const Center(child: Text("No spending data"));
+    }
+    
+    final sorted = categoryTotals.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    final top3 = sorted.take(3).toList();
+    final total = categoryTotals.values.fold(0.0, (sum, v) => sum + v);
+    
+    final colors = [Colors.blue, Colors.orange, AppColors.accentTeal];
+
     return PieChart(
       PieChartData(
         sectionsSpace: 0,
         centerSpaceRadius: 40,
-        sections: [
-          PieChartSectionData(color: Colors.blue, value: 45, title: '45%', radius: 50, titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-          PieChartSectionData(color: Colors.orange, value: 30, title: '30%', radius: 50, titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-          PieChartSectionData(color: AppColors.accentTeal, value: 25, title: '25%', radius: 50, titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-        ],
+        sections: List.generate(top3.length, (i) {
+          final percentage = (top3[i].value / total * 100).toStringAsFixed(0);
+          return PieChartSectionData(
+            color: colors[i], 
+            value: top3[i].value, 
+            title: '$percentage%', 
+            radius: 50, 
+            titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)
+          );
+        }),
       ),
     );
   }
@@ -978,9 +1022,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             width: 60,
                             height: 60,
                             decoration: BoxDecoration(
-                              color: AppColors.accentTeal.withOpacity(0.1),
+                              color: AppColors.accentTeal.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.accentTeal.withOpacity(0.2), width: 2),
+                              border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
                             ),
                             child: const Icon(Icons.add_rounded, color: AppColors.accentTeal, size: 30),
                           ),
@@ -1011,7 +1055,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             Container(
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(color: AppColors.accentTeal.withOpacity(0.2), width: 2),
+                                border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
                               ),
                               child: CircleAvatar(
                                 radius: 30,
@@ -1209,7 +1253,7 @@ class WalletCardPainter extends CustomPainter {
     final path = _getCardPath(size);
     
     // Layered Shadow for depth
-    canvas.drawShadow(path.shift(const Offset(0, 8)), Colors.black.withOpacity(0.3), 15, true);
+    canvas.drawShadow(path.shift(const Offset(0, 8)), Colors.black.withValues(alpha: 0.3), 15, true);
     
     // Fill with premium glass effect
     final paint = Paint()
@@ -1217,8 +1261,8 @@ class WalletCardPainter extends CustomPainter {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Colors.white.withOpacity(0.12), 
-          Colors.white.withOpacity(0.03),
+          Colors.white.withValues(alpha: 0.12), 
+          Colors.white.withValues(alpha: 0.03),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     canvas.drawPath(path, paint);
@@ -1229,9 +1273,9 @@ class WalletCardPainter extends CustomPainter {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Colors.white.withOpacity(0.4), 
-          Colors.white.withOpacity(0.1),
-          Colors.white.withOpacity(0.3),
+          Colors.white.withValues(alpha: 0.4), 
+          Colors.white.withValues(alpha: 0.1),
+          Colors.white.withValues(alpha: 0.3),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.stroke
