@@ -15,6 +15,7 @@ import '../../core/widgets/success_screen.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:intl/intl.dart';
+import '../../core/models/recurring_payment_model.dart';
 import '../more/investments_screen.dart';
 import '../more/savings_screen.dart';
 import '../deposit/deposit_card_screen.dart';
@@ -23,6 +24,7 @@ import '../withdraw/withdraw_screen.dart';
 import '../../l10n/app_localizations.dart';
 import 'models/card_model.dart';
 import 'widgets/elite_virtual_card.dart';
+import 'card_statement_screen.dart';
 
 class CardsScreen extends StatefulWidget {
   const CardsScreen({super.key});
@@ -286,31 +288,33 @@ class _CardsScreenState extends State<CardsScreen> {
                 padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
                 child: Column(
                   children: [
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(minWidth: constraints.maxWidth),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                _buildQuickAction(context, state, "Deposit", l10n.deposit, Icons.add_circle_outline_rounded, AppColors.accentTeal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DepositCardScreen(amount: "0", currencyCode: "USD", cardId: state.cards[_currentIndex].id)))),
-                                const SizedBox(width: 8),
-                                _buildQuickAction(context, state, "Withdraw", l10n.withdraw, Icons.file_upload_outlined, Colors.orange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => WithdrawScreen(cardId: state.cards[_currentIndex].id)))),
-                                const SizedBox(width: 8),
-                                _buildQuickAction(context, state, "Savings", l10n.savings, Icons.account_balance_outlined, Colors.blue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SavingsScreen()))),
-                                const SizedBox(width: 8),
-                                _buildQuickAction(context, state, "Invest", l10n.invest, Icons.auto_graph_rounded, Colors.purple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InvestmentsScreen()))),
-                              ],
-                            ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildQuickAction(
+                            context, 
+                            state, 
+                            "Deposit", 
+                            l10n.deposit, 
+                            Icons.add_circle_outline_rounded, 
+                            AppColors.accentTeal, 
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DepositCardScreen(amount: "0", currencyCode: "USD", cardId: state.cards[_currentIndex].id))),
                           ),
-                        );
-                      },
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildQuickAction(
+                            context, 
+                            state, 
+                            "Withdraw", 
+                            l10n.withdraw, 
+                            Icons.file_upload_outlined, 
+                            Colors.orange, 
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => WithdrawScreen(cardId: state.cards[_currentIndex].id))),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 32),
-                    _buildFinancialInsights(context, state, theme),
                     const SizedBox(height: 32),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -405,45 +409,47 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  Widget _buildFinancialInsights(BuildContext context, AppState state, ThemeData theme) {
-    final l10n = AppLocalizations.of(context)!;
-    return Container(
-      padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(24)),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 150 * context.fontSizeFactor,
-            child: Row(
-              children: [
-                Expanded(child: PieChart(PieChartData(sectionsSpace: 4, centerSpaceRadius: 30 * context.fontSizeFactor, sections: [PieChartSectionData(color: AppColors.accentTeal, value: 30, title: '30%', titleStyle: TextStyle(fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white)), PieChartSectionData(color: Colors.orange, value: 20, title: '20%', titleStyle: TextStyle(fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white)), PieChartSectionData(color: Colors.blue, value: 50, title: '50%', titleStyle: TextStyle(fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white))]))),
-                const SizedBox(width: 16),
-                Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [_legendItem(context, l10n.food, AppColors.accentTeal), _legendItem(context, l10n.shopping, Colors.orange), _legendItem(context, l10n.billsLabel, Colors.blue)]),
-              ],
-            ),
-          ),
-          const Divider(height: 32),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(l10n.monthlyBudget, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)), Text(r"$850 / $1000", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor))]),
-          const SizedBox(height: 8),
-          ClipRRect(borderRadius: BorderRadius.circular(10), child: const LinearProgressIndicator(value: 0.85, minHeight: 8, backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation(Colors.redAccent))),
-        ],
-      ),
-    );
-  }
-
-  Widget _legendItem(BuildContext context, String label, Color color) => Row(children: [Container(width: 8 * context.fontSizeFactor, height: 8 * context.fontSizeFactor, decoration: BoxDecoration(color: color, shape: BoxShape.circle)), const SizedBox(width: 8), Text(label, style: TextStyle(fontSize: 12 * context.fontSizeFactor))]);
-
   Widget _buildQuickAction(BuildContext context, AppState state, String title, String translatedTitle, IconData icon, Color color, {VoidCallback? onTap}) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 90 * context.fontSizeFactor, padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(16)),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)), 
-            const SizedBox(height: 8), 
-            Flexible(child: Text(translatedTitle, style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis))
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 26 * context.fontSizeFactor),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              translatedTitle,
+              style: TextStyle(
+                fontSize: 14 * context.fontSizeFactor,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.3,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            )
           ],
         ),
       ),
@@ -548,6 +554,28 @@ class _CardsScreenState extends State<CardsScreen> {
                       _buildSettingsTile(
                         context: context,
                         isDark: isDark,
+                        icon: Icons.receipt_long_rounded,
+                        color: Colors.teal,
+                        title: state.translate("Bayaanka Kaadhka", "Card Statement"),
+                        subtitle: state.translate("Eeg taariikhda macaamilka kaadhkaaga", "View your card transaction history"),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: currentCard)));
+                        },
+                      ),
+                      _buildSettingsTile(
+                        context: context,
+                        isDark: isDark,
+                        icon: Icons.lock_reset_rounded,
+                        color: Colors.blueAccent,
+                        title: state.translate("Beddel PIN-ka", "Change PIN"),
+                        subtitle: state.translate("Cusboonaysii PIN-ka kaadhkaaga", "Update your card security PIN"),
+                        onTap: () {
+                          _showNewPinVerification(context, l10n, isTerminate: false, isChangePin: true);
+                        },
+                      ),
+                      _buildSettingsTile(
+                        context: context,
+                        isDark: isDark,
                         icon: Icons.ac_unit_rounded,
                         color: Colors.blue,
                         title: currentCard.isFrozen 
@@ -564,6 +592,17 @@ class _CardsScreenState extends State<CardsScreen> {
                       ),
                       const SizedBox(height: 24),
                       _buildSectionTitle(context, l10n.cardControls, isDark),
+                      _buildSettingsTile(
+                        context: context,
+                        isDark: isDark,
+                        icon: Icons.subscriptions_rounded,
+                        color: Colors.purple,
+                        title: state.translate("Maareeyaha Is-qorista", "Subscription Manager"),
+                        subtitle: state.translate("Xakamee adeegyada lacagta kaa goosta", "Manage linked subscriptions & recurring payments"),
+                        onTap: () {
+                          _showSubscriptionManager(context, state, currentCard);
+                        },
+                      ),
                       _buildSwitchTile(
                         context: context,
                         isDark: isDark,
@@ -954,7 +993,7 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  void _showNewPinVerification(BuildContext context, AppLocalizations l10n, {required bool isTerminate, VoidCallback? customAction}) {
+  void _showNewPinVerification(BuildContext context, AppLocalizations l10n, {required bool isTerminate, VoidCallback? customAction, bool isChangePin = false}) {
     final TextEditingController pinController = TextEditingController();
     final state = Provider.of<AppState>(context, listen: false);
     final theme = Theme.of(context);
@@ -986,15 +1025,23 @@ class _CardsScreenState extends State<CardsScreen> {
               const SizedBox(height: 12),
               Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
               const SizedBox(height: 24),
-              Icon(Icons.lock_outline_rounded, color: isTerminate ? Colors.redAccent : Colors.orange, size: 48 * context.fontSizeFactor),
+              Icon(
+                isChangePin ? Icons.security_rounded : (isTerminate ? Icons.delete_sweep_rounded : Icons.lock_outline_rounded), 
+                color: isChangePin ? Colors.blueAccent : (isTerminate ? Colors.redAccent : Colors.orange), 
+                size: 48 * context.fontSizeFactor
+              ),
               const SizedBox(height: 16),
               Text(
-                state.translate("Gali PIN-ka Kaadhka", "Enter Card PIN"),
+                isChangePin 
+                  ? state.translate("Gali PIN-ka Hadda", "Enter Current PIN")
+                  : state.translate("Gali PIN-ka Kaadhka", "Enter Card PIN"),
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
               ),
               const SizedBox(height: 8),
               Text(
-                state.translate("Fadlan geli PIN-kaaga si aad u xaqiijiso talaabadan.", "Please enter your PIN to confirm this action."),
+                isChangePin 
+                  ? state.translate("Fadlan geli PIN-kaaga hadda si aad u beddesho.", "Please enter your current PIN to change it.")
+                  : state.translate("Fadlan geli PIN-kaaga si aad u xaqiijiso talaabadan.", "Please enter your PIN to confirm this action."),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
               ),
@@ -1020,7 +1067,9 @@ class _CardsScreenState extends State<CardsScreen> {
                     if (value.length == 4) {
                       if (state.verifyCardPin(value)) {
                         Navigator.pop(sheetCtx);
-                        if (customAction != null) {
+                        if (isChangePin) {
+                          _showSetupNewPin(context, l10n);
+                        } else if (customAction != null) {
                           customAction();
                         } else {
                           _processTransaction(context, l10n, isTerminate: isTerminate);
@@ -1030,6 +1079,194 @@ class _CardsScreenState extends State<CardsScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(state.translate("PIN-kaagu waa khalad.", "Incorrect PIN.")),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        pinController.clear();
+                      }
+                    }
+                  },
+                ),
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: TextButton(
+                  onPressed: () => Navigator.pop(sheetCtx),
+                  child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSetupNewPin(BuildContext context, AppLocalizations l10n) {
+    final TextEditingController pinController = TextEditingController();
+    final state = Provider.of<AppState>(context, listen: false);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(sheetCtx).viewInsets.bottom),
+        child: GlassmorphicContainer(
+          width: double.infinity,
+          height: 400 * context.fontSizeFactor,
+          borderRadius: 24,
+          blur: 30,
+          alignment: Alignment.topCenter,
+          border: 2,
+          linearGradient: LinearGradient(
+            colors: isDark 
+                ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
+                : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
+          ),
+          borderGradient: LinearGradient(
+            colors: [Colors.white.withOpacity(0.2), Colors.white.withOpacity(0.05)],
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+              const SizedBox(height: 24),
+              Icon(Icons.lock_reset_rounded, color: AppColors.accentTeal, size: 48 * context.fontSizeFactor),
+              const SizedBox(height: 16),
+              Text(
+                state.translate("Samee PIN Cusub", "Set New PIN"),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                state.translate("Fadlan geli 4 god oo PIN cusub ah.", "Please enter a new 4-digit PIN."),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: 220 * context.fontSizeFactor,
+                child: TextField(
+                  controller: pinController,
+                  obscureText: true,
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(fontSize: 28 * context.fontSizeFactor, letterSpacing: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: "****",
+                    hintStyle: TextStyle(letterSpacing: 20 * context.fontSizeFactor, fontSize: 28 * context.fontSizeFactor, color: isDark ? Colors.white24 : Colors.black12),
+                    filled: true,
+                    fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                  ),
+                  onChanged: (value) {
+                    if (value.length == 4) {
+                      Navigator.pop(sheetCtx);
+                      _showConfirmNewPin(context, l10n, value);
+                    }
+                  },
+                ),
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: TextButton(
+                  onPressed: () => Navigator.pop(sheetCtx),
+                  child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showConfirmNewPin(BuildContext context, AppLocalizations l10n, String newPin) {
+    final TextEditingController pinController = TextEditingController();
+    final state = Provider.of<AppState>(context, listen: false);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(sheetCtx).viewInsets.bottom),
+        child: GlassmorphicContainer(
+          width: double.infinity,
+          height: 400 * context.fontSizeFactor,
+          borderRadius: 24,
+          blur: 30,
+          alignment: Alignment.topCenter,
+          border: 2,
+          linearGradient: LinearGradient(
+            colors: isDark 
+                ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
+                : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
+          ),
+          borderGradient: LinearGradient(
+            colors: [Colors.white.withOpacity(0.2), Colors.white.withOpacity(0.05)],
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+              const SizedBox(height: 24),
+              Icon(Icons.verified_user_rounded, color: AppColors.accentTeal, size: 48 * context.fontSizeFactor),
+              const SizedBox(height: 16),
+              Text(
+                state.translate("Xaqiiji PIN-ka", "Confirm PIN"),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                state.translate("Fadlan mar kale geli PIN-ka cusub.", "Please re-enter the new PIN to confirm."),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: 220 * context.fontSizeFactor,
+                child: TextField(
+                  controller: pinController,
+                  obscureText: true,
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(fontSize: 28 * context.fontSizeFactor, letterSpacing: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: "****",
+                    hintStyle: TextStyle(letterSpacing: 20 * context.fontSizeFactor, fontSize: 28 * context.fontSizeFactor, color: isDark ? Colors.white24 : Colors.black12),
+                    filled: true,
+                    fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                  ),
+                  onChanged: (value) async {
+                    if (value.length == 4) {
+                      if (value == newPin) {
+                        Navigator.pop(sheetCtx);
+                        state.updateCardPin(value);
+                        _audioPlayer.play(AssetSource('sounds/success.mp3'));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.translate("PIN-ka waa la beddelay!", "PIN changed successfully!")),
+                            backgroundColor: AppColors.accentTeal,
+                          ),
+                        );
+                      } else {
+                        HapticFeedback.vibrate();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.translate("PIN-ku isma laha.", "PINs do not match.")),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -1359,9 +1596,161 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
+  void _showSubscriptionManager(BuildContext context, AppState state, VirtualCard card) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (context, setModalState) {
+          final subscriptions = state.recurringPayments.where((p) => p.cardId == card.id).toList();
+          
+          return GlassmorphicContainer(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.75,
+            borderRadius: 24,
+            blur: 30,
+            alignment: Alignment.topCenter,
+            border: 2,
+            linearGradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark 
+                  ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
+                  : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
+            ),
+            borderGradient: LinearGradient(
+              colors: [
+                (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.2), 
+                (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05)
+              ],
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+                const SizedBox(height: 24),
+                Text(
+                  state.translate("Maareeyaha Is-qorista", "Subscription Manager"),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  state.translate("Adeegyada ku xidhan kaadhkan", "Services linked to this card"),
+                  style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
+                ),
+                const SizedBox(height: 24),
+                if (subscriptions.isEmpty)
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.subscriptions_outlined, size: 64, color: isDark ? Colors.white10 : Colors.black12),
+                          const SizedBox(height: 16),
+                          Text(
+                            state.translate("Ma jiraan is-qoris ku xidhan kaadhkan", "No subscriptions linked to this card"),
+                            style: TextStyle(color: AppColors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: subscriptions.length,
+                      itemBuilder: (context, index) {
+                        final sub = subscriptions[index];
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            leading: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                _getIconForMerchant(sub.receiverName),
+                                color: isDark ? Colors.white70 : AppColors.textPrimary,
+                              ),
+                            ),
+                            title: Text(
+                              sub.receiverName,
+                              style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
+                            ),
+                            subtitle: Text(
+                              "${state.translate("Bishii", "Monthly")} \$${sub.amount.toStringAsFixed(2)}",
+                              style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary),
+                            ),
+                            trailing: Switch(
+                              value: sub.status == RecurringStatus.active,
+                              activeColor: AppColors.accentTeal,
+                              onChanged: (val) {
+                                final globalIndex = state.recurringPayments.indexOf(sub);
+                                if (globalIndex != -1) {
+                                  state.updateRecurringPayment(
+                                    globalIndex, 
+                                    sub.copyWith(status: val ? RecurringStatus.active : RecurringStatus.paused)
+                                  );
+                                  setModalState(() {});
+                                }
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(sheetCtx),
+                    child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  IconData _getIconForMerchant(String name) {
+    final n = name.toLowerCase();
+    if (n.contains('netflix')) return Icons.movie_outlined;
+    if (n.contains('amazon')) return Icons.shopping_cart_outlined;
+    if (n.contains('apple')) return Icons.apple;
+    if (n.contains('spotify')) return Icons.music_note_outlined;
+    if (n.contains('google')) return Icons.g_mobiledata;
+    return Icons.subscriptions_outlined;
+  }
+
   void _createNewVirtualCard(BuildContext context, AppState state) async {
     final l10n = AppLocalizations.of(context)!;
     
+    // Enforce 2-card limit
+    if (state.cards.length >= 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(state.translate("Ma abuuri kartid wax ka badan laba kaadh oo virtual ah.", "You cannot create more than two virtual cards.")),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     // Check if user has enough balance for a new card ($5 fee)
     if (state.balance < 5.0) {
       ScaffoldMessenger.of(context).showSnackBar(

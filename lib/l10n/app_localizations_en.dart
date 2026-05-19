@@ -1652,6 +1652,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hagbadCreatedSuccess => 'Hagbad Group Created Successfully!';
 
   @override
+  String get enterWalletOrPhoneHint => 'Enter Wallet ID or Phone Number';
+
+  @override
+  String get memberAlreadyAdded => 'Member already added';
+
+  @override
+  String get walletIdNotFound => 'Wallet ID not found';
+
+  @override
+  String get createAndInvite => 'Create & Invite';
+
+  @override
+  String get allMembersMustConfirm =>
+      'All members must confirm their invitation before Qori-tuur.';
+
+  @override
+  String get qoriTuurStart => 'Qori-tuur (Start Group)';
+
+  @override
+  String get qoriTuurRandomize => 'Qori-tuur (Randomize Turns)';
+
+  @override
+  String inviteToGroup(String groupName) {
+    return 'Invite to $groupName';
+  }
+
+  @override
+  String get memberAlreadyInGroup => 'Member already in group';
+
+  @override
+  String get walletOrPhoneNotFound => 'Wallet ID or Phone not found';
+
+  @override
+  String memberInvitedSuccess(String name) {
+    return '$name invited to group';
+  }
+
+  @override
   String get drawing => 'Drawing...';
 
   @override
@@ -1764,6 +1802,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debtor => 'Debtor';
+
+  @override
+  String get payout => 'Payout';
+
+  @override
+  String get cycle => 'Cycle';
+
+  @override
+  String nextPayoutWithMember(String name, int turn) {
+    return 'Next Payout: $name (Turn $turn)';
+  }
+
+  @override
+  String payoutSuccessfulFor(String name) {
+    return 'Payout successful for $name';
+  }
+
+  @override
+  String payContributionConfirm(String amount) {
+    return 'Do you want to pay $amount for this cycle\'s Hagbad?';
+  }
+
+  @override
+  String get fullOathText =>
+      'I swear by the name of Almighty Allah that I will pay the Hagbad contribution on time, and if I am late I will pay the agreed penalty.';
+
+  @override
+  String joinedGroup(String name) {
+    return 'You have joined $name!';
+  }
+
+  @override
+  String memberSignedOath(String name) {
+    return '$name has signed the oath.';
+  }
+
+  @override
+  String get noSavingGroups => 'No saving groups yet';
+
+  @override
+  String get createFirstGroup => 'Create First Group';
+
+  @override
+  String penalty(String amount) {
+    return 'Penalty: $amount';
+  }
+
+  @override
+  String processPayoutError(String error) {
+    return 'Error processing payout: $error';
+  }
 
   @override
   String get remaining => 'Remaining';
@@ -1946,4 +2035,351 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noActivityYet => 'No activity yet';
+
+  @override
+  String get totalCycles => 'Total Cycles';
+
+  @override
+  String get selectFromContacts => 'Select from Contacts';
+
+  @override
+  String get fromContacts => 'From Contacts';
+
+  @override
+  String get payOut => 'Pay Out';
+
+  @override
+  String confirmPayoutDesc(String name) {
+    return 'Are you sure you want to process the payout for $name?';
+  }
+
+  @override
+  String get payoutNote => 'Note: This will move the group to the next cycle.';
+
+  @override
+  String get processPayout => 'Process Payout';
+
+  @override
+  String get invitationPending => 'Invitation Pending';
+
+  @override
+  String get signOathDhaar => 'Sign Oath (Dhaar)';
+
+  @override
+  String enterPenaltyAmount(String name) {
+    return 'Enter penalty amount for $name';
+  }
+
+  @override
+  String get qoriTuurDesc =>
+      'This will randomize the payout order for all members who haven\'t received their payout yet. Proceed?';
+
+  @override
+  String get randomize => 'Randomize';
+
+  @override
+  String get inviteToApp => 'Invite to MurtaaxPay';
+
+  @override
+  String inviteToAppDesc(String name) {
+    return '$name is not on MurtaaxPay yet. Would you like to invite them to the app first?';
+  }
+
+  @override
+  String get inviteViaSms => 'Invite via SMS';
+
+  @override
+  String get selfTransferError => 'You cannot invite yourself';
+
+  @override
+  String get invalidWalletFormat => 'Invalid Wallet ID format';
+
+  @override
+  String get searching => 'Searching...';
+
+  @override
+  String get invite => 'Invite';
+
+  @override
+  String get admin => 'Admin';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get confirmPayout => 'Confirm Payout';
+
+  @override
+  String get payoutAmount => 'Payout Amount';
+
+  @override
+  String get sadaqahUrgent => 'URGENT';
+
+  @override
+  String get sadaqahRaised => 'raised';
+
+  @override
+  String get sadaqahRaisedOf => 'raised of';
+
+  @override
+  String get sadaqahDonations => 'donations';
+
+  @override
+  String get sadaqahTrending => 'Trending';
+
+  @override
+  String get sadaqahAgo => 'ago';
+
+  @override
+  String get catAll => 'All';
+
+  @override
+  String get catMedical => 'Medical';
+
+  @override
+  String get catWater => 'Water';
+
+  @override
+  String get catEducation => 'Education';
+
+  @override
+  String get catEmergency => 'Emergency';
+
+  @override
+  String get campaignMedicalTitle => 'Medical Emergency';
+
+  @override
+  String get campaignMedicalDesc =>
+      'Help Ahmed cover his heart surgery expenses in Turkey.';
+
+  @override
+  String get campaignWaterTitle => 'Village Water Well';
+
+  @override
+  String get campaignWaterDesc =>
+      'Building a permanent water source for a village in Gedo.';
+
+  @override
+  String get campaignEducationTitle => 'Education Support';
+
+  @override
+  String get campaignEducationDesc =>
+      'Scholarships for 10 orphans in Mogadishu.';
+
+  @override
+  String get campaignEmergencyTitle => 'Food Relief';
+
+  @override
+  String get campaignEmergencyDesc =>
+      'Providing essential food supplies to families affected by drought.';
+
+  @override
+  String get exchangeRates => 'Exchange Rates';
+
+  @override
+  String get liveMarketRates => 'Live Market Rates';
+
+  @override
+  String get ratesInfo =>
+      'Rates are mid-market rates updated every 15 minutes.';
+
+  @override
+  String get youConvert => 'You Convert';
+
+  @override
+  String get youGet => 'You Get';
+
+  @override
+  String get selectCurrency => 'Select Currency';
+
+  @override
+  String get verifiedOrganizer => 'Verified Organizer';
+
+  @override
+  String get organizedBy => 'Organized by';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get donateNow => 'Donate Now';
+
+  @override
+  String get peopleDonated => 'people donated';
+
+  @override
+  String get secureProtected => 'Secure & Protected';
+
+  @override
+  String get secureProtectedDesc =>
+      'Bank-level encryption for every transaction.';
+
+  @override
+  String get zeroPlatformFees => '0% Platform Fees';
+
+  @override
+  String get zeroPlatformFeesDesc =>
+      'We don\'t take a cut. 100% goes to the cause.';
+
+  @override
+  String get freeWithdrawals => 'Free Withdrawals';
+
+  @override
+  String get freeWithdrawalsDesc =>
+      'Organizers pay \$0 to withdraw their funds.';
+
+  @override
+  String get shareThisCampaign => 'Share this Campaign';
+
+  @override
+  String get link => 'Link';
+
+  @override
+  String get recentDonations => 'Recent Donations';
+
+  @override
+  String get selectAmount => 'Select Amount';
+
+  @override
+  String get finalizeDonation => 'Finalize Donation';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get securedByMurtaaxPay => 'Secured by MurtaaxPay';
+
+  @override
+  String get customAmount => 'Custom Amount';
+
+  @override
+  String get enterPhoneNumber => 'Enter Phone Number';
+
+  @override
+  String get selectLocalBank => 'Select Local Bank';
+
+  @override
+  String get transferDirectlyDesc => 'Transfer directly via your bank app.';
+
+  @override
+  String get payWithVisaMastercard => 'Pay with Visa/Mastercard';
+
+  @override
+  String get secureInternationalGateway =>
+      'Secure international payment gateway.';
+
+  @override
+  String get insufficientBalanceSadaqah =>
+      'Insufficient balance in your MurtaaxPay wallet.';
+
+  @override
+  String get startFundraiser => 'Start Fundraiser';
+
+  @override
+  String get createCampaign => 'Create a Campaign';
+
+  @override
+  String get createCampaignDesc =>
+      'Raise funds for a cause you care about. We\'ll verify your campaign to build trust.';
+
+  @override
+  String get campaignDetails => 'Campaign Details';
+
+  @override
+  String get campaignTitle => 'Campaign Title';
+
+  @override
+  String get campaignTitleHint => 'E.g. Help build a water well in Gedo';
+
+  @override
+  String get goalAmountUsd => 'Goal Amount (USD)';
+
+  @override
+  String get goalAmountHint => 'E.g. 5000';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get descriptionHint =>
+      'Describe why you need help and how the funds will be used...';
+
+  @override
+  String get coverPhoto => 'Cover Photo';
+
+  @override
+  String get tapToUpload => 'Tap to upload photo';
+
+  @override
+  String get uploadLimits => 'JPG, PNG up to 5MB';
+
+  @override
+  String get campaignSubmitted => 'Campaign submitted for review!';
+
+  @override
+  String get submitForReview => 'Submit for Review';
+
+  @override
+  String get past24h => 'Past 24h';
+
+  @override
+  String get avgCost => 'Avg. Cost';
+
+  @override
+  String get returnLabel => 'Return';
+
+  @override
+  String get noTransactionsYet => 'No transactions yet';
+
+  @override
+  String aboutAsset(String asset) {
+    return 'About $asset';
+  }
+
+  @override
+  String cryptoDescription(String asset) {
+    return '$asset is a decentralized digital currency, without a central bank or single administrator, that can be sent from user to user on the peer-to-peer network without the need for intermediaries.';
+  }
+
+  @override
+  String get cryptoPurchased => 'Crypto purchased successfully!';
+
+  @override
+  String get cryptoSold => 'Crypto sold successfully!';
+
+  @override
+  String get zakatCalculator => 'Zakat Calculator';
+
+  @override
+  String get totalZakatToPay => 'Total Zakat to Pay';
+
+  @override
+  String get enterYourAssets => 'Enter Your Assets';
+
+  @override
+  String get cashAndSavings => 'Cash & Savings';
+
+  @override
+  String get goldValue => 'Gold Value';
+
+  @override
+  String get silverValue => 'Silver Value';
+
+  @override
+  String get otherInvestments => 'Other Investments';
+
+  @override
+  String get zakatInfo =>
+      'Zakatable amount is calculated as 2.5% of your total wealth if it exceeds the Nisab threshold.';
+
+  @override
+  String get donateYourZakat => 'Donate Your Zakat';
+
+  @override
+  String proceedingToDonate(String amount) {
+    return 'Proceeding to donate $amount';
+  }
+
+  @override
+  String get error => 'Error';
 }

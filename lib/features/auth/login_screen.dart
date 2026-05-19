@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   Text(
                     AppLocalizations.of(context)!.selectProvider, // Reusing localized string for "Select"
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
                   ),
                   const SizedBox(height: 20),
                   TextField(

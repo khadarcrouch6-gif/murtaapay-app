@@ -4,6 +4,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:camera/camera.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
+import '../../core/responsive_utils.dart';
 
 class KYCScreen extends StatefulWidget {
   const KYCScreen({super.key});
@@ -161,7 +162,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
       appBar: _currentStep == 2 || _currentStep == 3 ? null : AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(l10n.identityVerification, style: TextStyle(color: theme.textTheme.titleLarge?.color, fontWeight: FontWeight.bold, fontSize: 16)),
+        title: Text(l10n.identityVerification, style: TextStyle(color: theme.textTheme.titleLarge?.color, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
         leading: IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded, color: theme.iconTheme.color, size: 20), onPressed: () => Navigator.pop(context)),
         actions: [TextButton(onPressed: () {}, child: Text(l10n.help, style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)))],
       ),
@@ -194,7 +195,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
                   const Spacer(),
                   FadeInDown(child: Icon(Icons.shield_rounded, size: 80, color: Theme.of(context).primaryColor)),
                   const SizedBox(height: 40),
-                  Text(l10n.verifyYourIdentity, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900), textAlign: TextAlign.center),
+                  Text(l10n.verifyYourIdentity, style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.w900), textAlign: TextAlign.center),
                   const SizedBox(height: 16),
                   Text(l10n.verifyIdentityDesc, textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color?.withValues(alpha: 0.7), height: 1.5)),
                   const SizedBox(height: 40),
@@ -205,7 +206,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
                   const SizedBox(height: 24),
                   SizedBox(width: double.infinity, height: 56, child: ElevatedButton(onPressed: () => setState(() => _currentStep = 0), style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: Text(l10n.letsGetStarted, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
                   const SizedBox(height: 20),
-                  Text(l10n.encryptedConnection, style: const TextStyle(fontSize: 10, letterSpacing: 1, color: Colors.grey, fontWeight: FontWeight.bold)),
+                  Text(l10n.encryptedConnection, style: TextStyle(fontSize: 10 * context.fontSizeFactor, letterSpacing: 1, color: Colors.grey, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -216,7 +217,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
   }
 
   Widget _buildIntroStep(IconData icon, String text) {
-    return Padding(padding: const EdgeInsets.only(bottom: 20), child: Row(children: [Icon(icon, color: AppColors.accentTeal, size: 24), const SizedBox(width: 16), Expanded(child: Text(text, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)))]));
+    return Padding(padding: const EdgeInsets.only(bottom: 20), child: Row(children: [Icon(icon, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor), const SizedBox(width: 16), Expanded(child: Text(text, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14 * context.fontSizeFactor)))]));
   }
 
   Widget _buildPersonalInfo(AppLocalizations l10n) {
@@ -230,7 +231,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
             children: [
               _buildStepIndicator(1, 4, "25%"),
               const SizedBox(height: 24),
-              Text(l10n.personalDetails, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+              Text(l10n.personalDetails, style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.w900)),
               const SizedBox(height: 32),
               _buildField(_nameController, l10n.fullName, l10n),
               _buildField(_emailController, l10n.emailAddress, l10n),
@@ -294,13 +295,13 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
         children: [
           _buildStepIndicator(2, 4, "50%"),
           const SizedBox(height: 24),
-          Text(l10n.chooseDocumentType, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+          Text(l10n.chooseDocumentType, style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.w900)),
           const SizedBox(height: 32),
           _docCard(l10n.passport, Icons.public, l10n),
           _docCard(l10n.nationalIdCard, Icons.badge, l10n),
           _docCard(l10n.driversLicense, Icons.drive_eta, l10n),
           const Spacer(),
-          Center(child: Column(children: [const Icon(Icons.lock_outline, color: AppColors.accentTeal), const SizedBox(height: 8), Text(l10n.bankGradeEncryption, style: const TextStyle(fontWeight: FontWeight.bold)), Text(l10n.dataDeletedNotice, style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 12))])),
+          Center(child: Column(children: [const Icon(Icons.lock_outline, color: AppColors.accentTeal), const SizedBox(height: 8), Text(l10n.bankGradeEncryption, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)), Text(l10n.dataDeletedNotice, style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 12 * context.fontSizeFactor))])),
           const SizedBox(height: 24),
         ],
       ),
@@ -319,7 +320,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
           borderRadius: BorderRadius.circular(16), 
           border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1))
         ), 
-        child: Row(children: [Icon(icon, color: theme.primaryColor), const SizedBox(width: 16), Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)), const Spacer(), const Icon(Icons.chevron_right, color: Colors.grey)])
+        child: Row(children: [Icon(icon, color: theme.primaryColor), const SizedBox(width: 16), Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)), const Spacer(), const Icon(Icons.chevron_right, color: Colors.grey)])
       )
     );
   }
@@ -334,7 +335,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
             children: [
               Padding(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)), Text(isDoc ? l10n.frontOfIdCard : l10n.verification, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), const Icon(Icons.help_outline, color: Colors.white)])),
               const SizedBox(height: 20),
-              if (!isDoc) ...[Text(l10n.verifyYourFace, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)), const SizedBox(height: 8), Text(l10n.positionFaceNotice, style: const TextStyle(color: Colors.white70))],
+              if (!isDoc) ...[Text(l10n.verifyYourFace, style: TextStyle(color: Colors.white, fontSize: 22 * context.fontSizeFactor, fontWeight: FontWeight.bold)), const SizedBox(height: 8), Text(l10n.positionFaceNotice, style: const TextStyle(color: Colors.white70))],
               const Spacer(),
               Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(20)), child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.circle, color: _captureProgress > 0 ? AppColors.accentTeal : Colors.white, size: 12), const SizedBox(width: 8), Text(_scanStatus, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))])),
               const SizedBox(height: 40),
@@ -365,7 +366,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
           const Spacer(),
           FadeInDown(child: Container(padding: const EdgeInsets.all(30), decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle, border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 4)), child: const Icon(Icons.access_time_filled_rounded, size: 80, color: AppColors.accentTeal))),
           const SizedBox(height: 40),
-          Text(l10n.verificationPending, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+          Text(l10n.verificationPending, style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.w900)),
           const SizedBox(height: 16),
           Text(l10n.verificationPendingDesc, textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color?.withValues(alpha: 0.7), height: 1.5)),
           const SizedBox(height: 40),
@@ -374,7 +375,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
           const Spacer(),
           SizedBox(width: double.infinity, height: 56, child: ElevatedButton(onPressed: () => Navigator.popUntil(context, (r) => r.isFirst), style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: Text(l10n.returnToHome, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           const SizedBox(height: 20),
-          const Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.verified_user, size: 14, color: Colors.grey), SizedBox(width: 8), Text("Sovereign Institutional-Grade Security", style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold))]),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.verified_user, size: 14, color: Colors.grey), const SizedBox(width: 8), Text("Sovereign Institutional-Grade Security", style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: Colors.grey, fontWeight: FontWeight.bold))]),
         ],
       ),
     );
@@ -394,7 +395,7 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
         children: [
           Icon(icon, color: theme.iconTheme.color?.withValues(alpha: 0.5)),
           const SizedBox(width: 16), 
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: const TextStyle(fontWeight: FontWeight.bold)), Text(sub, style: TextStyle(fontSize: 12, color: theme.textTheme.bodySmall?.color))]), 
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)), Text(sub, style: TextStyle(fontSize: 12 * context.fontSizeFactor, color: theme.textTheme.bodySmall?.color))]),
           const Spacer(), 
           const Icon(Icons.sync, color: AppColors.accentTeal, size: 18)
         ]
@@ -403,10 +404,10 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
   }
 
   Widget _buildStepIndicator(int current, int total, String percent) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text("STEP $current OF $total", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.grey)), Text(percent, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.accentTeal))]);
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text("STEP $current OF $total", style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w800, color: Colors.grey)), Text(percent, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w800, color: AppColors.accentTeal))]);
   }
 
   Widget _buildLoading(AppLocalizations l10n) {
-    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const CircularProgressIndicator(color: AppColors.accentTeal), const SizedBox(height: 24), Text(l10n.verifyingIdentity, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18))]));
+    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const CircularProgressIndicator(color: AppColors.accentTeal), const SizedBox(height: 24), Text(l10n.verifyingIdentity, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor))]));
   }
 }

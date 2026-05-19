@@ -539,6 +539,54 @@
   "iAgreeToTerms": "Waxaan ogolahay shuruudaha kooxda",
   "payoutReceiver": "Qofka qaadanaya",
   "debtor": "Debtor",
+  "payout": "Lacag Bixinta",
+  "cycle": "Wareegga",
+  "nextPayoutWithMember": "Bixinta Xigta: {name} (Kaalinta {turn})",
+  "@nextPayoutWithMember": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "turn": { "type": "int" }
+    }
+  },
+  "payoutSuccessfulFor": "Bixinta lacagta ee {name} waa guul",
+  "@payoutSuccessfulFor": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "payContributionConfirm": "Ma doonaysaa inaad bixiso {amount} oo ah qaaraanka Hagbadda wareeggan?",
+  "@payContributionConfirm": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "fullOathText": "Waxaan ku dhaaranayaa magaca Ilaaha Qaadirka ah inaan bixin doono qaaraanka Hagbad-ka waqtigiisa, haddii aan dib u dhacona aan bixin doono ganaaxa lagu heshiiyey.",
+  "joinedGroup": "Waxaad ku biirtay kooxda {name}!",
+  "@joinedGroup": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "memberSignedOath": "{name} waa uu saxiixay dhaarta.",
+  "@memberSignedOath": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "noSavingGroups": "Weli ma jiraan kooxo kayd",
+  "createFirstGroup": "Abuur Kooxdii Koowaad",
+  "penalty": "Ganaax: {amount}",
+  "@penalty": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "processPayoutError": "Cillad ayaa ku timid bixinta: {error}",
+  "@processPayoutError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
   "remaining": "Haray",
   "hagbadTerms": "6. Aaminaadda Hagbad",
   "hagbadTermsDesc": "Hagbad waxay ku dhisantahay aaminaad. Markaad ku biirto, waxaad ogolaatay inaad qaaraanka bixiso waqtigeeda. Haddii xubni bixin waayo, Uul-ka ayaa mas'uul ka ah bixinta deynta.",
@@ -677,9 +725,144 @@
   "currentCardBalance": "HADHAAGA KAADHKA EE HADDA",
   "virtualCardBalance": "HADHAAGA KAADHKA VIRTUAL-KA AH",
   "hagbadCreatedSuccess": "Kooxda Hagbad-da waa la abuuray si guul leh!",
+  "enterWalletOrPhoneHint": "Geli ID-ga Wallet-ka ama Taleefanka",
+  "memberAlreadyAdded": "Xubinta mar hore ayaa lagu daray",
+  "walletIdNotFound": "ID-ga Wallet-ka lama helin",
+  "createAndInvite": "Abuur & Casuun",
+  "allMembersMustConfirm": "Dhammaan xubnaha waa inay aqbalaan ka hor Qori-tuurka.",
+  "qoriTuurStart": "Qori-tuur (Bilow Kooxda)",
+  "qoriTuurRandomize": "Qori-tuur (Isku dhex dar)",
+  "inviteToGroup": "Ku casuun {groupName}",
+  "@inviteToGroup": {
+    "placeholders": {
+      "groupName": { "type": "String" }
+    }
+  },
+  "memberAlreadyInGroup": "Xubinta mar hore ayay ku jirtay kooxda",
+  "walletOrPhoneNotFound": "ID-ga Wallet-ka ama Taleefanka lama helin",
+  "memberInvitedSuccess": "{name} waa lagu casuumay kooxda",
+  "@memberInvitedSuccess": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
   "drawing": "Bakhti-nasiibka...",
   "qoriTuur": "Qori-tuur",
   "noHagbadGroups": "Weli ma jiraan kooxo. Abuur mid si aad u bilowdo kaydinta!",
   "progress": "Heerka",
-  "members": "Xubnaha"
+  "members": "Xubnaha",
+  "totalCycles": "Wareegyada Guud",
+  "selectFromContacts": "Ka soo xulo Dadka kugu jira",
+  "fromContacts": "Xiriiradaada",
+  "payOut": "Bixi Lacagta",
+  "confirmPayoutDesc": "Ma hubtaa inaad lacagta u bixiso {name}?",
+  "@confirmPayoutDesc": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "payoutNote": "Fiiro gaar ah: Tani waxay kooxda u guurin doontaa wareegga xiga.",
+  "processPayout": "Dhammaystir Bixinta",
+  "invitationPending": "Casuumad Sugaysa",
+  "signOathDhaar": "Saxiix Dhaarta",
+  "enterPenaltyAmount": "Geli cadadka ganaaxa ee {name}",
+  "@enterPenaltyAmount": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "qoriTuurDesc": "Tani waxay isku dhex dari doontaa sida ay xubnaha u kala helayaan lacagta. Ma sii wadnaa?",
+  "randomize": "Isku dhex dar",
+  "inviteToApp": "Ku casuum MurtaaxPay",
+  "inviteToAppDesc": "{name} weli kuma jiro MurtaaxPay. Ma doonaysaa inaad marka hore app-ka ku casuunto?",
+  "@inviteToAppDesc": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "inviteViaSms": "Ku casuum SMS",
+  "selfTransferError": "Isku diri kartid lacag (Naftaada ma casuumi kartid)",
+  "invalidWalletFormat": "ID-ga Wallet-ka waa khaldan yahay",
+  "searching": "Raadinaya...",
+  "invite": "Casuun",
+  "exchangeRates": "Sarifka Lacagta",
+  "liveMarketRates": "Qiimaha Suuqyada",
+  "ratesInfo": "Qiimayaashu waa kuwa suuqa dhexe waxaana la cusboonaysiiyaa 15 daqiiqo kasta.",
+  "youConvert": "Waxaad Beddelaysaa",
+  "youGet": "Waxaad Helaysaa",
+  "selectCurrency": "Dooro Lacagta",
+  "verifiedOrganizer": "Qaban-qaabiye la Hubiyay",
+  "organizedBy": "Waxaa qaban-qaabiyay",
+  "about": "Ku saabsan",
+  "donateNow": "Hadda Deeq Bixi",
+  "peopleDonated": "qof ayaa deeq bixiyay",
+  "secureProtected": "Ammaan ah oo la ilaaliyo",
+  "secureProtectedDesc": "Sir qarsoodi ah oo heerkiisu sarreeyo.",
+  "zeroPlatformFees": "0% Khidmadda Platform-ka",
+  "zeroPlatformFeesDesc": "Ma jiro wax naga go'aya. 100% waxay u socotaa mashaariicda.",
+  "freeWithdrawals": "Kala bixis Bilaash ah",
+  "freeWithdrawalsDesc": "Qofna khidmad lagama rabo inuu lacagtiisa kala baxo.",
+  "shareThisCampaign": "Kala Qaybi Ololahan",
+  "link": "Link-ga",
+  "recentDonations": "Deeqaha u Dambeeyay",
+  "selectAmount": "Dooro Cadadka",
+  "finalizeDonation": "Xaqiiji Deeqda",
+  "total": "Wartada",
+  "securedByMurtaaxPay": "MurtaaxPay ayaa dammaanad qaaday",
+  "customAmount": "Cadad Kale",
+  "enterPhoneNumber": "Geli Lambarka Mobile-ka",
+  "selectLocalBank": "Dooro Bangiga",
+  "transferDirectlyDesc": "Si toos ah ugu wareeji barnaamijkaaga bangiga.",
+  "payWithVisaMastercard": "Ku bixi Visa/Mastercard",
+  "secureInternationalGateway": "Habka lacag bixinta ee caalamiga ah ee sugan.",
+  "insufficientBalanceSadaqah": "Haraagaagu kuguma filna.",
+  "startFundraiser": "Bilow Ururinta Sadaqo",
+  "createCampaign": "Samee Ololaha",
+  "createCampaignDesc": "Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doonaa ololahaaga si loo dhiso kalsoonida.",
+  "campaignDetails": "Faahfaahinta Ololaha",
+  "campaignTitle": "Cinwaanka Ololaha",
+  "campaignTitleHint": "Tusaale: Caawi dhisidda ceel biyood Gedo",
+  "goalAmountUsd": "Cadadka Hadafka (USD)",
+  "goalAmountHint": "Tusaale: 5000",
+  "description": "Sharaxaadda",
+  "descriptionHint": "Sharax sababta aad caawimo ugu baahan tahay iyo sida lacagta loo isticmaali doono...",
+  "coverPhoto": "Sawirka Daboolka",
+  "tapToUpload": "Taabo si aad sawir u soo geliso",
+  "uploadLimits": "JPG, PNG ilaa 5MB",
+  "campaignSubmitted": "Ololaha waa loo gudbiyay dib u eegis!",
+  "submitForReview": "Gudbi si dib loogu eego",
+  "past24h": "24h ee u dambeeyay",
+  "avgCost": "Celceliska Qiimaha",
+  "returnLabel": "Faa'iidada",
+  "noTransactionsYet": "Weli ma jiraan dhaqdhaqaaqyo",
+  "aboutAsset": "Ku saabsan {asset}",
+  "@aboutAsset": {
+    "placeholders": {
+      "asset": { "type": "String" }
+    }
+  },
+  "cryptoDescription": "{asset} waa lacag dhijitaal ah oo aan lahayn bangi dhexe ama maamule keliya, taas oo qof loogu diri karo qof kale iyada oo aan loo baahnayn dhex-dhexaadiye.",
+  "@cryptoDescription": {
+    "placeholders": {
+      "asset": { "type": "String" }
+    }
+  },
+  "cryptoPurchased": "Iibsashada krifto-ga waa guul!",
+  "cryptoSold": "Iibinta krifto-ga waa guul!",
+  "zakatCalculator": "Xisaabiyaha Sakada",
+  "totalZakatToPay": "Wadarta Sakada laga rabo",
+  "enterYourAssets": "Geli Hantidaada",
+  "cashAndSavings": "Lacagta & Kaydka",
+  "goldValue": "Qiimaha Dahabka",
+  "silverValue": "Qiimaha Qalinka",
+  "otherInvestments": "Maalgelin Kale",
+  "zakatInfo": "Cadadka Sakada waxaa loo xisaabinayaa 2.5% hantidaada haddii ay gaadho heerka nisaabka.",
+  "donateYourZakat": "Bixi Sakadaada",
+  "proceedingToDonate": "Waxaad bixinaysaa {amount}",
+  "@proceedingToDonate": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "error": "Khalad"
 }

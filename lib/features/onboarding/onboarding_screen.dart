@@ -93,7 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: Text(
                             state.translate("Skip", "Sii dhaaf", ar: "تخطى", de: "Überspringen"),
                             style: TextStyle(
-                              color: isDark ? Colors.white.withOpacity(0.6) : AppColors.textSecondary,
+                              color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
                               fontWeight: FontWeight.w600,
                               fontSize: 14 * context.fontSizeFactor,
                             ),
@@ -136,15 +136,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: isDark 
-                        ? [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)]
-                        : [AppColors.primaryDark.withOpacity(0.05), AppColors.primaryDark.withOpacity(0.02)],
+                        ? [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)]
+                        : [AppColors.primaryDark.withValues(alpha: 0.05), AppColors.primaryDark.withValues(alpha: 0.02)],
                     ),
                     borderGradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: isDark
-                        ? [Colors.white.withOpacity(0.2), Colors.white.withOpacity(0.05)]
-                        : [AppColors.primaryDark.withOpacity(0.1), AppColors.primaryDark.withOpacity(0.05)],
+                        ? [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)]
+                        : [AppColors.primaryDark.withValues(alpha: 0.1), AppColors.primaryDark.withValues(alpha: 0.05)],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -156,7 +156,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             count: _pages.length,
                             effect: ExpandingDotsEffect(
                               activeDotColor: AppColors.accentTeal,
-                              dotColor: isDark ? Colors.white.withOpacity(0.2) : AppColors.primaryDark.withOpacity(0.1),
+                              dotColor: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.primaryDark.withValues(alpha: 0.1),
                               dotHeight: 8 * context.fontSizeFactor,
                               dotWidth: 8 * context.fontSizeFactor,
                               expansionFactor: 4,
@@ -261,15 +261,15 @@ class OnboardingPage extends StatelessWidget {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: isDark
-                              ? [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)]
-                              : [AppColors.primaryDark.withOpacity(0.05), AppColors.primaryDark.withOpacity(0.02)],
+                              ? [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)]
+                              : [AppColors.primaryDark.withValues(alpha: 0.05), AppColors.primaryDark.withValues(alpha: 0.02)],
                           ),
                           borderGradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              AppColors.accentTeal.withOpacity(0.5),
-                              isDark ? Colors.white.withOpacity(0.2) : AppColors.primaryDark.withOpacity(0.1),
+                              AppColors.accentTeal.withValues(alpha: 0.5),
+                              isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.primaryDark.withValues(alpha: 0.1),
                             ],
                           ),
                           child: Padding(
@@ -321,7 +321,7 @@ class OnboardingPage extends StatelessWidget {
                           data.subtitle,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: isDark ? Colors.white.withOpacity(0.6) : AppColors.textSecondary,
+                            color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
                             fontSize: context.responsiveValue(mobile: 14, tablet: 15) * context.fontSizeFactor,
                             height: 1.6,
                             fontWeight: FontWeight.w400,

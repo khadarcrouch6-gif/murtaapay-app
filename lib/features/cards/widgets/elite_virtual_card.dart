@@ -487,6 +487,40 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
   }
 }
 
+// Added for visual validation
+class EliteVirtualCardPreview extends StatelessWidget {
+  const EliteVirtualCardPreview({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: EliteVirtualCard(
+            card: VirtualCard(
+              id: "preview",
+              cardNumber: "4580123456789012",
+              cardHolder: "KHADAR RAYAALE",
+              expiryDate: "12/28",
+              cvv: "455",
+              theme: CardThemeType.obsidian,
+              network: CardNetwork.visa,
+              balance: 850.50,
+            ),
+            showNumber: true,
+            showBack: false,
+            onFlip: () {},
+            onToggleShowNumber: () {},
+            onCopyNumber: () {},
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _CardThemeColors {
   final List<Color> baseGradient;
   final Color primaryGlow;

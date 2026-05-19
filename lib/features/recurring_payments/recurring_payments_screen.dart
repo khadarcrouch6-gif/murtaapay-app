@@ -207,11 +207,11 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
                 const Text("Select Recipient", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                 Expanded(
                   child: ContactSyncList(
-                    onContactSelected: (contact, murtaaxName) {
+                    onContactSelected: (contact, murtaaxName, verifiedId) {
                       if (murtaaxName != null) {
                         selected = {
                           'name': murtaaxName,
-                          'walletId': contact.phones.first.number,
+                          'walletId': verifiedId ?? contact.phones.first.number,
                         };
                         Navigator.pop(context);
                       }

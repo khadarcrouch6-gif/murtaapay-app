@@ -147,7 +147,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -284,13 +284,13 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                 decoration: InputDecoration(
                   counterText: "",
                   filled: true,
-                  fillColor: AppColors.accentTeal.withOpacity(0.05),
+                  fillColor: AppColors.accentTeal.withValues(alpha: 0.05),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,
                   ),
                   hintText: "••••",
-                  hintStyle: TextStyle(color: AppColors.grey.withOpacity(0.3), letterSpacing: 8),
+                  hintStyle: TextStyle(color: AppColors.grey.withValues(alpha: 0.3), letterSpacing: 8),
                 ),
                 onChanged: (value) => setDialogState(() {}),
               ),
@@ -396,7 +396,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.dividerColor.withOpacity(0.1),
+          color: theme.dividerColor.withValues(alpha: 0.1),
           width: 2,
         ),
       ),
@@ -491,7 +491,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                       Text(
                         l10n.currentCardBalance,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
+                          color: Colors.white.withValues(alpha: 0.6),
                           fontSize: 11 * context.fontSizeFactor,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
@@ -515,15 +515,15 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                       SizedBox(height: 24 * context.fontSizeFactor),
                       Text(
                         l10n.enterAmountToTopUp,
-                        style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w500),
+                        style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w500),
                       ),
                       SizedBox(height: 12 * context.fontSizeFactor),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.white.withOpacity(0.2)),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -539,7 +539,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "0.00",
-                                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                                 ),
                                 onChanged: (_) => setState(() {}),
                               ),
@@ -560,7 +560,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                               margin: const EdgeInsets.symmetric(horizontal: 6),
                               padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 10 * context.fontSizeFactor),
                               decoration: BoxDecoration(
-                                color: _amountController.text == amt.toString() ? Colors.white : Colors.white.withOpacity(0.15),
+                                color: _amountController.text == amt.toString() ? Colors.white : Colors.white.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Text(
@@ -612,16 +612,16 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                               color: theme.colorScheme.surface,
                               borderRadius: BorderRadius.circular(24),
                               boxShadow: [
-                                BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 10))
+                                BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, 10))
                               ],
-                              border: Border.all(color: theme.dividerColor.withOpacity(0.05)),
+                              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
                             ),
                             child: Row(
                               children: [
                                 Container(
                                   padding: EdgeInsets.all(16 * context.fontSizeFactor),
                                   decoration: BoxDecoration(
-                                    color: method["color"].withOpacity(0.1),
+                                    color: method["color"].withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: AdaptiveIcon(method["icon"], color: method["color"], size: 28 * context.fontSizeFactor),
@@ -643,7 +643,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                                     ],
                                   ),
                                 ),
-                                Icon(Icons.arrow_forward_ios_rounded, size: 18 * context.fontSizeFactor, color: AppColors.grey.withOpacity(0.5)),
+                                Icon(Icons.arrow_forward_ios_rounded, size: 18 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.5)),
                               ],
                             ),
                           ),

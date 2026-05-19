@@ -35,7 +35,7 @@ class HagbadHistoryScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.history, size: 64, color: AppColors.grey.withAlpha(128)),
+                  Icon(Icons.history, size: 64, color: AppColors.grey.withValues(alpha: 0.5)),
                   const SizedBox(height: 16),
                   const Text("No payout history yet"),
                 ],
@@ -46,13 +46,16 @@ class HagbadHistoryScreen extends StatelessWidget {
               itemCount: transactions.length,
               itemBuilder: (context, index) {
                 final tx = transactions[index];
+                final isEvent = tx.status == "Info" && tx.type == "event";
+                
                 return TransactionItem(
                   title: tx.title,
-                  subtitle: tx.type,
+                  subtitle: isEvent ? "Group Event" : tx.type,
                   amount: tx.amount,
                   status: tx.status,
                   date: tx.date,
-                  isSent: tx.isNegative,
+                  isSent: isEvent ? null : tx.isNegative,
+                  icon: isEvent ? Icons.info_outline : null,
                 );
               },
             ),

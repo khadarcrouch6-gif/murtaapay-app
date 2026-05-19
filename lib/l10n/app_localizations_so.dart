@@ -1653,6 +1653,45 @@ class AppLocalizationsSo extends AppLocalizations {
       'Kooxda Hagbad-da waa la abuuray si guul leh!';
 
   @override
+  String get enterWalletOrPhoneHint => 'Geli ID-ga Wallet-ka ama Taleefanka';
+
+  @override
+  String get memberAlreadyAdded => 'Xubinta mar hore ayaa lagu daray';
+
+  @override
+  String get walletIdNotFound => 'ID-ga Wallet-ka lama helin';
+
+  @override
+  String get createAndInvite => 'Abuur & Casuun';
+
+  @override
+  String get allMembersMustConfirm =>
+      'Dhammaan xubnaha waa inay aqbalaan ka hor Qori-tuurka.';
+
+  @override
+  String get qoriTuurStart => 'Qori-tuur (Bilow Kooxda)';
+
+  @override
+  String get qoriTuurRandomize => 'Qori-tuur (Isku dhex dar)';
+
+  @override
+  String inviteToGroup(String groupName) {
+    return 'Ku casuun $groupName';
+  }
+
+  @override
+  String get memberAlreadyInGroup => 'Xubinta mar hore ayay ku jirtay kooxda';
+
+  @override
+  String get walletOrPhoneNotFound =>
+      'ID-ga Wallet-ka ama Taleefanka lama helin';
+
+  @override
+  String memberInvitedSuccess(String name) {
+    return '$name waa lagu casuumay kooxda';
+  }
+
+  @override
   String get drawing => 'Bakhti-nasiibka...';
 
   @override
@@ -1766,6 +1805,57 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get debtor => 'Debtor';
+
+  @override
+  String get payout => 'Lacag Bixinta';
+
+  @override
+  String get cycle => 'Wareegga';
+
+  @override
+  String nextPayoutWithMember(String name, int turn) {
+    return 'Bixinta Xigta: $name (Kaalinta $turn)';
+  }
+
+  @override
+  String payoutSuccessfulFor(String name) {
+    return 'Bixinta lacagta ee $name waa guul';
+  }
+
+  @override
+  String payContributionConfirm(String amount) {
+    return 'Ma doonaysaa inaad bixiso $amount oo ah qaaraanka Hagbadda wareeggan?';
+  }
+
+  @override
+  String get fullOathText =>
+      'Waxaan ku dhaaranayaa magaca Ilaaha Qaadirka ah inaan bixin doono qaaraanka Hagbad-ka waqtigiisa, haddii aan dib u dhacona aan bixin doono ganaaxa lagu heshiiyey.';
+
+  @override
+  String joinedGroup(String name) {
+    return 'Waxaad ku biirtay kooxda $name!';
+  }
+
+  @override
+  String memberSignedOath(String name) {
+    return '$name waa uu saxiixay dhaarta.';
+  }
+
+  @override
+  String get noSavingGroups => 'Weli ma jiraan kooxo kayd';
+
+  @override
+  String get createFirstGroup => 'Abuur Kooxdii Koowaad';
+
+  @override
+  String penalty(String amount) {
+    return 'Ganaax: $amount';
+  }
+
+  @override
+  String processPayoutError(String error) {
+    return 'Cillad ayaa ku timid bixinta: $error';
+  }
 
   @override
   String get remaining => 'Haray';
@@ -1949,4 +2039,352 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get noActivityYet => 'Weli ma jiraan dhaqdhaqaaqyo';
+
+  @override
+  String get totalCycles => 'Wareegyada Guud';
+
+  @override
+  String get selectFromContacts => 'Ka soo xulo Dadka kugu jira';
+
+  @override
+  String get fromContacts => 'Xiriiradaada';
+
+  @override
+  String get payOut => 'Bixi Lacagta';
+
+  @override
+  String confirmPayoutDesc(String name) {
+    return 'Ma hubtaa inaad lacagta u bixiso $name?';
+  }
+
+  @override
+  String get payoutNote =>
+      'Fiiro gaar ah: Tani waxay kooxda u guurin doontaa wareegga xiga.';
+
+  @override
+  String get processPayout => 'Dhammaystir Bixinta';
+
+  @override
+  String get invitationPending => 'Casuumad Sugaysa';
+
+  @override
+  String get signOathDhaar => 'Saxiix Dhaarta';
+
+  @override
+  String enterPenaltyAmount(String name) {
+    return 'Geli cadadka ganaaxa ee $name';
+  }
+
+  @override
+  String get qoriTuurDesc =>
+      'Tani waxay isku dhex dari doontaa sida ay xubnaha u kala helayaan lacagta. Ma sii wadnaa?';
+
+  @override
+  String get randomize => 'Isku dhex dar';
+
+  @override
+  String get inviteToApp => 'Ku casuum MurtaaxPay';
+
+  @override
+  String inviteToAppDesc(String name) {
+    return '$name weli kuma jiro MurtaaxPay. Ma doonaysaa inaad marka hore app-ka ku casuunto?';
+  }
+
+  @override
+  String get inviteViaSms => 'Ku casuum SMS';
+
+  @override
+  String get selfTransferError =>
+      'Isku diri kartid lacag (Naftaada ma casuumi kartid)';
+
+  @override
+  String get invalidWalletFormat => 'ID-ga Wallet-ka waa khaldan yahay';
+
+  @override
+  String get searching => 'Raadinaya...';
+
+  @override
+  String get invite => 'Casuun';
+
+  @override
+  String get admin => 'Maamule';
+
+  @override
+  String get history => 'Taariikhda';
+
+  @override
+  String get confirmPayout => 'Xaqiiji lacag bixinta';
+
+  @override
+  String get payoutAmount => 'Cadadka la bixinayo';
+
+  @override
+  String get sadaqahUrgent => 'URGENT';
+
+  @override
+  String get sadaqahRaised => 'raised';
+
+  @override
+  String get sadaqahRaisedOf => 'raised of';
+
+  @override
+  String get sadaqahDonations => 'donations';
+
+  @override
+  String get sadaqahTrending => 'Trending';
+
+  @override
+  String get sadaqahAgo => 'ago';
+
+  @override
+  String get catAll => 'All';
+
+  @override
+  String get catMedical => 'Medical';
+
+  @override
+  String get catWater => 'Water';
+
+  @override
+  String get catEducation => 'Education';
+
+  @override
+  String get catEmergency => 'Emergency';
+
+  @override
+  String get campaignMedicalTitle => 'Medical Emergency';
+
+  @override
+  String get campaignMedicalDesc =>
+      'Help Ahmed cover his heart surgery expenses in Turkey.';
+
+  @override
+  String get campaignWaterTitle => 'Village Water Well';
+
+  @override
+  String get campaignWaterDesc =>
+      'Building a permanent water source for a village in Gedo.';
+
+  @override
+  String get campaignEducationTitle => 'Education Support';
+
+  @override
+  String get campaignEducationDesc =>
+      'Scholarships for 10 orphans in Mogadishu.';
+
+  @override
+  String get campaignEmergencyTitle => 'Food Relief';
+
+  @override
+  String get campaignEmergencyDesc =>
+      'Providing essential food supplies to families affected by drought.';
+
+  @override
+  String get exchangeRates => 'Sarifka Lacagta';
+
+  @override
+  String get liveMarketRates => 'Qiimaha Suuqyada';
+
+  @override
+  String get ratesInfo =>
+      'Qiimayaashu waa kuwa suuqa dhexe waxaana la cusboonaysiiyaa 15 daqiiqo kasta.';
+
+  @override
+  String get youConvert => 'Waxaad Beddelaysaa';
+
+  @override
+  String get youGet => 'Waxaad Helaysaa';
+
+  @override
+  String get selectCurrency => 'Dooro Lacagta';
+
+  @override
+  String get verifiedOrganizer => 'Qaban-qaabiye la Hubiyay';
+
+  @override
+  String get organizedBy => 'Waxaa qaban-qaabiyay';
+
+  @override
+  String get about => 'Ku saabsan';
+
+  @override
+  String get donateNow => 'Hadda Deeq Bixi';
+
+  @override
+  String get peopleDonated => 'qof ayaa deeq bixiyay';
+
+  @override
+  String get secureProtected => 'Ammaan ah oo la ilaaliyo';
+
+  @override
+  String get secureProtectedDesc => 'Sir qarsoodi ah oo heerkiisu sarreeyo.';
+
+  @override
+  String get zeroPlatformFees => '0% Khidmadda Platform-ka';
+
+  @override
+  String get zeroPlatformFeesDesc =>
+      'Ma jiro wax naga go\'aya. 100% waxay u socotaa mashaariicda.';
+
+  @override
+  String get freeWithdrawals => 'Kala bixis Bilaash ah';
+
+  @override
+  String get freeWithdrawalsDesc =>
+      'Qofna khidmad lagama rabo inuu lacagtiisa kala baxo.';
+
+  @override
+  String get shareThisCampaign => 'Kala Qaybi Ololahan';
+
+  @override
+  String get link => 'Link-ga';
+
+  @override
+  String get recentDonations => 'Deeqaha u Dambeeyay';
+
+  @override
+  String get selectAmount => 'Dooro Cadadka';
+
+  @override
+  String get finalizeDonation => 'Xaqiiji Deeqda';
+
+  @override
+  String get total => 'Wartada';
+
+  @override
+  String get securedByMurtaaxPay => 'MurtaaxPay ayaa dammaanad qaaday';
+
+  @override
+  String get customAmount => 'Cadad Kale';
+
+  @override
+  String get enterPhoneNumber => 'Geli Lambarka Mobile-ka';
+
+  @override
+  String get selectLocalBank => 'Dooro Bangiga';
+
+  @override
+  String get transferDirectlyDesc =>
+      'Si toos ah ugu wareeji barnaamijkaaga bangiga.';
+
+  @override
+  String get payWithVisaMastercard => 'Ku bixi Visa/Mastercard';
+
+  @override
+  String get secureInternationalGateway =>
+      'Habka lacag bixinta ee caalamiga ah ee sugan.';
+
+  @override
+  String get insufficientBalanceSadaqah => 'Haraagaagu kuguma filna.';
+
+  @override
+  String get startFundraiser => 'Bilow Ururinta Sadaqo';
+
+  @override
+  String get createCampaign => 'Samee Ololaha';
+
+  @override
+  String get createCampaignDesc =>
+      'Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doonaa ololahaaga si loo dhiso kalsoonida.';
+
+  @override
+  String get campaignDetails => 'Faahfaahinta Ololaha';
+
+  @override
+  String get campaignTitle => 'Cinwaanka Ololaha';
+
+  @override
+  String get campaignTitleHint => 'Tusaale: Caawi dhisidda ceel biyood Gedo';
+
+  @override
+  String get goalAmountUsd => 'Cadadka Hadafka (USD)';
+
+  @override
+  String get goalAmountHint => 'Tusaale: 5000';
+
+  @override
+  String get description => 'Sharaxaadda';
+
+  @override
+  String get descriptionHint =>
+      'Sharax sababta aad caawimo ugu baahan tahay iyo sida lacagta loo isticmaali doono...';
+
+  @override
+  String get coverPhoto => 'Sawirka Daboolka';
+
+  @override
+  String get tapToUpload => 'Taabo si aad sawir u soo geliso';
+
+  @override
+  String get uploadLimits => 'JPG, PNG ilaa 5MB';
+
+  @override
+  String get campaignSubmitted => 'Ololaha waa loo gudbiyay dib u eegis!';
+
+  @override
+  String get submitForReview => 'Gudbi si dib loogu eego';
+
+  @override
+  String get past24h => '24h ee u dambeeyay';
+
+  @override
+  String get avgCost => 'Celceliska Qiimaha';
+
+  @override
+  String get returnLabel => 'Faa\'iidada';
+
+  @override
+  String get noTransactionsYet => 'Weli ma jiraan dhaqdhaqaaqyo';
+
+  @override
+  String aboutAsset(String asset) {
+    return 'Ku saabsan $asset';
+  }
+
+  @override
+  String cryptoDescription(String asset) {
+    return '$asset waa lacag dhijitaal ah oo aan lahayn bangi dhexe ama maamule keliya, taas oo qof loogu diri karo qof kale iyada oo aan loo baahnayn dhex-dhexaadiye.';
+  }
+
+  @override
+  String get cryptoPurchased => 'Iibsashada krifto-ga waa guul!';
+
+  @override
+  String get cryptoSold => 'Iibinta krifto-ga waa guul!';
+
+  @override
+  String get zakatCalculator => 'Xisaabiyaha Sakada';
+
+  @override
+  String get totalZakatToPay => 'Wadarta Sakada laga rabo';
+
+  @override
+  String get enterYourAssets => 'Geli Hantidaada';
+
+  @override
+  String get cashAndSavings => 'Lacagta & Kaydka';
+
+  @override
+  String get goldValue => 'Qiimaha Dahabka';
+
+  @override
+  String get silverValue => 'Qiimaha Qalinka';
+
+  @override
+  String get otherInvestments => 'Maalgelin Kale';
+
+  @override
+  String get zakatInfo =>
+      'Cadadka Sakada waxaa loo xisaabinayaa 2.5% hantidaada haddii ay gaadho heerka nisaabka.';
+
+  @override
+  String get donateYourZakat => 'Bixi Sakadaada';
+
+  @override
+  String proceedingToDonate(String amount) {
+    return 'Waxaad bixinaysaa $amount';
+  }
+
+  @override
+  String get error => 'Khalad';
 }

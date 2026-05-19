@@ -92,33 +92,37 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
                   const SizedBox(height: 48),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: List.generate(4, (index) {
-                      return SizedBox(
-                        width: 70 * context.fontSizeFactor,
-                        child: FadeInUp(
-                          delay: Duration(milliseconds: 200 + (index * 100)),
-                          child: TextField(
-                            controller: _controllers[index],
-                            focusNode: _focusNodes[index],
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.center,
-                            maxLength: 1,
-                            style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                            decoration: InputDecoration(
-                              counterText: "",
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(color: AppColors.grey.withOpacity(0.2)),
+                      return Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4 * context.fontSizeFactor),
+                          child: FadeInUp(
+                            delay: Duration(milliseconds: 200 + (index * 100)),
+                            child: TextField(
+                              controller: _controllers[index],
+                              focusNode: _focusNodes[index],
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              maxLength: 1,
+                              style: TextStyle(
+                                fontSize: 24 * context.fontSizeFactor,
+                                fontWeight: FontWeight.bold,
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: AppColors.primaryDark, width: 2),
+                              decoration: InputDecoration(
+                                counterText: "",
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(color: AppColors.grey.withOpacity(0.2)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: const BorderSide(color: AppColors.primaryDark, width: 2),
+                                ),
+                                filled: true,
+                                fillColor: Theme.of(context).colorScheme.surface,
                               ),
-                              filled: true,
-                              fillColor: Theme.of(context).colorScheme.surface,
+                              onChanged: (value) => _onOtpDigitChanged(index, value),
                             ),
-                            onChanged: (value) => _onOtpDigitChanged(index, value),
                           ),
                         ),
                       );

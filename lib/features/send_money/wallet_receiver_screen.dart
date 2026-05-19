@@ -137,7 +137,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
             const SizedBox(height: 8),
             Expanded(
               child: ContactSyncList(
-                onContactSelected: (contact, murtaaxName) {
+                onContactSelected: (contact, murtaaxName, verifiedId) {
                   if (contact.phones.isNotEmpty) {
                     String phone = contact.phones.first.number.replaceAll(RegExp(r'[\s\-\(\)]'), '');
                     if (phone.startsWith('+252')) phone = phone.substring(4);

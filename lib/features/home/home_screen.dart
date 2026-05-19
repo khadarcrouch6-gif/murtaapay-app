@@ -28,6 +28,7 @@ import '../deposit/deposit_screen.dart';
 import '../notifications/notifications_screen.dart';
 import '../analytics/analytics_screen.dart';
 import '../hagbad/hagbad_screen.dart';
+import '../more/savings_screen.dart';
 import '../../core/widgets/receipt_view.dart';
 import '../withdraw/withdraw_screen.dart';
 import '../withdraw/wallet_withdraw_screen.dart';
@@ -269,10 +270,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           )
                         ],
                       ),
-                      child: const CircleAvatar(
+                      child: CircleAvatar(
                         radius: 20,
                         backgroundColor: AppColors.primaryDark,
-                        backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=khadar'),
+                        backgroundImage: const AssetImage('assets/images/app_logo.png'),
+                        foregroundImage: const NetworkImage('https://ui-avatars.com/api/?name=Khadar+Abdi&background=0D47A1&color=fff'),
+                        onForegroundImageError: (exception, stackTrace) => {},
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -469,7 +472,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           Expanded(
                             child: Text(
                               l10n.walletBalance, 
-                              style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold), 
+                              style: TextStyle(color: Colors.white70, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold), 
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             )
@@ -477,7 +480,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           const SizedBox(width: 8),
                           IconButton(
                             onPressed: () => setState(() => _isBalanceVisible = !_isBalanceVisible), 
-                            icon: Icon(_isBalanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.white70, size: 20),
+                            icon: Icon(_isBalanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.white70, size: 20 * context.fontSizeFactor),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
                           ),
@@ -585,7 +588,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       Expanded(
                         child: Text(
                           l10n.spendingAnalysis, 
-                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: isSmall ? 15 : 18),
+                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (isSmall ? 15 : 18) * context.fontSizeFactor),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
@@ -651,7 +654,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           const SizedBox(height: 4),
           LayoutBuilder(
             builder: (context, constraints) {
-              final crossAxisCount = constraints.maxWidth < 300 ? 2 : 4;
+              final crossAxisCount = constraints.maxWidth < 350 ? 3 : 5;
               return GridView.count(
                 padding: EdgeInsets.zero,
                 crossAxisCount: crossAxisCount, 
@@ -659,12 +662,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 physics: const NeverScrollableScrollPhysics(), 
                 mainAxisSpacing: 4, 
                 crossAxisSpacing: 8,
-                childAspectRatio: crossAxisCount == 2 ? 1.5 : 0.8,
+                childAspectRatio: crossAxisCount == 3 ? 1.0 : 0.8,
                 children: [
-                  _buildFeatureItem(context, "Hagbad", Icons.group_work_rounded, Colors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HagbadScreen()))),
                   _buildFeatureItem(context, l10n.bills, Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
-                  _buildFeatureItem(context, l10n.sadaqah, Icons.volunteer_activism_rounded, AppColors.accentTeal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
+                  _buildFeatureItem(context, "Hagbad", Icons.group_work_rounded, Colors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HagbadScreen()))),
                   _buildFeatureItem(context, l10n.exchange, Icons.currency_exchange_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
+                  _buildFeatureItem(context, l10n.sadaqah, Icons.volunteer_activism_rounded, AppColors.accentTeal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
+                  _buildFeatureItem(context, l10n.savings, Icons.account_balance_outlined, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsScreen()))),
                 ],
               );
             },
@@ -786,7 +790,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       },
       child: Container(
         height: 56 * context.fontSizeFactor,
-        decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))]),
+        decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))]),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           AdaptiveIcon(icon, color: Colors.white, size: 18 * context.fontSizeFactor),
           const SizedBox(width: 8),
@@ -990,7 +994,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountLimitsScreen())),
                 child: Text(
                   l10n.seeAll,
-                  style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
                 ),
               ),
             ],
@@ -1031,7 +1035,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           const SizedBox(height: 8),
                           Text(
                             state.translate("New", "Cusub"),
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                            style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),
@@ -1084,7 +1088,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         const SizedBox(height: 8),
                         Text(
                           profile.name,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                          style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -1111,7 +1115,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 Expanded(
                   child: Text(
                     label, 
-                    style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w500),
+                    style: TextStyle(color: Colors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w500),
                     overflow: TextOverflow.ellipsis,
                   )
                 ),
@@ -1119,7 +1123,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
           ),
           const SizedBox(width: 8),
-          Text(amount, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          Text(amount, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
         ],
       );
     }
@@ -1136,7 +1140,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             Flexible(
               child: Text(
                 label, 
-                style: const TextStyle(color: Colors.grey, fontSize: 10), 
+                style: TextStyle(color: Colors.grey, fontSize: 10 * context.fontSizeFactor), 
                 overflow: TextOverflow.ellipsis, 
                 maxLines: 1
               )
@@ -1147,7 +1151,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         Flexible(
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(amount, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+            child: Text(amount, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor)),
           ),
         ),
       ],

@@ -98,14 +98,14 @@ class ChatMessageWidget extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.auto_awesome_rounded, size: 14, color: isDark ? Colors.blue[300] : Colors.blue),
+            Icon(Icons.auto_awesome_rounded, size: 14 * context.fontSizeFactor, color: isDark ? Colors.blue[300] : Colors.blue),
             const SizedBox(width: 8),
             Flexible(
               child: Text(
                 message.content,
                 style: TextStyle(
                   color: isDark ? Colors.blue[100] : Colors.blue[800],
-                  fontSize: 12,
+                  fontSize: 12 * context.fontSizeFactor,
                   fontWeight: FontWeight.w500,
                   fontStyle: FontStyle.italic,
                 ),
@@ -220,7 +220,7 @@ class ChatMessageWidget extends StatelessWidget {
                 ? AppLocalizations.of(context)!.youSentMoney 
                 : AppLocalizations.of(context)!.youReceivedMoney,
             style: TextStyle(
-              color: isCurrentUser ? Colors.white.withOpacity(0.9) : theme.textTheme.bodySmall?.color,
+              color: isCurrentUser ? Colors.white.withValues(alpha: 0.9) : theme.textTheme.bodySmall?.color,
               fontSize: 12 * context.fontSizeFactor,
               fontWeight: FontWeight.w500,
             ),

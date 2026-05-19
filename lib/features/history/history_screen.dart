@@ -168,7 +168,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         decoration: BoxDecoration(
           color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? theme.colorScheme.primary : AppColors.grey.withOpacity(0.2)),
+          border: Border.all(color: isSelected ? theme.colorScheme.primary : AppColors.grey.withValues(alpha: 0.2)),
         ),
         child: Text(label, style: TextStyle(color: isSelected ? Colors.white : theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 12)),
       ),
@@ -225,6 +225,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context, AppState state) {
-    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.search_off_rounded, size: 80, color: AppColors.grey.withOpacity(0.5)), const SizedBox(height: 16), Text(state.translate("No transactions found", "Dhaqdhaqaaq lama hayo", ar: "لم يتم العثور على معاملات", de: "Keine Transaktionen gefunden", et: "Tehinguid ei leitud"), style: const TextStyle(color: AppColors.grey))]));
+    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.search_off_rounded, size: 80, color: AppColors.grey.withValues(alpha: 0.5)), const SizedBox(height: 16), Text(state.translate("No transactions found", "Dhaqdhaqaaq lama hayo", ar: "لم يتم العثور على معاملات", de: "Keine Transaktionen gefunden", et: "Tehinguid ei leitud"), style: const TextStyle(color: AppColors.grey))]));
   }
 }

@@ -65,7 +65,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   Text(
                     AppLocalizations.of(context)!.selectProvider,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
                   ),
                   const SizedBox(height: 20),
                   TextField(

@@ -432,9 +432,21 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 onPressed: _field1Controller.text.length < 4
                     ? null
                     : () {
-                        final localContext = this.context;
-                        Navigator.pop(context);
-                        _processTransaction(localContext, l10n, state, type: "bank");
+                        if (state.verifyCardPin(_field1Controller.text)) {
+                          final localContext = this.context;
+                          Navigator.pop(context);
+                          _processTransaction(localContext, l10n, state, type: "wallet");
+                        } else {
+                          HapticFeedback.vibrate();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.translate("PIN-kaagu waa khalad.", "Incorrect PIN.")),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          _field1Controller.clear();
+                          setDialogState(() {});
+                        }
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.accentTeal,
@@ -459,6 +471,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     String? selectedBank;
     bool isCustomBank = false;
     final TextEditingController customBankController = TextEditingController();
+    final TextEditingController bankPinController = TextEditingController();
     _field1Controller.clear(); // Account Number
     _field2Controller.clear(); // Account Name
 
@@ -591,6 +604,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       _withdrawInputField(context, l10n.accountName, Icons.person, _field2Controller, onChanged: (_) => setDialogState(() {})),
                       SizedBox(height: 16 * context.fontSizeFactor),
                       _buildPurposeDropdown(theme, l10n, setDialogState),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      _withdrawInputField(context, l10n.cardPin, Icons.lock_rounded, bankPinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                     ],
                   ),
                 ),
@@ -605,12 +620,24 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 8, bottom: 8),
               child: ElevatedButton(
-                onPressed: (selectedBank == null || (isCustomBank && customBankController.text.isEmpty) || _field1Controller.text.isEmpty || _field2Controller.text.isEmpty)
+                onPressed: (selectedBank == null || (isCustomBank && customBankController.text.isEmpty) || _field1Controller.text.isEmpty || _field2Controller.text.isEmpty || bankPinController.text.length < 4)
                     ? null
                     : () {
-                        final localContext = this.context;
-                        Navigator.pop(context);
-                        _processTransaction(localContext, l10n, state, type: "bank");
+                        if (state.verifyCardPin(bankPinController.text)) {
+                          final localContext = this.context;
+                          Navigator.pop(context);
+                          _processTransaction(localContext, l10n, state, type: "bank");
+                        } else {
+                          HapticFeedback.vibrate();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.translate("PIN-ka kaarkaagu waa khalad.", "Incorrect Card PIN.")),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          bankPinController.clear();
+                          setDialogState(() {});
+                        }
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -794,15 +821,18 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     }
   }
 
-  Widget _withdrawInputField(BuildContext context, String label, IconData icon, TextEditingController controller, {bool isNumber = false, Function(String)? onChanged}) {
+  Widget _withdrawInputField(BuildContext context, String label, IconData icon, TextEditingController controller, {bool isNumber = false, bool isObscure = false, int? maxLength, Function(String)? onChanged}) {
     final theme = Theme.of(context);
     return TextField(
       controller: controller,
       onChanged: onChanged,
+      obscureText: isObscure,
+      maxLength: maxLength,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
       decoration: InputDecoration(
         labelText: label,
+        counterText: "",
         labelStyle: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w600),
         prefixIcon: Icon(icon, color: AppColors.grey, size: 20 * context.fontSizeFactor),
         filled: true,

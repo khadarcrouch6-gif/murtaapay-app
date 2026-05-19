@@ -209,8 +209,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               decoration: BoxDecoration(
                                 color: theme.colorScheme.surface,
                                 borderRadius: BorderRadius.circular(24),
-                                border: Border.all(color: theme.dividerColor.withOpacity(0.1), width: 1.5),
-                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
+                                border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5),
+                                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))],
                               ),
                               child: Column(
                                 children: [
@@ -274,7 +274,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 elevation: 4,
-                                shadowColor: theme.colorScheme.secondary.withOpacity(0.3),
+                                shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
                               ),
                               child: Text(
                                 l10n.continueToReview,
@@ -341,10 +341,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
           border: Border.all(
             color: isSelected 
               ? (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary) 
-              : theme.dividerColor.withOpacity(0.1),
+              : theme.dividerColor.withValues(alpha: 0.1),
             width: 2,
           ),
-          boxShadow: isSelected ? [BoxShadow(color: (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary).withOpacity(0.1), blurRadius: 10)] : null,
+          boxShadow: isSelected ? [BoxShadow(color: (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary).withValues(alpha: 0.1), blurRadius: 10)] : null,
         ),
         child: Row(
           children: [
@@ -352,8 +352,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: isSelected 
-                  ? (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red.withOpacity(0.1) : theme.colorScheme.secondary.withOpacity(0.1)) 
-                  : theme.dividerColor.withOpacity(0.05),
+                  ? (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red.withValues(alpha: 0.1) : theme.colorScheme.secondary.withValues(alpha: 0.1)) 
+                  : theme.dividerColor.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
               child: Icon(method["icon"], color: isSelected ? (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary) : AppColors.grey, size: 24),
@@ -405,8 +405,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
     final theme = Theme.of(context);
     Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withOpacity(0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withOpacity(0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
+    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
 
     return Column(
       children: [
@@ -415,7 +415,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           decoration: BoxDecoration(
             color: isActive || isCompleted ? activeColor : inactiveColor, 
             shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withOpacity(0.2), width: 4) : null
+            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
           ),
           child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
         ),
@@ -431,7 +431,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
     final theme = Theme.of(context);
     Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withOpacity(0.3))
+      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3))
       : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
     return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
   }

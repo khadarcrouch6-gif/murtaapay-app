@@ -4,6 +4,8 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import '../../l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class ZakatCalculatorScreen extends StatefulWidget {
   const ZakatCalculatorScreen({super.key});
@@ -51,112 +53,136 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
+    final state = Provider.of<AppState>(context);
+
+    final scale = context.fontSizeFactor;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(state.translate("Zakat Calculator", "Xisaabiyaha Sakada", ar: "حاسبة الزكاة", de: "Zakat-Rechner"), style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
+        title: Text(
+          l10n.zakatCalculator, 
+          style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 20 * scale)
+        ),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(state.isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.colorScheme.primary),
+          icon: Icon(state.isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.colorScheme.primary, size: 24 * scale),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(context.horizontalPadding),
-        child: Center(
-          child: MaxWidthBox(
-            maxWidth: 600,
+      body: Center(
+        child: MaxWidthBox(
+          maxWidth: 800,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(context.horizontalPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FadeInDown(
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(32),
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      borderRadius: BorderRadius.circular(32),
-                      boxShadow: [BoxShadow(color: AppColors.primaryDark.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10))],
-                    ),
-                    child: Column(
-                      children: [
-                        Text(state.translate("Total Zakat to Pay", "Wadarta Sakada laga rabo", ar: "إجمالي الزكاة المستحقة", de: "Gesamtbetrag der Zakat"), style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 16)),
-                        const SizedBox(height: 8),
-                        Text("\$${_totalZakat.toStringAsFixed(2)}", style: const TextStyle(color: Colors.white, fontSize: 42, fontWeight: FontWeight.bold)),
-                      ],
+                  child: Center(
+                    child: MaxWidthBox(
+                      maxWidth: 600,
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(32 * scale),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(32 * scale),
+                          boxShadow: [BoxShadow(color: AppColors.primaryDark.withValues(alpha: 0.3), blurRadius: 20 * scale, offset: Offset(0, 10 * scale))],
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              l10n.totalZakatToPay, 
+                              style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 16 * scale)
+                            ),
+                            SizedBox(height: 8 * scale),
+                            Text("\$${_totalZakat.toStringAsFixed(2)}", style: TextStyle(color: Colors.white, fontSize: 42 * scale, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40 * scale),
                 FadeInUp(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(state.translate("Enter Your Assets", "Geli Hantidaada", ar: "أدخل أصولك", de: "Geben Sie Ihr Vermögen ein"), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 24),
-                      _buildInputField(state.translate("Cash & Savings", "Lacagta & Kaydka", ar: "النقد والمدخرات", de: "Bargeld & Ersparnisse"), _cashController, Icons.account_balance_wallet_rounded, isDark),
-                      const SizedBox(height: 16),
-                      _buildInputField(state.translate("Gold Value", "Qiimaha Dahabka", ar: "قيمة الذهب", de: "Goldwert"), _goldController, Icons.auto_awesome_rounded, isDark),
-                      const SizedBox(height: 16),
-                      _buildInputField(state.translate("Silver Value", "Qiimaha Qalinka", ar: "قيمة الفضة", de: "Silberwert"), _silverController, Icons.brightness_high_rounded, isDark),
-                      const SizedBox(height: 16),
-                      _buildInputField(state.translate("Other Investments", "Maalgelin Kale", ar: "استثمارات أخرى", de: "Andere Investitionen"), _investmentsController, Icons.trending_up_rounded, isDark),
-                    ],
+                  child: Center(
+                    child: MaxWidthBox(
+                      maxWidth: 600,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l10n.enterYourAssets, style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.bold)),
+                          SizedBox(height: 24 * scale),
+                          _buildInputField(l10n.cashAndSavings, _cashController, Icons.account_balance_wallet_rounded, isDark, scale),
+                          SizedBox(height: 16 * scale),
+                          _buildInputField(l10n.goldValue, _goldController, Icons.auto_awesome_rounded, isDark, scale),
+                          SizedBox(height: 16 * scale),
+                          _buildInputField(l10n.silverValue, _silverController, Icons.brightness_high_rounded, isDark, scale),
+                          SizedBox(height: 16 * scale),
+                          _buildInputField(l10n.otherInvestments, _investmentsController, Icons.trending_up_rounded, isDark, scale),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40 * scale),
                 FadeInUp(
                   delay: const Duration(milliseconds: 200),
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentTeal.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.accentTeal.withOpacity(0.2)),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.info_outline_rounded, color: AppColors.accentTeal),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            state.translate(
-                              "Zakatable amount is calculated as 2.5% of your total wealth if it exceeds the Nisab threshold.",
-                              "Cadadka Sakada waxaa loo xisaabinayaa 2.5% hantidaada haddii ay gaadho heerka nisaabka.",
-                              ar: "يتم حساب مبلغ الزكاة بنسبة 2.5٪ من إجمالي ثروتك إذا تجاوزت حد النصاب.",
-                              de: "Der zakatfähige Betrag wird mit 2,5 % Ihres Gesamtvermögens berechnet, wenn es die Nisab-Schwelle überschreitet.",
-                            ),
-                            style: const TextStyle(fontSize: 13, color: AppColors.accentTeal, height: 1.4),
-                          ),
+                  child: Center(
+                    child: MaxWidthBox(
+                      maxWidth: 600,
+                      child: Container(
+                        padding: EdgeInsets.all(20 * scale),
+                        decoration: BoxDecoration(
+                          color: AppColors.accentTeal.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20 * scale),
+                          border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2)),
                         ),
-                      ],
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline_rounded, color: AppColors.accentTeal, size: 24 * scale),
+                            SizedBox(width: 16 * scale),
+                            Expanded(
+                              child: Text(
+                                l10n.zakatInfo,
+                                style: TextStyle(fontSize: 13 * scale, color: AppColors.accentTeal, height: 1.4),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 60),
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: _totalZakat > 0 ? () {
-                      // Implementation for donating from calculator
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Proceeding to donate \$${_totalZakat.toStringAsFixed(2)}")));
-                    } : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryDark,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      elevation: 4,
+                SizedBox(height: 60 * scale),
+                Center(
+                  child: MaxWidthBox(
+                    maxWidth: 600,
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 60 * scale,
+                      child: ElevatedButton(
+                        onPressed: _totalZakat > 0 ? () {
+                          // Implementation for donating from calculator
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.proceedingToDonate("\$${_totalZakat.toStringAsFixed(2)}"))));
+                        } : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryDark,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * scale)),
+                          elevation: 4,
+                        ),
+                        child: Text(l10n.donateYourZakat, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * scale)),
+                      ),
                     ),
-                    child: Text(state.translate("Donate Your Zakat", "Bixi Sakadaada", ar: "تبرع بزكاتك", de: "Zakat spenden"), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40 * scale),
               ],
             ),
           ),
@@ -165,25 +191,27 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
     );
   }
 
-  Widget _buildInputField(String label, TextEditingController controller, IconData icon, bool isDark) {
+  Widget _buildInputField(String label, TextEditingController controller, IconData icon, bool isDark, double scale) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey)),
-        const SizedBox(height: 8),
+        Text(label, style: TextStyle(fontSize: 14 * scale, fontWeight: FontWeight.bold, color: Colors.grey)),
+        SizedBox(height: 8 * scale),
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * scale),
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: AppColors.accentTeal),
+            prefixIcon: Icon(icon, color: AppColors.accentTeal, size: 20 * scale),
             filled: true,
-            fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.05),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+            fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.05),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale), borderSide: BorderSide.none),
             hintText: "0.00",
+            contentPadding: EdgeInsets.symmetric(vertical: 16 * scale, horizontal: 16 * scale),
           ),
         ),
       ],
     );
   }
+
 }

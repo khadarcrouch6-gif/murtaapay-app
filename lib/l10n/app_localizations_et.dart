@@ -34,7 +34,7 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get recurringPaymentsDesc =>
-      'Graafikujärgsed automaatsed maksed (nt raha saatmine perele iga kuu 1. kuupäeval).';
+      'Schedule automatic payments (e.g. send money to family on the 1st of every month).';
 
   @override
   String get receiveMoney => 'Võta vastu';
@@ -1657,6 +1657,44 @@ class AppLocalizationsEt extends AppLocalizations {
   String get hagbadCreatedSuccess => 'Hagbad Group Created Successfully!';
 
   @override
+  String get enterWalletOrPhoneHint => 'Enter Wallet ID or Phone Number';
+
+  @override
+  String get memberAlreadyAdded => 'Member already added';
+
+  @override
+  String get walletIdNotFound => 'Wallet ID not found';
+
+  @override
+  String get createAndInvite => 'Create & Invite';
+
+  @override
+  String get allMembersMustConfirm =>
+      'All members must confirm their invitation before Qori-tuur.';
+
+  @override
+  String get qoriTuurStart => 'Qori-tuur (Start Group)';
+
+  @override
+  String get qoriTuurRandomize => 'Qori-tuur (Randomize Turns)';
+
+  @override
+  String inviteToGroup(String groupName) {
+    return 'Invite to $groupName';
+  }
+
+  @override
+  String get memberAlreadyInGroup => 'Member already in group';
+
+  @override
+  String get walletOrPhoneNotFound => 'Wallet ID or Phone not found';
+
+  @override
+  String memberInvitedSuccess(String name) {
+    return '$name invited to group';
+  }
+
+  @override
   String get drawing => 'Drawing...';
 
   @override
@@ -1769,6 +1807,57 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get debtor => 'Debtor';
+
+  @override
+  String get payout => 'Payout';
+
+  @override
+  String get cycle => 'Cycle';
+
+  @override
+  String nextPayoutWithMember(String name, int turn) {
+    return 'Next Payout: $name (Turn $turn)';
+  }
+
+  @override
+  String payoutSuccessfulFor(String name) {
+    return 'Payout successful for $name';
+  }
+
+  @override
+  String payContributionConfirm(String amount) {
+    return 'Do you want to pay $amount for this cycle\'s Hagbad?';
+  }
+
+  @override
+  String get fullOathText =>
+      'I swear by the name of Almighty Allah that I will pay the Hagbad contribution on time, and if I am late I will pay the agreed penalty.';
+
+  @override
+  String joinedGroup(String name) {
+    return 'You have joined $name!';
+  }
+
+  @override
+  String memberSignedOath(String name) {
+    return '$name has signed the oath.';
+  }
+
+  @override
+  String get noSavingGroups => 'No saving groups yet';
+
+  @override
+  String get createFirstGroup => 'Create First Group';
+
+  @override
+  String penalty(String amount) {
+    return 'Penalty: $amount';
+  }
+
+  @override
+  String processPayoutError(String error) {
+    return 'Error processing payout: $error';
+  }
 
   @override
   String get remaining => 'Remaining';
@@ -1951,4 +2040,349 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get noActivityYet => 'Tegevusi veel pole';
+
+  @override
+  String get totalCycles => 'Total Cycles';
+
+  @override
+  String get selectFromContacts => 'Select from Contacts';
+
+  @override
+  String get fromContacts => 'From Contacts';
+
+  @override
+  String get payOut => 'Pay Out';
+
+  @override
+  String confirmPayoutDesc(String name) {
+    return 'Are you sure you want to process the payout for $name?';
+  }
+
+  @override
+  String get payoutNote => 'Note: This will move the group to the next cycle.';
+
+  @override
+  String get processPayout => 'Process Payout';
+
+  @override
+  String get invitationPending => 'Invitation Pending';
+
+  @override
+  String get signOathDhaar => 'Sign Oath (Dhaar)';
+
+  @override
+  String enterPenaltyAmount(String name) {
+    return 'Enter penalty amount for $name';
+  }
+
+  @override
+  String get qoriTuurDesc =>
+      'This will randomize the payout order for all members who haven\'t received their payout yet. Proceed?';
+
+  @override
+  String get randomize => 'Randomize';
+
+  @override
+  String get inviteToApp => 'Invite to MurtaaxPay';
+
+  @override
+  String inviteToAppDesc(String name) {
+    return '$name is not on MurtaaxPay yet. Would you like to invite them to the app first?';
+  }
+
+  @override
+  String get inviteViaSms => 'Invite via SMS';
+
+  @override
+  String get selfTransferError => 'You cannot invite yourself';
+
+  @override
+  String get invalidWalletFormat => 'Invalid Wallet ID format';
+
+  @override
+  String get searching => 'Searching...';
+
+  @override
+  String get invite => 'Invite';
+
+  @override
+  String get admin => 'Admin';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get confirmPayout => 'Confirm Payout';
+
+  @override
+  String get payoutAmount => 'Payout Amount';
+
+  @override
+  String get sadaqahUrgent => 'KIIRE';
+
+  @override
+  String get sadaqahRaised => 'kogutud';
+
+  @override
+  String get sadaqahRaisedOf => 'kogutud';
+
+  @override
+  String get sadaqahDonations => 'annetust';
+
+  @override
+  String get sadaqahTrending => 'Populaarne';
+
+  @override
+  String get sadaqahAgo => 'tagasi';
+
+  @override
+  String get catAll => 'Kõik';
+
+  @override
+  String get catMedical => 'Meditsiin';
+
+  @override
+  String get catWater => 'Vesi';
+
+  @override
+  String get catEducation => 'Haridus';
+
+  @override
+  String get catEmergency => 'Hädaabi';
+
+  @override
+  String get campaignMedicalTitle => 'Meditsiiniline hädaabi';
+
+  @override
+  String get campaignMedicalDesc =>
+      'Aita Ahmedil katta südameoperatsiooni kulud Türgis.';
+
+  @override
+  String get campaignWaterTitle => 'Küla veekaev';
+
+  @override
+  String get campaignWaterDesc => 'Püsiva veeallika ehitamine Gedo külla.';
+
+  @override
+  String get campaignEducationTitle => 'Haridustoetus';
+
+  @override
+  String get campaignEducationDesc => 'Stipendiumid 10-le orvule Mogadishus.';
+
+  @override
+  String get campaignEmergencyTitle => 'Toiduabi';
+
+  @override
+  String get campaignEmergencyDesc =>
+      'Esmavajaliku toiduabi pakkumine põuast mõjutatud peredele.';
+
+  @override
+  String get exchangeRates => 'Valuutakursid';
+
+  @override
+  String get liveMarketRates => 'Turukursid reaalajas';
+
+  @override
+  String get ratesInfo =>
+      'Kursid on keskmised turukursid, mida uuendatakse iga 15 minuti järel.';
+
+  @override
+  String get youConvert => 'Sina konverteerid';
+
+  @override
+  String get youGet => 'Sina saad';
+
+  @override
+  String get selectCurrency => 'Vali valuuta';
+
+  @override
+  String get verifiedOrganizer => 'Kinnitatud korraldaja';
+
+  @override
+  String get organizedBy => 'Korraldaja:';
+
+  @override
+  String get about => 'Teave';
+
+  @override
+  String get donateNow => 'Aneta kohe';
+
+  @override
+  String get peopleDonated => 'inimest annetasid';
+
+  @override
+  String get secureProtected => 'Turvaline ja kaitstud';
+
+  @override
+  String get secureProtectedDesc =>
+      'Pangataseme krüpteerimine iga tehingu puhul.';
+
+  @override
+  String get zeroPlatformFees => '0% platvormitasud';
+
+  @override
+  String get zeroPlatformFeesDesc =>
+      'Me ei võta vaheltkasu. 100% läheb eesmärgi heaks.';
+
+  @override
+  String get freeWithdrawals => 'Tasuta väljamaksed';
+
+  @override
+  String get freeWithdrawalsDesc =>
+      'Korraldajad maksavad raha väljavõtmise eest \$0.';
+
+  @override
+  String get shareThisCampaign => 'Jaga seda kampaaniat';
+
+  @override
+  String get link => 'Link';
+
+  @override
+  String get recentDonations => 'Viimased annetused';
+
+  @override
+  String get selectAmount => 'Vali summa';
+
+  @override
+  String get finalizeDonation => 'Lõpeta annetus';
+
+  @override
+  String get total => 'Kokku';
+
+  @override
+  String get securedByMurtaaxPay => 'Tagatud MurtaaxPay poolt';
+
+  @override
+  String get customAmount => 'Muu summa';
+
+  @override
+  String get enterPhoneNumber => 'Sisesta telefoninumber';
+
+  @override
+  String get selectLocalBank => 'Vali kohalik pank';
+
+  @override
+  String get transferDirectlyDesc => 'Kanna üle otse oma pangaäpi kaudu.';
+
+  @override
+  String get payWithVisaMastercard => 'Maksa Visa/Mastercardiga';
+
+  @override
+  String get secureInternationalGateway =>
+      'Turvaline rahvusvaheline maksevärav.';
+
+  @override
+  String get insufficientBalanceSadaqah =>
+      'Teie MurtaaxPay rahakotis on ebapiisav jääk.';
+
+  @override
+  String get startFundraiser => 'Alusta annetuskampaaniat';
+
+  @override
+  String get createCampaign => 'Loo kampaania';
+
+  @override
+  String get createCampaignDesc =>
+      'Kogu raha eesmärgi nimel, mis sulle korda läheb. Me kinnitame su kampaania usalduse suurendamiseks.';
+
+  @override
+  String get campaignDetails => 'Kampaania üksikasjad';
+
+  @override
+  String get campaignTitle => 'Kampaania pealkiri';
+
+  @override
+  String get campaignTitleHint => 'Nt: Aita ehitada kaev Gedo piirkonnas';
+
+  @override
+  String get goalAmountUsd => 'Eesmärk (USD)';
+
+  @override
+  String get goalAmountHint => 'Nt: 5000';
+
+  @override
+  String get description => 'Kirjeldus';
+
+  @override
+  String get descriptionHint =>
+      'Kirjelda, miks sa abi vajad ja kuidas vahendeid kasutatakse...';
+
+  @override
+  String get coverPhoto => 'Kaanefoto';
+
+  @override
+  String get tapToUpload => 'Puuduta foto üleslaadimiseks';
+
+  @override
+  String get uploadLimits => 'JPG, PNG kuni 5MB';
+
+  @override
+  String get campaignSubmitted => 'Kampaania on ülevaatamiseks esitatud!';
+
+  @override
+  String get submitForReview => 'Esita ülevaatamiseks';
+
+  @override
+  String get past24h => 'Viimased 24h';
+
+  @override
+  String get avgCost => 'Keskmine kulu';
+
+  @override
+  String get returnLabel => 'Tootlus';
+
+  @override
+  String get noTransactionsYet => 'Tehinguid veel pole';
+
+  @override
+  String aboutAsset(String asset) {
+    return 'Teave $asset kohta';
+  }
+
+  @override
+  String cryptoDescription(String asset) {
+    return '$asset on detsentraliseeritud digitaalne valuuta, millel puudub keskpank või üksik administraator ning mida saab saata kasutajalt kasutajale võrdõigusvõrgus ilma vahendajate vajaduseta.';
+  }
+
+  @override
+  String get cryptoPurchased => 'Krüpto ostmine õnnestus!';
+
+  @override
+  String get cryptoSold => 'Krüpto müük õnnestus!';
+
+  @override
+  String get zakatCalculator => 'Zakati kalkulaator';
+
+  @override
+  String get totalZakatToPay => 'Tasumisele kuuluv Zakat kokku';
+
+  @override
+  String get enterYourAssets => 'Sisesta oma varad';
+
+  @override
+  String get cashAndSavings => 'Sularaha ja säästud';
+
+  @override
+  String get goldValue => 'Kulla väärtus';
+
+  @override
+  String get silverValue => 'Hõbeda väärtus';
+
+  @override
+  String get otherInvestments => 'Muud investeeringud';
+
+  @override
+  String get zakatInfo =>
+      'Zakati summa arvutatakse 2,5% teie kogurikkusest, kui see ületab Nisabi künnise.';
+
+  @override
+  String get donateYourZakat => 'Annetage oma Zakat';
+
+  @override
+  String proceedingToDonate(String amount) {
+    return 'Jätkame $amount annetamisega';
+  }
+
+  @override
+  String get error => 'Error';
 }

@@ -44,18 +44,18 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
             style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.iconTheme.color),
+          icon: Icon(isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.iconTheme.color, size: 24 * context.fontSizeFactor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Center(
         child: MaxWidthBox(
           maxWidth: 1000,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 12),
+            child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 12 * context.fontSizeFactor),
             child: Column(
               children: [
-                const SizedBox(height: 10),
+                SizedBox(height: 10 * context.fontSizeFactor),
                 FadeInDown(
                   child: Center(
                     child: MaxWidthBox(
@@ -69,19 +69,19 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
-                          borderRadius: BorderRadius.circular(40),
-                          boxShadow: isDark ? [] : [BoxShadow(color: const Color(0xFF203A43).withValues(alpha: 0.3), blurRadius: 25, offset: const Offset(0, 15))],
+                          borderRadius: BorderRadius.circular(40 * context.fontSizeFactor),
+                          boxShadow: isDark ? [] : [BoxShadow(color: const Color(0xFF203A43).withValues(alpha: 0.3), blurRadius: 25 * context.fontSizeFactor, offset: Offset(0, 15 * context.fontSizeFactor))],
                         ),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
                             // Animated background elements
                             Positioned(
-                              top: -20, right: -20,
+                              top: -20 * context.fontSizeFactor, right: -20 * context.fontSizeFactor,
                               child: Icon(Icons.stars_rounded, color: Colors.white.withValues(alpha: 0.05), size: 150 * context.fontSizeFactor),
                             ),
                             Positioned(
-                              bottom: 30, left: 40,
+                              bottom: 30 * context.fontSizeFactor, left: 40 * context.fontSizeFactor,
                               child: Icon(Icons.auto_awesome_rounded, color: Colors.white.withValues(alpha: 0.1), size: 40 * context.fontSizeFactor),
                             ),
                             Column(
@@ -92,7 +92,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                                   decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.12), shape: BoxShape.circle),
                                   child: Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 40 * context.fontSizeFactor),
                                 ),
-                                const SizedBox(height: 20),
+                                SizedBox(height: 20 * context.fontSizeFactor),
                                 Text(l10n.rewardsWaiting, style: TextStyle(color: Colors.white, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                               ],
                             ),
@@ -102,7 +102,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40 * context.fontSizeFactor),
                 FadeInUp(
                   child: MaxWidthBox(
                     maxWidth: 600,
@@ -113,7 +113,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16 * context.fontSizeFactor),
                 FadeInUp(
                   delay: const Duration(milliseconds: 200),
                   child: MaxWidthBox(
@@ -125,7 +125,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 48),
+                SizedBox(height: 48 * context.fontSizeFactor),
                 
                 // Referral Code UI
                 FadeInUp(
@@ -135,14 +135,14 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                       maxWidth: 600,
                       child: Column(
                         children: [
-                          Text(l10n.yourReferralCode, style: TextStyle(fontSize: 13 * context.fontSizeFactor, color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6), fontWeight: FontWeight.bold, letterSpacing: 1)),
-                          const SizedBox(height: 12),
+                          Text(l10n.yourReferralCode, style: TextStyle(fontSize: 13 * context.fontSizeFactor, color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6), fontWeight: FontWeight.bold, letterSpacing: 1 * context.fontSizeFactor)),
+                          SizedBox(height: 12 * context.fontSizeFactor),
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: EdgeInsets.all(8 * context.fontSizeFactor),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.surface,
-                              borderRadius: BorderRadius.circular(24),
-                              boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, 10))],
+                              borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+                              boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20 * context.fontSizeFactor, offset: Offset(0, 10 * context.fontSizeFactor))],
                               border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                             ),
                             child: LayoutBuilder(
@@ -152,10 +152,10 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                                   return Column(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 24),
+                                        padding: EdgeInsets.symmetric(vertical: 24 * context.fontSizeFactor),
                                         child: Text(
                                           referralCode,
-                                          style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 6, color: theme.textTheme.titleLarge?.color),
+                                          style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 6 * context.fontSizeFactor, color: theme.textTheme.titleLarge?.color),
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
@@ -166,8 +166,8 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                                           padding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor),
                                           decoration: BoxDecoration(
                                             gradient: const LinearGradient(colors: [AppColors.accentTeal, Color(0xFF10B981)]),
-                                            borderRadius: BorderRadius.circular(18),
-                                            boxShadow: isDark ? [] : [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 4))],
+                                            borderRadius: BorderRadius.circular(18 * context.fontSizeFactor),
+                                            boxShadow: isDark ? [] : [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.3), blurRadius: 10 * context.fontSizeFactor, offset: Offset(0, 4 * context.fontSizeFactor))],
                                           ),
                                           child: Center(child: Text(l10n.copy, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor))),
                                         ),
@@ -179,10 +179,10 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                                   children: [
                                     Expanded(
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                                        padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor),
                                         child: Text(
                                           referralCode,
-                                          style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 6, color: theme.textTheme.titleLarge?.color),
+                                          style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 6 * context.fontSizeFactor, color: theme.textTheme.titleLarge?.color),
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
@@ -193,8 +193,8 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                                         padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor, vertical: 16 * context.fontSizeFactor),
                                         decoration: BoxDecoration(
                                           gradient: const LinearGradient(colors: [AppColors.accentTeal, Color(0xFF10B981)]),
-                                          borderRadius: BorderRadius.circular(18),
-                                          boxShadow: isDark ? [] : [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 4))],
+                                          borderRadius: BorderRadius.circular(18 * context.fontSizeFactor),
+                                          boxShadow: isDark ? [] : [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.3), blurRadius: 10 * context.fontSizeFactor, offset: Offset(0, 4 * context.fontSizeFactor))],
                                         ),
                                         child: Text(l10n.copy, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor)),
                                       ),
@@ -210,7 +210,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                   ),
                 ),
                 
-                const SizedBox(height: 48),
+                SizedBox(height: 48 * context.fontSizeFactor),
                 
                 // Social Sharing
                 FadeInUp(
@@ -225,19 +225,19 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                               height: 60 * context.fontSizeFactor,
                               decoration: BoxDecoration(
                                 color: const Color(0xFF25D366),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: isDark ? [] : [BoxShadow(color: const Color(0xFF25D366).withValues(alpha: 0.3), blurRadius: 12, offset: const Offset(0, 6))],
+                                borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                                boxShadow: isDark ? [] : [BoxShadow(color: const Color(0xFF25D366).withValues(alpha: 0.3), blurRadius: 12 * context.fontSizeFactor, offset: Offset(0, 6 * context.fontSizeFactor))],
                               ),
                               child: Material(
                                 color: Colors.transparent,
                                 child: InkWell(
                                   onTap: () {},
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       FaIcon(FontAwesomeIcons.whatsapp, size: 20 * context.fontSizeFactor, color: Colors.white),
-                                      const SizedBox(width: 12),
+                                      SizedBox(width: 12 * context.fontSizeFactor),
                                       Flexible(
                                         child: Text(
                                           l10n.whatsApp,
@@ -252,13 +252,13 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          SizedBox(width: 16 * context.fontSizeFactor),
                           Container(
                             width: 60 * context.fontSizeFactor, height: 60 * context.fontSizeFactor,
                             decoration: BoxDecoration(
                               color: theme.colorScheme.surface,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 6))],
+                              borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                              boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12 * context.fontSizeFactor, offset: Offset(0, 6 * context.fontSizeFactor))],
                               border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                             ),
                             child: IconButton(
@@ -271,7 +271,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40 * context.fontSizeFactor),
               ],
             ),
           ),

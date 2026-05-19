@@ -5,6 +5,8 @@ import '../../../core/app_colors.dart';
 import '../../../core/app_state.dart';
 import '../../../core/models/crypto_asset.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/responsive_utils.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 class CryptoBuySellSheet extends StatefulWidget {
   final CryptoAsset asset;
@@ -106,9 +108,10 @@ class _CryptoBuySellSheetState extends State<CryptoBuySellSheet> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString().contains('insufficient_funds') ? "Insufficient funds in wallet" : e.toString()), 
+            content: Text(e.toString().contains('insufficient_funds') ? l10n.insufficientBalance : e.toString()), 
             backgroundColor: Colors.redAccent
           ),
         );
@@ -137,91 +140,99 @@ class _CryptoBuySellSheetState extends State<CryptoBuySellSheet> {
     }
 
     final availableLabel = widget.isBuy 
-      ? "Balance: \$${state.balance.toStringAsFixed(2)}" 
-      : "Available: ${(state.cryptoHoldings[widget.asset.symbol] ?? 0).toStringAsFixed(6)} ${widget.asset.symbol}";
+      ? "${l10n.balance}: \$${state.balance.toStringAsFixed(2)}" 
+      : "${l10n.active}: ${(state.cryptoHoldings[widget.asset.symbol] ?? 0).toStringAsFixed(6)} ${widget.asset.symbol}";
 
-    return Container(
-      padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(context).padding.bottom + 20),
-      decoration: BoxDecoration(
-        color: theme.scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            margin: const EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(2)),
-          ),
-          Text(
-            widget.isBuy ? "${l10n.buy} ${widget.asset.name}" : "${l10n.sell} ${widget.asset.name}",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          Text(availableLabel, style: TextStyle(color: theme.hintColor, fontSize: 13, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 32),
-          GestureDetector(
-            onTap: _toggleInputMode,
-            behavior: HitTestBehavior.opaque,
-            child: FadeInDown(
-              duration: const Duration(milliseconds: 400),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      if (_isInputtingFiat) const Text("\$", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                      Flexible(
-                        child: Text(
-                          _amountStr,
-                          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-                          overflow: TextOverflow.ellipsis,
+    return MaxWidthBox(
+      maxWidth: 600,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(
+          24 * context.fontSizeFactor, 
+          20 * context.fontSizeFactor, 
+          24 * context.fontSizeFactor, 
+          (MediaQuery.of(context).padding.bottom + 20) * context.fontSizeFactor
+        ),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32 * context.fontSizeFactor)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40 * context.fontSizeFactor,
+              height: 4 * context.fontSizeFactor,
+              margin: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
+              decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(2 * context.fontSizeFactor)),
+            ),
+            Text(
+              widget.isBuy ? "${l10n.buy} ${widget.asset.name}" : "${l10n.sell} ${widget.asset.name}",
+              style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 12 * context.fontSizeFactor),
+            Text(availableLabel, style: TextStyle(color: theme.hintColor, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w500)),
+            SizedBox(height: 32 * context.fontSizeFactor),
+            GestureDetector(
+              onTap: _toggleInputMode,
+              behavior: HitTestBehavior.opaque,
+              child: FadeInDown(
+                duration: const Duration(milliseconds: 400),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (_isInputtingFiat) Text("\$", style: TextStyle(fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                        Flexible(
+                          child: Text(
+                            _amountStr,
+                            style: TextStyle(fontSize: 48 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                      if (!_isInputtingFiat) Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(widget.asset.symbol, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(Icons.swap_vert_rounded, color: AppColors.accentTeal, size: 28),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    subText,
-                    style: TextStyle(fontSize: 16, color: theme.hintColor, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 40),
-          _buildNumericKeypad(theme),
-          const SizedBox(height: 32),
-          SizedBox(
-            width: double.infinity,
-            height: 60,
-            child: ElevatedButton(
-              onPressed: _isProcessing || inputAmount <= 0 ? null : _processTransaction,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: widget.isBuy ? AppColors.accentTeal : Colors.redAccent,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                elevation: 0,
-                disabledBackgroundColor: theme.dividerColor.withValues(alpha: 0.1),
-              ),
-              child: _isProcessing
-                  ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                  : Text(
-                      widget.isBuy ? "Review Buy" : "Review Sell",
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        if (!_isInputtingFiat) Padding(
+                          padding: EdgeInsets.only(left: 8.0 * context.fontSizeFactor),
+                          child: Text(widget.asset.symbol, style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                        ),
+                        SizedBox(width: 8 * context.fontSizeFactor),
+                        Icon(Icons.swap_vert_rounded, color: AppColors.accentTeal, size: 28 * context.fontSizeFactor),
+                      ],
                     ),
+                    SizedBox(height: 8 * context.fontSizeFactor),
+                    Text(
+                      subText,
+                      style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: theme.hintColor, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 40 * context.fontSizeFactor),
+            _buildNumericKeypad(theme),
+            SizedBox(height: 32 * context.fontSizeFactor),
+            SizedBox(
+              width: double.infinity,
+              height: 60 * context.fontSizeFactor,
+              child: ElevatedButton(
+                onPressed: _isProcessing || inputAmount <= 0 ? null : _processTransaction,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: widget.isBuy ? AppColors.accentTeal : Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
+                  elevation: 0,
+                  disabledBackgroundColor: theme.dividerColor.withValues(alpha: 0.1),
+                ),
+                child: _isProcessing
+                    ? SizedBox(height: 24 * context.fontSizeFactor, width: 24 * context.fontSizeFactor, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                    : Text(
+                        widget.isBuy ? "${l10n.confirm} ${l10n.buy}" : "${l10n.confirm} ${l10n.sell}",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
+                      ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -242,13 +253,13 @@ class _CryptoBuySellSheetState extends State<CryptoBuySellSheet> {
             return Expanded(
               child: InkWell(
                 onTap: () => _onKeyTap(key),
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(40 * context.fontSizeFactor),
                 child: Container(
-                  height: 60,
+                  height: 60 * context.fontSizeFactor,
                   alignment: Alignment.center,
                   child: Text(
                     key,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: theme.textTheme.bodyLarge?.color),
+                    style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.w600, color: theme.textTheme.bodyLarge?.color),
                   ),
                 ),
               ),

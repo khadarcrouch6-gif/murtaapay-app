@@ -13,6 +13,7 @@ class RecurringPayment {
   final DateTime? nextPaymentDate;
   final RecurringStatus status;
   final String category;
+  final String? cardId;
 
   RecurringPayment({
     required this.id,
@@ -25,6 +26,7 @@ class RecurringPayment {
     this.nextPaymentDate,
     required this.status,
     required this.category,
+    this.cardId,
   });
 
   Map<String, dynamic> toJson() => {
@@ -38,6 +40,7 @@ class RecurringPayment {
         'nextPaymentDate': nextPaymentDate?.toIso8601String(),
         'status': status.index,
         'category': category,
+        'cardId': cardId,
       };
 
   factory RecurringPayment.fromJson(Map<String, dynamic> json) => RecurringPayment(
@@ -51,6 +54,7 @@ class RecurringPayment {
         nextPaymentDate: json['nextPaymentDate'] != null ? DateTime.parse(json['nextPaymentDate']) : null,
         status: RecurringStatus.values[json['status']],
         category: json['category'],
+        cardId: json['cardId'],
       );
 
   RecurringPayment copyWith({
@@ -64,6 +68,7 @@ class RecurringPayment {
     DateTime? nextPaymentDate,
     RecurringStatus? status,
     String? category,
+    String? cardId,
   }) {
     return RecurringPayment(
       id: id ?? this.id,
@@ -76,6 +81,7 @@ class RecurringPayment {
       nextPaymentDate: nextPaymentDate ?? this.nextPaymentDate,
       status: status ?? this.status,
       category: category ?? this.category,
+      cardId: cardId ?? this.cardId,
     );
   }
 }

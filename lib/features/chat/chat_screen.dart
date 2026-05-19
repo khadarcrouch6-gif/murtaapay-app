@@ -231,9 +231,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     value: 'info',
                     child: Row(
                       children: [
-                        const AdaptiveIcon(FontAwesomeIcons.circleInfo, color: AppColors.accentTeal, size: 16),
-                        const SizedBox(width: 12),
-                        Text(AppLocalizations.of(context)!.viewInfo, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+                        AdaptiveIcon(FontAwesomeIcons.circleInfo, color: AppColors.accentTeal, size: 16 * context.fontSizeFactor),
+                        SizedBox(width: 12 * context.fontSizeFactor),
+                        Text(
+                          AppLocalizations.of(context)!.viewInfo, 
+                          style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 14 * context.fontSizeFactor),
+                        ),
                       ],
                     ),
                   ),
@@ -241,9 +244,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     value: 'help',
                     child: Row(
                       children: [
-                        const AdaptiveIcon(FontAwesomeIcons.circleQuestion, color: Colors.blue, size: 16),
-                        const SizedBox(width: 12),
-                        Text(AppLocalizations.of(context)!.helpSupport, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+                        AdaptiveIcon(FontAwesomeIcons.circleQuestion, color: Colors.blue, size: 16 * context.fontSizeFactor),
+                        SizedBox(width: 12 * context.fontSizeFactor),
+                        Text(
+                          AppLocalizations.of(context)!.helpSupport, 
+                          style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 14 * context.fontSizeFactor),
+                        ),
                       ],
                     ),
                   ),
@@ -252,9 +258,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     value: 'clear',
                     child: Row(
                       children: [
-                        const AdaptiveIcon(FontAwesomeIcons.trash, color: Colors.red, size: 16),
-                        const SizedBox(width: 12),
-                        Text(AppLocalizations.of(context)!.clearChat, style: const TextStyle(color: Colors.red)),
+                        AdaptiveIcon(FontAwesomeIcons.trash, color: Colors.red, size: 16 * context.fontSizeFactor),
+                        SizedBox(width: 12 * context.fontSizeFactor),
+                        Text(
+                          AppLocalizations.of(context)!.clearChat, 
+                          style: TextStyle(color: Colors.red, fontSize: 14 * context.fontSizeFactor),
+                        ),
                       ],
                     ),
                   ),
@@ -497,7 +506,7 @@ class _ChatScreenState extends State<ChatScreen> {
           width: 44 * context.fontSizeFactor,
           height: 44 * context.fontSizeFactor,
           decoration: BoxDecoration(
-            color: AppColors.accentTeal.withOpacity(0.1),
+            color: AppColors.accentTeal.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: AdaptiveIcon(
@@ -540,12 +549,21 @@ class _ChatScreenState extends State<ChatScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
-        title: Text(AppLocalizations.of(context)!.clearChat, style: TextStyle(color: theme.textTheme.titleLarge?.color)),
-        content: Text(AppLocalizations.of(context)!.clearChatConfirm, style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+        title: Text(
+          AppLocalizations.of(context)!.clearChat, 
+          style: TextStyle(color: theme.textTheme.titleLarge?.color, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          AppLocalizations.of(context)!.clearChatConfirm, 
+          style: TextStyle(color: theme.textTheme.bodyMedium?.color, fontSize: 14 * context.fontSizeFactor),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: AppColors.grey)),
+            child: Text(
+              AppLocalizations.of(context)!.cancel, 
+              style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -555,6 +573,7 @@ class _ChatScreenState extends State<ChatScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
+              textStyle: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold),
             ),
             child: Text(AppLocalizations.of(context)!.clear),
           ),

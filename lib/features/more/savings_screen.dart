@@ -11,6 +11,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../core/models/savings_goal.dart';
+import '../cards/models/card_model.dart';
 
 class SavingsScreen extends StatefulWidget {
   final bool isTab;
@@ -42,7 +43,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
         ),
         body: Center(
           child: MaxWidthBox(
-            maxWidth: 800,
+            maxWidth: 1000,
             child: SingleChildScrollView(
               padding: EdgeInsets.all(context.horizontalPadding),
               child: Column(
@@ -50,11 +51,11 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 children: [
                   Center(
                     child: MaxWidthBox(
-                      maxWidth: 500,
+                      maxWidth: 600,
                       child: _buildTotalSavings(context, l10n),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32 * context.fontSizeFactor),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -64,24 +65,30 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         child: Row(
                           children: [
                             Text(l10n.seeAll, style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
-                            const Icon(Icons.chevron_right_rounded, size: 20, color: AppColors.accentTeal),
+                            Icon(Icons.chevron_right_rounded, size: 20 * context.fontSizeFactor, color: AppColors.accentTeal),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16 * context.fontSizeFactor),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: state.savingsGoals.length,
-                    itemBuilder: (context, index) => _buildSavingsGoalCard(context: context, l10n: l10n, index: index, goal: state.savingsGoals[index]),
+                    itemBuilder: (context, index) => _buildSavingsGoalCard(
+                      context: context, 
+                      l10n: l10n, 
+                      index: index, 
+                      goal: state.savingsGoals[index],
+                      languageCode: state.locale.languageCode,
+                    ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   Text(l10n.recentSavingsActivity, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor, letterSpacing: -0.5)),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16 * context.fontSizeFactor),
                   _buildRecentActivity(context, l10n),
-                  const SizedBox(height: 100),
+                  SizedBox(height: 120 * context.fontSizeFactor),
                 ],
               ),
             ),
@@ -103,12 +110,12 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         height: 56 * context.fontSizeFactor,
                         child: ElevatedButton(
                           onPressed: () => _showCreateGoalDialog(context, l10n),
-                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, elevation: 8, shadowColor: AppColors.accentTeal.withValues(alpha: 0.4), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, elevation: 8, shadowColor: AppColors.accentTeal.withValues(alpha: 0.4), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor))),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.add_circle_outline_rounded, size: 24),
-                              const SizedBox(width: 12),
+                              Icon(Icons.add_circle_outline_rounded, size: 24 * context.fontSizeFactor),
+                              SizedBox(width: 12 * context.fontSizeFactor),
                               Text(l10n.createNewGoal, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16 * context.fontSizeFactor, letterSpacing: 0.5)),
                             ],
                           ),
@@ -130,11 +137,11 @@ class _SavingsScreenState extends State<SavingsScreen> {
     return FadeInDown(
       duration: const Duration(milliseconds: 500),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24 * context.fontSizeFactor),
         decoration: BoxDecoration(
           gradient: const LinearGradient(colors: [AppColors.accentTeal, Color(0xFF00695C)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))],
+          borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
+          boxShadow: [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.3), blurRadius: 20 * context.fontSizeFactor, offset: Offset(0, 10 * context.fontSizeFactor))],
         ),
         child: Column(
           children: [
@@ -157,30 +164,30 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         );
                       },
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4 * context.fontSizeFactor),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.trending_up_rounded, color: Colors.white, size: 14),
-                          SizedBox(width: 4),
-                          Text("2.5%", style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
+                      decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
+                      child: Row(
+                      children: [
+                        Icon(Icons.trending_up_rounded, color: Colors.white, size: 14 * context.fontSizeFactor),
+                        SizedBox(width: 4 * context.fontSizeFactor),
+                        Text("2.5%", style: TextStyle(color: Colors.white, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                     ),
                   ],
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8 * context.fontSizeFactor),
             Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.savingsBalance), style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: -1)),
-            const SizedBox(height: 24),
+            SizedBox(height: 24 * context.fontSizeFactor),
             Row(
               children: [
-                Expanded(child: _buildBalanceAction(context, l10n.deposit, Icons.add_rounded, Colors.white, AppColors.accentTeal, onTap: () => _showDepositMethodDialog(context, l10n))),
-                const SizedBox(width: 12),
-                Expanded(child: _buildBalanceAction(context, l10n.withdraw, Icons.arrow_outward_rounded, Colors.white.withValues(alpha: 0.15), Colors.white, onTap: () => _showWithdrawMethodDialog(context, l10n))),
+                Expanded(child: _buildBalanceAction(context, l10n.deposit, Icons.add_rounded, Colors.white, AppColors.accentTeal, onTap: () => _showWalletDepositDialog(context, l10n))),
+                SizedBox(width: 12 * context.fontSizeFactor),
+                Expanded(child: _buildBalanceAction(context, l10n.withdraw, Icons.arrow_outward_rounded, Colors.white.withValues(alpha: 0.15), Colors.white, onTap: () => _showWalletWithdrawDialog(context, l10n))),
               ],
             ),
           ],
@@ -193,38 +200,14 @@ class _SavingsScreenState extends State<SavingsScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(16)),
+        padding: EdgeInsets.symmetric(vertical: 14 * context.fontSizeFactor),
+        decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: textColor, size: 20),
-            const SizedBox(width: 8),
+            Icon(icon, color: textColor, size: 20 * context.fontSizeFactor),
+            SizedBox(width: 8 * context.fontSizeFactor),
             Text(label, style: TextStyle(color: textColor, fontWeight: FontWeight.w800, fontSize: 14 * context.fontSizeFactor)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showWithdrawMethodDialog(BuildContext context, AppLocalizations l10n) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(l10n.chooseWithdrawalMethod, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildMethodTile(context, l10n.sendToWallet, l10n.payFromSavingBalance, Icons.account_balance_wallet_rounded, AppColors.accentTeal, () {
-              Navigator.pop(context);
-              _showWalletWithdrawDialog(this.context, l10n);
-            }),
-            const SizedBox(height: 12),
-            _buildMethodTile(context, l10n.sendToCard, l10n.withdrawToVirtualCard, Icons.credit_card_rounded, const Color(0xFF1A1F71), () {
-              Navigator.pop(context);
-              _showCardWithdrawDialog(this.context, l10n);
-            }),
           ],
         ),
       ),
@@ -235,186 +218,157 @@ class _SavingsScreenState extends State<SavingsScreen> {
     final state = Provider.of<AppState>(context, listen: false);
     final TextEditingController amountController = TextEditingController();
     final TextEditingController pinController = TextEditingController();
+    final screenContext = context;
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          contentPadding: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-                  decoration: const BoxDecoration(gradient: LinearGradient(colors: [AppColors.accentTeal, Color(0xFF00695C)], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-                  child: Column(
-                    children: [
-                      Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle), child: const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 32)),
-                      const SizedBox(height: 16),
-                      Text(l10n.savingsBalanceLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
-                      const SizedBox(height: 4),
-                      FittedBox(fit: BoxFit.scaleDown, child: ListenableBuilder(listenable: state, builder: (context, _) => Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.savingsBalance), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900)))),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                      const SizedBox(height: 16),
-                      _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold))),
-            Padding(
-              padding: const EdgeInsets.only(right: 8, bottom: 8),
-              child: ElevatedButton(
-                onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
-                  if (state.verifyPin(pinController.text)) {
-                    final double amount = double.tryParse(amountController.text) ?? 0.0;
-                    if (amount > state.savingsBalance) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
-                      return;
-                    }
-                    Navigator.pop(context);
-                    await _processWithdrawal(this.context, l10n, amountController.text);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-kaagu waa khalad.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red));
-                  }
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showCardWithdrawDialog(BuildContext context, AppLocalizations l10n) {
-    final state = Provider.of<AppState>(context, listen: false);
-    final TextEditingController amountController = TextEditingController();
-    final TextEditingController pinController = TextEditingController();
-    int selectedCardIdx = state.selectedCardIndex < state.cards.length ? state.selectedCardIndex : 0;
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          contentPadding: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
-                  decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF1A1F71), Color(0xFF000000)], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-                  child: Column(
-                    children: [
-                      Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle), child: const FaIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 24)),
-                      const SizedBox(height: 12),
-                      Text(l10n.savingsBalanceLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
-                      const SizedBox(height: 4),
-                      FittedBox(fit: BoxFit.scaleDown, child: ListenableBuilder(listenable: state, builder: (context, _) => Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.savingsBalance), style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900)))),
-                    ],
-                  ),
-                ),
-                if (state.cards.isNotEmpty) ...[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(state.translate("Select Card", "Dooro Kaarka"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey)),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          height: 60,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: state.cards.length,
-                            itemBuilder: (context, index) {
-                              final card = state.cards[index];
-                              bool isSelected = selectedCardIdx == index;
-                              return GestureDetector(
-                                onTap: () => setDialogState(() => selectedCardIdx = index),
-                                child: Container(
-                                  margin: const EdgeInsets.only(right: 12),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        builder: (context, setDialogState) => Center(
+          child: MaxWidthBox(
+            maxWidth: 600,
+            child: AlertDialog(
+              scrollable: true,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
+              contentPadding: EdgeInsets.zero,
+              clipBehavior: Clip.antiAlias,
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppColors.accentTeal, Color(0xFF004D40)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 32 * context.fontSizeFactor),
+                          ),
+                          SizedBox(height: 20 * context.fontSizeFactor),
+                          Text(
+                            l10n.savingsBalanceLabel, 
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.8), 
+                              fontSize: 12 * context.fontSizeFactor, 
+                              fontWeight: FontWeight.w800, 
+                              letterSpacing: 1.2
+                            )
+                          ),
+                          SizedBox(height: 8 * context.fontSizeFactor),
+                          FittedBox(
+                            fit: BoxFit.scaleDown, 
+                            child: ListenableBuilder(
+                              listenable: state, 
+                              builder: (context, _) => Text(
+                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.savingsBalance), 
+                                style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: -1)
+                              )
+                            )
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            state.translate("Target Wallet", "Boorsada loo dirayo"),
+                            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor, letterSpacing: -0.3)
+                          ),
+                          SizedBox(height: 16 * context.fontSizeFactor),
+                          Container(
+                            padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                              border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(10 * context.fontSizeFactor),
                                   decoration: BoxDecoration(
-                                    color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).colorScheme.surface,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                                    color: AppColors.accentTeal.withValues(alpha: 0.1),
+                                    shape: BoxShape.circle,
                                   ),
+                                  child: Icon(Icons.person_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                                ),
+                                SizedBox(width: 12 * context.fontSizeFactor),
+                                Expanded(
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text("**** ${card.cardNumber.substring(card.cardNumber.length - 4)}", style: TextStyle(color: isSelected ? Colors.white : null, fontWeight: FontWeight.bold, fontSize: 13)),
-                                      Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance), style: TextStyle(color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.grey, fontSize: 11)),
+                                      Text(state.translate("Main Wallet", "Boorsada Weyn"), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
+                                      Text("ID: ${state.walletId}", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                                     ],
                                   ),
                                 ),
-                              );
-                            },
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.accentTeal.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(10 * context.fontSizeFactor),
+                                  ),
+                                  child: Text(
+                                    NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance),
+                                    style: TextStyle(color: AppColors.accentTeal, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 24 * context.fontSizeFactor),
+                          _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
+                          SizedBox(height: 16 * context.fontSizeFactor),
+                          _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
                 Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                      const SizedBox(height: 16),
-                      _dialogInputField(context, l10n.cardPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
-                    ],
+                  padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
+                  child: ElevatedButton(
+                    onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
+                      if (state.verifyPin(pinController.text)) {
+                        final double amount = double.tryParse(amountController.text) ?? 0.0;
+                        if (amount > state.savingsBalance) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
+                          return;
+                        }
+                        Navigator.pop(context);
+                        await _processWithdrawal(screenContext, l10n, amountController.text);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-kaagu waa khalad.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red));
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
+                    child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
                   ),
                 ),
               ],
             ),
           ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold))),
-            Padding(
-              padding: const EdgeInsets.only(right: 8, bottom: 8),
-              child: ElevatedButton(
-                onPressed: (amountController.text.isEmpty || pinController.text.length < 4 || state.cards.isEmpty) ? null : () async {
-                  if (state.verifyCardPin(pinController.text)) {
-                    final double amount = double.tryParse(amountController.text) ?? 0.0;
-                    if (amount > state.savingsBalance) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
-                      return;
-                    }
-                    Navigator.pop(context);
-                    await _processWithdrawal(this.context, l10n, amountController.text, toCardId: state.cards[selectedCardIdx].id);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-ka kaarkaagu waa khalad.", "PIN-ka kaarkaagu waa khalad.")), backgroundColor: Colors.red));
-                  }
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1A1F71), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
         ),
       ),
     );
   }
+
+
 
   Future<void> _processWithdrawal(BuildContext context, AppLocalizations l10n, String amountStr, {String? toCardId}) async {
     final theme = Theme.of(context);
@@ -433,11 +387,11 @@ class _SavingsScreenState extends State<SavingsScreen> {
             child: Container(
               width: 220 * context.fontSizeFactor,
               padding: EdgeInsets.all(32 * context.fontSizeFactor),
-              decoration: BoxDecoration(color: theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(32), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10))]),
+              decoration: BoxDecoration(color: theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(32 * context.fontSizeFactor), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20 * context.fontSizeFactor, offset: Offset(0, 10 * context.fontSizeFactor))]),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Stack(alignment: Alignment.center, children: [SizedBox(width: 65 * context.fontSizeFactor, height: 65 * context.fontSizeFactor, child: const CircularProgressIndicator(color: AppColors.accentTeal, strokeWidth: 3)), Icon(Icons.bolt_rounded, color: AppColors.accentTeal, size: 32 * context.fontSizeFactor)]),
+                  Stack(alignment: Alignment.center, children: [SizedBox(width: 65 * context.fontSizeFactor, height: 65 * context.fontSizeFactor, child: CircularProgressIndicator(color: AppColors.accentTeal, strokeWidth: 3 * context.fontSizeFactor)), Icon(Icons.bolt_rounded, color: AppColors.accentTeal, size: 32 * context.fontSizeFactor)]),
                   SizedBox(height: 24 * context.fontSizeFactor),
                   Text(l10n.processing, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, decoration: ui.TextDecoration.none)),
                 ],
@@ -472,245 +426,145 @@ class _SavingsScreenState extends State<SavingsScreen> {
     }
   }
 
-  void _showDepositMethodDialog(BuildContext context, AppLocalizations l10n) {
+  void _showWalletDepositDialog(BuildContext context, AppLocalizations l10n) {
     final state = Provider.of<AppState>(context, listen: false);
+    final TextEditingController amountController = TextEditingController();
+    final TextEditingController pinController = TextEditingController();
+    final screenContext = context;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(l10n.selectPaymentMethod, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildMethodTile(context, l10n.sendFromWallet, l10n.payFromWalletBalance, Icons.account_balance_wallet_rounded, AppColors.accentTeal, () {
-              Navigator.pop(context);
-              _showWalletDepositDialog(this.context, state, l10n);
-            }),
-            const SizedBox(height: 12),
-            _buildMethodTile(context, l10n.sendFromCard, l10n.payFromVirtualCard, Icons.credit_card_rounded, const Color(0xFF1A1F71), () {
-              Navigator.pop(context);
-              _showCardDepositDialog(this.context, state, l10n);
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMethodTile(BuildContext context, String title, String subtitle, IconData icon, Color color, VoidCallback onTap) {
-    final theme = Theme.of(context);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)), borderRadius: BorderRadius.circular(16)),
-        child: Row(
-          children: [
-            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(icon, color: color, size: 24)),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Center(
+          child: MaxWidthBox(
+            maxWidth: 600,
+            child: AlertDialog(
+              scrollable: true,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
+              contentPadding: EdgeInsets.zero,
+              clipBehavior: Clip.antiAlias,
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                  Text(subtitle, style: TextStyle(color: AppColors.grey, fontSize: 12)),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right_rounded, color: AppColors.grey, size: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showWalletDepositDialog(BuildContext context, AppState state, AppLocalizations l10n) {
-    final TextEditingController amountController = TextEditingController();
-    final TextEditingController pinController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          contentPadding: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-                  decoration: const BoxDecoration(gradient: LinearGradient(colors: [AppColors.accentTeal, Color(0xFF00695C)], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-                  child: Column(
-                    children: [
-                      Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle), child: const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 32)),
-                      const SizedBox(height: 16),
-                      Text(l10n.availableBalance, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
-                      const SizedBox(height: 4),
-                      FittedBox(fit: BoxFit.scaleDown, child: ListenableBuilder(listenable: state, builder: (context, _) => Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900)))),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                      const SizedBox(height: 16),
-                      _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold))),
-            Padding(
-              padding: const EdgeInsets.only(right: 8, bottom: 8),
-              child: ElevatedButton(
-                onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
-                  if (state.verifyPin(pinController.text)) {
-                    final double amount = double.tryParse(amountController.text) ?? 0.0;
-                    if (amount > state.balance) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
-                      return;
-                    }
-                    Navigator.pop(context);
-                    await _processDeposit(this.context, l10n, amountController.text);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-kaagu waa khalad.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red));
-                  }
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showCardDepositDialog(BuildContext context, AppState state, AppLocalizations l10n) {
-    final TextEditingController amountController = TextEditingController();
-    final TextEditingController pinController = TextEditingController();
-    int selectedCardIdx = state.selectedCardIndex < state.cards.length ? state.selectedCardIndex : 0;
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          contentPadding: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
-                  decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF1A1F71), Color(0xFF000000)], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-                  child: Column(
-                    children: [
-                      Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle), child: const FaIcon(FontAwesomeIcons.ccVisa, color: Colors.white, size: 24)),
-                      const SizedBox(height: 12),
-                      Text(l10n.virtualCardBalance, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
-                      const SizedBox(height: 4),
-                      FittedBox(fit: BoxFit.scaleDown, child: ListenableBuilder(listenable: state, builder: (context, _) {
-                        final currentCardBalance = state.cards.isNotEmpty 
-                            ? state.cards[selectedCardIdx].balance 
-                            : 0.0;
-                        return Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(currentCardBalance), style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900));
-                      })),
-                    ],
-                  ),
-                ),
-                if (state.cards.isNotEmpty) ...[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(state.translate("Select Card", "Dooro Kaarka"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey)),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          height: 60,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: state.cards.length,
-                            itemBuilder: (context, index) {
-                              final card = state.cards[index];
-                              bool isSelected = selectedCardIdx == index;
-                              return GestureDetector(
-                                onTap: () => setDialogState(() => selectedCardIdx = index),
-                                child: Container(
-                                  margin: const EdgeInsets.only(right: 12),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppColors.accentTeal, Color(0xFF004D40)], 
+                          begin: Alignment.topLeft, 
+                          end: Alignment.bottomRight
+                        )
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(16 * context.fontSizeFactor), 
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15), 
+                              shape: BoxShape.circle
+                            ), 
+                            child: Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 32 * context.fontSizeFactor)
+                          ),
+                          SizedBox(height: 20 * context.fontSizeFactor),
+                          Text(
+                            l10n.availableBalance, 
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.8), 
+                              fontSize: 12 * context.fontSizeFactor, 
+                              fontWeight: FontWeight.w800, 
+                              letterSpacing: 1.2
+                            )
+                          ),
+                          SizedBox(height: 8 * context.fontSizeFactor),
+                          FittedBox(
+                            fit: BoxFit.scaleDown, 
+                            child: ListenableBuilder(
+                              listenable: state, 
+                              builder: (context, _) => Text(
+                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance), 
+                                style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: -1)
+                              )
+                            )
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            state.translate("Source Wallet", "Boorsada Isha"),
+                            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor, letterSpacing: -0.3)
+                          ),
+                          SizedBox(height: 16 * context.fontSizeFactor),
+                          Container(
+                            padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                              border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(10 * context.fontSizeFactor),
                                   decoration: BoxDecoration(
-                                    color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).colorScheme.surface,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                                    color: AppColors.accentTeal.withValues(alpha: 0.1),
+                                    shape: BoxShape.circle,
                                   ),
+                                  child: Icon(Icons.security_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                                ),
+                                SizedBox(width: 12 * context.fontSizeFactor),
+                                Expanded(
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text("**** ${card.cardNumber.substring(card.cardNumber.length - 4)}", style: TextStyle(color: isSelected ? Colors.white : null, fontWeight: FontWeight.bold, fontSize: 13)),
-                                      Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance), style: TextStyle(color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.grey, fontSize: 11)),
+                                      Text(state.translate("Main Balance", "Hadhaaga Weyn"), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
+                                      Text(state.translate("Verified Account", "Akoon La Xaqiijiyay"), style: TextStyle(color: AppColors.grey, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                                     ],
                                   ),
                                 ),
-                              );
-                            },
+                                Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 24 * context.fontSizeFactor),
+                          _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
+                          SizedBox(height: 16 * context.fontSizeFactor),
+                          _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
                 Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                      const SizedBox(height: 16),
-                      _dialogInputField(context, l10n.cardPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
-                    ],
+                  padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
+                  child: ElevatedButton(
+                    onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
+                      if (state.verifyPin(pinController.text)) {
+                        final double amount = double.tryParse(amountController.text) ?? 0.0;
+                        if (amount > state.balance) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
+                          return;
+                        }
+                        Navigator.pop(context);
+                        await _processDeposit(screenContext, l10n, amountController.text);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-kaagu waa khalad.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red));
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
+                    child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
                   ),
                 ),
               ],
             ),
           ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold))),
-            Padding(
-              padding: const EdgeInsets.only(right: 8, bottom: 8),
-              child: ElevatedButton(
-                onPressed: (amountController.text.isEmpty || pinController.text.length < 4 || state.cards.isEmpty) ? null : () async {
-                  if (state.verifyCardPin(pinController.text)) {
-                    final double amount = double.tryParse(amountController.text) ?? 0.0;
-                    final currentCardBalance = state.cards.isNotEmpty 
-                        ? state.cards[selectedCardIdx].balance 
-                        : 0.0;
-                    if (amount > currentCardBalance) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
-                      return;
-                    }
-                    Navigator.pop(context);
-                    await _processDeposit(this.context, l10n, amountController.text, fromCardId: state.cards[selectedCardIdx].id);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-ka kaarkaagu waa khalad.", "PIN-ka kaarkaagu waa khalad.")), backgroundColor: Colors.red));
-                  }
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1A1F71), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -733,11 +587,11 @@ class _SavingsScreenState extends State<SavingsScreen> {
             child: Container(
               width: 220 * context.fontSizeFactor,
               padding: EdgeInsets.all(32 * context.fontSizeFactor),
-              decoration: BoxDecoration(color: theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(32), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10))]),
+              decoration: BoxDecoration(color: theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(32 * context.fontSizeFactor), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20 * context.fontSizeFactor, offset: Offset(0, 10 * context.fontSizeFactor))]),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Stack(alignment: Alignment.center, children: [SizedBox(width: 65 * context.fontSizeFactor, height: 65 * context.fontSizeFactor, child: const CircularProgressIndicator(color: AppColors.accentTeal, strokeWidth: 3)), Icon(Icons.bolt_rounded, color: AppColors.accentTeal, size: 32 * context.fontSizeFactor)]),
+                  Stack(alignment: Alignment.center, children: [SizedBox(width: 65 * context.fontSizeFactor, height: 65 * context.fontSizeFactor, child: CircularProgressIndicator(color: AppColors.accentTeal, strokeWidth: 3 * context.fontSizeFactor)), Icon(Icons.bolt_rounded, color: AppColors.accentTeal, size: 32 * context.fontSizeFactor)]),
                   SizedBox(height: 24 * context.fontSizeFactor),
                   Text(l10n.processing, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, decoration: ui.TextDecoration.none)),
                 ],
@@ -790,9 +644,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
         prefixIcon: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
         filled: true,
         fillColor: theme.colorScheme.surface,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.accentTeal, width: 2)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: const BorderSide(color: AppColors.accentTeal, width: 2)),
       ),
     );
   }
@@ -802,6 +656,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     required AppLocalizations l10n,
     required int index,
     required SavingsGoal goal,
+    required String languageCode,
   }) {
     final theme = Theme.of(context);
     double progress = (goal.saved / goal.target).clamp(0.0, 1.0);
@@ -810,34 +665,34 @@ class _SavingsScreenState extends State<SavingsScreen> {
     return FadeInUp(
       delay: Duration(milliseconds: goal.delay),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(color: theme.cardColor, borderRadius: BorderRadius.circular(24), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))]),
+        margin: EdgeInsets.only(bottom: 16 * context.fontSizeFactor),
+        decoration: BoxDecoration(color: theme.cardColor, borderRadius: BorderRadius.circular(24 * context.fontSizeFactor), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10 * context.fontSizeFactor, offset: Offset(0, 4 * context.fontSizeFactor))]),
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20 * context.fontSizeFactor),
               child: Row(
                 children: [
-                  Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: goal.color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)), child: Icon(goal.icon, color: goal.color, size: 28)),
-                  const SizedBox(width: 16),
+                  Container(padding: EdgeInsets.all(12 * context.fontSizeFactor), decoration: BoxDecoration(color: goal.color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)), child: Icon(goal.icon, color: goal.color, size: 28 * context.fontSizeFactor)),
+                  SizedBox(width: 16 * context.fontSizeFactor),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Text(goal.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, letterSpacing: -0.2)),
+                            Text(goal.getLocalizedTitle(languageCode), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17 * context.fontSizeFactor, letterSpacing: -0.2)),
                             if (isPaused)
                               Container(
-                                margin: const EdgeInsets.only(left: 8),
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(color: AppColors.grey.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-                                child: Text(l10n.paused.toUpperCase(), style: TextStyle(color: AppColors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+                                margin: EdgeInsets.only(left: 8 * context.fontSizeFactor),
+                                padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 2 * context.fontSizeFactor),
+                                decoration: BoxDecoration(color: AppColors.grey.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8 * context.fontSizeFactor)),
+                                child: Text(l10n.paused.toUpperCase(), style: TextStyle(color: AppColors.grey, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                               ),
                           ],
                         ),
-                        const SizedBox(height: 4),
-                        Text("${l10n.targetWithColon}${NumberFormat.simpleCurrency(name: 'USD').format(goal.target)} • ${goal.deadline}", style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.w500)),
+                        SizedBox(height: 4 * context.fontSizeFactor),
+                        Text("${l10n.targetWithColon}${NumberFormat.simpleCurrency(name: 'USD').format(goal.target)} • ${goal.deadline}", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w500)),
                       ],
                     ),
                   ),
@@ -846,31 +701,31 @@ class _SavingsScreenState extends State<SavingsScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              padding: EdgeInsets.fromLTRB(20 * context.fontSizeFactor, 0, 20 * context.fontSizeFactor, 20 * context.fontSizeFactor),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(NumberFormat.simpleCurrency(name: 'USD').format(goal.saved), style: TextStyle(color: goal.color, fontWeight: FontWeight.w900, fontSize: 18)),
-                      Text("${(progress * 100).toInt()}%", style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 13)),
+                      Text(NumberFormat.simpleCurrency(name: 'USD').format(goal.saved), style: TextStyle(color: goal.color, fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor)),
+                      Text("${(progress * 100).toInt()}%", style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor)),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12 * context.fontSizeFactor),
                   Stack(
                     children: [
-                      Container(height: 10, width: double.infinity, decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(10))),
-                      AnimatedContainer(duration: const Duration(seconds: 1), curve: Curves.easeOutCubic, height: 10, width: MediaQuery.of(context).size.width * 0.7 * progress, decoration: BoxDecoration(gradient: LinearGradient(colors: [goal.color, goal.color.withValues(alpha: 0.7)]), borderRadius: BorderRadius.circular(10), boxShadow: [BoxShadow(color: goal.color.withValues(alpha: 0.3), blurRadius: 6, offset: const Offset(0, 2))])),
+                      Container(height: 10 * context.fontSizeFactor, width: double.infinity, decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(10 * context.fontSizeFactor))),
+                      AnimatedContainer(duration: const Duration(seconds: 1), curve: Curves.easeOutCubic, height: 10 * context.fontSizeFactor, width: MediaQuery.of(context).size.width * 0.7 * progress, decoration: BoxDecoration(gradient: LinearGradient(colors: [goal.color, goal.color.withValues(alpha: 0.7)]), borderRadius: BorderRadius.circular(10 * context.fontSizeFactor), boxShadow: [BoxShadow(color: goal.color.withValues(alpha: 0.3), blurRadius: 6 * context.fontSizeFactor, offset: Offset(0, 2 * context.fontSizeFactor))])),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20 * context.fontSizeFactor),
                   Row(
                     children: [
                       Expanded(
                         child: OutlinedButton(
                           onPressed: isPaused ? null : () => _showAddFundsDialog(context, l10n, index),
-                          style: OutlinedButton.styleFrom(side: BorderSide(color: goal.color.withValues(alpha: 0.2)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)), padding: const EdgeInsets.symmetric(vertical: 12)),
-                          child: Text(l10n.addFunds, style: TextStyle(color: goal.color, fontWeight: FontWeight.w700)),
+                          style: OutlinedButton.styleFrom(side: BorderSide(color: goal.color.withValues(alpha: 0.2)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14 * context.fontSizeFactor)), padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor)),
+                          child: Text(l10n.addFunds, style: TextStyle(color: goal.color, fontWeight: FontWeight.w700, fontSize: 14 * context.fontSizeFactor)),
                         ),
                       ),
                     ],
@@ -888,17 +743,17 @@ class _SavingsScreenState extends State<SavingsScreen> {
     final state = Provider.of<AppState>(context, listen: false);
     return PopupMenuButton<String>(
       icon: Icon(Icons.more_vert_rounded, color: AppColors.grey),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
       onSelected: (value) {
         if (value == 'edit') _showEditGoalDialog(context, l10n, index, goal);
         if (value == 'pause') state.updateSavingsGoal(index, goal.copyWith(isPaused: !goal.isPaused));
         if (value == 'delete') _showDeleteConfirmDialog(context, l10n, index);
       },
       itemBuilder: (context) => [
-        PopupMenuItem(value: 'edit', child: Row(children: [const Icon(Icons.edit_rounded, size: 20), const SizedBox(width: 12), Text(l10n.edit)])),
-        PopupMenuItem(value: 'pause', child: Row(children: [Icon(goal.isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded, size: 20), const SizedBox(width: 12), Text(goal.isPaused ? l10n.resume : l10n.pause)])),
+        PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit_rounded, size: 20 * context.fontSizeFactor), SizedBox(width: 12 * context.fontSizeFactor), Text(l10n.edit, style: TextStyle(fontSize: 14 * context.fontSizeFactor))])),
+        PopupMenuItem(value: 'pause', child: Row(children: [Icon(goal.isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded, size: 20 * context.fontSizeFactor), SizedBox(width: 12 * context.fontSizeFactor), Text(goal.isPaused ? l10n.resume : l10n.pause, style: TextStyle(fontSize: 14 * context.fontSizeFactor))])),
         const PopupMenuDivider(),
-        PopupMenuItem(value: 'delete', child: Row(children: [const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red), const SizedBox(width: 12), Text(l10n.delete, style: const TextStyle(color: Colors.red))])),
+        PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete_outline_rounded, size: 20 * context.fontSizeFactor, color: Colors.red), SizedBox(width: 12 * context.fontSizeFactor), Text(l10n.delete, style: TextStyle(color: Colors.red, fontSize: 14 * context.fontSizeFactor))])),
       ],
     );
   }
@@ -906,104 +761,123 @@ class _SavingsScreenState extends State<SavingsScreen> {
   void _showAddFundsDialog(BuildContext context, AppLocalizations l10n, int index) {
     final state = Provider.of<AppState>(context, listen: false);
     final TextEditingController amountController = TextEditingController();
-    int selectedCardIdx = 0; // Default to Wallet (internal representation)
+    final TextEditingController pinController = TextEditingController();
+    final screenContext = context;
     
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Text(l10n.addFunds, style: const TextStyle(fontWeight: FontWeight.bold)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _dialogInputField(context, l10n.amountToAdd, Icons.add_circle_outline_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState((){})),
-              const SizedBox(height: 16),
-              Align(alignment: Alignment.centerLeft, child: Text(state.translate("Select Source", "Dooro Isha"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.grey))),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 50,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    GestureDetector(
-                      onTap: () => setDialogState(() => selectedCardIdx = 0),
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: selectedCardIdx == 0 ? AppColors.accentTeal : Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: selectedCardIdx == 0 ? AppColors.accentTeal : Theme.of(context).dividerColor.withOpacity(0.1)),
-                        ),
-                        child: Center(child: Text(state.translate("Wallet", "Boorsada"), style: TextStyle(color: selectedCardIdx == 0 ? Colors.white : null, fontWeight: FontWeight.bold, fontSize: 12))),
-                      ),
+        builder: (context, setDialogState) => Center(
+          child: MaxWidthBox(
+            maxWidth: 500,
+            child: AlertDialog(
+              scrollable: true,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
+              title: Text(l10n.addFunds, style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5, fontSize: 18 * context.fontSizeFactor)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _dialogInputField(context, l10n.amountToAdd, Icons.add_circle_outline_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState((){})),
+                  SizedBox(height: 20 * context.fontSizeFactor),
+                  Align(alignment: Alignment.centerLeft, child: Text(state.translate("Source", "Isha"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey))),
+                  SizedBox(height: 12 * context.fontSizeFactor),
+                  Container(
+                    padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentTeal,
+                      borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                      boxShadow: [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.2), blurRadius: 10 * context.fontSizeFactor, offset: Offset(0, 4 * context.fontSizeFactor))],
                     ),
-                    ...List.generate(state.cards.length, (i) {
-                      final card = state.cards[i];
-                      bool isSelected = selectedCardIdx == i + 1;
-                      return GestureDetector(
-                        onTap: () => setDialogState(() => selectedCardIdx = i + 1),
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 8),
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          decoration: BoxDecoration(
-                            color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).colorScheme.surface,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: isSelected ? const Color(0xFF1A1F71) : Theme.of(context).dividerColor.withOpacity(0.1)),
-                          ),
-                          child: Center(child: Text("**** ${card.cardNumber.substring(card.cardNumber.length - 4)}", style: TextStyle(color: isSelected ? Colors.white : null, fontWeight: FontWeight.bold, fontSize: 12))),
+                    child: Row(
+                      children: [
+                        Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 24 * context.fontSizeFactor),
+                        SizedBox(width: 12 * context.fontSizeFactor),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(state.translate("Wallet", "Boorsada"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
+                            Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance), style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                          ],
                         ),
-                      );
-                    }),
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20 * context.fontSizeFactor),
+                  _dialogInputField(
+                    context, 
+                    l10n.walletPin, 
+                    Icons.lock_rounded, 
+                    pinController, 
+                    isNumber: true, 
+                    isObscure: true, 
+                    maxLength: 4, 
+                    onChanged: (_) => setDialogState(() {})
+                  ),
+                ],
               ),
-            ],
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey))),
-            ElevatedButton(
-              onPressed: amountController.text.isEmpty ? null : () async {
-                final amount = double.tryParse(amountController.text) ?? 0;
-                final bool isFromCard = selectedCardIdx > 0;
-                final String? cardId = isFromCard ? state.cards[selectedCardIdx - 1].id : null;
-                final sourceBalance = isFromCard ? state.cards[selectedCardIdx - 1].balance : state.balance;
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+                Padding(
+                  padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
+                  child: ElevatedButton(
+                    onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
+                      final amount = double.tryParse(amountController.text) ?? 0;
+                      final sourceBalance = state.balance;
 
-                if (amount > 0 && amount <= sourceBalance) {
-                  Navigator.pop(context);
-                  final goal = state.savingsGoals[index];
-                  await _processDeposit(this.context, l10n, amountController.text, fromCardId: cardId, goalName: goal.title, goalId: goal.id);
-                } else if (amount > sourceBalance) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
-                }
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-              child: Text(l10n.add),
+                      // Verify PIN
+                      bool pinValid = state.verifyPin(pinController.text);
+                      
+                      if (!pinValid) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(state.translate("PIN-kaagu waa khalad.", "PIN-kaagu waa khalad.")), 
+                          backgroundColor: Colors.red
+                        ));
+                        return;
+                      }
+
+                      if (amount > 0 && amount <= sourceBalance) {
+                        Navigator.pop(context);
+                        final goal = state.savingsGoals[index];
+                        await _processDeposit(screenContext, l10n, amountController.text, goalName: goal.title, goalId: goal.id);
+                      } else if (amount > sourceBalance) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.accentTeal,
+                      foregroundColor: Colors.white, 
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))
+                    ),
+                    child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
+
   void _showDeleteConfirmDialog(BuildContext context, AppLocalizations l10n, int index) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(l10n.deleteGoal),
-        content: Text(l10n.deleteGoalConfirm),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey))),
-          TextButton(
-            onPressed: () {
-              Provider.of<AppState>(context, listen: false).removeSavingsGoal(index);
-              Navigator.pop(context);
-            },
-            child: Text(l10n.delete, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-          ),
-        ],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
+          title: Text(l10n.deleteGoal, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+          content: Text(l10n.deleteGoalConfirm, style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor))),
+            TextButton(
+              onPressed: () {
+                Provider.of<AppState>(context, listen: false).removeSavingsGoal(index);
+                Navigator.pop(context);
+              },
+              child: Text(l10n.delete, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+            ),
+          ],
       ),
     );
   }
@@ -1016,10 +890,10 @@ class _SavingsScreenState extends State<SavingsScreen> {
       return Center(
         child: Column(
           children: [
-            const SizedBox(height: 32),
-            Icon(Icons.history_rounded, size: 64, color: AppColors.grey.withValues(alpha: 0.2)),
-            const SizedBox(height: 16),
-            Text(l10n.noActivityYet, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500)),
+            SizedBox(height: 32 * context.fontSizeFactor),
+            Icon(Icons.history_rounded, size: 64 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.2)),
+            SizedBox(height: 16 * context.fontSizeFactor),
+            Text(l10n.noActivityYet, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor)),
           ],
         ),
       );
@@ -1029,23 +903,23 @@ class _SavingsScreenState extends State<SavingsScreen> {
       children: savingsTxs
           .take(5)
           .map((tx) => Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(20), border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.05))),
+                margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
+                padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(20 * context.fontSizeFactor), border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.05))),
                 child: Row(
                   children: [
-                    Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: (tx.isNegative ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(tx.isNegative ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded, color: tx.isNegative ? Colors.orange : AppColors.accentTeal, size: 18)),
-                    const SizedBox(width: 16),
+                    Container(padding: EdgeInsets.all(10 * context.fontSizeFactor), decoration: BoxDecoration(color: (tx.isNegative ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.1), shape: BoxShape.circle), child: Icon(tx.isNegative ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded, color: tx.isNegative ? Colors.orange : AppColors.accentTeal, size: 18 * context.fontSizeFactor)),
+                    SizedBox(width: 16 * context.fontSizeFactor),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(tx.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                          Text(tx.date, style: TextStyle(color: AppColors.grey, fontSize: 11)),
+                          Text(tx.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                          Text(tx.date, style: TextStyle(color: AppColors.grey, fontSize: 11 * context.fontSizeFactor)),
                         ],
                       ),
                     ),
-                    Text(tx.amount, style: TextStyle(fontWeight: FontWeight.w900, color: tx.isNegative ? Colors.orange : AppColors.accentTeal, fontSize: 15)),
+                    Text(tx.amount, style: TextStyle(fontWeight: FontWeight.w900, color: tx.isNegative ? Colors.orange : AppColors.accentTeal, fontSize: 15 * context.fontSizeFactor)),
                   ],
                 ),
               ))
@@ -1059,6 +933,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     final TextEditingController deadlineController = TextEditingController();
     IconData selectedIcon = Icons.star_rounded;
     Color selectedColor = AppColors.accentTeal;
+    final screenContext = context;
 
     final List<IconData> goalIcons = [Icons.star_rounded, Icons.flight_rounded, Icons.home_rounded, Icons.directions_car_rounded, Icons.school_rounded, Icons.shopping_bag_rounded, Icons.favorite_rounded, Icons.mosque_rounded];
     final List<Color> goalColors = [AppColors.accentTeal, const Color(0xFF6366F1), const Color(0xFFF43F5E), const Color(0xFFF59E0B), const Color(0xFF10B981), const Color(0xFF8B5CF6), const Color(0xFFEC4899), const Color(0xFF0EA5E9)];
@@ -1067,97 +942,97 @@ class _SavingsScreenState extends State<SavingsScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          title: Text(l10n.createNewGoal, style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5)),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _dialogInputField(context, l10n.goalName, Icons.edit_rounded, titleController),
-                  const SizedBox(height: 16),
-                  _dialogInputField(context, l10n.targetAmount, Icons.attach_money_rounded, amountController, isNumber: true),
-                  const SizedBox(height: 16),
-                  _dialogInputField(
-                    context,
-                    l10n.deadline,
-                    Icons.calendar_today_rounded,
-                    deadlineController,
-                    readOnly: true,
-                    onTap: () async {
-                      final date = await showDatePicker(context: context, initialDate: DateTime.now().add(const Duration(days: 30)), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 3650)));
-                      if (date != null) {
-                        if (!context.mounted) return;
-                        final time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
-                        if (time != null) {
-                          final fullDateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
-                          setDialogState(() {
-                            deadlineController.text = DateFormat('dd MMM yyyy').format(fullDateTime);
-                          });
+          scrollable: true,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
+          title: Text(l10n.createNewGoal, style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5, fontSize: 18 * context.fontSizeFactor)),
+          content: MaxWidthBox(
+            maxWidth: 450,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                    _dialogInputField(context, l10n.goalName, Icons.edit_rounded, titleController),
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    _dialogInputField(context, l10n.targetAmount, Icons.attach_money_rounded, amountController, isNumber: true),
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    _dialogInputField(
+                      context,
+                      l10n.deadline,
+                      Icons.calendar_today_rounded,
+                      deadlineController,
+                      readOnly: true,
+                      onTap: () async {
+                        final date = await showDatePicker(context: context, initialDate: DateTime.now().add(const Duration(days: 30)), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 3650)));
+                        if (date != null) {
+                          if (!context.mounted) return;
+                          final time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+                          if (time != null) {
+                            final fullDateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+                            setDialogState(() {
+                              deadlineController.text = DateFormat('dd MMM yyyy').format(fullDateTime);
+                            });
+                          }
                         }
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  Text(l10n.selectIcon, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 55 * context.fontSizeFactor,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: goalIcons.length,
-                      itemBuilder: (context, index) {
-                        bool isSelected = selectedIcon == goalIcons[index];
-                        return GestureDetector(
-                          onTap: () => setDialogState(() => selectedIcon = goalIcons[index]),
-                          child: Container(
-                            margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
-                            width: 50 * context.fontSizeFactor,
-                            decoration: BoxDecoration(color: isSelected ? selectedColor : Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: isSelected ? selectedColor : Theme.of(context).dividerColor.withValues(alpha: 0.1))),
-                            child: Icon(goalIcons[index], color: isSelected ? Colors.white : AppColors.grey, size: 26 * context.fontSizeFactor),
-                          ),
-                        );
                       },
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(l10n.selectColor, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 45 * context.fontSizeFactor,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: goalColors.length,
-                      itemBuilder: (context, index) {
-                        bool isSelected = selectedColor == goalColors[index];
-                        return GestureDetector(
-                          onTap: () => setDialogState(() => selectedColor = goalColors[index]),
-                          child: Container(
-                            margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
-                            width: 45 * context.fontSizeFactor,
-                            decoration: BoxDecoration(color: goalColors[index], shape: BoxShape.circle, border: Border.all(color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent, width: 3)),
-                            child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 24) : null,
-                          ),
-                        );
-                      },
+                    SizedBox(height: 24 * context.fontSizeFactor),
+                    Text(l10n.selectIcon, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
+                    SizedBox(height: 12 * context.fontSizeFactor),
+                    SizedBox(
+                      height: 55 * context.fontSizeFactor,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: goalIcons.length,
+                        itemBuilder: (context, index) {
+                          bool isSelected = selectedIcon == goalIcons[index];
+                          return GestureDetector(
+                            onTap: () => setDialogState(() => selectedIcon = goalIcons[index]),
+                            child: Container(
+                              margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
+                              width: 50 * context.fontSizeFactor,
+                              decoration: BoxDecoration(color: isSelected ? selectedColor : Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(14 * context.fontSizeFactor), border: Border.all(color: isSelected ? selectedColor : Theme.of(context).dividerColor.withValues(alpha: 0.1))),
+                              child: Icon(goalIcons[index], color: isSelected ? Colors.white : AppColors.grey, size: 26 * context.fontSizeFactor),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
+                    SizedBox(height: 24 * context.fontSizeFactor),
+                    Text(l10n.selectColor, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
+                    SizedBox(height: 12 * context.fontSizeFactor),
+                    SizedBox(
+                      height: 45 * context.fontSizeFactor,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: goalColors.length,
+                        itemBuilder: (context, index) {
+                          bool isSelected = selectedColor == goalColors[index];
+                          return GestureDetector(
+                            onTap: () => setDialogState(() => selectedColor = goalColors[index]),
+                            child: Container(
+                              margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
+                              width: 45 * context.fontSizeFactor,
+                              decoration: BoxDecoration(color: goalColors[index], shape: BoxShape.circle, border: Border.all(color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent, width: 3)),
+                              child: isSelected ? Icon(Icons.check, color: Colors.white, size: 24 * context.fontSizeFactor) : null,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold))),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
             ElevatedButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
-                  _processCreateGoal(context, l10n, titleController.text, amountController.text, deadlineController.text, selectedIcon, selectedColor);
+                  Navigator.pop(context);
+                  _processCreateGoal(screenContext, l10n, titleController.text, amountController.text, deadlineController.text, selectedIcon, selectedColor);
                 }
               },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-              child: Text(l10n.create),
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
+              child: Text(l10n.create, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
             ),
           ],
         ),
@@ -1181,11 +1056,11 @@ class _SavingsScreenState extends State<SavingsScreen> {
             child: Container(
               width: 220 * context.fontSizeFactor,
               padding: EdgeInsets.all(32 * context.fontSizeFactor),
-              decoration: BoxDecoration(color: theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(32), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10))]),
+              decoration: BoxDecoration(color: theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(32 * context.fontSizeFactor), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20 * context.fontSizeFactor, offset: Offset(0, 10 * context.fontSizeFactor))]),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Stack(alignment: Alignment.center, children: [SizedBox(width: 65 * context.fontSizeFactor, height: 65 * context.fontSizeFactor, child: const CircularProgressIndicator(color: AppColors.accentTeal, strokeWidth: 3)), Icon(Icons.auto_awesome_rounded, color: AppColors.accentTeal, size: 32 * context.fontSizeFactor)]),
+                  Stack(alignment: Alignment.center, children: [SizedBox(width: 65 * context.fontSizeFactor, height: 65 * context.fontSizeFactor, child: CircularProgressIndicator(color: AppColors.accentTeal, strokeWidth: 3 * context.fontSizeFactor)), Icon(Icons.auto_awesome_rounded, color: AppColors.accentTeal, size: 32 * context.fontSizeFactor)]),
                   SizedBox(height: 24 * context.fontSizeFactor),
                   Text(l10n.processing, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color, decoration: ui.TextDecoration.none)),
                 ],
@@ -1239,106 +1114,107 @@ class _SavingsScreenState extends State<SavingsScreen> {
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          title: Text(l10n.editGoal, style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5)),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Column(
+        builder: (context, setDialogState) => Center(
+          child: MaxWidthBox(
+            maxWidth: 450,
+            child: AlertDialog(
+              scrollable: true,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
+              title: Text(l10n.editGoal, style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5, fontSize: 18 * context.fontSizeFactor)),
+              content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _dialogInputField(context, l10n.goalName, Icons.edit_rounded, titleController),
-                  const SizedBox(height: 16),
-                  _dialogInputField(context, l10n.targetAmount, Icons.attach_money_rounded, amountController, isNumber: true),
-                  const SizedBox(height: 16),
-                  _dialogInputField(
-                    context,
-                    l10n.deadline,
-                    Icons.calendar_today_rounded,
-                    deadlineController,
-                    readOnly: true,
-                    onTap: () async {
-                      final date = await showDatePicker(context: context, initialDate: DateTime.now().add(const Duration(days: 30)), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 3650)));
-                      if (date != null) {
-                        if (!context.mounted) return;
-                        setDialogState(() {
-                          deadlineController.text = DateFormat('dd MMM yyyy').format(date);
-                        });
-                      }
-                    },
+                      _dialogInputField(context, l10n.goalName, Icons.edit_rounded, titleController),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      _dialogInputField(context, l10n.targetAmount, Icons.attach_money_rounded, amountController, isNumber: true),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      _dialogInputField(
+                        context,
+                        l10n.deadline,
+                        Icons.calendar_today_rounded,
+                        deadlineController,
+                        readOnly: true,
+                        onTap: () async {
+                          final date = await showDatePicker(context: context, initialDate: DateTime.now().add(const Duration(days: 30)), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 3650)));
+                          if (date != null) {
+                            if (!context.mounted) return;
+                            setDialogState(() {
+                              deadlineController.text = DateFormat('dd MMM yyyy').format(date);
+                            });
+                          }
+                        },
+                      ),
+                      SizedBox(height: 24 * context.fontSizeFactor),
+                      Text(l10n.selectIcon, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
+                      SizedBox(height: 12 * context.fontSizeFactor),
+                      SizedBox(
+                        height: 55 * context.fontSizeFactor,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: goalIcons.length,
+                          itemBuilder: (context, index) {
+                            bool isSelected = selectedIcon == goalIcons[index];
+                            return GestureDetector(
+                              onTap: () => setDialogState(() => selectedIcon = goalIcons[index]),
+                              child: Container(
+                                margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
+                                width: 50 * context.fontSizeFactor,
+                                decoration: BoxDecoration(color: isSelected ? selectedColor : Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(14 * context.fontSizeFactor), border: Border.all(color: isSelected ? selectedColor : Theme.of(context).dividerColor.withValues(alpha: 0.1))),
+                                child: Icon(goalIcons[index], color: isSelected ? Colors.white : AppColors.grey, size: 26 * context.fontSizeFactor),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 24 * context.fontSizeFactor),
+                      Text(l10n.selectColor, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
+                      SizedBox(height: 12 * context.fontSizeFactor),
+                      SizedBox(
+                        height: 45 * context.fontSizeFactor,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: goalColors.length,
+                          itemBuilder: (context, index) {
+                            bool isSelected = selectedColor == goalColors[index];
+                            return GestureDetector(
+                              onTap: () => setDialogState(() => selectedColor = goalColors[index]),
+                              child: Container(
+                                margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
+                                width: 45 * context.fontSizeFactor,
+                                decoration: BoxDecoration(color: goalColors[index], shape: BoxShape.circle, border: Border.all(color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent, width: 3)),
+                                child: isSelected ? Icon(Icons.check, color: Colors.white, size: 24 * context.fontSizeFactor) : null,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 24),
-                  Text(l10n.selectIcon, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 55 * context.fontSizeFactor,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: goalIcons.length,
-                      itemBuilder: (context, index) {
-                        bool isSelected = selectedIcon == goalIcons[index];
-                        return GestureDetector(
-                          onTap: () => setDialogState(() => selectedIcon = goalIcons[index]),
-                          child: Container(
-                            margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
-                            width: 50 * context.fontSizeFactor,
-                            decoration: BoxDecoration(color: isSelected ? selectedColor : Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: isSelected ? selectedColor : Theme.of(context).dividerColor.withValues(alpha: 0.1))),
-                            child: Icon(goalIcons[index], color: isSelected ? Colors.white : AppColors.grey, size: 26 * context.fontSizeFactor),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(l10n.selectColor, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 45 * context.fontSizeFactor,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: goalColors.length,
-                      itemBuilder: (context, index) {
-                        bool isSelected = selectedColor == goalColors[index];
-                        return GestureDetector(
-                          onTap: () => setDialogState(() => selectedColor = goalColors[index]),
-                          child: Container(
-                            margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
-                            width: 45 * context.fontSizeFactor,
-                            decoration: BoxDecoration(color: goalColors[index], shape: BoxShape.circle, border: Border.all(color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent, width: 3)),
-                            child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 24) : null,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+                ElevatedButton(
+                  onPressed: () {
+                    if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
+                      Provider.of<AppState>(context, listen: false).updateSavingsGoal(
+                        index, 
+                        goal.copyWith(
+                          title: titleController.text,
+                          target: double.tryParse(amountController.text) ?? goal.target,
+                          deadline: deadlineController.text,
+                          icon: selectedIcon,
+                          color: selectedColor,
+                        )
+                      );
+                      Navigator.pop(context);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
+                  child: Text(l10n.save, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: const TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold))),
-            ElevatedButton(
-              onPressed: () {
-                if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
-                  Provider.of<AppState>(context, listen: false).updateSavingsGoal(
-                    index, 
-                    goal.copyWith(
-                      title: titleController.text,
-                      target: double.tryParse(amountController.text) ?? goal.target,
-                      deadline: deadlineController.text,
-                      icon: selectedIcon,
-                      color: selectedColor,
-                    )
-                  );
-                  Navigator.pop(context);
-                }
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-              child: Text(l10n.save),
-            ),
-          ],
         ),
       ),
     );

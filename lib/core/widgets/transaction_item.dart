@@ -13,6 +13,7 @@ class TransactionItem extends StatelessWidget {
   final String? date;
   final bool? isSent;
   final dynamic icon;
+  final String? avatarUrl;
   final VoidCallback? onTap;
 
   const TransactionItem({
@@ -24,6 +25,7 @@ class TransactionItem extends StatelessWidget {
     this.date,
     this.isSent,
     this.icon,
+    this.avatarUrl,
     this.onTap,
   });
 
@@ -54,7 +56,7 @@ class TransactionItem extends StatelessWidget {
               height: 48,
               width: 48,
               decoration: BoxDecoration(
-                color: (icon != null)
+                color: (avatarUrl != null || icon != null)
                   ? Colors.grey.withValues(alpha: 0.1)
                   : (isSent == null 
                     ? theme.colorScheme.primary.withValues(alpha: 0.05)
@@ -62,21 +64,36 @@ class TransactionItem extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: icon != null 
-                  ? AdaptiveIcon(icon, color: AppColors.primaryDark, size: 20)
-                  : (isSent == null 
-                    ? Text(
-                        title.isNotEmpty ? title[0] : "?",
-                        style: TextStyle(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
+                child: avatarUrl != null && avatarUrl!.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image.network(
+                        avatarUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Text(
+                          title.isNotEmpty ? title[0] : "?",
+                          style: TextStyle(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      )
-                    : AdaptiveIcon(
-                        isSent! ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown,
-                        color: isSent! ? Colors.red : AppColors.accentTeal,
-                        size: 16,
-                      )),
+                      ),
+                    )
+                  : (icon != null 
+                    ? AdaptiveIcon(icon, color: AppColors.primaryDark, size: 20)
+                    : (isSent == null 
+                      ? Text(
+                          title.isNotEmpty ? title[0] : "?",
+                          style: TextStyle(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : AdaptiveIcon(
+                          isSent! ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown,
+                          color: isSent! ? Colors.red : AppColors.accentTeal,
+                          size: 16,
+                        ))),
               ),
             ),
             const SizedBox(width: 16),

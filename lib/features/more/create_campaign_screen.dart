@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:provider/provider.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
+import '../../core/responsive_utils.dart';
+import '../../l10n/app_localizations.dart';
 
 class CreateCampaignScreen extends StatefulWidget {
   const CreateCampaignScreen({super.key});
@@ -13,9 +17,10 @@ class CreateCampaignScreen extends StatefulWidget {
 class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
+    final state = Provider.of<AppState>(context);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -23,10 +28,11 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          state.translate("Start Fundraiser", "Bilow Ururinta Sadaqo", ar: "بدء حملة تبرع", de: "Fundraiser starten", et: "Alusta annetuskampaaniat"),
+          l10n.startFundraiser,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
+            fontSize: 18 * context.fontSizeFactor,
           ),
         ),
         centerTitle: true,
@@ -38,168 +44,173 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FadeInDown(
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.accentTeal.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.volunteer_activism_rounded, color: AppColors.accentTeal, size: 32),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            state.translate("Create a Campaign", "Samee Ololaha", ar: "إنشاء حملة", de: "Kampagne erstellen", et: "Loo kampaania"),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
-                            ),
+      body: Center(
+        child: MaxWidthBox(
+          maxWidth: 800,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(context.horizontalPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FadeInDown(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentTeal.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.volunteer_activism_rounded, color: AppColors.accentTeal, size: 32),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.createCampaign,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16 * context.fontSizeFactor,
+                                  color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.createCampaignDesc,
+                                style: TextStyle(
+                                  color: theme.textTheme.bodyMedium?.color ?? AppColors.textPrimary,
+                                  fontSize: 13 * context.fontSizeFactor,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            state.translate("Raise funds for a cause you care about. We'll verify your campaign to build trust.", "Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doonaa ololahaaga si loo dhiso kalsoonida.", ar: "اجمع التبرعات لقضية تهمك. سنتحقق من حملتك لبناء الثقة.", de: "Sammeln Sie Spenden für einen Zweck, der Ihnen am Herzen liegt. Wir verifizieren Ihre Kampagne, um Vertrauen aufzubauen.", et: "Kogu raha eesmärgi nimel, mis sulle korda läheb. Me kinnitame su kampaania usalduse suurendamiseks."),
-                            style: TextStyle(
-                              color: theme.textTheme.bodyMedium?.color ?? AppColors.textPrimary,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
-            FadeInUp(
-              delay: const Duration(milliseconds: 100),
-              child: Text(
-                state.translate("Campaign Details", "Faahfaahinta Ololaha", ar: "تفاصيل الحملة", de: "Kampagnendetails", et: "Kampaania üksikasjad"),
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: theme.textTheme.titleMedium?.color,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            FadeInUp(
-              delay: const Duration(milliseconds: 200),
-              child: _buildTextField(
-                state.translate("Campaign Title", "Cinwaanka Ololaha", ar: "عنوان الحملة", de: "Kampagnentitel", et: "Kampaania pealkiri"),
-                state.translate("E.g. Help build a water well in Gedo", "Tusaale: Caawi dhisidda ceel biyood Gedo", ar: "مثلاً: ساعد في بناء بئر ماء في جيدو", de: "Z. B. Hilfe beim Bau eines Wasserbrunnens in Gedo", et: "Nt: Aita ehitada kaev Gedo piirkonnas"),
-                Icons.title_rounded,
-                theme,
-                isDark,
-              ),
-            ),
-            const SizedBox(height: 16),
-            FadeInUp(
-              delay: const Duration(milliseconds: 300),
-              child: _buildTextField(
-                state.translate("Goal Amount (USD)", "Cadadka Hadafka (USD)", ar: "المبلغ المستهدف (بالدولار الأمريكي)", de: "Zielbetrag (USD)", et: "Eesmärk (USD)"),
-                "E.g. 5000",
-                Icons.attach_money_rounded,
-                theme,
-                isDark,
-                isNumber: true,
-              ),
-            ),
-            const SizedBox(height: 16),
-            FadeInUp(
-              delay: const Duration(milliseconds: 400),
-              child: _buildTextField(
-                state.translate("Description", "Sharaxaadda", ar: "الوصف", de: "Beschreibung", et: "Kirjeldus"),
-                state.translate("Describe why you need help and how the funds will be used...", "Sharax sababta aad caawimo ugu baahan tahay iyo sida lacagta loo isticmaali doono...", ar: "صف لماذا تحتاج إلى المساعدة وكيف سيتم استخدام الأموال...", de: "Beschreiben Sie, warum Sie Hilfe benötigen und wie die Gelder verwendet werden...", et: "Kirjelda, miks sa abi vajad ja kuidas vahendeid kasutatakse..."),
-                Icons.description_rounded,
-                theme,
-                isDark,
-                maxLines: 5,
-              ),
-            ),
-            const SizedBox(height: 32),
-            FadeInUp(
-              delay: const Duration(milliseconds: 500),
-              child: Text(
-                state.translate("Cover Photo", "Sawirka Daboolka", ar: "صورة الغلاف", de: "Titelbild", et: "Kaanefoto"),
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: theme.textTheme.titleMedium?.color,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            FadeInUp(
-              delay: const Duration(milliseconds: 600),
-              child: Container(
-                height: 160,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: isDark ? theme.dividerColor.withValues(alpha: 0.1) : AppColors.primaryDark.withValues(alpha: 0.1), width: 2),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(color: (isDark ? theme.colorScheme.onSurface : AppColors.primaryDark).withValues(alpha: 0.05), shape: BoxShape.circle),
-                      child: Icon(Icons.cloud_upload_rounded, size: 32, color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      state.translate("Tap to upload photo", "Taabo si aad sawir u soo geliso", ar: "اضغط لتحميل الصورة", de: "Tippen, um ein Foto hochzuladen", et: "Puuduta foto üleslaadimiseks"),
-                      style: TextStyle(
-                        color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      state.translate("JPG, PNG up to 5MB", "JPG, PNG ilaa 5MB", ar: "JPG، PNG حتى 5 ميجابايت", de: "JPG, PNG bis zu 5 MB", et: "JPG, PNG kuni 5MB"),
-                      style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 48),
-            FadeInUp(
-              delay: const Duration(milliseconds: 700),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("Campaign submitted for review!", "Ololaha waa loo gudbiyay dib u eegis!", ar: "تم تقديم الحملة للمراجعة!", de: "Kampagne zur Überprüfung eingereicht!", et: "Kampaania on ülevaatamiseks esitatud!"))));
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark ? theme.colorScheme.primary : AppColors.primaryDark,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
+                ),
+                const SizedBox(height: 32),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 100),
                   child: Text(
-                    state.translate("Submit for Review", "Gudbi si dib loogu eego", ar: "تقديم للمراجعة", de: "Zur Überprüfung einreichen", et: "Esita ülevaatamiseks"),
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    l10n.campaignDetails,
+                    style: TextStyle(
+                      fontSize: 18 * context.fontSizeFactor,
+                      fontWeight: FontWeight.bold,
+                      color: theme.textTheme.titleMedium?.color,
+                    ),
                   ),
                 ),
-              ),
+                const SizedBox(height: 24),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 200),
+                  child: _buildTextField(
+                    l10n.campaignTitle,
+                    l10n.campaignTitleHint,
+                    Icons.title_rounded,
+                    theme,
+                    isDark,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 300),
+                  child: _buildTextField(
+                    l10n.goalAmountUsd,
+                    l10n.goalAmountHint,
+                    Icons.attach_money_rounded,
+                    theme,
+                    isDark,
+                    isNumber: true,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 400),
+                  child: _buildTextField(
+                    l10n.description,
+                    l10n.descriptionHint,
+                    Icons.description_rounded,
+                    theme,
+                    isDark,
+                    maxLines: 5,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 500),
+                  child: Text(
+                    l10n.coverPhoto,
+                    style: TextStyle(
+                      fontSize: 16 * context.fontSizeFactor,
+                      fontWeight: FontWeight.bold,
+                      color: theme.textTheme.titleMedium?.color,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 600),
+                  child: Container(
+                    height: 160,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: isDark ? theme.dividerColor.withValues(alpha: 0.1) : AppColors.primaryDark.withValues(alpha: 0.1), width: 2),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(color: (isDark ? theme.colorScheme.onSurface : AppColors.primaryDark).withValues(alpha: 0.05), shape: BoxShape.circle),
+                          child: Icon(Icons.cloud_upload_rounded, size: 32, color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          l10n.tapToUpload,
+                          style: TextStyle(
+                            color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          l10n.uploadLimits,
+                          style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 12 * context.fontSizeFactor),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 48),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 700),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.campaignSubmitted)));
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDark ? theme.colorScheme.primary : AppColors.primaryDark,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      child: Text(
+                        l10n.submitForReview,
+                        style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
             ),
-            const SizedBox(height: 24),
-          ],
+          ),
         ),
       ),
     );
@@ -213,7 +224,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
           label,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            fontSize: 14,
+            fontSize: 14 * context.fontSizeFactor,
             color: theme.textTheme.titleMedium?.color,
           ),
         ),

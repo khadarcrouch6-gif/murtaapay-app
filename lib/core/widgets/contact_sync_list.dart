@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' hide PermissionStatus;
 import 'package:permission_handler/permission_handler.dart' as ph;
@@ -9,10 +9,13 @@ import '../app_state.dart';
 import '../app_colors.dart';
 import '../../l10n/app_localizations.dart';
 
-class ContactSyncList extends StatefulWidget {
-  final Function(Contact contact, String? murtaaxName) onContactSelected;
+typedef ContactSelectedCallback = void Function(Contact contact, String? murtaaxName, String? verifiedId);
 
-  const ContactSyncList({super.key, required this.onContactSelected});
+class ContactSyncList extends StatefulWidget {
+  final ContactSelectedCallback onContactSelected;
+  final String searchQuery;
+
+  const ContactSyncList({super.key, required this.onContactSelected, this.searchQuery = ""});
 
   @override
   State<ContactSyncList> createState() => _ContactSyncListState();
@@ -31,6 +34,13 @@ class _ContactSyncListState extends State<ContactSyncList> {
   }
 
   Future<void> _checkPermissionAndFetch() async {
+    if (kIsWeb) {
+      setState(() {
+        _isLoading = false;
+        _contacts = [];
+      });
+      return;
+    }
     final status = await ph.Permission.contacts.status;
     setState(() {
       _permissionStatus = status;
@@ -46,6 +56,7 @@ class _ContactSyncListState extends State<ContactSyncList> {
   }
 
   Future<void> _requestPermission() async {
+    if (kIsWeb) return;
     final status = await ph.Permission.contacts.request();
     setState(() {
       _permissionStatus = status;
@@ -95,6 +106,19 @@ class _ContactSyncListState extends State<ContactSyncList> {
     final theme = Theme.of(context);
     final appState = Provider.of<AppState>(context);
 
+    if (kIsWeb) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.contact_page_outlined, size: 64, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            const Text("Contact sync is not supported on web", style: TextStyle(color: Colors.grey)),
+          ],
+        ),
+      );
+    }
+
     if (_permissionStatus.isDenied) {
       return _buildPermissionPrompt(l10n, theme);
     }
@@ -107,11 +131,13 @@ class _ContactSyncListState extends State<ContactSyncList> {
       return const Center(child: CircularProgressIndicator());
     }
 
+    final effectiveSearchQuery = widget.searchQuery.isNotEmpty ? widget.searchQuery : _searchQuery;
+
     final filteredContacts = _contacts?.where((c) {
       final displayName = (c.displayName ?? "").toLowerCase();
-      final query = _searchQuery.toLowerCase();
+      final query = effectiveSearchQuery.toLowerCase();
       return displayName.contains(query) ||
-             c.phones.any((p) => p.number.contains(_searchQuery));
+             c.phones.any((p) => p.number.contains(effectiveSearchQuery));
     }).toList() ?? [];
 
     // Separate contacts into "On Murtaax" and "Invite"
@@ -137,23 +163,43 @@ class _ContactSyncListState extends State<ContactSyncList> {
       }
     }
 
+    if (onMurtaax.isEmpty && others.isEmpty) {
+      return Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.person_search_rounded, size: 64, color: Colors.grey[300]),
+              const SizedBox(height: 16),
+              Text(
+                effectiveSearchQuery.isEmpty ? l10n.noTransactionsFound : "No results for \"$effectiveSearchQuery\"",
+                style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Center(
       child: MaxWidthBox(
         maxWidth: 600,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                onChanged: (v) => setState(() => _searchQuery = v),
-                decoration: InputDecoration(
-                  hintText: "Search contacts...",
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+            if (widget.searchQuery.isEmpty)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  onChanged: (v) => setState(() => _searchQuery = v),
+                  decoration: InputDecoration(
+                    hintText: "Search contacts...",
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                  ),
                 ),
               ),
-            ),
             Expanded(
               child: ListView(
                 children: [
@@ -175,6 +221,7 @@ class _ContactSyncListState extends State<ContactSyncList> {
                       m['contact'], 
                       theme, 
                       murtaaxName: m['murtaaxName'],
+                      verifiedId: m['phone'], // Assuming phone is the ID
                       isMurtaax: true,
                     )),
                     const Divider(),
@@ -201,7 +248,7 @@ class _ContactSyncListState extends State<ContactSyncList> {
     );
   }
 
-  Widget _buildContactTile(BuildContext context, Contact contact, ThemeData theme, {String? murtaaxName, bool isMurtaax = false}) {
+  Widget _buildContactTile(BuildContext context, Contact contact, ThemeData theme, {String? murtaaxName, String? verifiedId, bool isMurtaax = false}) {
     Uint8List? photoBytes;
     if (contact.photo != null) {
       photoBytes = contact.photo?.thumbnail;
@@ -236,46 +283,49 @@ class _ContactSyncListState extends State<ContactSyncList> {
             ),
             child: Text("INVITE", style: TextStyle(color: theme.colorScheme.secondary, fontSize: 10, fontWeight: FontWeight.bold)),
           ),
-      onTap: () => widget.onContactSelected(contact, murtaaxName),
+      onTap: () => widget.onContactSelected(contact, murtaaxName, verifiedId),
     );
   }
 
   Widget _buildPermissionPrompt(AppLocalizations l10n, ThemeData theme) {
     return Center(
-      child: MaxWidthBox(
-        maxWidth: 500,
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.contacts_rounded, size: 64, color: theme.colorScheme.secondary.withValues(alpha: 0.5)),
-              const SizedBox(height: 24),
-              Text(
-                "Sync your contacts",
-                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                "Find your friends and family on MurtaaxPay instantly. We'll only use your contacts to help you find people you know.",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _requestPermission,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.secondary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text("Sync Contacts", style: TextStyle(fontWeight: FontWeight.bold)),
+      child: SingleChildScrollView(
+        child: MaxWidthBox(
+          maxWidth: 500,
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.contacts_rounded, size: 64, color: theme.colorScheme.secondary.withValues(alpha: 0.5)),
+                const SizedBox(height: 24),
+                Text(
+                  "Sync your contacts",
+                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+                const Text(
+                  "Find your friends and family on MurtaaxPay instantly. We'll only use your contacts to help you find people you know.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: _requestPermission,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.secondary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text("Sync Contacts", style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -284,38 +334,41 @@ class _ContactSyncListState extends State<ContactSyncList> {
 
   Widget _buildPermanentlyDenied(AppLocalizations l10n, ThemeData theme) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.settings_rounded, size: 64, color: Colors.grey),
-            const SizedBox(height: 24),
-            Text(
-              "Permission Required",
-              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              l10n.contactPermissionRequired,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () => ph.openAppSettings(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.secondary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: Text(l10n.openSettings, style: const TextStyle(fontWeight: FontWeight.bold)),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.settings_rounded, size: 64, color: Colors.grey),
+              const SizedBox(height: 24),
+              Text(
+                "Permission Required",
+                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                l10n.contactPermissionRequired,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () => ph.openAppSettings(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.secondary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text(l10n.openSettings, style: const TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -7,37 +7,12 @@ import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'models/campaign.dart';
 import 'campaign_detail_screen.dart';
 import 'create_campaign_screen.dart';
 import 'zakat_calculator_screen.dart';
 
-class Campaign {
-  final String id;
-  final String title;
-  final String description;
-  final double goalAmount;
-  final double raisedAmount;
-  final String creator;
-  final IconData icon;
-  final String imageUrl;
-  final String category;
-  final int donorCount;
-  final String lastDonationAgo;
-
-  Campaign({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.goalAmount,
-    required this.raisedAmount,
-    required this.creator,
-    required this.icon,
-    required this.imageUrl,
-    required this.category,
-    required this.donorCount,
-    required this.lastDonationAgo,
-  });
-}
+import 'zakat_calculator_screen.dart';
 
 class SadaqahScreen extends StatefulWidget {
   const SadaqahScreen({super.key});
@@ -49,13 +24,13 @@ class SadaqahScreen extends StatefulWidget {
 class _SadaqahScreenState extends State<SadaqahScreen> {
   String _selectedCategory = "All";
   
-  List<Campaign> _getCampaigns(AppState state) {
+  List<Campaign> _getCampaigns(AppState state, AppLocalizations l10n) {
     final allCampaigns = [
       Campaign(
         id: "1",
         category: "Medical",
-        title: state.translate("Medical Emergency", "Xaalad Caafimaad", ar: "حالة طبية طارئة", de: "Medizinischer Notfall"),
-        description: state.translate("Help Ahmed cover his heart surgery expenses in Turkey.", "Ka caawi Axmed kharashka qalliinka wadnaha ee Turkiga.", ar: "ساعد أحمد في تغطية تكاليف جراحة قلبه في تركيا.", de: "Helfen Sie Ahmed, seine Kosten für die Herzoperation in der Türkei zu decken."),
+        title: l10n.campaignMedicalTitle,
+        description: l10n.campaignMedicalDesc,
         goalAmount: 5000,
         raisedAmount: 3250,
         creator: "Ali Abdi",
@@ -67,8 +42,8 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
       Campaign(
         id: "2",
         category: "Water",
-        title: state.translate("Village Water Well", "Ceelka Biyaha Tuulada", ar: "بئر ماء للقرية", de: "Dorfbrunnen"),
-        description: state.translate("Building a permanent water source for a village in Gedo.", "Dhisidda il biyo oo joogto ah oo loo sameeyo tuulo ku taal Gedo.", ar: "بناء مصدر مياه دائم لقرية في جيدو.", de: "Bau einer dauerhaften Wasserquelle für ein Dorf in Gedo."),
+        title: l10n.campaignWaterTitle,
+        description: l10n.campaignWaterDesc,
         goalAmount: 2000,
         raisedAmount: 1800,
         creator: "Community Fund",
@@ -80,8 +55,8 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
       Campaign(
         id: "3",
         category: "Education",
-        title: state.translate("Education Support", "Garab istaagga Waxbarashada", ar: "دعم التعليم", de: "Bildungsunterstützung"),
-        description: state.translate("Scholarships for 10 orphans in Mogadishu.", "Deeq waxbarasho oo loogu talagalay 10 agoon ah oo ku nool Muqdisho.", ar: "منح دراسية لـ 10 أيتام في مقديشو.", de: "Stipendien für 10 Waisenkinder in Mogadischu."),
+        title: l10n.campaignEducationTitle,
+        description: l10n.campaignEducationDesc,
         goalAmount: 3000,
         raisedAmount: 450,
         creator: "Sahra Jama",
@@ -93,8 +68,8 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
       Campaign(
         id: "4",
         category: "Emergency",
-        title: state.translate("Food Relief", "Deeq Raashin", ar: "إغاثة غذائية", de: "Nahrungsmittelhilfe"),
-        description: state.translate("Providing essential food supplies to families affected by drought.", "Bixinta sahayda cuntada ee muhiimka ah ee qoysaska ay abartu saameysay.", ar: "توفير الإمدادات الغذائية الأساسية للأسر المتضررة من الجفاف.", de: "Bereitstellung lebenswichtiger Nahrungsmittel für von der Dürre betroffene Familien."),
+        title: l10n.campaignEmergencyTitle,
+        description: l10n.campaignEmergencyDesc,
         goalAmount: 10000,
         raisedAmount: 7200,
         creator: "Red Crescent",
@@ -109,7 +84,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     return allCampaigns.where((c) => c.category == _selectedCategory).toList();
   }
 
-  Widget _buildHeroSection(BuildContext context, Campaign featured, AppState state) {
+  Widget _buildHeroSection(BuildContext context, Campaign featured, AppState state, AppLocalizations l10n) {
     double progress = featured.raisedAmount / featured.goalAmount;
     final theme = Theme.of(context);
     
@@ -122,11 +97,11 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
           );
         },
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 16),
-          height: 400,
+          margin: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 16 * context.fontSizeFactor),
+          height: 400 * context.fontSizeFactor,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10))],
+            borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20 * context.fontSizeFactor, offset: Offset(0, 10 * context.fontSizeFactor))],
           ),
           clipBehavior: Clip.antiAlias,
           child: Stack(
@@ -143,7 +118,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                       end: Alignment.bottomRight,
                     ),
                   ),
-                  child: Center(child: Icon(featured.icon, size: 60, color: Colors.white.withValues(alpha: 0.2))),
+                  child: Center(child: Icon(featured.icon, size: 60 * context.fontSizeFactor, color: Colors.white.withValues(alpha: 0.2))),
                 ),
               ),
               Container(
@@ -167,7 +142,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                     child: Container(
-                      height: 160,
+                      height: 160 * context.fontSizeFactor,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
@@ -180,35 +155,35 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                 ),
               ),
               Positioned(
-                bottom: 24,
-                left: 24,
-                right: 24,
+                bottom: 24 * context.fontSizeFactor,
+                left: 24 * context.fontSizeFactor,
+                right: 24 * context.fontSizeFactor,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(color: AppColors.accentTeal, borderRadius: BorderRadius.circular(20)),
-                      child: Text(state.translate("URGENT", " DEG-DEG", ar: "عاجل", de: "DRINGEND"), style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                      padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
+                      decoration: BoxDecoration(color: AppColors.accentTeal, borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
+                      child: Text(l10n.sadaqahUrgent, style: TextStyle(color: Colors.white, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                     ),
-                    const SizedBox(height: 12),
-                    Text(featured.title, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 12 * context.fontSizeFactor),
+                    Text(featured.title, style: TextStyle(color: Colors.white, fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    SizedBox(height: 16 * context.fontSizeFactor),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("\$${featured.raisedAmount.toInt()} ${state.translate("raised", "la ururiyay")}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-                        Text("${(progress * 100).toInt()}%", style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 18)),
+                        Text("\$${featured.raisedAmount.toInt()} ${l10n.sadaqahRaised}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+                        Text("${(progress * 100).toInt()}%", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8 * context.fontSizeFactor),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10 * context.fontSizeFactor),
                       child: LinearProgressIndicator(
                         value: progress,
                         backgroundColor: Colors.white.withValues(alpha: 0.2),
                         valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
-                        minHeight: 8,
+                        minHeight: 8 * context.fontSizeFactor,
                       ),
                     ),
                   ],
@@ -221,43 +196,38 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     );
   }
 
-  Widget _buildTrustBanner(BuildContext context, AppState state) {
+  Widget _buildTrustBanner(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     
     return FadeInUp(
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        margin: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 8 * context.fontSizeFactor),
+        padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 16 * context.fontSizeFactor),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [AppColors.accentTeal.withValues(alpha: 0.15), AppColors.accentTeal.withValues(alpha: 0.05)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
           border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2)),
           boxShadow: [
-            BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.05), blurRadius: 15, offset: const Offset(0, 5)),
+            BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.05), blurRadius: 15 * context.fontSizeFactor, offset: Offset(0, 5 * context.fontSizeFactor)),
           ],
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8 * context.fontSizeFactor),
               decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle),
-              child: const Icon(Icons.verified_user_rounded, color: AppColors.accentTeal, size: 22),
+              child: Icon(Icons.verified_user_rounded, color: AppColors.accentTeal, size: 22 * context.fontSizeFactor),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16 * context.fontSizeFactor),
             Expanded(
               child: Text(
-                state.translate(
-                  "100% Secure. 0% Platform Fees. 0% Withdrawal Fees.",
-                  "100% Ammaan ah. 0% Khidmad ah. 0% Kala bixis ah.",
-                  ar: "آمن 100٪. 0٪ رسوم المنصة. 0٪ رسوم سحب.",
-                  de: "100 % sicher. 0 % Plattformgebühren. 0 % Auszahlungsgebühren.",
-                ),
-                style: const TextStyle(color: AppColors.accentTeal, fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.3),
+                l10n.secureProtected + ". " + l10n.zeroPlatformFees + ". " + l10n.freeWithdrawals + ".",
+                style: TextStyle(color: AppColors.accentTeal, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w600, letterSpacing: 0.3),
               ),
             ),
           ],
@@ -266,12 +236,12 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     );
   }
 
-  Widget _buildCategories(BuildContext context, AppState state) {
+  Widget _buildCategories(BuildContext context, AppLocalizations l10n) {
     final categories = ["All", "Medical", "Water", "Education", "Emergency"];
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      height: 50,
-      margin: const EdgeInsets.symmetric(vertical: 20),
+      height: 50 * context.fontSizeFactor,
+      margin: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
@@ -280,19 +250,19 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
           final cat = categories[index];
           final isSelected = _selectedCategory == cat;
           return Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: EdgeInsets.only(right: 12 * context.fontSizeFactor),
             child: FilterChip(
               selected: isSelected,
-              label: Text(state.translate(cat, _getSoCategory(cat))),
+              label: Text(_getL10nCategory(cat, l10n)),
               onSelected: (val) => setState(() => _selectedCategory = cat),
               backgroundColor: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.grey.withValues(alpha: 0.05),
               selectedColor: AppColors.accentTeal.withValues(alpha: 0.15),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
               side: BorderSide(color: isSelected ? AppColors.accentTeal : Colors.transparent),
               labelStyle: TextStyle(
                 color: isSelected ? AppColors.accentTeal : AppColors.grey,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                fontSize: 13,
+                fontSize: 13 * context.fontSizeFactor,
               ),
               shape: StadiumBorder(),
               showCheckmark: false,
@@ -303,13 +273,13 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     );
   }
 
-  String _getSoCategory(String cat) {
+  String _getL10nCategory(String cat, AppLocalizations l10n) {
     switch (cat) {
-      case "All": return "Dhammaan";
-      case "Medical": return "Caafimaad";
-      case "Water": return "Biyo";
-      case "Education": return "Waxbarasho";
-      case "Emergency": return "Gurmad";
+      case "All": return l10n.catAll;
+      case "Medical": return l10n.catMedical;
+      case "Water": return l10n.catWater;
+      case "Education": return l10n.catEducation;
+      case "Emergency": return l10n.catEmergency;
       default: return cat;
     }
   }
@@ -319,7 +289,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final state = Provider.of<AppState>(context);
-    final campaigns = _getCampaigns(state);
+    final campaigns = _getCampaigns(state, l10n);
     final isRtl = Directionality.of(context) == TextDirection.rtl;
     
     return Scaffold(
@@ -339,13 +309,13 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
           maxWidth: 1000,
           child: Column(
             children: [
+              _buildCategories(context, l10n),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
                   children: [
-                    if (campaigns.isNotEmpty) _buildHeroSection(context, campaigns.first, state),
-                    _buildTrustBanner(context, state),
-                    _buildCategories(context, state),
+                    if (campaigns.isNotEmpty) _buildHeroSection(context, campaigns.first, state, l10n),
+                    _buildTrustBanner(context, l10n),
                     ...campaigns.asMap().entries.map((entry) {
                       final index = entry.key;
                       final campaign = entry.value;
@@ -362,7 +332,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                         ),
                       );
                     }).toList(),
-                    const SizedBox(height: 100),
+                    SizedBox(height: 100 * context.fontSizeFactor),
                   ],
                 ),
               ),
@@ -389,21 +359,21 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
           );
         },
         child: Container(
-          margin: const EdgeInsets.only(bottom: 32),
+          margin: EdgeInsets.only(bottom: 32 * context.fontSizeFactor),
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
             border: Border.all(color: theme.dividerColor.withValues(alpha: isDark ? 0.08 : 0.05)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-                blurRadius: 30,
-                offset: const Offset(0, 15),
+                blurRadius: 30 * context.fontSizeFactor,
+                offset: Offset(0, 15 * context.fontSizeFactor),
               ),
               BoxShadow(
                 color: AppColors.accentTeal.withValues(alpha: isDark ? 0.05 : 0.01),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+                blurRadius: 20 * context.fontSizeFactor,
+                offset: Offset(0, 10 * context.fontSizeFactor),
               ),
             ],
           ),
@@ -481,16 +451,16 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
   Widget _buildVerifiedBadge(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     return Positioned(
-      top: 16,
-      left: 16,
+      top: 16 * context.fontSizeFactor,
+      left: 16 * context.fontSizeFactor,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 14 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
-        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10)]),
+        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20 * context.fontSizeFactor), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10 * context.fontSizeFactor)]),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.verified_rounded, color: const Color(0xFF10B981), size: 16 * context.fontSizeFactor),
-            const SizedBox(width: 6),
+            SizedBox(width: 6 * context.fontSizeFactor),
             Text(l10n.verified, style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           ],
         ),
@@ -507,45 +477,45 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.trending_up_rounded, size: 14, color: AppColors.accentTeal),
-            const SizedBox(width: 4),
+            Icon(Icons.trending_up_rounded, size: 14 * context.fontSizeFactor, color: AppColors.accentTeal),
+            SizedBox(width: 4 * context.fontSizeFactor),
             Text(
-              "${AppState().translate("Trending", "Hadda Socda", ar: "رائج", de: "Beliebt")} • ${campaign.lastDonationAgo} ${AppState().translate("ago", "ka hor", ar: "منذ", de: "vor")}",
+              "${l10n.sadaqahTrending} • ${campaign.lastDonationAgo} ${l10n.sadaqahAgo}",
               style: TextStyle(color: AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12 * context.fontSizeFactor),
         Text(campaign.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
-        const SizedBox(height: 8),
+        SizedBox(height: 8 * context.fontSizeFactor),
         Text(campaign.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor, height: 1.5)),
-        const SizedBox(height: 24),
+        SizedBox(height: 24 * context.fontSizeFactor),
         ClipRRect(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * context.fontSizeFactor),
           child: LinearProgressIndicator(
             value: progress,
             backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.1),
             valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
-            minHeight: 8,
+            minHeight: 8 * context.fontSizeFactor,
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16 * context.fontSizeFactor),
         Row(
           children: [
             Text("\$${campaign.raisedAmount.toInt()}", style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 18 * context.fontSizeFactor)),
-            const SizedBox(width: 4),
-            Text("${AppState().translate("raised of", "la ururiyay")} \$${campaign.goalAmount.toInt()}", style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+            SizedBox(width: 4 * context.fontSizeFactor),
+            Text("${l10n.sadaqahRaisedOf} \$${campaign.goalAmount.toInt()}", style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
           ],
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12 * context.fontSizeFactor),
         Divider(color: theme.dividerColor.withValues(alpha: 0.1), height: 1),
-        const SizedBox(height: 12),
+        SizedBox(height: 12 * context.fontSizeFactor),
         Row(
           children: [
-            Icon(Icons.people_outline_rounded, size: 16, color: AppColors.grey.withValues(alpha: 0.8)),
-            const SizedBox(width: 6),
+            Icon(Icons.people_outline_rounded, size: 16 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.8)),
+            SizedBox(width: 6 * context.fontSizeFactor),
             Text(
-              "${campaign.donorCount} ${AppState().translate("donations", "deeqoodo")}",
+              "${campaign.donorCount} ${l10n.sadaqahDonations}",
               style: TextStyle(color: AppColors.grey.withValues(alpha: 0.8), fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w500),
             ),
           ],
@@ -554,14 +524,15 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     );
   }
 
+
   Widget _buildBottomAction(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     return Container(
-      padding: EdgeInsets.fromLTRB(24, 16, 24, context.responsiveValue(mobile: 120, tablet: 24, desktop: 24)),
+      padding: EdgeInsets.fromLTRB(24 * context.fontSizeFactor, 16 * context.fontSizeFactor, 24 * context.fontSizeFactor, context.responsiveValue(mobile: 120, tablet: 24, desktop: 24)),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.05), blurRadius: 20, offset: const Offset(0, -5))],
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30 * context.fontSizeFactor)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.05), blurRadius: 20 * context.fontSizeFactor, offset: Offset(0, -5 * context.fontSizeFactor))],
       ),
       child: Center(
         child: MaxWidthBox(
@@ -578,7 +549,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
                 elevation: 8,
                 shadowColor: theme.colorScheme.primary.withValues(alpha: 0.3),
               ),

@@ -72,18 +72,18 @@ class _VouchersScreenState extends State<VouchersScreen> {
                     FadeInDown(
                       child: Text(
                         l10n.vouchers,
-                        style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color),
+                        style: TextStyle(fontSize: 22 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24 * context.fontSizeFactor),
                     if (isWide)
                       GridView.count(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         crossAxisCount: 2,
-                        crossAxisSpacing: 24,
+                        crossAxisSpacing: 24 * context.fontSizeFactor,
                         mainAxisSpacing: 0,
-                        childAspectRatio: 1.8,
+                        childAspectRatio: 1.6,
                         children: _buildVoucherList(context, l10n, theme, isDark),
                       )
                     else
@@ -91,17 +91,17 @@ class _VouchersScreenState extends State<VouchersScreen> {
                         children: _buildVoucherList(context, l10n, theme, isDark),
                       ),
                     
-                    const SizedBox(height: 48),
+                    SizedBox(height: 48 * context.fontSizeFactor),
                     FadeInUp(
                       delay: const Duration(milliseconds: 400),
                       child: Text(l10n.howToUse, 
                           style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20 * context.fontSizeFactor),
                     _buildStep(context, theme, 1, l10n.stepRedeem, 500),
                     _buildStep(context, theme, 2, l10n.stepTransfer, 600),
                     _buildStep(context, theme, 3, l10n.stepPaste, 700),
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40 * context.fontSizeFactor),
                   ],
                 ),
               );
@@ -175,14 +175,14 @@ class _VouchersScreenState extends State<VouchersScreen> {
     return FadeInUp(
       delay: Duration(milliseconds: delay),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 24),
+        margin: EdgeInsets.only(bottom: 24 * context.fontSizeFactor),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: isDark ? [] : [BoxShadow(color: color.withValues(alpha: 0.08), blurRadius: 25, offset: const Offset(0, 10))],
+          borderRadius: BorderRadius.circular(28 * context.fontSizeFactor),
+          boxShadow: isDark ? [] : [BoxShadow(color: color.withValues(alpha: 0.08), blurRadius: 25 * context.fontSizeFactor, offset: Offset(0, 10 * context.fontSizeFactor))],
         ),
         child: ClipPath(
-          clipper: TicketClipper(stubWidth: stubWidth),
+          clipper: TicketClipper(stubWidth: stubWidth, holeRadius: 16 * context.fontSizeFactor),
           child: Container(
             color: theme.colorScheme.surface,
             child: Row(
@@ -198,7 +198,7 @@ class _VouchersScreenState extends State<VouchersScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(icon, color: Colors.white, size: 32 * context.fontSizeFactor),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10 * context.fontSizeFactor),
                       RotatedBox(
                         quarterTurns: -1,
                         child: Text(
@@ -223,11 +223,11 @@ class _VouchersScreenState extends State<VouchersScreen> {
                             if (isRedeemed) Icon(Icons.check_circle_rounded, color: const Color(0xFF10B981), size: 16 * context.fontSizeFactor),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8 * context.fontSizeFactor),
                         Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.titleMedium?.color)),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4 * context.fontSizeFactor),
                         Text(desc, style: TextStyle(fontSize: 13 * context.fontSizeFactor, color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7), height: 1.4)),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16 * context.fontSizeFactor),
                         GestureDetector(
                           onTap: () => _redeemVoucher(code, l10n),
                           child: AnimatedContainer(
@@ -237,7 +237,7 @@ class _VouchersScreenState extends State<VouchersScreen> {
                             padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
                             decoration: BoxDecoration(
                               color: isRedeemed ? const Color(0xFF10B981) : color.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
                               border: Border.all(color: isRedeemed ? const Color(0xFF10B981) : color.withValues(alpha: 0.2)),
                             ),
                             child: Center(
@@ -269,18 +269,18 @@ class _VouchersScreenState extends State<VouchersScreen> {
     return FadeInUp(
       delay: Duration(milliseconds: delay),
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
+        padding: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
         child: Row(
           children: [
             Container(
-              width: 36 * context.fontSizeFactor, height: 36 * context.fontSizeFactor,
+              width: 40 * context.fontSizeFactor, height: 40 * context.fontSizeFactor,
               decoration: BoxDecoration(
                 color: isDark ? theme.colorScheme.surfaceContainerHighest : AppColors.primaryDark.withValues(alpha: 0.08), 
                 shape: BoxShape.circle
               ),
-              child: Center(child: Text(number.toString(), style: TextStyle(color: isDark ? theme.colorScheme.primary : AppColors.primaryDark, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+              child: Center(child: Text(number.toString(), style: TextStyle(color: isDark ? theme.colorScheme.primary : AppColors.primaryDark, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor))),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16 * context.fontSizeFactor),
             Expanded(child: Text(text, style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7), fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.w500))),
           ],
         ),
@@ -291,18 +291,19 @@ class _VouchersScreenState extends State<VouchersScreen> {
 
 class TicketClipper extends CustomClipper<Path> {
   final double stubWidth;
-  TicketClipper({required this.stubWidth});
+  final double holeRadius;
+  TicketClipper({required this.stubWidth, required this.holeRadius});
 
   @override
   Path getClip(Size size) {
     final path = Path();
-    const double holeRadius = 16;
+    // const double holeRadius = 16;
     // double stubWidth = 100; // Use the passed stubWidth
 
     path.lineTo(stubWidth - holeRadius, 0);
     path.arcToPoint(
       Offset(stubWidth + holeRadius, 0),
-      radius: const Radius.circular(holeRadius),
+      radius: Radius.circular(holeRadius),
       clockwise: false,
     );
     path.lineTo(size.width, 0);
@@ -310,7 +311,7 @@ class TicketClipper extends CustomClipper<Path> {
     path.lineTo(stubWidth + holeRadius, size.height);
     path.arcToPoint(
       Offset(stubWidth - holeRadius, size.height),
-      radius: const Radius.circular(holeRadius),
+      radius: Radius.circular(holeRadius),
       clockwise: false,
     );
     path.lineTo(0, size.height);
@@ -320,5 +321,5 @@ class TicketClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }

@@ -46,6 +46,12 @@ class AppState extends ChangeNotifier {
     return _cardPin == pin;
   }
 
+  void updateCardPin(String pin) {
+    _cardPin = pin;
+    _prefs.setString('card_pin', pin);
+    notifyListeners();
+  }
+
   String _currencyCode = 'USD';
   String get currencyCode => _currencyCode;
 
@@ -60,6 +66,9 @@ class AppState extends ChangeNotifier {
 
   List<VirtualCard> _cards = [];
   List<VirtualCard> get cards => _cards;
+
+  List<VirtualCard> _terminatedCards = [];
+  List<VirtualCard> get terminatedCards => _terminatedCards;
 
   List<SavingsGoal> _savingsGoals = [];
   List<SavingsGoal> get savingsGoals => _savingsGoals;
@@ -82,6 +91,32 @@ class AppState extends ChangeNotifier {
       _recurringPayments = [
         RecurringPayment(
           id: '1',
+          title: "Netflix Subscription",
+          receiverId: "netflix.com",
+          receiverName: "Netflix",
+          amount: 15.99,
+          frequency: RecurringFrequency.monthly,
+          startDate: DateTime.now().subtract(const Duration(days: 15)),
+          nextPaymentDate: DateTime.now().add(const Duration(days: 15)),
+          status: RecurringStatus.active,
+          category: "Subscriptions",
+          cardId: "1",
+        ),
+        RecurringPayment(
+          id: '2',
+          title: "Amazon Prime",
+          receiverId: "amazon.com",
+          receiverName: "Amazon",
+          amount: 12.99,
+          frequency: RecurringFrequency.monthly,
+          startDate: DateTime.now().subtract(const Duration(days: 5)),
+          nextPaymentDate: DateTime.now().add(const Duration(days: 25)),
+          status: RecurringStatus.active,
+          category: "Subscriptions",
+          cardId: "1",
+        ),
+        RecurringPayment(
+          id: '3',
           title: "Family Support (Hooyo)",
           receiverId: "615123456",
           receiverName: "Hooyo",
@@ -171,15 +206,86 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  void addHagbadMember(String groupId, HagbadMember member) {
+  void addHagbadMember(String groupId, HagbadMember member, {double catchUpAmount = 0}) {
     final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
     if (gIdx != -1) {
       final group = _hagbadGroups[gIdx];
+      
+      if (catchUpAmount > 0) {
+        if (_balance < catchUpAmount) throw Exception('insufficient_funds');
+        _balance -= catchUpAmount;
+        _prefs.setDouble('balance', _balance);
+        
+        final tx = Transaction(
+          id: "TX-HAG-CATCHUP-${DateTime.now().millisecondsSinceEpoch}",
+          title: "Hagbad Catch-up: ${group.name}",
+          purpose: "For ${member.name}",
+          date: DateFormat('MMM dd').format(DateTime.now()),
+          amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(catchUpAmount)}",
+          numericAmount: catchUpAmount,
+          isNegative: true,
+          category: "Hagbad",
+          status: "Success",
+          type: "transfer_out",
+          method: "Wallet",
+          referenceId: groupId,
+        );
+        _transactions.insert(0, tx);
+        _saveTransactions();
+      }
+
       final updatedMembers = List<HagbadMember>.from(group.members)..add(member);
-      _hagbadGroups[gIdx] = group.copyWith(members: updatedMembers);
+      _hagbadGroups[gIdx] = group.copyWith(
+        members: updatedMembers,
+        totalCycles: updatedMembers.length,
+      );
       _saveHagbadGroups();
+      logHagbadEvent(groupId, "New member added: ${member.name}${catchUpAmount > 0 ? ' with catch-up payment of \$$catchUpAmount' : ''}");
       notifyListeners();
     }
+  }
+
+  void logHagbadEvent(String groupId, String event) {
+    final tx = Transaction(
+      id: "TX-EVENT-${DateTime.now().millisecondsSinceEpoch}",
+      title: event,
+      date: DateFormat('MMM dd').format(DateTime.now()),
+      amount: "EVENT",
+      numericAmount: 0,
+      isNegative: false,
+      category: "Hagbad",
+      status: "Info",
+      type: "event",
+      method: "System",
+      referenceId: groupId,
+    );
+    _transactions.insert(0, tx);
+    _saveTransactions();
+    notifyListeners();
+  }
+
+  void sendHagbadNotification(String walletId, String message, {bool isSms = false}) {
+    // In a real app, this would call an API or Firebase Cloud Functions
+    // For this simulation, we log it and could potentially add to a notification list
+    debugPrint("Hagbad Notification [${isSms ? 'SMS' : 'App'}]: To $walletId - $message");
+    
+    // Simulate system message if the user exists in our mock system
+    final tx = Transaction(
+      id: "TX-NOTIF-${DateTime.now().millisecondsSinceEpoch}",
+      title: isSms ? "SMS Sent to $walletId" : "Notification Sent",
+      date: DateFormat('MMM dd').format(DateTime.now()),
+      amount: "NOTIF",
+      numericAmount: 0,
+      isNegative: false,
+      category: "System",
+      status: "Success",
+      type: "notification",
+      method: isSms ? "SMS" : "Push",
+      purpose: message,
+    );
+    _transactions.insert(0, tx);
+    _saveTransactions();
+    notifyListeners();
   }
 
   void randomizeHagbadTurns(String groupId) {
@@ -187,13 +293,23 @@ class AppState extends ChangeNotifier {
     if (gIdx != -1) {
       final group = _hagbadGroups[gIdx];
       final members = List<HagbadMember>.from(group.members);
+      
+      // Filter out members who have already received their payout
       final received = members.where((m) => m.hasReceived).toList();
       final remaining = members.where((m) => !m.hasReceived).toList();
+      
+      // Ensure all members are confirmed before allowing Qori-tuur for group start
+      if (group.status == HagbadStatus.pending && members.any((m) => !m.isConfirmed)) {
+         return; // Safety check
+      }
+
       remaining.shuffle();
       
       for (int i = 0; i < remaining.length; i++) {
-        int mIdx = members.indexOf(remaining[i]);
-        members[mIdx] = remaining[i].copyWith(payoutOrder: received.length + i + 1);
+        int mIdx = members.indexWhere((m) => m.name == remaining[i].name && m.walletId == remaining[i].walletId);
+        if (mIdx != -1) {
+          members[mIdx] = members[mIdx].copyWith(payoutOrder: received.length + i + 1);
+        }
       }
       
       members.sort((a, b) => a.payoutOrder.compareTo(b.payoutOrder));
@@ -202,7 +318,28 @@ class AppState extends ChangeNotifier {
         status: group.status == HagbadStatus.pending ? HagbadStatus.active : group.status,
       );
       _saveHagbadGroups();
+      logHagbadEvent(groupId, "Qori-tuur: Randomized remaining ${remaining.length} turns.");
       notifyListeners();
+    }
+  }
+
+  void swapHagbadTurns(String groupId, int index1, int index2) {
+    final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
+    if (gIdx != -1) {
+      final members = List<HagbadMember>.from(_hagbadGroups[gIdx].members);
+      if (index1 >= 0 && index1 < members.length && index2 >= 0 && index2 < members.length) {
+        final order1 = members[index1].payoutOrder;
+        final order2 = members[index2].payoutOrder;
+
+        members[index1] = members[index1].copyWith(payoutOrder: order2);
+        members[index2] = members[index2].copyWith(payoutOrder: order1);
+
+        members.sort((a, b) => a.payoutOrder.compareTo(b.payoutOrder));
+        _hagbadGroups[gIdx] = _hagbadGroups[gIdx].copyWith(members: members);
+        _saveHagbadGroups();
+        logHagbadEvent(groupId, "Turns swapped between ${members.firstWhere((m) => m.payoutOrder == order2).name} and ${members.firstWhere((m) => m.payoutOrder == order1).name}");
+        notifyListeners();
+      }
     }
   }
 
@@ -258,8 +395,39 @@ class AppState extends ChangeNotifier {
     final member = group.members[mIdx];
     if (member.hasReceived) throw Exception('Payout already received for this turn');
 
+    // Ensure the pool has enough funds (currentBalance must cover all payouts including this one)
+    final expectedPoolForCurrentCycle = group.amount * group.members.length;
+    // For simplicity, we check if the current balance is at least the payout amount 
+    // In a real Hagbad, everyone in the current cycle must have paid.
+    if (group.currentBalance < group.totalPayout * group.currentCycle / group.totalCycles && group.currentBalance < group.totalPayout) {
+       // This is a bit complex due to cumulative paidAmount. 
+       // Simpler check: Does the pool have enough for at least one payout?
+       // Let's use: Available = currentBalance - (already paid out)
+       double alreadyPaidOut = (group.currentCycle - 1) * group.totalPayout;
+       double available = group.currentBalance - alreadyPaidOut;
+       if (available < group.totalPayout) {
+         throw Exception('Insufficient funds in Hagbad pool. All members must contribute for this cycle first.');
+       }
+    }
+
     // Calculate total payout (amount * members)
-    final payoutAmount = group.totalPayout - group.serviceFee;
+    // We add any extra funds in the pool (penalties) to the payout for this cycle
+    final expectedBalanceForCurrentCycle = group.amount * group.members.length * group.currentCycle;
+    final totalPool = group.currentBalance;
+    final alreadyPaidOut = (group.currentCycle - 1) * group.totalPayout;
+    
+    // Recipient gets the standard amount + any surplus in the pool (penalties)
+    // If it's the last cycle, they get everything left.
+    double payoutAmount;
+    if (group.currentCycle == group.totalCycles) {
+      payoutAmount = totalPool - alreadyPaidOut;
+    } else {
+      payoutAmount = group.totalPayout;
+      // Add a portion of penalties if we want, or just the standard amount.
+      // For this logic, let's say they get the standard amount, and penalties accumulate.
+    }
+    
+    payoutAmount -= group.serviceFee;
 
     // Start Transaction
     final double originalBalance = _balance;
@@ -361,24 +529,22 @@ class AppState extends ChangeNotifier {
           network: CardNetwork.mastercard,
           balance: 150.0,
         ),
-        VirtualCard(
-          id: "3",
-          cardNumber: "4000111122223333",
-          cardHolder: "KHADAR RAYAALE",
-          expiryDate: "08/29",
-          cvv: "109",
-          theme: CardThemeType.emerald,
-          network: CardNetwork.visa,
-          balance: 0.0,
-        ),
       ];
       _saveCards();
+    }
+    
+    final List<String>? terminatedJson = _prefs.getStringList('terminated_cards');
+    if (terminatedJson != null) {
+      _terminatedCards = terminatedJson.map((e) => VirtualCard.fromJson(json.decode(e))).toList();
     }
   }
 
   void _saveCards() {
     final List<String> cardsJson = _cards.map((e) => json.encode(e.toJson())).toList();
     _prefs.setStringList('virtual_cards', cardsJson);
+    
+    final List<String> terminatedJson = _terminatedCards.map((e) => json.encode(e.toJson())).toList();
+    _prefs.setStringList('terminated_cards', terminatedJson);
   }
 
   void updateCard(int index, VirtualCard card) {
@@ -388,9 +554,22 @@ class AppState extends ChangeNotifier {
   }
 
   void removeCard(int index) {
-    _cards.removeAt(index);
+    final card = _cards.removeAt(index);
+    // Add to terminated cards with a timestamp (stored in metadata/id if needed, or we just track here)
+    // For simplicity, we add it to the grace period list
+    _terminatedCards.add(card);
     _saveCards();
     notifyListeners();
+  }
+
+  void restoreCard(String cardId) {
+    final index = _terminatedCards.indexWhere((c) => c.id == cardId);
+    if (index != -1) {
+      final card = _terminatedCards.removeAt(index);
+      _cards.add(card);
+      _saveCards();
+      notifyListeners();
+    }
   }
 
   void addCard(VirtualCard card) {
@@ -404,6 +583,17 @@ class AppState extends ChangeNotifier {
 
   Locale _locale = const Locale('en');
   Locale get locale => _locale;
+
+  String get languageName {
+    switch (_locale.languageCode) {
+      case 'en': return 'English';
+      case 'so': return 'Af-Soomaali';
+      case 'ar': return 'العربية';
+      case 'de': return 'Deutsch';
+      case 'et': return 'Eesti';
+      default: return 'English';
+    }
+  }
 
   // Estonian is not RTL, so we can remove or update this check.
   // Arabic was RTL.
@@ -480,6 +670,8 @@ class AppState extends ChangeNotifier {
     _loadSavingsGoals();
     _loadHagbadGroups();
     _loadRecurringPayments();
+    
+    _cardPin = _prefs.getString('card_pin') ?? '1122';
     
     _userDailyLimit = _prefs.getDouble('daily_limit') ?? 5000.0;
     _userMonthlyLimit = _prefs.getDouble('monthly_limit') ?? 20000.0;
@@ -919,11 +1111,22 @@ class AppState extends ChangeNotifier {
   // Savings Logic
   Future<void> transferToSavings(double amount, {String? fromCardId, bool? fromCard, String? goalName, String? goalId}) async {
     final bool isFromCard = fromCardId != null || (fromCard ?? false);
-    final String? effectiveFromCardId = fromCardId ?? ((fromCard ?? false) && _cards.isNotEmpty ? _cards.first.id : null);
+    String? effectiveFromCardId = fromCardId;
+    
+    if (isFromCard && effectiveFromCardId == null) {
+      if (_cards.isNotEmpty) {
+        effectiveFromCardId = _cards[_selectedCardIndex < _cards.length ? _selectedCardIndex : 0].id;
+      } else {
+        throw Exception('no_cards_available');
+      }
+    }
 
-    final double sourceBalance = isFromCard 
-        ? _cards.firstWhere((c) => c.id == effectiveFromCardId).balance 
-        : _balance;
+    VirtualCard? sourceCard;
+    if (isFromCard) {
+      sourceCard = _cards.firstWhere((c) => c.id == effectiveFromCardId, orElse: () => throw Exception('card_not_found'));
+    }
+
+    final double sourceBalance = isFromCard ? sourceCard!.balance : _balance;
 
     if (sourceBalance < amount) {
       throw Exception(isFromCard ? 'insufficient_card_funds' : 'insufficient_funds');
@@ -958,9 +1161,18 @@ class AppState extends ChangeNotifier {
         }
       }
 
+      String txTitle = "";
+      if (goalName != null) {
+        txTitle = "Deposit to $goalName";
+      } else if (isFromCard && sourceCard != null) {
+        txTitle = "Card Deposit (**** ${sourceCard.cardNumber.substring(sourceCard.cardNumber.length - 4)})";
+      } else {
+        txTitle = "Deposit to Savings";
+      }
+
       final tx = Transaction(
         id: "TX${DateTime.now().millisecondsSinceEpoch}",
-        title: goalName != null ? "Deposit to $goalName" : (isFromCard ? "Deposit from Card" : "Deposit to Savings"),
+        title: txTitle,
         date: DateFormat('MMM dd').format(DateTime.now()),
         numericAmount: amount,
         amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(amount)}",
@@ -976,8 +1188,8 @@ class AppState extends ChangeNotifier {
 
       // Persist changes
       await _prefs.setDouble('balance', _balance);
-      _saveCards();
       await _prefs.setDouble('savings_balance', _savingsBalance);
+      _saveCards();
       _saveTransactions();
       _saveSavingsGoals();
 
@@ -1001,7 +1213,20 @@ class AppState extends ChangeNotifier {
     }
 
     final bool isToCard = toCardId != null || (toCard ?? false);
-    final String? effectiveToCardId = toCardId ?? ((toCard ?? false) && _cards.isNotEmpty ? _cards.first.id : null);
+    String? effectiveToCardId = toCardId;
+    
+    if (isToCard && effectiveToCardId == null) {
+       if (_cards.isNotEmpty) {
+        effectiveToCardId = _cards[_selectedCardIndex < _cards.length ? _selectedCardIndex : 0].id;
+      } else {
+        throw Exception('no_cards_available');
+      }
+    }
+
+    VirtualCard? targetCard;
+    if (isToCard) {
+      targetCard = _cards.firstWhere((c) => c.id == effectiveToCardId, orElse: () => throw Exception('card_not_found'));
+    }
 
     // Capture state for rollback
     final double originalBalance = _balance;
@@ -1028,9 +1253,18 @@ class AppState extends ChangeNotifier {
         }
       }
 
+      String txTitle = "";
+      if (goalName != null) {
+        txTitle = "Withdraw from $goalName";
+      } else if (isToCard && targetCard != null) {
+        txTitle = "Withdraw to Card (**** ${targetCard.cardNumber.substring(targetCard.cardNumber.length - 4)})";
+      } else {
+        txTitle = "Withdraw from Savings";
+      }
+
       final tx = Transaction(
         id: "TX${DateTime.now().millisecondsSinceEpoch}",
-        title: goalName != null ? "Withdraw from $goalName" : (isToCard ? "Withdraw to Card" : "Withdraw from Savings"),
+        title: txTitle,
         date: DateFormat('MMM dd').format(DateTime.now()),
         numericAmount: amount,
         amount: "+${NumberFormat.simpleCurrency(name: _currencyCode).format(amount)}",
@@ -1046,8 +1280,8 @@ class AppState extends ChangeNotifier {
 
       // Persist changes
       await _prefs.setDouble('balance', _balance);
-      _saveCards();
       await _prefs.setDouble('savings_balance', _savingsBalance);
+      _saveCards();
       _saveTransactions();
       _saveSavingsGoals();
 
@@ -1064,6 +1298,7 @@ class AppState extends ChangeNotifier {
       rethrow;
     }
   }
+
 
   // Wallet ID Verification Logic
   Future<String?> verifyWalletId(String id) async {

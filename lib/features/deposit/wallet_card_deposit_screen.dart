@@ -110,7 +110,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: cardGradient[0].withOpacity(0.4),
+            color: cardGradient[0].withValues(alpha: 0.4),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -207,7 +207,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -401,7 +401,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
             filled: true,
             fillColor: theme.colorScheme.surface,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.withOpacity(0.1))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1))),
             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.accentTeal, width: 2)),
             contentPadding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 14 * context.fontSizeFactor),
           ),

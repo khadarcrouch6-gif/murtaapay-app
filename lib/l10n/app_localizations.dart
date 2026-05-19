@@ -3260,6 +3260,72 @@ abstract class AppLocalizations {
   /// **'Hagbad Group Created Successfully!'**
   String get hagbadCreatedSuccess;
 
+  /// No description provided for @enterWalletOrPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Wallet ID or Phone Number'**
+  String get enterWalletOrPhoneHint;
+
+  /// No description provided for @memberAlreadyAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Member already added'**
+  String get memberAlreadyAdded;
+
+  /// No description provided for @walletIdNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet ID not found'**
+  String get walletIdNotFound;
+
+  /// No description provided for @createAndInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Create & Invite'**
+  String get createAndInvite;
+
+  /// No description provided for @allMembersMustConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'All members must confirm their invitation before Qori-tuur.'**
+  String get allMembersMustConfirm;
+
+  /// No description provided for @qoriTuurStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Qori-tuur (Start Group)'**
+  String get qoriTuurStart;
+
+  /// No description provided for @qoriTuurRandomize.
+  ///
+  /// In en, this message translates to:
+  /// **'Qori-tuur (Randomize Turns)'**
+  String get qoriTuurRandomize;
+
+  /// No description provided for @inviteToGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite to {groupName}'**
+  String inviteToGroup(String groupName);
+
+  /// No description provided for @memberAlreadyInGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Member already in group'**
+  String get memberAlreadyInGroup;
+
+  /// No description provided for @walletOrPhoneNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet ID or Phone not found'**
+  String get walletOrPhoneNotFound;
+
+  /// No description provided for @memberInvitedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} invited to group'**
+  String memberInvitedSuccess(String name);
+
   /// No description provided for @drawing.
   ///
   /// In en, this message translates to:
@@ -3457,6 +3523,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Debtor'**
   String get debtor;
+
+  /// No description provided for @payout.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout'**
+  String get payout;
+
+  /// No description provided for @cycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycle'**
+  String get cycle;
+
+  /// No description provided for @nextPayoutWithMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Payout: {name} (Turn {turn})'**
+  String nextPayoutWithMember(String name, int turn);
+
+  /// No description provided for @payoutSuccessfulFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout successful for {name}'**
+  String payoutSuccessfulFor(String name);
+
+  /// No description provided for @payContributionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to pay {amount} for this cycle\'s Hagbad?'**
+  String payContributionConfirm(String amount);
+
+  /// No description provided for @fullOathText.
+  ///
+  /// In en, this message translates to:
+  /// **'I swear by the name of Almighty Allah that I will pay the Hagbad contribution on time, and if I am late I will pay the agreed penalty.'**
+  String get fullOathText;
+
+  /// No description provided for @joinedGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'You have joined {name}!'**
+  String joinedGroup(String name);
+
+  /// No description provided for @memberSignedOath.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has signed the oath.'**
+  String memberSignedOath(String name);
+
+  /// No description provided for @noSavingGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'No saving groups yet'**
+  String get noSavingGroups;
+
+  /// No description provided for @createFirstGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create First Group'**
+  String get createFirstGroup;
+
+  /// No description provided for @penalty.
+  ///
+  /// In en, this message translates to:
+  /// **'Penalty: {amount}'**
+  String penalty(String amount);
+
+  /// No description provided for @processPayoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error processing payout: {error}'**
+  String processPayoutError(String error);
 
   /// No description provided for @remaining.
   ///
@@ -3793,6 +3931,648 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No activity yet'**
   String get noActivityYet;
+
+  /// No description provided for @totalCycles.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Cycles'**
+  String get totalCycles;
+
+  /// No description provided for @selectFromContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Select from Contacts'**
+  String get selectFromContacts;
+
+  /// No description provided for @fromContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'From Contacts'**
+  String get fromContacts;
+
+  /// No description provided for @payOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay Out'**
+  String get payOut;
+
+  /// No description provided for @confirmPayoutDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to process the payout for {name}?'**
+  String confirmPayoutDesc(String name);
+
+  /// No description provided for @payoutNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: This will move the group to the next cycle.'**
+  String get payoutNote;
+
+  /// No description provided for @processPayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Payout'**
+  String get processPayout;
+
+  /// No description provided for @invitationPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation Pending'**
+  String get invitationPending;
+
+  /// No description provided for @signOathDhaar.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Oath (Dhaar)'**
+  String get signOathDhaar;
+
+  /// No description provided for @enterPenaltyAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter penalty amount for {name}'**
+  String enterPenaltyAmount(String name);
+
+  /// No description provided for @qoriTuurDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This will randomize the payout order for all members who haven\'t received their payout yet. Proceed?'**
+  String get qoriTuurDesc;
+
+  /// No description provided for @randomize.
+  ///
+  /// In en, this message translates to:
+  /// **'Randomize'**
+  String get randomize;
+
+  /// No description provided for @inviteToApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite to MurtaaxPay'**
+  String get inviteToApp;
+
+  /// No description provided for @inviteToAppDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is not on MurtaaxPay yet. Would you like to invite them to the app first?'**
+  String inviteToAppDesc(String name);
+
+  /// No description provided for @inviteViaSms.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite via SMS'**
+  String get inviteViaSms;
+
+  /// No description provided for @selfTransferError.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot invite yourself'**
+  String get selfTransferError;
+
+  /// No description provided for @invalidWalletFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Wallet ID format'**
+  String get invalidWalletFormat;
+
+  /// No description provided for @searching.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching...'**
+  String get searching;
+
+  /// No description provided for @invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get invite;
+
+  /// No description provided for @admin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get admin;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @confirmPayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Payout'**
+  String get confirmPayout;
+
+  /// No description provided for @payoutAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout Amount'**
+  String get payoutAmount;
+
+  /// No description provided for @sadaqahUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'URGENT'**
+  String get sadaqahUrgent;
+
+  /// No description provided for @sadaqahRaised.
+  ///
+  /// In en, this message translates to:
+  /// **'raised'**
+  String get sadaqahRaised;
+
+  /// No description provided for @sadaqahRaisedOf.
+  ///
+  /// In en, this message translates to:
+  /// **'raised of'**
+  String get sadaqahRaisedOf;
+
+  /// No description provided for @sadaqahDonations.
+  ///
+  /// In en, this message translates to:
+  /// **'donations'**
+  String get sadaqahDonations;
+
+  /// No description provided for @sadaqahTrending.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending'**
+  String get sadaqahTrending;
+
+  /// No description provided for @sadaqahAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'ago'**
+  String get sadaqahAgo;
+
+  /// No description provided for @catAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get catAll;
+
+  /// No description provided for @catMedical.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical'**
+  String get catMedical;
+
+  /// No description provided for @catWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Water'**
+  String get catWater;
+
+  /// No description provided for @catEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get catEducation;
+
+  /// No description provided for @catEmergency.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency'**
+  String get catEmergency;
+
+  /// No description provided for @campaignMedicalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Emergency'**
+  String get campaignMedicalTitle;
+
+  /// No description provided for @campaignMedicalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Help Ahmed cover his heart surgery expenses in Turkey.'**
+  String get campaignMedicalDesc;
+
+  /// No description provided for @campaignWaterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Village Water Well'**
+  String get campaignWaterTitle;
+
+  /// No description provided for @campaignWaterDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Building a permanent water source for a village in Gedo.'**
+  String get campaignWaterDesc;
+
+  /// No description provided for @campaignEducationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Education Support'**
+  String get campaignEducationTitle;
+
+  /// No description provided for @campaignEducationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Scholarships for 10 orphans in Mogadishu.'**
+  String get campaignEducationDesc;
+
+  /// No description provided for @campaignEmergencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Food Relief'**
+  String get campaignEmergencyTitle;
+
+  /// No description provided for @campaignEmergencyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Providing essential food supplies to families affected by drought.'**
+  String get campaignEmergencyDesc;
+
+  /// No description provided for @exchangeRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange Rates'**
+  String get exchangeRates;
+
+  /// No description provided for @liveMarketRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Market Rates'**
+  String get liveMarketRates;
+
+  /// No description provided for @ratesInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates are mid-market rates updated every 15 minutes.'**
+  String get ratesInfo;
+
+  /// No description provided for @youConvert.
+  ///
+  /// In en, this message translates to:
+  /// **'You Convert'**
+  String get youConvert;
+
+  /// No description provided for @youGet.
+  ///
+  /// In en, this message translates to:
+  /// **'You Get'**
+  String get youGet;
+
+  /// No description provided for @selectCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Currency'**
+  String get selectCurrency;
+
+  /// No description provided for @verifiedOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Organizer'**
+  String get verifiedOrganizer;
+
+  /// No description provided for @organizedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Organized by'**
+  String get organizedBy;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @donateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate Now'**
+  String get donateNow;
+
+  /// No description provided for @peopleDonated.
+  ///
+  /// In en, this message translates to:
+  /// **'people donated'**
+  String get peopleDonated;
+
+  /// No description provided for @secureProtected.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure & Protected'**
+  String get secureProtected;
+
+  /// No description provided for @secureProtectedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank-level encryption for every transaction.'**
+  String get secureProtectedDesc;
+
+  /// No description provided for @zeroPlatformFees.
+  ///
+  /// In en, this message translates to:
+  /// **'0% Platform Fees'**
+  String get zeroPlatformFees;
+
+  /// No description provided for @zeroPlatformFeesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'We don\'t take a cut. 100% goes to the cause.'**
+  String get zeroPlatformFeesDesc;
+
+  /// No description provided for @freeWithdrawals.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Withdrawals'**
+  String get freeWithdrawals;
+
+  /// No description provided for @freeWithdrawalsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizers pay \$0 to withdraw their funds.'**
+  String get freeWithdrawalsDesc;
+
+  /// No description provided for @shareThisCampaign.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this Campaign'**
+  String get shareThisCampaign;
+
+  /// No description provided for @link.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get link;
+
+  /// No description provided for @recentDonations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Donations'**
+  String get recentDonations;
+
+  /// No description provided for @selectAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Amount'**
+  String get selectAmount;
+
+  /// No description provided for @finalizeDonation.
+  ///
+  /// In en, this message translates to:
+  /// **'Finalize Donation'**
+  String get finalizeDonation;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @securedByMurtaaxPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Secured by MurtaaxPay'**
+  String get securedByMurtaaxPay;
+
+  /// No description provided for @customAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Amount'**
+  String get customAmount;
+
+  /// No description provided for @enterPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Phone Number'**
+  String get enterPhoneNumber;
+
+  /// No description provided for @selectLocalBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Local Bank'**
+  String get selectLocalBank;
+
+  /// No description provided for @transferDirectlyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer directly via your bank app.'**
+  String get transferDirectlyDesc;
+
+  /// No description provided for @payWithVisaMastercard.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with Visa/Mastercard'**
+  String get payWithVisaMastercard;
+
+  /// No description provided for @secureInternationalGateway.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure international payment gateway.'**
+  String get secureInternationalGateway;
+
+  /// No description provided for @insufficientBalanceSadaqah.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient balance in your MurtaaxPay wallet.'**
+  String get insufficientBalanceSadaqah;
+
+  /// No description provided for @startFundraiser.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Fundraiser'**
+  String get startFundraiser;
+
+  /// No description provided for @createCampaign.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Campaign'**
+  String get createCampaign;
+
+  /// No description provided for @createCampaignDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Raise funds for a cause you care about. We\'ll verify your campaign to build trust.'**
+  String get createCampaignDesc;
+
+  /// No description provided for @campaignDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Campaign Details'**
+  String get campaignDetails;
+
+  /// No description provided for @campaignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Campaign Title'**
+  String get campaignTitle;
+
+  /// No description provided for @campaignTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. Help build a water well in Gedo'**
+  String get campaignTitleHint;
+
+  /// No description provided for @goalAmountUsd.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal Amount (USD)'**
+  String get goalAmountUsd;
+
+  /// No description provided for @goalAmountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. 5000'**
+  String get goalAmountHint;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @descriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe why you need help and how the funds will be used...'**
+  String get descriptionHint;
+
+  /// No description provided for @coverPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover Photo'**
+  String get coverPhoto;
+
+  /// No description provided for @tapToUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to upload photo'**
+  String get tapToUpload;
+
+  /// No description provided for @uploadLimits.
+  ///
+  /// In en, this message translates to:
+  /// **'JPG, PNG up to 5MB'**
+  String get uploadLimits;
+
+  /// No description provided for @campaignSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Campaign submitted for review!'**
+  String get campaignSubmitted;
+
+  /// No description provided for @submitForReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for Review'**
+  String get submitForReview;
+
+  /// No description provided for @past24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Past 24h'**
+  String get past24h;
+
+  /// No description provided for @avgCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg. Cost'**
+  String get avgCost;
+
+  /// No description provided for @returnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get returnLabel;
+
+  /// No description provided for @noTransactionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet'**
+  String get noTransactionsYet;
+
+  /// No description provided for @aboutAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'About {asset}'**
+  String aboutAsset(String asset);
+
+  /// No description provided for @cryptoDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'{asset} is a decentralized digital currency, without a central bank or single administrator, that can be sent from user to user on the peer-to-peer network without the need for intermediaries.'**
+  String cryptoDescription(String asset);
+
+  /// No description provided for @cryptoPurchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto purchased successfully!'**
+  String get cryptoPurchased;
+
+  /// No description provided for @cryptoSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto sold successfully!'**
+  String get cryptoSold;
+
+  /// No description provided for @zakatCalculator.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat Calculator'**
+  String get zakatCalculator;
+
+  /// No description provided for @totalZakatToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Zakat to Pay'**
+  String get totalZakatToPay;
+
+  /// No description provided for @enterYourAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Your Assets'**
+  String get enterYourAssets;
+
+  /// No description provided for @cashAndSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash & Savings'**
+  String get cashAndSavings;
+
+  /// No description provided for @goldValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold Value'**
+  String get goldValue;
+
+  /// No description provided for @silverValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver Value'**
+  String get silverValue;
+
+  /// No description provided for @otherInvestments.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Investments'**
+  String get otherInvestments;
+
+  /// No description provided for @zakatInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakatable amount is calculated as 2.5% of your total wealth if it exceeds the Nisab threshold.'**
+  String get zakatInfo;
+
+  /// No description provided for @donateYourZakat.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate Your Zakat'**
+  String get donateYourZakat;
+
+  /// No description provided for @proceedingToDonate.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceeding to donate {amount}'**
+  String proceedingToDonate(String amount);
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
 }
 
 class _AppLocalizationsDelegate

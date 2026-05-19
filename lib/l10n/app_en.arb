@@ -689,6 +689,27 @@
   "monthly": "Monthly",
   "yearly": "Yearly",
   "hagbadCreatedSuccess": "Hagbad Group Created Successfully!",
+  "enterWalletOrPhoneHint": "Enter Wallet ID or Phone Number",
+  "memberAlreadyAdded": "Member already added",
+  "walletIdNotFound": "Wallet ID not found",
+  "createAndInvite": "Create & Invite",
+  "allMembersMustConfirm": "All members must confirm their invitation before Qori-tuur.",
+  "qoriTuurStart": "Qori-tuur (Start Group)",
+  "qoriTuurRandomize": "Qori-tuur (Randomize Turns)",
+  "inviteToGroup": "Invite to {groupName}",
+  "@inviteToGroup": {
+    "placeholders": {
+      "groupName": { "type": "String" }
+    }
+  },
+  "memberAlreadyInGroup": "Member already in group",
+  "walletOrPhoneNotFound": "Wallet ID or Phone not found",
+  "memberInvitedSuccess": "{name} invited to group",
+  "@memberInvitedSuccess": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
   "drawing": "Drawing...",
   "qoriTuur": "Qori-tuur",
   "noHagbadGroups": "No groups yet. Create one to start saving!",
@@ -771,6 +792,54 @@
   "requireGuarantor": "This member requires a guarantor (Uul)",
   "guarantorDetails": "Guarantor Details",
   "debtor": "Debtor",
+  "payout": "Payout",
+  "cycle": "Cycle",
+  "nextPayoutWithMember": "Next Payout: {name} (Turn {turn})",
+  "@nextPayoutWithMember": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "turn": { "type": "int" }
+    }
+  },
+  "payoutSuccessfulFor": "Payout successful for {name}",
+  "@payoutSuccessfulFor": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "payContributionConfirm": "Do you want to pay {amount} for this cycle's Hagbad?",
+  "@payContributionConfirm": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "fullOathText": "I swear by the name of Almighty Allah that I will pay the Hagbad contribution on time, and if I am late I will pay the agreed penalty.",
+  "joinedGroup": "You have joined {name}!",
+  "@joinedGroup": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "memberSignedOath": "{name} has signed the oath.",
+  "@memberSignedOath": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "noSavingGroups": "No saving groups yet",
+  "createFirstGroup": "Create First Group",
+  "penalty": "Penalty: {amount}",
+  "@penalty": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "processPayoutError": "Error processing payout: {error}",
+  "@processPayoutError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
   "remaining": "Remaining",
   "hagbadTerms": "6. Hagbad Social Trust",
   "hagbadTermsDesc": "Hagbad is based on mutual trust (Aaminaad). By joining, you agree to make timely contributions. If a member fails to pay, the Guarantor (Uul) is responsible for covering the debt.",
@@ -832,5 +901,142 @@
   "dailyLimit": "Daily Limit",
   "monthlyLimit": "Monthly Limit",
   "recentSavingsActivity": "Recent Savings Activity",
-  "noActivityYet": "No activity yet"
+  "noActivityYet": "No activity yet",
+  "totalCycles": "Total Cycles",
+  "selectFromContacts": "Select from Contacts",
+  "fromContacts": "From Contacts",
+  "payOut": "Pay Out",
+  "confirmPayoutDesc": "Are you sure you want to process the payout for {name}?",
+  "@confirmPayoutDesc": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "payoutNote": "Note: This will move the group to the next cycle.",
+  "processPayout": "Process Payout",
+  "invitationPending": "Invitation Pending",
+  "signOathDhaar": "Sign Oath (Dhaar)",
+  "enterPenaltyAmount": "Enter penalty amount for {name}",
+  "@enterPenaltyAmount": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "qoriTuurDesc": "This will randomize the payout order for all members who haven't received their payout yet. Proceed?",
+  "randomize": "Randomize",
+  "inviteToApp": "Invite to MurtaaxPay",
+  "inviteToAppDesc": "{name} is not on MurtaaxPay yet. Would you like to invite them to the app first?",
+  "@inviteToAppDesc": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "inviteViaSms": "Invite via SMS",
+  "selfTransferError": "You cannot invite yourself",
+  "invalidWalletFormat": "Invalid Wallet ID format",
+  "searching": "Searching...",
+  "invite": "Invite",
+  "admin": "Admin",
+  "history": "History",
+  "confirmPayout": "Confirm Payout",
+  "payoutAmount": "Payout Amount",
+  "sadaqahUrgent": "URGENT",
+  "sadaqahRaised": "raised",
+  "sadaqahRaisedOf": "raised of",
+  "sadaqahDonations": "donations",
+  "sadaqahTrending": "Trending",
+  "sadaqahAgo": "ago",
+  "catAll": "All",
+  "catMedical": "Medical",
+  "catWater": "Water",
+  "catEducation": "Education",
+  "catEmergency": "Emergency",
+  "campaignMedicalTitle": "Medical Emergency",
+  "campaignMedicalDesc": "Help Ahmed cover his heart surgery expenses in Turkey.",
+  "campaignWaterTitle": "Village Water Well",
+  "campaignWaterDesc": "Building a permanent water source for a village in Gedo.",
+  "campaignEducationTitle": "Education Support",
+  "campaignEducationDesc": "Scholarships for 10 orphans in Mogadishu.",
+  "campaignEmergencyTitle": "Food Relief",
+  "campaignEmergencyDesc": "Providing essential food supplies to families affected by drought.",
+  "exchangeRates": "Exchange Rates",
+  "liveMarketRates": "Live Market Rates",
+  "ratesInfo": "Rates are mid-market rates updated every 15 minutes.",
+  "youConvert": "You Convert",
+  "youGet": "You Get",
+  "selectCurrency": "Select Currency",
+  "verifiedOrganizer": "Verified Organizer",
+  "organizedBy": "Organized by",
+  "about": "About",
+  "donateNow": "Donate Now",
+  "peopleDonated": "people donated",
+  "secureProtected": "Secure & Protected",
+  "secureProtectedDesc": "Bank-level encryption for every transaction.",
+  "zeroPlatformFees": "0% Platform Fees",
+  "zeroPlatformFeesDesc": "We don't take a cut. 100% goes to the cause.",
+  "freeWithdrawals": "Free Withdrawals",
+  "freeWithdrawalsDesc": "Organizers pay $0 to withdraw their funds.",
+  "shareThisCampaign": "Share this Campaign",
+  "link": "Link",
+  "recentDonations": "Recent Donations",
+  "selectAmount": "Select Amount",
+  "finalizeDonation": "Finalize Donation",
+  "total": "Total",
+  "securedByMurtaaxPay": "Secured by MurtaaxPay",
+  "customAmount": "Custom Amount",
+  "enterPhoneNumber": "Enter Phone Number",
+  "selectLocalBank": "Select Local Bank",
+  "transferDirectlyDesc": "Transfer directly via your bank app.",
+  "payWithVisaMastercard": "Pay with Visa/Mastercard",
+  "secureInternationalGateway": "Secure international payment gateway.",
+  "insufficientBalanceSadaqah": "Insufficient balance in your MurtaaxPay wallet.",
+  "startFundraiser": "Start Fundraiser",
+  "createCampaign": "Create a Campaign",
+  "createCampaignDesc": "Raise funds for a cause you care about. We'll verify your campaign to build trust.",
+  "campaignDetails": "Campaign Details",
+  "campaignTitle": "Campaign Title",
+  "campaignTitleHint": "E.g. Help build a water well in Gedo",
+  "goalAmountUsd": "Goal Amount (USD)",
+  "goalAmountHint": "E.g. 5000",
+  "description": "Description",
+  "descriptionHint": "Describe why you need help and how the funds will be used...",
+  "coverPhoto": "Cover Photo",
+  "tapToUpload": "Tap to upload photo",
+  "uploadLimits": "JPG, PNG up to 5MB",
+  "campaignSubmitted": "Campaign submitted for review!",
+  "submitForReview": "Submit for Review",
+  "past24h": "Past 24h",
+  "avgCost": "Avg. Cost",
+  "returnLabel": "Return",
+  "noTransactionsYet": "No transactions yet",
+  "aboutAsset": "About {asset}",
+  "@aboutAsset": {
+    "placeholders": {
+      "asset": { "type": "String" }
+    }
+  },
+  "cryptoDescription": "{asset} is a decentralized digital currency, without a central bank or single administrator, that can be sent from user to user on the peer-to-peer network without the need for intermediaries.",
+  "@cryptoDescription": {
+    "placeholders": {
+      "asset": { "type": "String" }
+    }
+  },
+  "cryptoPurchased": "Crypto purchased successfully!",
+  "cryptoSold": "Crypto sold successfully!",
+  "zakatCalculator": "Zakat Calculator",
+  "totalZakatToPay": "Total Zakat to Pay",
+  "enterYourAssets": "Enter Your Assets",
+  "cashAndSavings": "Cash & Savings",
+  "goldValue": "Gold Value",
+  "silverValue": "Silver Value",
+  "otherInvestments": "Other Investments",
+  "zakatInfo": "Zakatable amount is calculated as 2.5% of your total wealth if it exceeds the Nisab threshold.",
+  "donateYourZakat": "Donate Your Zakat",
+  "proceedingToDonate": "Proceeding to donate {amount}",
+  "@proceedingToDonate": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "error": "Error"
 }

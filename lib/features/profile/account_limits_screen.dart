@@ -71,7 +71,7 @@ class AccountLimitsScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryDark.withOpacity(0.3),
+              color: AppColors.primaryDark.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
             )
@@ -82,7 +82,7 @@ class AccountLimitsScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.speed_rounded, color: AppColors.accentTeal, size: 40),
@@ -100,7 +100,7 @@ class AccountLimitsScreen extends StatelessWidget {
                 ar: "حسابك له حدود قياسية. أكمل KYC للحصول على حدود أعلى."
               ),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13, fontWeight: FontWeight.w500),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -117,9 +117,9 @@ class AccountLimitsScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? AppColors.primaryDark.withOpacity(0.5) : Colors.white,
+          color: isDark ? AppColors.primaryDark.withValues(alpha: 0.5) : Colors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.1)),
+          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.1)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +140,7 @@ class AccountLimitsScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.secondary.withOpacity(0.1),
+                    color: AppColors.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -199,9 +199,9 @@ class AccountLimitsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.accentTeal.withOpacity(0.1),
+        color: AppColors.accentTeal.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.accentTeal.withOpacity(0.2)),
+        border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [

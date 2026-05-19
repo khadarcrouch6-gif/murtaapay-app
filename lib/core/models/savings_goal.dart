@@ -6,6 +6,7 @@ class SavingsGoal {
   final String soTitle;
   final String arTitle;
   final String deTitle;
+  final String etTitle;
   final double saved;
   final double target;
   final String deadline;
@@ -20,6 +21,7 @@ class SavingsGoal {
     this.soTitle = "",
     this.arTitle = "",
     this.deTitle = "",
+    this.etTitle = "",
     required this.saved,
     required this.target,
     required this.deadline,
@@ -29,11 +31,27 @@ class SavingsGoal {
     this.isPaused = false,
   });
 
+  String getLocalizedTitle(String languageCode) {
+    switch (languageCode) {
+      case 'so':
+        return soTitle.isNotEmpty ? soTitle : title;
+      case 'ar':
+        return arTitle.isNotEmpty ? arTitle : title;
+      case 'de':
+        return deTitle.isNotEmpty ? deTitle : title;
+      case 'et':
+        return etTitle.isNotEmpty ? etTitle : title;
+      default:
+        return title;
+    }
+  }
+
   SavingsGoal copyWith({
     String? title,
     String? soTitle,
     String? arTitle,
     String? deTitle,
+    String? etTitle,
     double? saved,
     double? target,
     String? deadline,
@@ -48,6 +66,7 @@ class SavingsGoal {
       soTitle: soTitle ?? this.soTitle,
       arTitle: arTitle ?? this.arTitle,
       deTitle: deTitle ?? this.deTitle,
+      etTitle: etTitle ?? this.etTitle,
       saved: saved ?? this.saved,
       target: target ?? this.target,
       deadline: deadline ?? this.deadline,
@@ -65,6 +84,7 @@ class SavingsGoal {
       'soTitle': soTitle,
       'arTitle': arTitle,
       'deTitle': deTitle,
+      'etTitle': etTitle,
       'saved': saved,
       'target': target,
       'deadline': deadline,
@@ -82,6 +102,7 @@ class SavingsGoal {
       soTitle: json['soTitle'] ?? "",
       arTitle: json['arTitle'] ?? "",
       deTitle: json['deTitle'] ?? "",
+      etTitle: json['etTitle'] ?? "",
       saved: (json['saved'] as num).toDouble(),
       target: (json['target'] as num).toDouble(),
       deadline: json['deadline'],

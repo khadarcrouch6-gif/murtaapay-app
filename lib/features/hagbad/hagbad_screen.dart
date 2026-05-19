@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
+import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../core/models/hagbad_model.dart';
-import '../../core/widgets/contact_sync_list.dart';
 import '../chat/chat_screen.dart';
 import 'hagbad_history_screen.dart';
 
@@ -28,6 +27,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
     final groups = appState.hagbadGroups.where((g) => g.status != HagbadStatus.pending || g.members.any((m) => m.name == "Me" && m.isConfirmed)).toList();
     final invitations = appState.hagbadGroups.where((g) => g.status == HagbadStatus.pending && g.members.any((m) => m.name == "Me" && !m.isConfirmed)).toList();
 
+    final totalHagbadBalance = groups.fold(0.0, (sum, g) => sum + g.currentBalance);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.hagbad, style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -38,38 +39,113 @@ class _HagbadScreenState extends State<HagbadScreen> {
           ),
         ],
       ),
-      body: groups.isEmpty && invitations.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: context.responsiveBody(
+        child: groups.isEmpty && invitations.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const AdaptiveIcon(FontAwesomeIcons.users, size: 64, color: AppColors.grey),
+                    const SizedBox(height: 16),
+                    Text(l10n.noSavingGroups, style: theme.textTheme.titleMedium),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () => _showCreateGroupDialog(context),
+                      child: Text(l10n.createFirstGroup),
+                    ),
+                  ],
+                ),
+              )
+            : ListView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.horizontalPadding / 2,
+                  vertical: 16,
+                ),
                 children: [
-                  const AdaptiveIcon(FontAwesomeIcons.users, size: 64, color: AppColors.grey),
-                  const SizedBox(height: 16),
-                  Text("No saving groups yet", style: theme.textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  ElevatedButton(
-                    onPressed: () => _showCreateGroupDialog(context),
-                    child: const Text("Create First Group"),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: _buildTotalBalanceCard(totalHagbadBalance, l10n, theme),
                   ),
+                  const SizedBox(height: 24),
+                  if (invitations.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(l10n.invitationReceived.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.grey, fontSize: 12, letterSpacing: 1.2)),
+                    ),
+                    const SizedBox(height: 12),
+                    ...invitations.map((g) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: _buildInvitationCard(g, l10n, theme),
+                    )),
+                    const SizedBox(height: 24),
+                  ],
+                  if (groups.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(l10n.myGroups.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.grey, fontSize: 12, letterSpacing: 1.2)),
+                    ),
+                    const SizedBox(height: 12),
+                    ...groups.map((g) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: _buildGroupCard(g),
+                    )),
+                  ],
                 ],
               ),
-            )
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                if (invitations.isNotEmpty) ...[
-                  Text(l10n.invitationReceived.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.grey, fontSize: 12, letterSpacing: 1.2)),
-                  const SizedBox(height: 12),
-                  ...invitations.map((g) => _buildInvitationCard(g, l10n, theme)),
-                  const SizedBox(height: 24),
-                ],
-                if (groups.isNotEmpty) ...[
-                  Text(l10n.myGroups.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.grey, fontSize: 12, letterSpacing: 1.2)),
-                  const SizedBox(height: 12),
-                  ...groups.map((g) => _buildGroupCard(g)),
-                ],
-              ],
+      ),
+    );
+  }
+
+  Widget _buildTotalBalanceCard(double totalBalance, AppLocalizations l10n, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.primaryDark, AppColors.primary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Total Hagbad Balance",
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+              const Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 20),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "\$${totalBalance.toStringAsFixed(2)}",
+            style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(20),
             ),
+            child: const Text(
+              "Locked in Groups",
+              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -103,7 +179,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        "${group.name} • ${group.members.length} Members",
+                        "${group.name} • ${group.members.length} ${l10n.members}",
                         style: TextStyle(fontSize: 12, color: theme.textTheme.bodySmall?.color),
                       ),
                     ],
@@ -145,21 +221,38 @@ class _HagbadScreenState extends State<HagbadScreen> {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text(l10n.acceptInvite),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+        scrollable: false,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Column(
           children: [
-            const Icon(Icons.verified_user_outlined, size: 48, color: AppColors.primary),
-            const SizedBox(height: 16),
-            Text(l10n.oathRequirementDesc),
-            const SizedBox(height: 8),
-            Text(
-              "\"Waxaan ku dhaaranayaa magaca Ilaaha Qaadirka ah inaan bixin doono qaaraanka Hagbad-ka waqtigiisa...\"",
-              style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13),
-              textAlign: TextAlign.center,
-            ),
+            const Icon(Icons.verified_user_rounded, size: 48, color: AppColors.primary),
+            const SizedBox(height: 12),
+            Text(l10n.acceptInvite, textAlign: TextAlign.center),
           ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.oathRequirementDesc, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14)),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  "\"${l10n.fullOathText}\"",
+                  style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
@@ -175,10 +268,18 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 appState.updateHagbadMember(group.id, myIndex, updatedMember);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("You have joined ${group.name}!")),
+                  SnackBar(
+                    content: Text(l10n.joinedGroup(group.name)),
+                    behavior: SnackBarBehavior.floating,
+                  ),
                 );
               }
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
             child: Text(l10n.signOathNow),
           ),
         ],
@@ -187,158 +288,271 @@ class _HagbadScreenState extends State<HagbadScreen> {
   }
 
   void _showCreateGroupDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final appState = Provider.of<AppState>(context, listen: false);
+    
     final nameController = TextEditingController();
     final amountController = TextEditingController();
     final cyclesController = TextEditingController(text: "12");
     final searchController = TextEditingController();
     HagbadFrequency selectedFreq = HagbadFrequency.monthly;
     List<HagbadMember> invitedMembers = [
-      HagbadMember(name: "Me", avatar: "M", payoutOrder: 1, hasReceived: false, isTrusted: true, hasSignedOath: true, isConfirmed: true),
+      HagbadMember(
+        name: "Me", 
+        walletId: appState.walletId,
+        avatar: "M", 
+        payoutOrder: 1, 
+        hasReceived: false, 
+        isTrusted: true, 
+        hasSignedOath: true, 
+        isConfirmed: true
+      ),
     ];
     bool isSearching = false;
+    List<Map<String, String>> searchMatches = [];
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) {
-          final appState = Provider.of<AppState>(context, listen: false);
-          
           return AlertDialog(
-            title: const Text("Create New Hagbad"),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+            scrollable: true,
+            title: Text(l10n.createNewHagbad),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(labelText: l10n.groupName, border: const OutlineInputBorder()),
+                ),
+                const SizedBox(height: 16),
+                Row(
                   children: [
-                    TextField(
-                      controller: nameController,
-                      decoration: const InputDecoration(labelText: "Group Name", border: OutlineInputBorder()),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: amountController,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(labelText: "Amount", prefixText: "\$ ", border: OutlineInputBorder()),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: DropdownButtonFormField<HagbadFrequency>(
-                            value: selectedFreq,
-                            decoration: const InputDecoration(labelText: "Freq", border: OutlineInputBorder()),
-                            items: HagbadFrequency.values.map((f) => DropdownMenuItem(value: f, child: Text(f.name.toUpperCase()))).toList(),
-                            onChanged: (val) => setDialogState(() => selectedFreq = val!),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: cyclesController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(labelText: "Total Cycles", border: OutlineInputBorder()),
-                    ),
-                    const Divider(height: 32),
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text("Add Members (Search by Wallet ID)", style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: searchController,
-                            decoration: InputDecoration(
-                              hintText: "Enter Wallet ID (e.g. 102235)",
-                              border: const OutlineInputBorder(),
-                              suffixIcon: isSearching ? const SizedBox(width: 20, height: 20, child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(strokeWidth: 2))) : null,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        IconButton.filled(
-                          onPressed: isSearching ? null : () async {
-                            final id = searchController.text.trim();
-                            if (id.isEmpty) return;
-                            
-                            setDialogState(() => isSearching = true);
-                            try {
-                              final name = await appState.verifyWalletId(id);
-                              if (name != null) {
-                                if (invitedMembers.any((m) => m.walletId == id)) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Member already added")));
-                                  }
-                                } else {
-                                  setDialogState(() {
-                                    invitedMembers.add(HagbadMember(
-                                      name: name,
-                                      walletId: id,
-                                      avatar: name[0],
-                                      payoutOrder: invitedMembers.length + 1,
-                                      hasReceived: false,
-                                      isTrusted: false,
-                                      isConfirmed: false,
-                                    ));
-                                    searchController.clear();
-                                  });
-                                }
-                              } else {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Wallet ID not found")));
-                                }
-                              }
-                            } catch (e) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
-                              }
-                            } finally {
-                              setDialogState(() => isSearching = false);
-                            }
-                          },
-                          icon: const Icon(Icons.person_add),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      constraints: const BoxConstraints(maxHeight: 150),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(8),
+                    Expanded(
+                      child: TextField(
+                        controller: amountController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(labelText: l10n.amount, prefixText: r"$ ", border: const OutlineInputBorder()),
                       ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: invitedMembers.length,
-                        itemBuilder: (context, index) {
-                          final m = invitedMembers[index];
-                          return ListTile(
-                            dense: true,
-                            leading: CircleAvatar(radius: 12, child: Text(m.avatar, style: const TextStyle(fontSize: 10))),
-                            title: Text(m.name, style: const TextStyle(fontSize: 13)),
-                            subtitle: Text(m.walletId ?? "Admin", style: const TextStyle(fontSize: 11)),
-                            trailing: m.name == "Me" ? null : IconButton(
-                              icon: const Icon(Icons.remove_circle_outline, size: 18, color: Colors.red),
-                              onPressed: () => setDialogState(() => invitedMembers.removeAt(index)),
-                            ),
-                          );
-                        },
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: DropdownButtonFormField<HagbadFrequency>(
+                        initialValue: selectedFreq,
+                        decoration: InputDecoration(labelText: l10n.frequency, border: const OutlineInputBorder()),
+                        items: [
+                          DropdownMenuItem(value: HagbadFrequency.daily, child: Text(l10n.daily)),
+                          DropdownMenuItem(value: HagbadFrequency.weekly, child: Text(l10n.weekly)),
+                          DropdownMenuItem(value: HagbadFrequency.tenDays, child: Text(l10n.tenDays)),
+                          DropdownMenuItem(value: HagbadFrequency.monthly, child: Text(l10n.monthly)),
+                          DropdownMenuItem(value: HagbadFrequency.yearly, child: Text(l10n.yearly)),
+                        ],
+                        onChanged: (val) => setDialogState(() => selectedFreq = val!),
                       ),
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: cyclesController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: l10n.totalCycles, border: const OutlineInputBorder()),
+                ),
+                const Divider(height: 32),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(l10n.addMembers, style: const TextStyle(fontWeight: FontWeight.bold)),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        onChanged: (val) {
+                          setDialogState(() {
+                            if (val.isEmpty) {
+                              searchMatches = [];
+                              return;
+                            }
+                            final query = val.toLowerCase();
+                            searchMatches = [];
+                            
+                            // Search in verified mock users
+                            appState.mockUsers.forEach((id, name) {
+                              if (id != appState.walletId && (id.contains(query) || name.toLowerCase().contains(query))) {
+                                searchMatches.add({'id': id, 'name': name});
+                              }
+                            });
+
+                            // Search in quick profiles
+                            for (var p in appState.quickProfiles) {
+                              if (p.walletId != appState.walletId && (p.walletId.contains(query) || p.name.toLowerCase().contains(query))) {
+                                if (!searchMatches.any((m) => m['id'] == p.walletId)) {
+                                  searchMatches.add({'id': p.walletId, 'name': p.name});
+                                }
+                              }
+                            }
+                            
+                            // Limit to 5 results for clarity
+                            if (searchMatches.length > 5) {
+                              searchMatches = searchMatches.sublist(0, 5);
+                            }
+                          });
+                        },
+                        decoration: InputDecoration(
+                          hintText: l10n.enterWalletOrPhoneHint,
+                          border: const OutlineInputBorder(),
+                          suffixIcon: isSearching ? const SizedBox(width: 20, height: 20, child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(strokeWidth: 2))) : null,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton.filled(
+                      onPressed: isSearching ? null : () async {
+                        final id = searchController.text.trim();
+                        if (id.isEmpty) return;
+                        
+                        setDialogState(() => isSearching = true);
+                        try {
+                          final name = await appState.verifyWalletId(id);
+                          if (!context.mounted) return;
+                          
+                          if (name != null) {
+                            if (invitedMembers.any((m) => m.walletId == id)) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.memberAlreadyAdded)));
+                              }
+                            } else {
+                              setDialogState(() {
+                                final isMe = name == "Me" || id == appState.walletId;
+                                invitedMembers.add(HagbadMember(
+                                  name: name,
+                                  walletId: id,
+                                  avatar: name.isNotEmpty ? name[0] : "?",
+                                  payoutOrder: invitedMembers.length + 1,
+                                  hasReceived: false,
+                                  isTrusted: isMe,
+                                  isConfirmed: isMe,
+                                  hasSignedOath: isMe,
+                                ));
+                                searchController.clear();
+                                searchMatches = [];
+                              });
+                            }
+                          } else {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.walletOrPhoneNotFound)));
+                            }
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            String errorMsg = e.toString().contains('self_transfer_error') ? l10n.selfTransferError : e.toString();
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
+                          }
+                        } finally {
+                          if (context.mounted) {
+                            setDialogState(() => isSearching = false);
+                          }
+                        }
+                      },
+                      icon: const Icon(Icons.person_add_alt_1),
+                    ),
+                  ],
+                ),
+                if (searchMatches.isNotEmpty)
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                    color: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: theme.dividerColor),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: searchMatches.map((match) {
+                      final name = match['name']!;
+                      final id = match['id']!;
+                      final isAlreadyAdded = invitedMembers.any((m) => m.walletId == id);
+                      
+                      return ListTile(
+                        dense: true,
+                        leading: CircleAvatar(
+                          radius: 12,
+                          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                          child: Text(name.isNotEmpty ? name[0] : "?", style: const TextStyle(fontSize: 10, color: AppColors.primary)),
+                        ),
+                        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        subtitle: Text(id, style: const TextStyle(fontSize: 11)),
+                        trailing: isAlreadyAdded 
+                            ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
+                            : const Icon(Icons.add_circle_outline, size: 20),
+                        onTap: isAlreadyAdded ? null : () {
+                          setDialogState(() {
+                            final isMe = name == "Me" || id == appState.walletId;
+                            invitedMembers.add(HagbadMember(
+                              name: name,
+                              walletId: id,
+                              avatar: name.isNotEmpty ? name[0] : "?",
+                              payoutOrder: invitedMembers.length + 1,
+                              hasReceived: false,
+                              isTrusted: isMe,
+                              isConfirmed: isMe,
+                              hasSignedOath: isMe,
+                            ));
+                            searchController.clear();
+                            searchMatches = [];
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                if (invitedMembers.isNotEmpty)
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  constraints: const BoxConstraints(maxHeight: 250),
+                  decoration: BoxDecoration(
+                    color: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: theme.dividerColor),
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(), // Better for nested scrolling
+                    itemCount: invitedMembers.length,
+                    separatorBuilder: (context, index) => const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final m = invitedMembers[index];
+                      return ListTile(
+                        dense: true,
+                        leading: CircleAvatar(
+                          radius: 14,
+                          backgroundColor: AppColors.primary,
+                          child: Text(m.avatar, style: const TextStyle(color: Colors.white, fontSize: 10)),
+                        ),
+                        title: Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        subtitle: m.walletId != null ? Text(m.walletId!, style: const TextStyle(fontSize: 11)) : null,
+                        trailing: m.name == "Me" ? null : IconButton(
+                          icon: const Icon(Icons.remove_circle_outline, color: Colors.red, size: 20),
+                          onPressed: () => setDialogState(() => invitedMembers.removeAt(index)),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (nameController.text.isNotEmpty && amountController.text.isNotEmpty) {
+                    final pinSuccess = await _showSecurityPinDialog(context);
+                    if (!pinSuccess || !context.mounted) return;
+
                     final newGroup = HagbadGroup(
                       id: DateTime.now().millisecondsSinceEpoch.toString(),
                       name: nameController.text,
@@ -351,14 +565,15 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       currentCycle: 1,
                       members: invitedMembers,
                     );
-                    appState.createHagbadGroup(newGroup);
+                    
+                    Provider.of<AppState>(context, listen: false).createHagbadGroup(newGroup);
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Hagbad created. Invitations sent!")),
+                      SnackBar(content: Text(l10n.hagbadCreatedSuccess)),
                     );
                   }
                 },
-                child: const Text("Create & Invite"),
+                child: Text(l10n.createAndInvite),
               ),
             ],
           );
@@ -387,7 +602,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
           child: const AdaptiveIcon(FontAwesomeIcons.users, color: AppColors.accentTeal, size: 20),
         ),
         title: Text(group.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        subtitle: Text("${group.members.length} Members • \$${group.amount} ${group.frequency.name}"),
+        subtitle: Text("${group.members.length} ${l10n.members} • \$${group.amount} ${_getFreqLabel(group.frequency, l10n)}"),
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -408,9 +623,11 @@ class _HagbadScreenState extends State<HagbadScreen> {
                         spacing: 0,
                         children: [
                           TextButton.icon(
-                            onPressed: () => _showInviteMemberDialog(group),
+                            onPressed: (group.adminName == "Me" || group.adminName == "Khadar Abdi") 
+                                ? () => _showInviteMemberDialog(group) 
+                                : null,
                             icon: const Icon(Icons.person_add_alt_1, size: 18),
-                            label: const Text("Invite"),
+                            label: Text(l10n.invite),
                             style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
                           ),
                           TextButton.icon(
@@ -421,7 +638,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                               ),
                             ),
                             icon: const Icon(Icons.history, size: 18),
-                            label: const Text("History"),
+                            label: Text(l10n.history),
                             style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
                           ),
                           TextButton.icon(
@@ -448,17 +665,20 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 const SizedBox(height: 12),
                 ...group.members.asMap().entries.map((entry) => _buildMemberItem(group, entry.value, entry.key, group.frequency, theme, isDark, l10n)),
                 const SizedBox(height: 16),
+                if (group.adminName == "Me" || group.adminName == "Khadar Abdi")
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => _showQoriTuur(group),
+                    onPressed: (group.members.every((m) => m.isConfirmed) && group.status == HagbadStatus.pending)
+                        ? () => _showQoriTuur(group) 
+                        : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryDark,
+                      backgroundColor: (group.members.every((m) => m.isConfirmed) && group.status == HagbadStatus.pending) ? AppColors.primaryDark : AppColors.grey,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: const Text("Qori-tuur (Randomize Turns)"),
+                    child: Text(group.status == HagbadStatus.pending ? l10n.qoriTuurStart : l10n.qoriTuurRandomize),
                   ),
                 ),
               ],
@@ -467,6 +687,16 @@ class _HagbadScreenState extends State<HagbadScreen> {
         ],
       ),
     );
+  }
+
+  String _getFreqLabel(HagbadFrequency freq, AppLocalizations l10n) {
+    switch (freq) {
+      case HagbadFrequency.daily: return l10n.daily;
+      case HagbadFrequency.weekly: return l10n.weekly;
+      case HagbadFrequency.tenDays: return l10n.tenDays;
+      case HagbadFrequency.monthly: return l10n.monthly;
+      case HagbadFrequency.yearly: return l10n.yearly;
+    }
   }
 
   Widget _buildGroupSummary(HagbadGroup group, AppLocalizations l10n, ThemeData theme) {
@@ -486,9 +716,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildSummaryItem("Balance", "\$${group.currentBalance}", Colors.green),
-              _buildSummaryItem("Cycle", "${group.currentCycle}/${group.totalCycles}", Colors.blue),
-              _buildSummaryItem("Payout", "\$${group.totalPayout}", Colors.orange),
+              _buildSummaryItem(l10n.balance, "\$${group.currentBalance}", Colors.green),
+              _buildSummaryItem(l10n.cycle, "${group.currentCycle}/${group.totalCycles}", Colors.blue),
+              _buildSummaryItem(l10n.payout, "\$${group.totalPayout}", Colors.orange),
             ],
           ),
         ),
@@ -507,14 +737,14 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 const Icon(Icons.stars, color: AppColors.primaryDark, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  "Next Payout: ${nextMember.name} (Turn ${group.currentCycle})",
+                  l10n.nextPayoutWithMember(nextMember.name, group.currentCycle),
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.primaryDark),
                 ),
                 if (group.adminName == "Me" || group.adminName == "Khadar Abdi")
                   TextButton(
                     onPressed: () => _showProcessPayoutDialog(group, nextMember),
                     style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
-                    child: const Text("Pay Out"),
+                    child: Text(l10n.payOut),
                   ),
               ],
             ),
@@ -531,19 +761,20 @@ class _HagbadScreenState extends State<HagbadScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm Payout"),
+        scrollable: true,
+        title: Text(l10n.confirmPayout),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Are you sure you want to process the payout for ${member.name}?"),
+            Text(l10n.confirmPayoutDesc(member.name)),
             const SizedBox(height: 12),
-            Text("Payout Amount: \$${payoutAmount.toStringAsFixed(2)}"),
-            Text("Service Fee: \$${group.serviceFee.toStringAsFixed(2)}"),
+            Text("${l10n.payoutAmount}: \$${payoutAmount.toStringAsFixed(2)}"),
+            Text("${l10n.serviceFee}: \$${group.serviceFee.toStringAsFixed(2)}"),
             const Divider(),
-            const Text(
-              "Note: This will move the group to the next cycle.",
-              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+            Text(
+              l10n.payoutNote,
+              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
             ),
           ],
         ),
@@ -551,23 +782,28 @@ class _HagbadScreenState extends State<HagbadScreen> {
           TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
           ElevatedButton(
             onPressed: () async {
+              final pinSuccess = await _showSecurityPinDialog(context);
+              if (!pinSuccess || !context.mounted) return;
+
               try {
-                await Provider.of<AppState>(context, listen: false).processHagbadPayout(group.id);
+                if (context.mounted) {
+                  await Provider.of<AppState>(context, listen: false).processHagbadPayout(group.id);
+                }
                 if (context.mounted) {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Payout successful for ${member.name}")),
+                    SnackBar(content: Text(l10n.payoutSuccessfulFor(member.name))),
                   );
                 }
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Error: ${e.toString()}")),
+                    SnackBar(content: Text(l10n.processPayoutError(e.toString()))),
                   );
                 }
               }
             },
-            child: const Text("Process Payout"),
+            child: Text(l10n.processPayout),
           ),
         ],
       ),
@@ -600,10 +836,33 @@ class _HagbadScreenState extends State<HagbadScreen> {
         ),
         title: Row(
           children: [
-            Text(member.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-            if (member.isTrusted) const Padding(
-              padding: EdgeInsets.only(left: 4),
-              child: Icon(Icons.verified, size: 14, color: Colors.blue),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(member.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                  if (member.walletId != null)
+                    Text(member.walletId!, style: TextStyle(fontSize: 11, color: theme.textTheme.bodySmall?.color)),
+                ],
+              ),
+            ),
+            if (member.isTrusted) Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Icon(Icons.verified, size: 14, color: theme.primaryColor),
+            ),
+            if (member.guarantorId != null) Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Tooltip(
+                message: "${l10n.guarantor}: ${member.guarantorName}",
+                child: const Icon(Icons.shield_outlined, size: 14, color: Colors.green),
+              ),
+            ),
+            if (!member.isTrusted && member.guarantorId == null && member.name != "Me") Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Tooltip(
+                message: l10n.requireGuarantor,
+                child: const Icon(Icons.warning_amber_rounded, size: 14, color: Colors.orange),
+              ),
             ),
           ],
         ),
@@ -611,10 +870,12 @@ class _HagbadScreenState extends State<HagbadScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(_getTurnLabel(freq, member.payoutOrder, l10n), style: const TextStyle(fontSize: 12)),
+            if (member.guarantorName != null)
+              Text("${l10n.guarantor}: ${member.guarantorName}", style: const TextStyle(fontSize: 11, color: Colors.green, fontWeight: FontWeight.w500)),
             if (!member.isConfirmed)
-              const Text("Invitation Pending", style: TextStyle(color: Colors.orange, fontSize: 11, fontWeight: FontWeight.bold)),
+              Text(l10n.invitationPending, style: const TextStyle(color: Colors.orange, fontSize: 11, fontWeight: FontWeight.bold)),
             if (member.penaltyAmount > 0)
-              Text("Penalty: \$${member.penaltyAmount}", style: const TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold)),
+              Text(l10n.penalty(member.penaltyAmount.toString()), style: const TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold)),
           ],
         ),
         trailing: Row(
@@ -622,20 +883,37 @@ class _HagbadScreenState extends State<HagbadScreen> {
           children: [
             if (!member.hasSignedOath)
               IconButton(
-                tooltip: "Sign Oath (Dhaar)",
+                tooltip: l10n.signOathDhaar,
                 icon: const Icon(Icons.mosque_outlined, color: Colors.purple, size: 20), 
                 onPressed: () => _showDhaarDialog(group, member, index)
               ),
             IconButton(
-              tooltip: "Apply Penalty",
+              tooltip: l10n.applyPenalty,
               icon: const Icon(Icons.report_problem_outlined, color: Colors.red, size: 20), 
               onPressed: () => _showPenaltyDialog(group, index)
             ),
+            if (group.adminName == "Me" || group.adminName == "Khadar Abdi") ...[
+              IconButton(
+                tooltip: l10n.guarantor,
+                icon: Icon(Icons.security, color: member.guarantorId != null ? Colors.green : Colors.orange, size: 20),
+                onPressed: () => _showGuarantorDialog(group, member, index),
+              ),
+              IconButton(
+                tooltip: "Swap Turn",
+                icon: const Icon(Icons.swap_vert_outlined, color: Colors.blueGrey, size: 20),
+                onPressed: () => _showSwapTurnDialog(group, member, index),
+              ),
+              IconButton(
+                tooltip: "Edit Member",
+                icon: const Icon(Icons.edit_outlined, color: Colors.grey, size: 20),
+                onPressed: () => _showEditMemberDialog(group, member, index),
+              ),
+            ],
             if (member.hasReceived)
               const Icon(Icons.check_circle, color: Colors.green, size: 20)
             else if (member.name == "Me" && member.paidAmount < group.amount)
               IconButton(
-                tooltip: "Pay Contribution",
+                tooltip: l10n.payContribution,
                 icon: const Icon(Icons.payment, color: Colors.blue, size: 20),
                 onPressed: () => _showPayContributionDialog(group, index),
               ),
@@ -646,14 +924,16 @@ class _HagbadScreenState extends State<HagbadScreen> {
   }
 
   void _showPayContributionDialog(HagbadGroup group, int memberIndex) {
+    final l10n = AppLocalizations.of(context)!;
     final amount = group.amount;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Pay Contribution"),
-        content: Text("Do you want to pay \$${amount.toStringAsFixed(2)} for this cycle's Hagbad?"),
+        scrollable: true,
+        title: Text(l10n.payContribution),
+        content: Text(l10n.payContributionConfirm(amount.toStringAsFixed(2))),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
           ElevatedButton(
             onPressed: () async {
               final appState = Provider.of<AppState>(context, listen: false);
@@ -662,18 +942,18 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 if (context.mounted) {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Payment successful!")),
+                    SnackBar(content: Text(l10n.success)),
                   );
                 }
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Error: ${e.toString()}")),
+                    SnackBar(content: Text("${l10n.error}: ${e.toString()}")),
                   );
                 }
               }
             },
-            child: const Text("Pay Now"),
+            child: Text(l10n.payNow),
           ),
         ],
       ),
@@ -685,6 +965,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        scrollable: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
@@ -693,9 +974,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
             Expanded(child: Text(l10n.hagbadOath)),
           ],
         ),
-        content: const Text(
-          "Waxaan ku dhaaranayaa magaca Ilaaha Qaadirka ah inaan bixin doono qaaraanka Hagbad-ka waqtigiisa, haddii aan dib u dhacona aan bixin doono ganaaxa lagu heshiiyey.",
-          style: TextStyle(fontStyle: FontStyle.italic),
+        content: Text(
+          l10n.fullOathText,
+          style: const TextStyle(fontStyle: FontStyle.italic),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
@@ -706,7 +987,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
               Provider.of<AppState>(context, listen: false).updateHagbadMember(group.id, index, updatedMember);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("${member.name} has signed the oath.")),
+                SnackBar(content: Text(l10n.memberSignedOath(member.name))),
               );
             },
             child: Text(l10n.confirm),
@@ -722,11 +1003,12 @@ class _HagbadScreenState extends State<HagbadScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        scrollable: true,
         title: Text(l10n.applyPenalty),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Enter penalty amount for ${group.members[index].name}"),
+            Text(l10n.enterPenaltyAmount(group.members[index].name)),
             const SizedBox(height: 16),
             TextField(
               controller: controller, 
@@ -740,102 +1022,299 @@ class _HagbadScreenState extends State<HagbadScreen> {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
-          ElevatedButton(
-            onPressed: () {
-              final amount = double.tryParse(controller.text) ?? 1.0;
-              final member = group.members[index];
-              final updatedMember = member.copyWith(
-                penaltyAmount: member.penaltyAmount + amount
-              );
-              Provider.of<AppState>(context, listen: false).updateHagbadMember(group.id, index, updatedMember);
-              Navigator.pop(context);
-            },
-            child: Text(l10n.confirm),
-          ),
+              ElevatedButton(
+                onPressed: () async {
+                  final pinSuccess = await _showSecurityPinDialog(context);
+                  if (!pinSuccess || !context.mounted) return;
+
+                  final amount = double.tryParse(controller.text) ?? 1.0;
+                  final member = group.members[index];
+                  final updatedMember = member.copyWith(
+                    penaltyAmount: member.penaltyAmount + amount
+                  );
+                  Provider.of<AppState>(context, listen: false).updateHagbadMember(group.id, index, updatedMember);
+                  if (context.mounted) Navigator.pop(context);
+                },
+                child: Text(l10n.confirm),
+              ),
         ],
       ),
     );
   }
 
   void _showQoriTuur(HagbadGroup group) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    bool isSpinning = false;
+    String? currentName;
+    
+    // Get members who haven't received payout yet
+    final remainingMembers = group.members.where((m) => !m.hasReceived).toList();
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Qori-tuur"),
-        content: const Text("This will randomize the payout order for all members who haven't received their payout yet. Proceed?"),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
-          ElevatedButton(
-            onPressed: () {
-              Provider.of<AppState>(context, listen: false).randomizeHagbadTurns(group.id);
-              Navigator.pop(context);
-            },
-            child: const Text("Randomize"),
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Text(l10n.qoriTuur, textAlign: TextAlign.center),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isSpinning)
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: 150,
+                        width: 150,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            const SizedBox(
+                              height: 150,
+                              width: 150,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 10, 
+                                color: AppColors.primary,
+                                backgroundColor: AppColors.accentTeal,
+                              ),
+                            ),
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 100),
+                              child: CircleAvatar(
+                                key: ValueKey<String>(currentName ?? ""),
+                                radius: 50,
+                                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                                child: Text(
+                                  currentName?[0] ?? "?",
+                                  style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: AppColors.primary),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        currentName ?? "Selecting...", 
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text("Randomizing turns...", style: TextStyle(color: AppColors.grey)),
+                    ],
+                  )
+                else
+                  Column(
+                    children: [
+                      AdaptiveIcon(FontAwesomeIcons.dice, size: 60, color: AppColors.accentTeal),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.qoriTuurDesc,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          "Participants: ${remainingMembers.length}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
           ),
-        ],
+          actions: [
+            if (!isSpinning)
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+            if (!isSpinning)
+              ElevatedButton(
+                onPressed: () async {
+                  final pinSuccess = await _showSecurityPinDialog(context);
+                  if (!pinSuccess || !context.mounted) return;
+
+                  setDialogState(() => isSpinning = true);
+                  
+                  // Simple animation effect
+                  for (int i = 0; i < 20; i++) {
+                    await Future.delayed(Duration(milliseconds: 50 + (i * 10)));
+                    if (context.mounted) {
+                      setDialogState(() {
+                        currentName = remainingMembers[i % remainingMembers.length].name;
+                      });
+                    }
+                  }
+
+                  await Future.delayed(const Duration(milliseconds: 500));
+
+                  if (context.mounted) {
+                    Provider.of<AppState>(context, listen: false).randomizeHagbadTurns(group.id);
+                    Navigator.pop(context);
+                    
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Turns randomized successfully!"),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                },
+                child: Text(l10n.randomize),
+              ),
+          ],
+        ),
       ),
     );
   }
 
   void _showInviteMemberDialog(HagbadGroup group) {
+    final l10n = AppLocalizations.of(context)!;
+    final searchController = TextEditingController();
+    bool isSearching = false;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Center(
-        child: MaxWidthBox(
-          maxWidth: 600,
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.85,
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Center(
+          child: MaxWidthBox(
+            maxWidth: 600,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.85,
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Invite to ${group.name}",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      l10n.inviteToGroup(group.name),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: ContactSyncList(
-                    onContactSelected: (contact, murtaaxName) {
-                      if (murtaaxName != null) {
-                        final newMember = HagbadMember(
-                          name: murtaaxName,
-                          walletId: "CONTACT", // Placeholder since we identified by phone
-                          avatar: murtaaxName[0],
-                          payoutOrder: group.members.length + 1,
-                          hasReceived: false,
-                          isTrusted: false,
-                          isConfirmed: false,
-                        );
-                        Provider.of<AppState>(context, listen: false).addHagbadMember(group.id, newMember);
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("$murtaaxName added to group")),
-                        );
-                      } else {
-                        // This case is handled by the "INVITE" button in ContactSyncList
-                        // but if the user just taps the tile, we can show a prompt
-                        _showAppInvitePrompt(contact);
-                      }
-                    },
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: searchController,
+                            decoration: InputDecoration(
+                              hintText: l10n.enterWalletOrPhoneHint,
+                              border: const OutlineInputBorder(),
+                              suffixIcon: isSearching ? const SizedBox(width: 20, height: 20, child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(strokeWidth: 2))) : null,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton.filled(
+                          onPressed: isSearching ? null : () async {
+                            final id = searchController.text.trim();
+                            if (id.isEmpty) return;
+                            
+                            setDialogState(() => isSearching = true);
+                            try {
+                              final name = await Provider.of<AppState>(context, listen: false).verifyWalletId(id);
+                              if (name != null) {
+                                if (group.members.any((m) => m.walletId == id)) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.memberAlreadyInGroup)));
+                                  }
+                                } else {
+                                  final catchUpAmount = (group.currentCycle - 1) * group.amount;
+                                  final newMember = HagbadMember(
+                                    name: name,
+                                    walletId: id,
+                                    avatar: name[0],
+                                    payoutOrder: group.members.length + 1,
+                                    hasReceived: false,
+                                    isTrusted: false,
+                                    isConfirmed: group.status == HagbadStatus.active, // Auto-confirm if group is already active
+                                    paidAmount: group.status == HagbadStatus.active ? catchUpAmount : 0.0,
+                                  );
+
+                                  if (context.mounted && group.status == HagbadStatus.active && catchUpAmount > 0) {
+                                    final confirmed = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text("Add Late Member"),
+                                        content: Text("Since the group is in cycle ${group.currentCycle}, the new member must pay \$${catchUpAmount.toStringAsFixed(2)} to catch up with previous contributions. Add them now?"),
+                                        actions: [
+                                          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+                                          ElevatedButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.confirm)),
+                                        ],
+                                      ),
+                                    );
+                                    if (confirmed != true) {
+                                       if (context.mounted) setDialogState(() => isSearching = false);
+                                       return;
+                                    }
+                                  }
+
+                                  if (context.mounted) {
+                                    final pinSuccess = await _showSecurityPinDialog(context);
+                                    if (!pinSuccess || !context.mounted) return;
+
+                                    try {
+                                      Provider.of<AppState>(context, listen: false).addHagbadMember(
+                                        group.id, 
+                                        newMember,
+                                        catchUpAmount: newMember.paidAmount,
+                                      );
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.memberInvitedSuccess(name))));
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                      }
+                                    }
+                                  }
+                                }
+                              } else {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.walletOrPhoneNotFound)));
+                                }
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                String errorMsg = e.toString().contains('self_transfer_error') ? l10n.selfTransferError : e.toString();
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
+                              }
+                            } finally {
+                              if (context.mounted) {
+                                setDialogState(() => isSearching = false);
+                              }
+                            }
+                          },
+                          icon: const Icon(Icons.person_add),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  const Divider(height: 32),
+                ],
+              ),
             ),
           ),
         ),
@@ -843,22 +1322,344 @@ class _HagbadScreenState extends State<HagbadScreen> {
     );
   }
 
-  void _showAppInvitePrompt(Contact contact) {
+  void _showGuarantorDialog(HagbadGroup group, HagbadMember member, int index) {
+    final l10n = AppLocalizations.of(context)!;
+    final appState = Provider.of<AppState>(context, listen: false);
+    final searchController = TextEditingController();
+    bool isSearching = false;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          scrollable: true,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(l10n.guarantorDetails),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.requireGuarantor, style: const TextStyle(fontSize: 13, color: AppColors.grey)),
+              const SizedBox(height: 16),
+              if (member.guarantorName != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(member.guarantorName!, style: const TextStyle(fontWeight: FontWeight.bold)),
+                            if (member.guarantorId != null) Text(member.guarantorId!, style: const TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, size: 18),
+                        onPressed: () {
+                          final updatedMember = member.copyWith(
+                            guarantorName: null,
+                            guarantorId: null,
+                            isGuarantorConfirmed: false,
+                          );
+                          appState.updateHagbadMember(group.id, index, updatedMember);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        hintText: l10n.guarantorIdLabel,
+                        border: const OutlineInputBorder(),
+                        suffixIcon: isSearching ? const SizedBox(width: 20, height: 20, child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(strokeWidth: 2))) : null,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton.filled(
+                    onPressed: isSearching ? null : () async {
+                      final id = searchController.text.trim();
+                      if (id.isEmpty) return;
+                      
+                      // PIN verification before sensitive administrative actions
+                      final success = await _showSecurityPinDialog(context);
+                      if (!success || !context.mounted) return;
+
+                      setDialogState(() => isSearching = true);
+                      try {
+                        final name = await appState.verifyWalletId(id);
+                        if (name != null) {
+                          final updatedMember = member.copyWith(
+                            guarantorName: name,
+                            guarantorId: id,
+                            isGuarantorConfirmed: true,
+                          );
+                          appState.updateHagbadMember(group.id, index, updatedMember);
+                          
+                          // Log as significant event
+                          appState.logHagbadEvent(group.id, "Guarantor assigned: $name for ${member.name}");
+
+                          // Send notification/SMS to guarantor
+                          appState.sendHagbadNotification(
+                            id, 
+                            "You have been assigned as a guarantor for ${member.name} in the '${group.name}' Hagbad group.",
+                            isSms: true,
+                          );
+                          
+                          if (context.mounted) Navigator.pop(context);
+                        } else {
+                          if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.walletIdNotFound)));
+                        }
+                      } catch (e) {
+                        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                      } finally {
+                        if (context.mounted) setDialogState(() => isSearching = false);
+                      }
+                    },
+                    icon: const Icon(Icons.search),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                onPressed: () async {
+                  // PIN verification before sensitive administrative actions
+                  final success = await _showSecurityPinDialog(context);
+                  if (!success || !context.mounted) return;
+
+                  final updatedMember = member.copyWith(
+                    guarantorName: "Admin (Accepted)",
+                    guarantorId: "ADMIN",
+                    isGuarantorConfirmed: true,
+                  );
+                  appState.updateHagbadMember(group.id, index, updatedMember);
+                  appState.logHagbadEvent(group.id, "Admin (${group.adminName}) vouched for ${member.name}");
+                  if (context.mounted) Navigator.pop(context);
+                },
+                  child: const Text("Skip (Admin Accepted)"),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditMemberDialog(HagbadGroup group, HagbadMember member, int index) {
+    final l10n = AppLocalizations.of(context)!;
+    final appState = Provider.of<AppState>(context, listen: false);
+    final nameController = TextEditingController(text: member.name);
+    final walletIdController = TextEditingController(text: member.walletId);
+    final guarantorNameController = TextEditingController(text: member.guarantorName);
+    final guarantorIdController = TextEditingController(text: member.guarantorId);
+    bool isTrusted = member.isTrusted;
+    bool isConfirmed = member.isConfirmed;
+    bool hasReceived = member.hasReceived;
+    bool isGuarantorConfirmed = member.isGuarantorConfirmed;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          scrollable: true,
+          title: Row(
+            children: [
+              const Icon(Icons.admin_panel_settings, color: Colors.blue),
+              const SizedBox(width: 8),
+              Text(l10n.edit),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.personalDetails.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: l10n.fullName,
+                    prefixIcon: const Icon(Icons.person),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: walletIdController,
+                  decoration: InputDecoration(
+                    labelText: "Wallet ID / Phone",
+                    prefixIcon: const Icon(Icons.account_balance_wallet),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Text("TRUST & STATUS", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+                SwitchListTile(
+                  title: Text(l10n.trustedMember),
+                  subtitle: const Text("Admin vouching for this member"),
+                  value: isTrusted,
+                  onChanged: (val) => setDialogState(() => isTrusted = val),
+                  contentPadding: EdgeInsets.zero,
+                ),
+                SwitchListTile(
+                  title: const Text("Confirmed Participation"),
+                  subtitle: const Text("Member has accepted invitation"),
+                  value: isConfirmed,
+                  onChanged: (val) => setDialogState(() => isConfirmed = val),
+                  contentPadding: EdgeInsets.zero,
+                ),
+                SwitchListTile(
+                  title: const Text("Payout Completed"),
+                  subtitle: const Text("Manually override payout status"),
+                  value: hasReceived,
+                  onChanged: (val) => setDialogState(() => hasReceived = val),
+                  contentPadding: EdgeInsets.zero,
+                ),
+                const SizedBox(height: 24),
+                const Text("GUARANTOR (HAG-DOR)", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: guarantorNameController,
+                  decoration: InputDecoration(
+                    labelText: "Guarantor Name",
+                    prefixIcon: const Icon(Icons.security),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: guarantorIdController,
+                  decoration: InputDecoration(
+                    labelText: "Guarantor Wallet ID",
+                    prefixIcon: const Icon(Icons.vpn_key),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                SwitchListTile(
+                  title: const Text("Guarantor Confirmed"),
+                  value: isGuarantorConfirmed,
+                  onChanged: (val) => setDialogState(() => isGuarantorConfirmed = val),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+            ElevatedButton(
+              onPressed: () async {
+                // PIN verification before sensitive administrative actions
+                final success = await _showSecurityPinDialog(context);
+                if (!success || !context.mounted) return;
+
+                final updatedMember = member.copyWith(
+                  name: nameController.text.trim(),
+                  walletId: walletIdController.text.trim(),
+                  isTrusted: isTrusted,
+                  isConfirmed: isConfirmed,
+                  hasReceived: hasReceived,
+                  guarantorName: guarantorNameController.text.trim().isEmpty ? null : guarantorNameController.text.trim(),
+                  guarantorId: guarantorIdController.text.trim().isEmpty ? null : guarantorIdController.text.trim(),
+                  isGuarantorConfirmed: isGuarantorConfirmed,
+                  avatar: nameController.text.trim().isNotEmpty ? nameController.text.trim()[0] : member.avatar,
+                );
+                appState.updateHagbadMember(group.id, index, updatedMember);
+                
+                if (isTrusted && !member.isTrusted) {
+                  appState.logHagbadEvent(group.id, "Admin manually vouched for ${updatedMember.name}");
+                }
+                
+                if (updatedMember.guarantorId != member.guarantorId && updatedMember.guarantorId != null) {
+                   appState.sendHagbadNotification(
+                     updatedMember.guarantorId!, 
+                     "You have been assigned as a guarantor for ${updatedMember.name} in group '${group.name}'. Please confirm in-app."
+                   );
+                }
+
+                if (context.mounted) Navigator.pop(context);
+              },
+              child: Text(l10n.saveChanges),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSwapTurnDialog(HagbadGroup group, HagbadMember member, int index) {
+    final l10n = AppLocalizations.of(context)!;
+    final appState = Provider.of<AppState>(context, listen: false);
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Invite to MurtaaxPay"),
-        content: Text("${contact.displayName} is not on MurtaaxPay yet. Would you like to invite them to the app first?"),
+        scrollable: false,
+        title: Text(l10n.swapTurn),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Select a member to swap turns with ${member.name}.", style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.maxFinite,
+              height: 300,
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: group.members.length,
+                separatorBuilder: (context, i) => i == index ? const SizedBox.shrink() : const Divider(height: 1),
+                itemBuilder: (context, i) {
+                  if (i == index) return const SizedBox.shrink();
+                  final otherMember = group.members[i];
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    leading: CircleAvatar(
+                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                      child: Text(otherMember.avatar, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
+                    ),
+                    title: Text(otherMember.name, style: const TextStyle(fontWeight: FontWeight.w500)),
+                    subtitle: Text("Current: ${_getTurnLabel(group.frequency, otherMember.payoutOrder, l10n)}"),
+                    trailing: const Icon(Icons.swap_horiz, color: Colors.blue),
+                    onTap: () async {
+                      // PIN verification before sensitive administrative actions
+                      final success = await _showSecurityPinDialog(context);
+                      if (success && context.mounted) {
+                        appState.swapHagbadTurns(group.id, index, i);
+                        Navigator.pop(context);
+                      }
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
-          ElevatedButton(
-            onPressed: () {
-              // The invite logic is already in ContactSyncList, 
-              // but we can trigger it here or just close.
-              Navigator.pop(context);
-            },
-            child: const Text("Invite via SMS"),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
         ],
       ),
     );
@@ -872,5 +1673,59 @@ class _HagbadScreenState extends State<HagbadScreen> {
       case HagbadFrequency.tenDays: return "10-Maalmood $order";
       case HagbadFrequency.yearly: return "Sanadka $order";
     }
+  }
+
+  Future<bool> _showSecurityPinDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final state = Provider.of<AppState>(context, listen: false);
+    final TextEditingController pinController = TextEditingController();
+    
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        scrollable: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(l10n.enterSecurityPin, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.enterTransactionPin, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.grey, fontSize: 14)),
+            const SizedBox(height: 20),
+            TextField(
+              controller: pinController,
+              keyboardType: TextInputType.number,
+              obscureText: true,
+              maxLength: 4,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 10),
+              decoration: InputDecoration(
+                counterText: "",
+                filled: true,
+                fillColor: Colors.grey.withValues(alpha: 0.1),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+          TextButton(
+            onPressed: () {
+              if (state.verifyPin(pinController.text)) {
+                if (context.mounted) Navigator.pop(context, true);
+              } else {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Incorrect PIN"), duration: Duration(seconds: 2)),
+                  );
+                }
+              }
+            },
+            child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 }

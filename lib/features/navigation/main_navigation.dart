@@ -144,12 +144,12 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
         borderRadius: isDrawer ? BorderRadius.zero : BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 20,
             offset: const Offset(0, 10),
           )
         ],
-        border: isDrawer ? null : Border.all(color: theme.dividerColor.withOpacity(0.05)),
+        border: isDrawer ? null : Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
       ),
       child: SafeArea(
         child: Column(
@@ -203,7 +203,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppColors.primaryDark.withOpacity(0.03),
+          color: AppColors.primaryDark.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -211,10 +211,10 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.accentTeal.withOpacity(0.4), width: 2),
+                border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.4), width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.accentTeal.withOpacity(0.1),
+                    color: AppColors.accentTeal.withValues(alpha: 0.1),
                     blurRadius: 8,
                   )
                 ]
@@ -238,7 +238,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: AppColors.accentTeal.withOpacity(0.1),
+                      color: AppColors.accentTeal.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Text(
@@ -268,7 +268,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.bold,
-          color: AppColors.grey.withOpacity(0.6),
+          color: AppColors.grey.withValues(alpha: 0.6),
           letterSpacing: 1.2,
         ),
       ),
@@ -289,7 +289,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
               const SizedBox(width: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: theme.dividerColor.withOpacity(0.05),
+                  color: theme.dividerColor.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(
@@ -317,7 +317,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
       height: 40,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.primaryDark.withOpacity(0.05),
+        color: AppColors.primaryDark.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -329,7 +329,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                 decoration: BoxDecoration(
                   color: !isSomali ? Colors.white : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
-                  boxShadow: !isSomali ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)] : null,
+                  boxShadow: !isSomali ? [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4)] : null,
                 ),
                 alignment: Alignment.center,
                 child: Text(
@@ -388,7 +388,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.accentTeal.withOpacity(0.1) : Colors.transparent,
+            color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -401,7 +401,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                    color: color ?? (isSelected ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color?.withOpacity(0.7)),
+                    color: color ?? (isSelected ? AppColors.accentTeal : theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.7)),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -441,12 +441,12 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
               margin: const EdgeInsets.symmetric(horizontal: 24),
               height: 76,
               decoration: BoxDecoration(
-                color: AppColors.primaryDark.withOpacity(0.95),
+                color: AppColors.primaryDark.withValues(alpha: 0.95),
                 borderRadius: BorderRadius.circular(38),
-                border: Border.all(color: Colors.white.withOpacity(0.05), width: 1),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                     blurRadius: 25,
                     offset: const Offset(0, 10),
                     spreadRadius: -5,
@@ -487,12 +487,12 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                 duration: const Duration(milliseconds: 300),
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.accentTeal.withOpacity(0.1) : Colors.transparent,
+                  color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent,
                   shape: BoxShape.circle,
                 ),
                 child: AdaptiveIcon(
                   icon, 
-                  color: isSelected ? AppColors.accentTeal : Colors.white.withOpacity(0.5),
+                  color: isSelected ? AppColors.accentTeal : Colors.white.withValues(alpha: 0.5),
                   size: 22,
                 ),
               ),
@@ -518,7 +518,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: AppColors.accentTeal.withOpacity(0.3),
+              color: AppColors.accentTeal.withValues(alpha: 0.3),
               blurRadius: 12,
               offset: const Offset(0, 4),
             )

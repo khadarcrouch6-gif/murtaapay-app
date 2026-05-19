@@ -5,6 +5,7 @@ import '../../core/api_service.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class ExchangeRatesScreen extends StatefulWidget {
@@ -53,7 +54,9 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
     "CAD": "ca",
   };
 
-  Widget _buildFlag(String currency, {double width = 28, double height = 20}) {
+  Widget _buildFlag(String currency, {double? width, double? height}) {
+    final w = width ?? (28 * context.fontSizeFactor);
+    final h = height ?? (20 * context.fontSizeFactor);
     final Map<String, String> flagMap = {
       "USD": "us", "EUR": "eu", "GBP": "gb", "CAD": "ca", "KES": "ke", "SOS": "so",
       "AED": "ae", "SAR": "sa", "TRY": "tr", "ETB": "et", "DJF": "dj", "UGX": "ug",
@@ -65,9 +68,9 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
       borderRadius: BorderRadius.circular(3),
       child: Image.network(
         "https://flagcdn.com/w40/$code.png",
-        width: width, height: height,
+        width: w, height: h,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => const Icon(Icons.flag_rounded, size: 18, color: Colors.white),
+        errorBuilder: (_, _, _) => Icon(Icons.flag_rounded, size: 18 * context.fontSizeFactor, color: Colors.white),
       ),
     );
   }
@@ -88,6 +91,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = AppState();
     final theme = Theme.of(context);
     return ListenableBuilder(
@@ -96,7 +100,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
           appBar: AppBar(
-            title: Text(state.translate("Exchange Rates", "Sarifka Lacagta", ar: "أسعار الصرف", de: "Wechselkurse"), 
+            title: Text(l10n.exchangeRates, 
                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
             centerTitle: true,
             leading: IconButton(
@@ -117,9 +121,9 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FadeInDown(child: _buildConverterCard(context, state)),
+                    FadeInDown(child: _buildConverterCard(context, state, l10n)),
                     const SizedBox(height: 32),
-                    FadeInUp(child: Text(state.translate("Live Market Rates", "Qiimaha Suuqyada", ar: "أسعار السوق المباشرة", de: "Live-Marktkurse"), 
+                    FadeInUp(child: Text(l10n.liveMarketRates, 
                         style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary))),
                     const SizedBox(height: 16),
                     
@@ -144,12 +148,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              state.translate(
-                                "Rates are mid-market rates updated every 15 minutes.",
-                                "Qiimayaashu waa kuwa suuqa dhexe waxaana la cusboonaysiiyaa 15 daqiiqo kasta.",
-                                ar: "الأسعار هي أسعار السوق المتوسطة ويتم تحديثها كل 15 دقيقة.",
-                                de: "Die Kurse sind Mittelkurse, die alle 15 Minuten aktualisiert werden."
-                              ),
+                              l10n.ratesInfo,
                               style: TextStyle(fontSize: 12 * context.fontSizeFactor, color: AppColors.grey),
                             ),
                           ),
@@ -166,7 +165,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
     );
   }
 
-  Widget _buildConverterCard(BuildContext context, AppState state) {
+  Widget _buildConverterCard(BuildContext context, AppState state, AppLocalizations l10n) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24 * context.fontSizeFactor),
@@ -183,10 +182,10 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(state.translate("You Convert", "Waxaad Beddelaysaa", ar: "أنت تحول", de: "Sie konvertieren"), 
+                    Text(l10n.youConvert, 
                         style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
                         maxLines: 1, overflow: TextOverflow.ellipsis),
-                    _buildCurrencySelector(context, state, _fromCurrency, true),
+                    _buildCurrencySelector(context, state, l10n, _fromCurrency, true),
                   ],
                 ),
               ),
@@ -204,10 +203,10 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(state.translate("You Get", "Waxaad Helaysaa", ar: "تحصل على", de: "Sie erhalten"), 
+                    Text(l10n.youGet, 
                         style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
                         maxLines: 1, overflow: TextOverflow.ellipsis),
-                    _buildCurrencySelector(context, state, _toCurrency, false),
+                    _buildCurrencySelector(context, state, l10n, _toCurrency, false),
                   ],
                 ),
               ),
@@ -253,9 +252,9 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
     );
   }
 
-  Widget _buildCurrencySelector(BuildContext context, AppState state, String currency, bool isActive) {
+  Widget _buildCurrencySelector(BuildContext context, AppState state, AppLocalizations l10n, String currency, bool isActive) {
     return GestureDetector(
-      onTap: () => _showCurrencyPicker(state, isActive),
+      onTap: () => _showCurrencyPicker(state, l10n, isActive),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
@@ -278,7 +277,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
     );
   }
 
-  void _showCurrencyPicker(AppState state, bool isActive) {
+  void _showCurrencyPicker(AppState state, AppLocalizations l10n, bool isActive) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -287,64 +286,62 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        height: MediaQuery.of(context).size.height * 0.7,
-        padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        ),
-        child: Column(
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: isDark ? Colors.grey[700] : Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              state.translate("Select Currency", "Dooro Lacagta", ar: "اختر العملة", de: "Währung wählen"),
-              style: TextStyle(
-                fontSize: 20 * context.fontSizeFactor,
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Center(
-                child: MaxWidthBox(
-                  maxWidth: 600,
-                  child: ListView(
-                    children: _rates.keys.map((curr) => ListTile(
-                      leading: _buildFlag(curr, width: 32 * context.fontSizeFactor, height: 24 * context.fontSizeFactor),
-                      title: Text(
-                        curr,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16 * context.fontSizeFactor,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          if (isActive) {
-                            _fromCurrency = curr;
-                          } else {
-                            _toCurrency = curr;
-                          }
-                        });
-                        Navigator.pop(ctx);
-                      },
-                    )).toList(),
-                  ),
+      builder: (ctx) => MaxWidthBox(
+        maxWidth: 600,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          padding: EdgeInsets.fromLTRB(24 * context.fontSizeFactor, 8 * context.fontSizeFactor, 24 * context.fontSizeFactor, 24 * context.fontSizeFactor),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32 * context.fontSizeFactor)),
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: 40 * context.fontSizeFactor,
+                height: 4 * context.fontSizeFactor,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[700] : Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2 * context.fontSizeFactor),
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: 20 * context.fontSizeFactor),
+              Text(
+                l10n.selectCurrency,
+                style: TextStyle(
+                  fontSize: 20 * context.fontSizeFactor,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              SizedBox(height: 16 * context.fontSizeFactor),
+              Expanded(
+                child: ListView(
+                  children: _rates.keys.map((curr) => ListTile(
+                    leading: _buildFlag(curr, width: 32 * context.fontSizeFactor, height: 24 * context.fontSizeFactor),
+                    title: Text(
+                      curr,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16 * context.fontSizeFactor,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        if (isActive) {
+                          _fromCurrency = curr;
+                        } else {
+                          _toCurrency = curr;
+                        }
+                      });
+                      Navigator.pop(ctx);
+                    },
+                  )).toList(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
