@@ -24,6 +24,22 @@ class AppState extends ChangeNotifier {
   double _balance = 12450.80;
   double get balance => _balance;
 
+  String _userName = "Mohamed Osman";
+  String get userName => _userName;
+
+  String _userEmail = "mohamed.osman@example.com";
+  String get userEmail => _userEmail;
+
+  String _userPhone = "+252 615 123 456";
+  String get userPhone => _userPhone;
+
+  void updateProfile({String? name, String? email, String? phone}) {
+    if (name != null) _userName = name;
+    if (email != null) _userEmail = email;
+    if (phone != null) _userPhone = phone;
+    notifyListeners();
+  }
+
   double _savingsBalance = 0.0;
   double get savingsBalance => _savingsBalance;
 
@@ -507,6 +523,11 @@ class AppState extends ChangeNotifier {
     final List<String>? cardsJson = _prefs.getStringList('virtual_cards');
     if (cardsJson != null) {
       _cards = cardsJson.map((e) => VirtualCard.fromJson(json.decode(e))).toList();
+      // Enforce limit of 2 cards
+      if (_cards.length > 2) {
+        _cards = _cards.sublist(0, 2);
+        _saveCards();
+      }
     } else {
       _cards = [
         VirtualCard(
@@ -573,6 +594,7 @@ class AppState extends ChangeNotifier {
   }
 
   void addCard(VirtualCard card) {
+    if (_cards.length >= 2) return;
     _cards.add(card);
     _saveCards();
     notifyListeners();

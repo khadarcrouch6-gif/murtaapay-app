@@ -34,9 +34,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String _userName = "Mohamed Osman";
-  String _userEmail = "mohamed.osman@example.com";
-  String _userPhone = "+252 615 123 456";
   String _userDob = "1990-01-01";
   String _userNationality = "Somali";
   String _userIdNumber = "ABC123456";
@@ -225,7 +222,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: AppColors.accentTeal, width: 2 * context.fontSizeFactor),
-                      image: const DecorationImage(image: AssetImage('assets/images/user.png'), fit: BoxFit.cover),
+                    ),
+                    child: ClipOval(
+                      child: Image.network(
+                        'https://ui-avatars.com/api/?name=${state.userName.replaceAll(' ', '+')}&background=0D47A1&color=fff',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Image.asset('assets/images/user.png', fit: BoxFit.cover),
+                      ),
                     ),
                   ),
                   Positioned(
@@ -244,9 +247,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_userName, style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                    Text(state.userName, style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                     SizedBox(height: 4 * context.fontSizeFactor),
-                    Text(_userEmail, style: TextStyle(color: Colors.grey, fontSize: 14 * context.fontSizeFactor)),
+                    Text(state.userEmail, style: TextStyle(color: Colors.grey, fontSize: 14 * context.fontSizeFactor)),
                     SizedBox(height: 8 * context.fontSizeFactor),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
@@ -280,14 +283,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _buildQuickActionItem(context, Icons.account_balance_wallet_outlined, state.translate("Wallet", "Kiishka", ar: "المحفظة", de: "Wallet", et: "Rahakott"), () {}),
+        _buildQuickActionItem(context, Icons.account_balance_wallet_outlined, state.translate("Wallet", "Kiishka", ar: "المحفظة", de: "Wallet", et: "Rahakott"), () => state.setNavIndex(0)),
         _buildQuickActionItem(context, Icons.card_giftcard_rounded, state.translate("Vouchers", "Vouchers-ka", ar: "القسائم", de: "Gutscheine", et: "Voucherid"), () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const VouchersScreen()));
         }),
         _buildQuickActionItem(context, Icons.people_outline_rounded, state.translate("Referral", "Tixraac", ar: "الإحالة", de: "Empfehlung", et: "Soovitus"), () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const ReferEarnScreen()));
         }),
-        _buildQuickActionItem(context, Icons.history_rounded, state.translate("History", "Taariikhda", ar: "السجل", de: "Verlauf", et: "Ajalugu"), () {}),
+        _buildQuickActionItem(context, Icons.history_rounded, state.translate("History", "Taariikhda", ar: "السجل", de: "Verlauf", et: "Ajalugu"), () => state.setNavIndex(1)),
       ],
     );
   }
@@ -349,9 +352,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showEditProfile(BuildContext context, AppState state) {
-    final nameCtrl = TextEditingController(text: _userName);
-    final emailCtrl = TextEditingController(text: _userEmail);
-    final phoneCtrl = TextEditingController(text: _userPhone);
+    final nameCtrl = TextEditingController(text: state.userName);
+    final emailCtrl = TextEditingController(text: state.userEmail);
+    final phoneCtrl = TextEditingController(text: state.userPhone);
     final dobCtrl = TextEditingController(text: _userDob);
     final nationalityCtrl = TextEditingController(text: _userNationality);
     final idNumberCtrl = TextEditingController(text: _userIdNumber);
@@ -441,10 +444,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 56 * context.fontSizeFactor,
                           child: ElevatedButton(
                             onPressed: () {
+                              state.updateProfile(
+                                name: nameCtrl.text,
+                                email: emailCtrl.text,
+                                phone: phoneCtrl.text,
+                              );
                               setState(() {
-                                _userName = nameCtrl.text;
-                                _userEmail = emailCtrl.text;
-                                _userPhone = phoneCtrl.text;
                                 _userDob = dobCtrl.text;
                                 _userNationality = nationalityCtrl.text;
                                 _userIdNumber = idNumberCtrl.text;
@@ -531,11 +536,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   padding: EdgeInsets.all(16 * context.fontSizeFactor),
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
-                  child: QrImageView(data: _userEmail, version: QrVersions.auto, size: 200 * context.fontSizeFactor, gapless: false),
+                  child: QrImageView(data: state.userEmail, version: QrVersions.auto, size: 200 * context.fontSizeFactor, gapless: false),
                 ),
                 SizedBox(height: 24 * context.fontSizeFactor),
-                Text(_userName, style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                Text(_userEmail, style: TextStyle(color: Colors.grey, fontSize: 13 * context.fontSizeFactor)),
+                Text(state.userName, style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                Text(state.userEmail, style: TextStyle(color: Colors.grey, fontSize: 13 * context.fontSizeFactor)),
                 SizedBox(height: 32 * context.fontSizeFactor),
                 Row(
                   children: [

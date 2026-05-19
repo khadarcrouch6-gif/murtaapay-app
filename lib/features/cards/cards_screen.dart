@@ -484,7 +484,6 @@ class _CardsScreenState extends State<CardsScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Direct access to settings without initial PIN (PIN will be asked for sensitive actions)
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -514,7 +513,7 @@ class _CardsScreenState extends State<CardsScreen> {
             children: [
               const SizedBox(height: 12),
               Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Row(
@@ -653,6 +652,7 @@ class _CardsScreenState extends State<CardsScreen> {
                         onTap: () => _showTerminateReasons(context, l10n, state),
                         isLast: true,
                       ),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
@@ -1565,6 +1565,37 @@ class _CardsScreenState extends State<CardsScreen> {
 
   void _showNewCardDialog(BuildContext context, AppState state) {
     final l10n = AppLocalizations.of(context)!;
+    
+    if (state.cards.length >= 2) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Row(
+            children: [
+              const Icon(Icons.info_outline_rounded, color: Colors.orange),
+              const SizedBox(width: 12),
+              Text(state.translate("Card Limit Reach", "Xadka Kaadhka")),
+            ],
+          ),
+          content: Text(
+            state.translate(
+              "You can only have a maximum of 2 virtual cards at a time. Please terminate an existing card to order a new one.",
+              "Waxa aad yeelan kartaa ugu badnaan 2 kaadh oo keliya. Fadlan tirtir mid ka mid ah kuwa hadda kuu furan si aad u dalbato mid cusub."
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(state.translate("Understood", "Waan fahmay")),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,

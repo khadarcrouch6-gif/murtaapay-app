@@ -317,11 +317,13 @@ class _HagbadScreenState extends State<HagbadScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) {
           return AlertDialog(
-            scrollable: true,
             title: Text(l10n.createNewHagbad),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                 TextField(
                   controller: nameController,
                   decoration: InputDecoration(labelText: l10n.groupName, border: const OutlineInputBorder()),
@@ -545,6 +547,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 ),
               ],
             ),
+          ),
+        ),
             actions: [
               TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
               ElevatedButton(

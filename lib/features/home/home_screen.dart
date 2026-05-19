@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String _displayedName = "Khadar";
   int _charIndex = 6;
   Timer? _timer;
-  final List<String> _names = ["Khadar", "Abdi", "Warsame"];
+  late List<String> _names;
   
   ChartType _selectedChartType = ChartType.bar;
   final List<double> _spendingData = [45, 80, 55, 95, 70, 40, 65];
@@ -71,6 +71,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       duration: const Duration(seconds: 3),
       vsync: this,
     )..repeat(reverse: true);
+    _names = [Provider.of<AppState>(context, listen: false).userName.split(' ').first, "Abdi", "Warsame"];
+    _displayedName = _names[0];
+    _charIndex = _names[0].length;
     _startNameAnimation();
     
     // Simulate initial data loading
@@ -256,58 +259,62 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             Expanded(
               child: FadeInLeft(
                 delay: const Duration(milliseconds: 300),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          )
-                        ],
+                child: InkWell(
+                  onTap: () => state.setNavIndex(4),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            )
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 20,
+                          backgroundColor: AppColors.primaryDark,
+                          backgroundImage: const AssetImage('assets/images/app_logo.png'),
+                          foregroundImage: NetworkImage('https://ui-avatars.com/api/?name=${state.userName.replaceAll(' ', '+')}&background=0D47A1&color=fff'),
+                          onForegroundImageError: (exception, stackTrace) => {},
+                        ),
                       ),
-                      child: CircleAvatar(
-                        radius: 20,
-                        backgroundColor: AppColors.primaryDark,
-                        backgroundImage: const AssetImage('assets/images/app_logo.png'),
-                        foregroundImage: const NetworkImage('https://ui-avatars.com/api/?name=Khadar+Abdi&background=0D47A1&color=fff'),
-                        onForegroundImageError: (exception, stackTrace) => {},
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, 
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            l10n.welcome,
-                            style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              _displayedName, 
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                color: Colors.white, 
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20 * context.fontSizeFactor
-                              ), 
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start, 
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              l10n.welcome,
+                              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
-                          ),
-                        ],
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                _displayedName, 
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  color: Colors.white, 
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20 * context.fontSizeFactor
+                                ), 
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
