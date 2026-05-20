@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:ui' show ImageFilter;
+import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
@@ -693,7 +693,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
@@ -816,7 +816,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Center(
           child: Container(
             padding: const EdgeInsets.all(32),

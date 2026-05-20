@@ -49,7 +49,7 @@ class _VouchersScreenState extends State<VouchersScreen> {
             style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Directionality.of(context) == TextDirection.rtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.iconTheme.color),
+          icon: Icon(Icons.arrow_back_rounded, color: theme.iconTheme.color),
           onPressed: () => Navigator.pop(context),
         ),
       ),

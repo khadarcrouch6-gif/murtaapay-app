@@ -9,6 +9,26 @@ class AppLocalizationsSo extends AppLocalizations {
   AppLocalizationsSo([String locale = 'so']) : super(locale);
 
   @override
+  String get anonymous => 'Qof aan la aqoon';
+
+  @override
+  String get donationSuccessful => 'Deeqdu Way Guulaysatay!';
+
+  @override
+  String get donationSuccessMessage =>
+      'Waad ku mahadsan tahay deeqdaada. Waxay wax weyn ka tari doontaa nolosha dadka u baahan.';
+
+  @override
+  String get pleaseEnterValidAmount => 'Fadlan geli cadad sax ah';
+
+  @override
+  String get facebook => 'Facebook';
+
+  @override
+  String get campaignDescriptionExtra =>
+      'Ururintan lacageed waxaa loo bilaabay si loo daboolo kharashaadka degdegga ah ee qalliinka Axmed. Doollar kasta wuxuu noo soo dhoweynayaa yoolka wuxuuna gacan ka geysanayaa badbaadinta nolosha. Ku biir 142-da deeq-bixiyeyaal ee horay uga qayb qaatay.';
+
+  @override
   String get appTitle => 'MurtaaxPay';
 
   @override
@@ -90,6 +110,9 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get seeAll => 'See All';
+
+  @override
+  String get more => 'Wax kale';
 
   @override
   String get spendingAnalysis => 'Spending Analysis';
@@ -1336,7 +1359,22 @@ class AppLocalizationsSo extends AppLocalizations {
   String get ethereum => 'Ethereum';
 
   @override
-  String get gold => 'Gold';
+  String get solana => 'Solana';
+
+  @override
+  String get tether => 'Tether';
+
+  @override
+  String get ripple => 'Ripple';
+
+  @override
+  String get cardano => 'Cardano';
+
+  @override
+  String get polkadot => 'Polkadot';
+
+  @override
+  String get gold => 'Dahab';
 
   @override
   String get investmentOpportunities => 'Investment Opportunities';
@@ -2131,6 +2169,42 @@ class AppLocalizationsSo extends AppLocalizations {
   String get sadaqahDonations => 'donations';
 
   @override
+  String get sadaqahHistory => 'Taariikhda Deeqaha';
+
+  @override
+  String get sadaqahTotal => 'Wadarta';
+
+  @override
+  String get sadaqahSearchHint => 'Raadi ololaha ama qofka...';
+
+  @override
+  String get sadaqahDonateTo => 'Ku deeq';
+
+  @override
+  String get sadaqahThankYou => 'Mahadsanid! Deeqdaada waa la guddoomay.';
+
+  @override
+  String get sadaqahConfirmDonation => 'Xaqiiji Deeqda';
+
+  @override
+  String get sadaqahDonate => 'Bixi';
+
+  @override
+  String get sadaqahDonateNow => 'Bixi Hadda';
+
+  @override
+  String get sadaqahBixiHadda => 'Bixi Hadda';
+
+  @override
+  String get sadaqahBixi => 'Bixi';
+
+  @override
+  String get sadaqahXaqiiji => 'Xaqiiji';
+
+  @override
+  String get sadaqahZakatCalcDesc => 'Xisaabi oo bixi sakadaada si sax ah';
+
+  @override
   String get sadaqahTrending => 'Trending';
 
   @override
@@ -2353,7 +2427,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get cryptoSold => 'Iibinta krifto-ga waa guul!';
 
   @override
-  String get zakatCalculator => 'Xisaabiyaha Sakada';
+  String get zakatCalculator => 'Zakat Calculator';
 
   @override
   String get totalZakatToPay => 'Wadarta Sakada laga rabo';
@@ -2387,4 +2461,98 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get error => 'Khalad';
+
+  @override
+  String get noCampaignsFound => 'Wax ololaha ah lama helin';
+
+  @override
+  String get tryAdjustingFilters =>
+      'Isku day inaad wax ka beddesho shaandhadaada ama ereyada raadinta.';
+
+  @override
+  String get targetWallet => 'Boorsada loo dirayo';
+
+  @override
+  String currencyRateFormat(String rate, String code) {
+    return '1 USD = $rate $code';
+  }
+
+  @override
+  String get mainWallet => 'Boorsada Weyn';
+
+  @override
+  String get invalidPin => 'PIN-kaagu waa khalad.';
+
+  @override
+  String get sourceWallet => 'Boorsada Isha';
+
+  @override
+  String get mainBalance => 'Hadhaaga Weyn';
+
+  @override
+  String get verifiedAccount => 'Akoon La Xaqiijiyay';
+
+  @override
+  String get source => 'Isha';
+
+  @override
+  String get wallet => 'Boorsada';
+
+  @override
+  String get noAssetsToSell => 'Ma haysatid hanti aad iibin karto';
+
+  @override
+  String get selectAssetToBuy => 'Dooro Hantida aad Iibsanayso';
+
+  @override
+  String get selectAssetToSell => 'Dooro Hantida aad Iibinayso';
+
+  @override
+  String availableAmount(String amount, String symbol) {
+    return '$amount $symbol ayaa diyaar ah';
+  }
+
+  @override
+  String get priceAlerts => 'Ogeysiiska Qiimaha';
+
+  @override
+  String get priceAlertsDesc => 'Hel ogeysiis markii qiimuhu isbeddelo';
+
+  @override
+  String get transactionHistory => 'Taariikhda Dhaqdhaqaaqa';
+
+  @override
+  String get transactionHistoryDesc => 'Fiiri iibkaagii hore ee krifto-ga';
+
+  @override
+  String get taxReports => 'Warbixinta Canshuurta';
+
+  @override
+  String get taxReportsDesc => 'Soo deji xogtaada maalgashiga';
+
+  @override
+  String get searchAssets => 'Raadi hantida...';
+
+  @override
+  String todayPlus(String percentage) {
+    return '+$percentage% Maanta';
+  }
+
+  @override
+  String todayMinus(String percentage) {
+    return '-$percentage% Maanta';
+  }
+
+  @override
+  String get discover => 'Baadi-goob';
+
+  @override
+  String get portfolio => 'Portfolio';
+
+  @override
+  String get noInvestmentsYet => 'Weli wax maalgashi ah ma jiraan';
+
+  @override
+  String get startBuildingPortfolio =>
+      'Bilow dhisidda portfolio-kaaga krifto maanta adoo isticmaalaya Murtaax Pay.';
 }

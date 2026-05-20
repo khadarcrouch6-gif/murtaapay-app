@@ -26,19 +26,21 @@ class MurtaaxPayApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: appState,
-      child: ListenableBuilder(
-        listenable: appState,
-        builder: (context, child) {
+      child: Selector<AppState, (ThemeMode, Locale)>(
+        selector: (context, state) => (state.themeMode, state.locale),
+        builder: (context, data, child) {
+          final themeMode = data.$1;
+          final locale = data.$2;
           return MaterialApp(
             onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: appState.themeMode,
-            locale: appState.locale,
+            themeMode: themeMode,
+            locale: locale,
             localizationsDelegates: const [
               AppLocalizations.delegate,
-              SomaliLocalizationsDelegate(), 
+              SomaliLocalizationsDelegate(),
               SomaliCupertinoLocalizationsDelegate(),
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
@@ -46,7 +48,6 @@ class MurtaaxPayApp extends StatelessWidget {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             builder: (context, child) {
-              appState.contextForL10n = context;
               return GestureDetector(
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
                 child: ResponsiveBreakpoints.builder(

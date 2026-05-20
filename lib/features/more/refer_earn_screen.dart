@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'dart:ui' as ui;
 
 class ReferEarnScreen extends StatefulWidget {
   const ReferEarnScreen({super.key});
@@ -32,7 +33,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final isRtl = Directionality.of(context) == ui.TextDirection.rtl;
     const referralCode = "MURTAAX77";
     
     return Scaffold(
@@ -44,7 +45,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
             style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.iconTheme.color, size: 24 * context.fontSizeFactor),
+          icon: Icon(Icons.arrow_back_rounded, color: theme.iconTheme.color, size: 24 * context.fontSizeFactor),
           onPressed: () => Navigator.pop(context),
         ),
       ),

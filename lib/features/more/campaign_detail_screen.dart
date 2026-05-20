@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:intl/intl.dart';
+import 'dart:ui' as ui;
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import '../../core/widgets/success_screen.dart';
 import 'models/campaign.dart';
-import 'success_donation_screen.dart';
 
 class CampaignDetailScreen extends StatefulWidget {
   final Campaign campaign;
@@ -117,7 +120,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                         FadeInUp(
                           delay: const Duration(milliseconds: 500),
                           child: Text(
-                            "${widget.campaign.description}\n\nThis fundraiser was started to handle the urgent costs for Ahmed's surgery. Every dollar brings us closer to the goal and helps save a life. Join the 142 donors who have already contributed.",
+                            "${widget.campaign.description}\n\n${l10n.campaignDescriptionExtra}",
                             style: TextStyle(fontSize: 15 * context.fontSizeFactor, height: 1.6, color: theme.textTheme.bodyMedium?.color ?? AppColors.textPrimary),
                           ),
                         ),
@@ -276,7 +279,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildShareOption(Icons.message_rounded, "WhatsApp", Colors.green),
-                  _buildShareOption(Icons.facebook_rounded, "Facebook", Colors.blue),
+                  _buildShareOption(Icons.facebook_rounded, l10n.facebook, Colors.blue),
                   _buildShareOption(Icons.link_rounded, l10n.link, AppColors.primaryDark),
                 ],
               ),
@@ -316,7 +319,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   Widget _buildDonorsList(BuildContext context, AppState state, AppLocalizations l10n) {
     final donors = [
       {"name": "Ali Hassan", "amount": 50, "time": "2m ago"},
-      {"name": "Anonymous", "amount": 100, "time": "15m ago"},
+      {"name": l10n.anonymous, "amount": 100, "time": "15m ago"},
       {"name": "Sahra Jama", "amount": 25, "time": "1h ago"},
     ];
 
@@ -354,9 +357,9 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   void _showDonateDialog(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme, bool isDark) {
     int selectedAmount = 50;
     int currentStep = 0;
-    String selectedMethod = "Mobile";
+    String selectedMethod = "Wallet";
     final TextEditingController customAmountController = TextEditingController();
-    final TextEditingController phoneController = TextEditingController();
+    final TextEditingController pinController = TextEditingController();
 
     showModalBottomSheet(
       context: context,
@@ -387,7 +390,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                      Text(
                        currentStep == 0 ? l10n.selectAmount : 
                        currentStep == 1 ? l10n.paymentMethod :
-                       l10n.finalizeDonation,
+                       l10n.securityVerification,
                        style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                      ),
                      const Spacer(),
@@ -405,7 +408,43 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                         ] else if (currentStep == 1) ...[
                           _buildPaymentMethodStep(state, l10n, selectedMethod, theme, (val) => setModalState(() => selectedMethod = val)),
                         ] else ...[
-                          _buildDetailsStep(state, l10n, selectedMethod, phoneController),
+                          Text(
+                            l10n.enterTransactionPin,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 24 * context.fontSizeFactor),
+                          SizedBox(
+                            width: 200 * context.fontSizeFactor,
+                            child: TextField(
+                              controller: pinController,
+                              obscureText: true,
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              autofocus: true,
+                              style: TextStyle(fontSize: 24 * context.fontSizeFactor, letterSpacing: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(4),
+                              ],
+                              decoration: InputDecoration(
+                                hintText: "****",
+                                hintStyle: TextStyle(letterSpacing: 16 * context.fontSizeFactor, fontSize: 24 * context.fontSizeFactor),
+                                filled: true,
+                                fillColor: theme.dividerColor.withOpacity(0.05),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
+                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2)),
+                              ),
+                              onChanged: (val) {
+                                if (val.length == 4) {
+                                   final double amount = customAmountController.text.isNotEmpty 
+                                      ? double.tryParse(customAmountController.text) ?? 0 
+                                      : selectedAmount.toDouble();
+                                  _processDonation(context, state, l10n, amount, val);
+                                }
+                              },
+                            ),
+                          ),
                         ],
                       ],
                     ),
@@ -435,7 +474,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                                final double amount = customAmountController.text.isNotEmpty 
                                   ? double.tryParse(customAmountController.text) ?? 0 
                                   : selectedAmount.toDouble();
-                              _processDonation(context, state, l10n, amount);
+                              _processDonation(context, state, l10n, amount, pinController.text);
                             }
                           },
                           child: Text(
@@ -468,6 +507,34 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     final amounts = [10, 20, 50, 100, 250, 500];
     return Column(
       children: [
+        // Live Balance Display
+        Container(
+          padding: EdgeInsets.all(16 * context.fontSizeFactor),
+          margin: EdgeInsets.only(bottom: 24 * context.fontSizeFactor),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.secondary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+            border: Border.all(color: theme.colorScheme.secondary.withOpacity(0.2)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.account_balance_wallet_rounded, color: theme.colorScheme.secondary, size: 24 * context.fontSizeFactor),
+              SizedBox(width: 12 * context.fontSizeFactor),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.walletBalance, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                    Text(
+                      NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -527,9 +594,10 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
 
   Widget _buildPaymentMethodStep(AppState state, AppLocalizations l10n, String selectedMethod, ThemeData theme, Function(String) onSelect) {
     final methods = [
-      {"id": "Mobile", "name": l10n.mobileMoney, "icon": Icons.phone_android_rounded},
-      {"id": "Bank", "name": l10n.bankTransfer, "icon": Icons.account_balance_rounded},
-      {"id": "Card", "name": l10n.debitCreditCard, "icon": Icons.credit_card_rounded},
+      {"id": "Wallet", "name": l10n.murtaaxWallet, "desc": l10n.murtaaxWalletDesc, "icon": Icons.account_balance_wallet_rounded},
+      {"id": "Mobile", "name": l10n.mobileMoney, "desc": l10n.mobileMoneyDesc, "icon": Icons.phone_android_rounded},
+      {"id": "Bank", "name": l10n.bankTransfer, "desc": l10n.localBankTransfer, "icon": Icons.account_balance_rounded},
+      {"id": "Card", "name": l10n.debitCreditCard, "desc": l10n.payWithInternationalCard, "icon": Icons.credit_card_rounded},
     ];
 
     return Column(
@@ -557,15 +625,25 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                 child: Icon(m["icon"] as IconData, color: selectedMethod == m["id"] ? AppColors.accentTeal : AppColors.grey, size: 20 * context.fontSizeFactor),
               ),
               SizedBox(width: 16 * context.fontSizeFactor),
-              Text(
-                m["name"] as String, 
-                style: TextStyle(
-                  fontWeight: selectedMethod == m["id"] ? FontWeight.bold : FontWeight.w500,
-                  fontSize: 14 * context.fontSizeFactor,
-                  color: selectedMethod == m["id"] ? theme.colorScheme.primary : AppColors.grey,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      m["name"] as String, 
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14 * context.fontSizeFactor,
+                        color: selectedMethod == m["id"] ? theme.colorScheme.primary : theme.textTheme.bodyLarge?.color,
+                      ),
+                    ),
+                    Text(
+                      m["desc"] as String,
+                      style: TextStyle(fontSize: 12 * context.fontSizeFactor, color: AppColors.grey),
+                    ),
+                  ],
                 ),
               ),
-              const Spacer(),
               if (selectedMethod == m["id"]) 
                 Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
             ],
@@ -575,72 +653,26 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     );
   }
 
-  Widget _buildDetailsStep(AppState state, AppLocalizations l10n, String method, TextEditingController phoneController) {
-    if (method == "Mobile") {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l10n.enterPhoneNumber, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
-          SizedBox(height: 12 * context.fontSizeFactor),
-          TextField(
-            controller: phoneController,
-            keyboardType: TextInputType.phone,
-            style: TextStyle(fontSize: 16 * context.fontSizeFactor),
-            decoration: InputDecoration(
-              hintText: "E.g. 061XXXXXXX",
-              prefixIcon: const Icon(Icons.phone_rounded),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-            ),
-          ),
-          SizedBox(height: 16 * context.fontSizeFactor),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildProviderLogo("EVC+", Colors.blue),
-              _buildProviderLogo("Sahal", Colors.orange),
-              _buildProviderLogo("Zaad", Colors.red),
-            ],
-          ),
-        ],
-      );
-    } else if (method == "Bank") {
-      return Column(
-        children: [
-           Icon(Icons.account_balance_rounded, size: 64 * context.fontSizeFactor, color: AppColors.grey),
-           SizedBox(height: 16 * context.fontSizeFactor),
-           Text(l10n.selectLocalBank, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
-           SizedBox(height: 8 * context.fontSizeFactor),
-           Text(l10n.transferDirectlyDesc, style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
-        ],
-      );
-    } else {
-      return Column(
-        children: [
-           Icon(Icons.credit_card_rounded, size: 64 * context.fontSizeFactor, color: AppColors.grey),
-           SizedBox(height: 16 * context.fontSizeFactor),
-           Text(l10n.payWithVisaMastercard, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
-           SizedBox(height: 8 * context.fontSizeFactor),
-           Text(l10n.secureInternationalGateway, style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
-        ],
-      );
-    }
-  }
-
-  Widget _buildProviderLogo(String name, Color color) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12 * context.fontSizeFactor), border: Border.all(color: color.withValues(alpha: 0.5))),
-      child: Text(name, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12 * context.fontSizeFactor)),
-    );
-  }
-
-  void _processDonation(BuildContext context, AppState state, AppLocalizations l10n, double amount) {
+  void _processDonation(BuildContext context, AppState state, AppLocalizations l10n, double amount, String pin) async {
     if (amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please enter a valid amount")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.pleaseEnterValidAmount)));
       return;
     }
 
-    if (!state.hasSufficientBalance(amount)) {
+    if (pin.length < 4) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.enterSecurityPin)));
+      return;
+    }
+
+    if (!state.verifyPin(pin)) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(state.translate("Incorrect PIN. Please try again.", "PIN-kaagu waa khalad. Fadlan isku day markale.")),
+        backgroundColor: Colors.redAccent,
+      ));
+      return;
+    }
+
+    if (state.balance < amount) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(l10n.insufficientBalanceSadaqah),
         backgroundColor: Colors.redAccent,
@@ -648,8 +680,65 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
       return;
     }
 
-    state.deductBalance(amount);
-    Navigator.pop(context); // Close dialog
-    Navigator.push(context, MaterialPageRoute(builder: (context) => SuccessDonationScreen(amount: amount)));
+    // Show loader
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (ctx) => BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(color: AppColors.accentTeal),
+              const SizedBox(height: 16),
+              Text(l10n.processing, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    try {
+      await state.donateToCampaign(widget.campaign.id, amount);
+      
+      if (!context.mounted) return;
+      
+      Navigator.of(context, rootNavigator: true).pop(); // Pop loader
+      Navigator.of(context).pop(); // Pop bottom sheet
+
+      final transactionData = {
+        'title': "Sadaqah: ${widget.campaign.title}",
+        'amount': "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(amount)}",
+        'date': DateFormat('MMM dd, yyyy').format(DateTime.now()),
+        'status': 'Success',
+        'type': 'transfer_out',
+        'method': 'Wallet',
+        'isNegative': true,
+        'id': 'TX-SAD-${DateTime.now().millisecondsSinceEpoch}',
+      };
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SuccessScreen(
+            title: l10n.donationSuccessful,
+            message: l10n.donationSuccessMessage,
+            subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
+            buttonText: l10n.backToHome,
+            transactionData: transactionData,
+            onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+          ),
+        ),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 }

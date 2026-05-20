@@ -1,5 +1,11 @@
 {
   "@@locale": "so",
+  "anonymous": "Qof aan la aqoon",
+  "donationSuccessful": "Deeqdu Way Guulaysatay!",
+  "donationSuccessMessage": "Waad ku mahadsan tahay deeqdaada. Waxay wax weyn ka tari doontaa nolosha dadka u baahan.",
+  "pleaseEnterValidAmount": "Fadlan geli cadad sax ah",
+  "facebook": "Facebook",
+  "campaignDescriptionExtra": "Ururintan lacageed waxaa loo bilaabay si loo daboolo kharashaadka degdegga ah ee qalliinka Axmed. Doollar kasta wuxuu noo soo dhoweynayaa yoolka wuxuuna gacan ka geysanayaa badbaadinta nolosha. Ku biir 142-da deeq-bixiyeyaal ee horay uga qayb qaatay.",
   "appTitle": "MurtaaxPay",
   "splashTitle": "MURTAAX PAY",
   "splashSubtitle": "Saaxiibka Soomaaliyeed",
@@ -102,7 +108,15 @@
   "orphanage": "Agoomaha",
   "reliefFund": "Gurmadka Degdega ah",
   "donate": "Ku deeq",
-  "zakatCalculator": "Xisaabiyaha Sakada",
+  "sadaqahHistory": "Taariikhda Deeqaha",
+  "sadaqahTotal": "Wadarta",
+  "sadaqahSearchHint": "Raadi ololaha ama qofka...",
+  "sadaqahDonateTo": "Ku deeq",
+  "sadaqahThankYou": "Mahadsanid! Deeqdaada waa la guddoomay.",
+  "sadaqahConfirmDonation": "Xaqiiji Deeqda",
+  "sadaqahDonate": "Bixi",
+  "sadaqahDonateNow": "Bixi Hadda",
+  "sadaqahZakatCalcDesc": "Xisaabi oo bixi sakadaada si sax ah",
   "calculateZakat": "Xisaabi Sakada",
   "goldValue": "Qiimaha Dahabka",
   "cashInHand": "Lacagta caddaanka ah",
@@ -849,7 +863,15 @@
   },
   "cryptoPurchased": "Iibsashada krifto-ga waa guul!",
   "cryptoSold": "Iibinta krifto-ga waa guul!",
-  "zakatCalculator": "Xisaabiyaha Sakada",
+  "sadaqahHistory": "Taariikhda Deeqaha",
+  "sadaqahTotal": "Wadarta",
+  "sadaqahSearchHint": "Raadi ololaha ama qofka...",
+  "sadaqahDonateTo": "Ku deeq",
+  "sadaqahThankYou": "Mahadsanid! Deeqdaada waa la guddoomay.",
+  "sadaqahConfirmDonation": "Xaqiiji Deeqda",
+  "sadaqahDonate": "Bixi",
+  "sadaqahDonateNow": "Bixi Hadda",
+  "sadaqahZakatCalcDesc": "Xisaabi oo bixi sakadaada si sax ah",
   "totalZakatToPay": "Wadarta Sakada laga rabo",
   "enterYourAssets": "Geli Hantidaada",
   "cashAndSavings": "Lacagta & Kaydka",
@@ -864,5 +886,63 @@
       "amount": { "type": "String" }
     }
   },
-  "error": "Khalad"
+  "error": "Khalad",
+  "noCampaignsFound": "Wax ololaha ah lama helin",
+  "tryAdjustingFilters": "Isku day inaad wax ka beddesho shaandhadaada ama ereyada raadinta.",
+  "targetWallet": "Boorsada loo dirayo",
+  "currencyRateFormat": "1 USD = {rate} {code}",
+  "@currencyRateFormat": {
+    "placeholders": {
+      "rate": { "type": "String" },
+      "code": { "type": "String" }
+    }
+  },
+  "mainWallet": "Boorsada Weyn",
+  "invalidPin": "PIN-kaagu waa khalad.",
+  "sourceWallet": "Boorsada Isha",
+  "mainBalance": "Hadhaaga Weyn",
+  "verifiedAccount": "Akoon La Xaqiijiyay",
+  "source": "Isha",
+  "wallet": "Boorsada",
+  "bitcoin": "Bitcoin",
+  "ethereum": "Ethereum",
+  "solana": "Solana",
+  "tether": "Tether",
+  "ripple": "Ripple",
+  "cardano": "Cardano",
+  "polkadot": "Polkadot",
+  "gold": "Dahab",
+  "noAssetsToSell": "Ma haysatid hanti aad iibin karto",
+  "selectAssetToBuy": "Dooro Hantida aad Iibsanayso",
+  "selectAssetToSell": "Dooro Hantida aad Iibinayso",
+  "availableAmount": "{amount} {symbol} ayaa diyaar ah",
+  "@availableAmount": {
+    "placeholders": {
+      "amount": { "type": "String" },
+      "symbol": { "type": "String" }
+    }
+  },
+  "priceAlerts": "Ogeysiiska Qiimaha",
+  "priceAlertsDesc": "Hel ogeysiis markii qiimuhu isbeddelo",
+  "transactionHistory": "Taariikhda Dhaqdhaqaaqa",
+  "transactionHistoryDesc": "Fiiri iibkaagii hore ee krifto-ga",
+  "taxReports": "Warbixinta Canshuurta",
+  "taxReportsDesc": "Soo deji xogtaada maalgashiga",
+  "searchAssets": "Raadi hantida...",
+  "todayPlus": "+{percentage}% Maanta",
+  "@todayPlus": {
+    "placeholders": {
+      "percentage": { "type": "String" }
+    }
+  },
+  "todayMinus": "-{percentage}% Maanta",
+  "@todayMinus": {
+    "placeholders": {
+      "percentage": { "type": "String" }
+    }
+  },
+  "discover": "Baadi-goob",
+  "portfolio": "Portfolio",
+  "noInvestmentsYet": "Weli wax maalgashi ah ma jiraan",
+  "startBuildingPortfolio": "Bilow dhisidda portfolio-kaaga krifto maanta adoo isticmaalaya Murtaax Pay."
 }

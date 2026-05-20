@@ -20,6 +20,7 @@
   "exchange": "Umtausch",
   "vouchers": "Gutscheine",
   "seeAll": "Alle ansehen",
+  "more": "Mehr",
   "spendingAnalysis": "Ausgabenanalyse",
   "walletBalance": "Guthaben",
   "getStarted": "Jetzt loslegen",
@@ -544,5 +545,7 @@
   "recentSavingsActivity": "Letzte Sparaktivität",
   "noActivityYet": "Noch keine Aktivität",
   "recurringPayments": "Daueraufträge",
-  "recurringPaymentsDesc": "Automatische Zahlungen planen (z. B. jeden 1. des Monats Geld an die Familie senden)."
+  "recurringPaymentsDesc": "Automatische Zahlungen planen (z. B. jeden 1. des Monats Geld an die Familie senden).",
+  "noCampaignsFound": "Keine Kampagnen gefunden",
+  "tryAdjustingFilters": "Versuchen Sie, die Filter anzupassen, um das zu finden, was Sie suchen."
 }

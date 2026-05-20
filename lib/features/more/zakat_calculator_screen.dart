@@ -71,7 +71,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(state.isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.colorScheme.primary, size: 24 * scale),
+          icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
       ),

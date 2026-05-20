@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:provider/provider.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/app_state.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class SuccessDonationScreen extends StatefulWidget {
@@ -41,6 +42,7 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final scale = context.fontSizeFactor;
 
@@ -113,7 +115,7 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
                     FadeInUp(
                       duration: const Duration(milliseconds: 600),
                       child: Text(
-                        state.translate("Donation Successful!", "Deeqdu Way Guulaysatay!", ar: "تم التبرع بنجاح!", de: "Spende erfolgreich!"),
+                        l10n.donationSuccessful,
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 28 * scale, fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
                       ),
@@ -137,12 +139,7 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
                     FadeInUp(
                       delay: const Duration(milliseconds: 300),
                       child: Text(
-                        state.translate(
-                          "Thank you for your donation. It will make a big difference in the lives of those in need.",
-                          "Waad ku mahadsan tahay deeqdaada. Waxay wax weyn ka tari doontaa nolosha dadka u baahan.",
-                          ar: "شكراً لتبرعك. سيحدث فرقاً كبيراً في حياة المحتاجين.",
-                          de: "Vielen Dank für Ihre Spende. Sie wird einen großen Unterschied im Leben der Bedürftigen machen.",
-                        ),
+                        l10n.donationSuccessMessage,
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16 * scale, color: theme.textTheme.bodyMedium?.color, height: 1.6),
                       ),
@@ -164,7 +161,7 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
                             elevation: 0,
                           ),
                           child: Text(
-                            state.translate("Back to Home", "Ku Noqo Hoyga", ar: "العودة للرئيسية", de: "Zurück zur Startseite"), 
+                            l10n.backToHome, 
                             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * scale),
                           ),
                         ),
@@ -180,3 +177,4 @@ class _SuccessDonationScreenState extends State<SuccessDonationScreen> {
     );
   }
 }
+

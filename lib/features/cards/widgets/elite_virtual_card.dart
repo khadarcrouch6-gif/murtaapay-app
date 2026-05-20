@@ -1,5 +1,5 @@
 import 'dart:math' show pi;
-import 'dart:ui' show ImageFilter;
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/app_colors.dart';
@@ -364,7 +364,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
           child: Container(
             decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(24)),
             child: Center(

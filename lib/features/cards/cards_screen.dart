@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -216,7 +216,7 @@ class _CardsScreenState extends State<CardsScreen> {
                   padding: const EdgeInsets.only(bottom: 15),
                   child: ScrollConfiguration(
                     behavior: ScrollConfiguration.of(context).copyWith(
-                      dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
+                      dragDevices: {ui.PointerDeviceKind.touch, ui.PointerDeviceKind.mouse},
                     ),
                     child: PageView.builder(
                       controller: _pageController,
@@ -1302,7 +1302,7 @@ class _CardsScreenState extends State<CardsScreen> {
       barrierDismissible: false,
       useRootNavigator: true,
       builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Center(
           child: ZoomIn(
             duration: const Duration(milliseconds: 300),

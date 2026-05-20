@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
@@ -64,7 +64,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
       barrierDismissible: false,
       useRootNavigator: true,
       builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Center(
           child: ZoomIn(
             duration: const Duration(milliseconds: 300),

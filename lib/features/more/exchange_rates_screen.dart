@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:provider/provider.dart';
 import '../../core/api_service.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
@@ -92,7 +93,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final state = AppState();
+    final state = Provider.of<AppState>(context);
     final theme = Theme.of(context);
     return ListenableBuilder(
       listenable: state,
@@ -104,7 +105,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
             centerTitle: true,
             leading: IconButton(
-              icon: Icon(state.isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.colorScheme.primary),
+              icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
               onPressed: () => Navigator.pop(context),
             ),
           ),
@@ -369,7 +370,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor, color: theme.colorScheme.primary)),
-                  Text("1 USD = $rate $code", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor)),
+                  Text(AppLocalizations.of(context)!.currencyRateFormat(rate, code), style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor)),
                 ],
               ),
             ),

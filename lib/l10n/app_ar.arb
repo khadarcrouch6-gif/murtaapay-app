@@ -20,6 +20,7 @@
   "exchange": "تبديل",
   "vouchers": "قسائم",
   "seeAll": "عرض الكل",
+  "more": "أكثر",
   "spendingAnalysis": "تحليل الإنفاق",
   "walletBalance": "رصيد المحفظة",
   "getStarted": "ابدأ الآن",
@@ -544,5 +545,7 @@
   "recentSavingsActivity": "نشاط الادخار الأخير",
   "noActivityYet": "لا يوجد نشاط بعد",
   "recurringPayments": "المدفوعات المتكررة",
-  "recurringPaymentsDesc": "جدولة المدفوعات التلقائية (مثل إرسال الأموال إلى العائلة في الأول من كل شهر)."
+  "recurringPaymentsDesc": "جدولة المدفوعات التلقائية (مثل إرسال الأموال إلى العائلة في الأول من كل شهر).",
+  "noCampaignsFound": "لم يتم العثور على حملات",
+  "tryAdjustingFilters": "حاول تعديل الفلاتر للعثور على ما تبحث عنه."
 }

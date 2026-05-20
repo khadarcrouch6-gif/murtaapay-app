@@ -104,6 +104,42 @@ abstract class AppLocalizations {
     Locale('so'),
   ];
 
+  /// No description provided for @anonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous'**
+  String get anonymous;
+
+  /// No description provided for @donationSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation Successful!'**
+  String get donationSuccessful;
+
+  /// No description provided for @donationSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your donation. It will make a big difference in the lives of those in need.'**
+  String get donationSuccessMessage;
+
+  /// No description provided for @pleaseEnterValidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid amount'**
+  String get pleaseEnterValidAmount;
+
+  /// No description provided for @facebook.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook'**
+  String get facebook;
+
+  /// No description provided for @campaignDescriptionExtra.
+  ///
+  /// In en, this message translates to:
+  /// **'This fundraiser was started to handle the urgent costs for Ahmed\'s surgery. Every dollar brings us closer to the goal and helps save a life. Join the 142 donors who have already contributed.'**
+  String get campaignDescriptionExtra;
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
@@ -265,6 +301,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See All'**
   String get seeAll;
+
+  /// No description provided for @more.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get more;
 
   /// No description provided for @spendingAnalysis.
   ///
@@ -2648,6 +2690,36 @@ abstract class AppLocalizations {
   /// **'Ethereum'**
   String get ethereum;
 
+  /// No description provided for @solana.
+  ///
+  /// In en, this message translates to:
+  /// **'Solana'**
+  String get solana;
+
+  /// No description provided for @tether.
+  ///
+  /// In en, this message translates to:
+  /// **'Tether'**
+  String get tether;
+
+  /// No description provided for @ripple.
+  ///
+  /// In en, this message translates to:
+  /// **'Ripple'**
+  String get ripple;
+
+  /// No description provided for @cardano.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardano'**
+  String get cardano;
+
+  /// No description provided for @polkadot.
+  ///
+  /// In en, this message translates to:
+  /// **'Polkadot'**
+  String get polkadot;
+
   /// No description provided for @gold.
   ///
   /// In en, this message translates to:
@@ -4094,6 +4166,78 @@ abstract class AppLocalizations {
   /// **'donations'**
   String get sadaqahDonations;
 
+  /// No description provided for @sadaqahHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation History'**
+  String get sadaqahHistory;
+
+  /// No description provided for @sadaqahTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get sadaqahTotal;
+
+  /// No description provided for @sadaqahSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search campaigns or creator...'**
+  String get sadaqahSearchHint;
+
+  /// No description provided for @sadaqahDonateTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate to'**
+  String get sadaqahDonateTo;
+
+  /// No description provided for @sadaqahThankYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you! Your donation was successful.'**
+  String get sadaqahThankYou;
+
+  /// No description provided for @sadaqahConfirmDonation.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Donation'**
+  String get sadaqahConfirmDonation;
+
+  /// No description provided for @sadaqahDonate.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate'**
+  String get sadaqahDonate;
+
+  /// No description provided for @sadaqahDonateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate Now'**
+  String get sadaqahDonateNow;
+
+  /// No description provided for @sadaqahBixiHadda.
+  ///
+  /// In en, this message translates to:
+  /// **'Bixi Hadda'**
+  String get sadaqahBixiHadda;
+
+  /// No description provided for @sadaqahBixi.
+  ///
+  /// In en, this message translates to:
+  /// **'Bixi'**
+  String get sadaqahBixi;
+
+  /// No description provided for @sadaqahXaqiiji.
+  ///
+  /// In en, this message translates to:
+  /// **'Xaqiiji'**
+  String get sadaqahXaqiiji;
+
+  /// No description provided for @sadaqahZakatCalcDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate and pay your zakat accurately'**
+  String get sadaqahZakatCalcDesc;
+
   /// No description provided for @sadaqahTrending.
   ///
   /// In en, this message translates to:
@@ -4573,6 +4717,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error'**
   String get error;
+
+  /// No description provided for @noCampaignsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No campaigns found'**
+  String get noCampaignsFound;
+
+  /// No description provided for @tryAdjustingFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your filters or search terms.'**
+  String get tryAdjustingFilters;
+
+  /// No description provided for @targetWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Wallet'**
+  String get targetWallet;
+
+  /// No description provided for @currencyRateFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'1 USD = {rate} {code}'**
+  String currencyRateFormat(String rate, String code);
+
+  /// No description provided for @mainWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Wallet'**
+  String get mainWallet;
+
+  /// No description provided for @invalidPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid PIN'**
+  String get invalidPin;
+
+  /// No description provided for @sourceWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Source Wallet'**
+  String get sourceWallet;
+
+  /// No description provided for @mainBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Balance'**
+  String get mainBalance;
+
+  /// No description provided for @verifiedAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Account'**
+  String get verifiedAccount;
+
+  /// No description provided for @source.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get source;
+
+  /// No description provided for @wallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get wallet;
+
+  /// No description provided for @noAssetsToSell.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any assets to sell'**
+  String get noAssetsToSell;
+
+  /// No description provided for @selectAssetToBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Asset to Buy'**
+  String get selectAssetToBuy;
+
+  /// No description provided for @selectAssetToSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Asset to Sell'**
+  String get selectAssetToSell;
+
+  /// No description provided for @availableAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} {symbol} available'**
+  String availableAmount(String amount, String symbol);
+
+  /// No description provided for @priceAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Price Alerts'**
+  String get priceAlerts;
+
+  /// No description provided for @priceAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified when prices change'**
+  String get priceAlertsDesc;
+
+  /// No description provided for @transactionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction History'**
+  String get transactionHistory;
+
+  /// No description provided for @transactionHistoryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View your past crypto trades'**
+  String get transactionHistoryDesc;
+
+  /// No description provided for @taxReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax Reports'**
+  String get taxReports;
+
+  /// No description provided for @taxReportsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Download your investment data'**
+  String get taxReportsDesc;
+
+  /// No description provided for @searchAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Search assets...'**
+  String get searchAssets;
+
+  /// No description provided for @todayPlus.
+  ///
+  /// In en, this message translates to:
+  /// **'+{percentage}% Today'**
+  String todayPlus(String percentage);
+
+  /// No description provided for @todayMinus.
+  ///
+  /// In en, this message translates to:
+  /// **'-{percentage}% Today'**
+  String todayMinus(String percentage);
+
+  /// No description provided for @discover.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover'**
+  String get discover;
+
+  /// No description provided for @portfolio.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio'**
+  String get portfolio;
+
+  /// No description provided for @noInvestmentsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No Investments Yet'**
+  String get noInvestmentsYet;
+
+  /// No description provided for @startBuildingPortfolio.
+  ///
+  /// In en, this message translates to:
+  /// **'Start building your crypto portfolio today with Murtaax Pay.'**
+  String get startBuildingPortfolio;
 }
 
 class _AppLocalizationsDelegate

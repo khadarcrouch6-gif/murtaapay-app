@@ -11,6 +11,7 @@ import '../features/cards/models/card_model.dart';
 import 'models/crypto_asset.dart';
 import 'models/hagbad_model.dart';
 import 'models/recurring_payment_model.dart';
+import '../features/more/models/campaign.dart';
 
 class AppState extends ChangeNotifier {
   static final AppState _instance = AppState._internal();
@@ -97,6 +98,110 @@ class AppState extends ChangeNotifier {
 
   List<RecurringPayment> _recurringPayments = [];
   List<RecurringPayment> get recurringPayments => _recurringPayments;
+
+  List<Campaign> _campaigns = [];
+  List<Campaign> get campaigns => _campaigns;
+
+  void _loadCampaigns() {
+    final List<String>? campaignsJson = _prefs.getStringList('sadaqah_campaigns');
+    if (campaignsJson != null) {
+      _campaigns = campaignsJson.map((e) => Campaign.fromJson(json.decode(e))).toList();
+    } else {
+      // Mock initial campaigns
+      _campaigns = [
+        Campaign(
+          id: "1",
+          title: "Dhismaha Masaajidka",
+          description: "Naga caawi inaan dhisno masaajid weyn oo dadka deegaanka ay ku cibaadaystaan.",
+          goalAmount: 50000.0,
+          raisedAmount: 32500.0,
+          creator: "Jaamacadda Islaamka",
+          icon: Icons.mosque_rounded,
+          imageUrl: "https://images.unsplash.com/photo-1542621334-a254cf47733d?q=80&w=2070",
+          category: "Masaajid",
+          donorCount: 1240,
+          lastDonationAgo: "5m",
+          isUrgent: true,
+        ),
+        Campaign(
+          id: "2",
+          title: "Caawinta Agoomaha",
+          description: "Daryeelka carruurta agoomaha ah ee u baahan waxbarasho iyo cunto.",
+          goalAmount: 15000.0,
+          raisedAmount: 8200.0,
+          creator: "Ururka Samafalka",
+          icon: Icons.child_care_rounded,
+          imageUrl: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070",
+          category: "Agoomo",
+          donorCount: 456,
+          lastDonationAgo: "15m",
+        ),
+        Campaign(
+          id: "3",
+          title: "Qodista Ceelal Biyood",
+          description: "Biyo nadiif ah oo loo sameeyo miyiga fog ee ay abaartu ku habsatay.",
+          goalAmount: 25000.0,
+          raisedAmount: 12000.0,
+          creator: "Biyo Deeq",
+          icon: Icons.water_drop_rounded,
+          imageUrl: "https://images.unsplash.com/photo-1519074063912-ad25b57b9d17?q=80&w=1974",
+          category: "Biyo",
+          donorCount: 256,
+          lastDonationAgo: "2m",
+        ),
+      ];
+      _saveCampaigns();
+    }
+  }
+
+  void _saveCampaigns() {
+    final List<String> campaignsJson = _campaigns.map((e) => json.encode(e.toJson())).toList();
+    _prefs.setStringList('sadaqah_campaigns', campaignsJson);
+  }
+
+  Future<void> donateToCampaign(String campaignId, double amount) async {
+    if (_balance < amount) throw Exception('insufficient_funds');
+
+    final index = _campaigns.indexWhere((c) => c.id == campaignId);
+    if (index != -1) {
+      _balance -= amount;
+      final campaign = _campaigns[index];
+      _campaigns[index] = Campaign(
+        id: campaign.id,
+        title: campaign.title,
+        description: campaign.description,
+        goalAmount: campaign.goalAmount,
+        raisedAmount: campaign.raisedAmount + amount,
+        creator: campaign.creator,
+        icon: campaign.icon,
+        imageUrl: campaign.imageUrl,
+        category: campaign.category,
+        donorCount: campaign.donorCount + 1,
+        lastDonationAgo: "Just now",
+        isUrgent: campaign.isUrgent,
+      );
+
+      final tx = Transaction(
+        id: "TX-SAD-${DateTime.now().millisecondsSinceEpoch}",
+        title: "Sadaqah: ${campaign.title}",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(amount)}",
+        numericAmount: amount,
+        isNegative: true,
+        category: "Sadaqah",
+        status: "Success",
+        type: "transfer_out",
+        method: "Wallet",
+        referenceId: campaignId,
+      );
+      _transactions.insert(0, tx);
+
+      await _prefs.setDouble('balance', _balance);
+      _saveTransactions();
+      _saveCampaigns();
+      notifyListeners();
+    }
+  }
 
   void _loadRecurringPayments() {
     final List<String>? paymentsJson = _prefs.getStringList('recurring_payments');
@@ -692,6 +797,7 @@ class AppState extends ChangeNotifier {
     _loadSavingsGoals();
     _loadHagbadGroups();
     _loadRecurringPayments();
+    _loadCampaigns();
     
     _cardPin = _prefs.getString('card_pin') ?? '1122';
     
@@ -1627,7 +1733,4 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  // Temporary hack to get context for l10n in state
-  // In a real app, you'd use a better service locator or pass context/l10n as params
-  BuildContext? contextForL10n;
 }

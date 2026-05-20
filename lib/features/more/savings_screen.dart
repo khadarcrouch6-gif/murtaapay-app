@@ -37,7 +37,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
           title: Text(l10n.savingsAndGoals, style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary, fontSize: 20 * context.fontSizeFactor)),
           centerTitle: true,
           leading: IconButton(
-            icon: Icon(isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: theme.colorScheme.primary),
+            icon: const Icon(Icons.arrow_back_rounded),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -284,7 +284,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            state.translate("Target Wallet", "Boorsada loo dirayo"),
+                            l10n.targetWallet,
                             style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor, letterSpacing: -0.3)
                           ),
                           SizedBox(height: 16 * context.fontSizeFactor),
@@ -310,7 +310,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(state.translate("Main Wallet", "Boorsada Weyn"), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
+                                      Text(l10n.mainWallet, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
                                       Text("ID: ${state.walletId}", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                                     ],
                                   ),
@@ -353,7 +353,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         Navigator.pop(context);
                         await _processWithdrawal(screenContext, l10n, amountController.text);
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-kaagu waa khalad.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.invalidPin), backgroundColor: Colors.red));
                       }
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
@@ -496,7 +496,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            state.translate("Source Wallet", "Boorsada Isha"),
+                            l10n.sourceWallet,
                             style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor, letterSpacing: -0.3)
                           ),
                           SizedBox(height: 16 * context.fontSizeFactor),
@@ -522,8 +522,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(state.translate("Main Balance", "Hadhaaga Weyn"), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
-                                      Text(state.translate("Verified Account", "Akoon La Xaqiijiyay"), style: TextStyle(color: AppColors.grey, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                                      Text(l10n.mainBalance, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
+                                      Text(l10n.verifiedAccount, style: TextStyle(color: AppColors.grey, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                                     ],
                                   ),
                                 ),
@@ -555,7 +555,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         Navigator.pop(context);
                         await _processDeposit(screenContext, l10n, amountController.text);
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.translate("PIN-kaagu waa khalad.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.invalidPin), backgroundColor: Colors.red));
                       }
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
@@ -779,7 +779,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 children: [
                   _dialogInputField(context, l10n.amountToAdd, Icons.add_circle_outline_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState((){})),
                   SizedBox(height: 20 * context.fontSizeFactor),
-                  Align(alignment: Alignment.centerLeft, child: Text(state.translate("Source", "Isha"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey))),
+                  Align(alignment: Alignment.centerLeft, child: Text(l10n.source, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor, color: AppColors.grey))),
                   SizedBox(height: 12 * context.fontSizeFactor),
                   Container(
                     padding: EdgeInsets.all(16 * context.fontSizeFactor),
@@ -796,7 +796,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(state.translate("Wallet", "Boorsada"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
+                            Text(l10n.wallet, style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
                             Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance), style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                           ],
                         ),
@@ -830,7 +830,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       
                       if (!pinValid) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(state.translate("PIN-kaagu waa khalad.", "PIN-kaagu waa khalad.")), 
+                          content: Text(l10n.invalidPin),
                           backgroundColor: Colors.red
                         ));
                         return;

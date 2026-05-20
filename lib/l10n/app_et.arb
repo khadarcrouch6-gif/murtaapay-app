@@ -20,6 +20,7 @@
   "exchange": "Vahetus",
   "vouchers": "Vautšerid",
   "seeAll": "Vaata kõiki",
+  "more": "Rohkem",
   "spendingAnalysis": "Kulude analüüs",
   "walletBalance": "Rahakoti saldo",
   "getStarted": "Alusta",
@@ -693,5 +694,7 @@
     "placeholders": {
       "amount": { "type": "String" }
     }
-  }
+  },
+  "noCampaignsFound": "Kampaaniaid ei leitud",
+  "tryAdjustingFilters": "Proovige filtreid kohandada, et leida otsitav."
 }

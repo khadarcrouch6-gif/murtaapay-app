@@ -32,11 +32,11 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
     return [
       CryptoAsset(symbol: "BTC", name: l10n.bitcoin, price: 64250.80, change24h: 5.2, icon: FontAwesomeIcons.bitcoin, color: const Color(0xFFF7931A)),
       CryptoAsset(symbol: "ETH", name: l10n.ethereum, price: 3450.50, change24h: -2.1, icon: FontAwesomeIcons.ethereum, color: const Color(0xFF627EEA)),
-      CryptoAsset(symbol: "SOL", name: "Solana", price: 145.20, change24h: 12.5, icon: Icons.wb_sunny_rounded, color: const Color(0xFF14F195)),
-      CryptoAsset(symbol: "USDT", name: "Tether", price: 1.00, change24h: 0.01, icon: Icons.monetization_on_rounded, color: const Color(0xFF26A17B)),
-      CryptoAsset(symbol: "XRP", name: "Ripple", price: 0.62, change24h: -1.5, icon: FontAwesomeIcons.xmark, color: const Color(0xFF23292F)),
-      CryptoAsset(symbol: "ADA", name: "Cardano", price: 0.45, change24h: 3.1, icon: Icons.hexagon_outlined, color: const Color(0xFF0033AD)),
-      CryptoAsset(symbol: "DOT", name: "Polkadot", price: 7.20, change24h: -0.8, icon: Icons.circle_outlined, color: const Color(0xFFE6007A)),
+      CryptoAsset(symbol: "SOL", name: l10n.solana, price: 145.20, change24h: 12.5, icon: Icons.wb_sunny_rounded, color: const Color(0xFF14F195)),
+      CryptoAsset(symbol: "USDT", name: l10n.tether, price: 1.00, change24h: 0.01, icon: Icons.monetization_on_rounded, color: const Color(0xFF26A17B)),
+      CryptoAsset(symbol: "XRP", name: l10n.ripple, price: 0.62, change24h: -1.5, icon: FontAwesomeIcons.xmark, color: const Color(0xFF23292F)),
+      CryptoAsset(symbol: "ADA", name: l10n.cardano, price: 0.45, change24h: 3.1, icon: Icons.hexagon_outlined, color: const Color(0xFF0033AD)),
+      CryptoAsset(symbol: "DOT", name: l10n.polkadot, price: 7.20, change24h: -0.8, icon: Icons.circle_outlined, color: const Color(0xFFE6007A)),
     ];
   }
 
@@ -63,13 +63,14 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
 
   void _showTradeSheet(BuildContext context, List<CryptoAsset> allAssets, {required bool isBuy}) {
     final state = Provider.of<AppState>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
     final assets = isBuy 
         ? allAssets 
         : allAssets.where((a) => (state.cryptoHoldings[a.symbol] ?? 0) > 0).toList();
 
     if (assets.isEmpty && !isBuy) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("You don't have any assets to sell")),
+        SnackBar(content: Text(l10n.noAssetsToSell)),
       );
       return;
     }
@@ -102,7 +103,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                 Padding(
                   padding: EdgeInsets.all(24.0 * context.fontSizeFactor),
                   child: Text(
-                    isBuy ? "Select Asset to Buy" : "Select Asset to Sell", 
+                    isBuy ? l10n.selectAssetToBuy : l10n.selectAssetToSell, 
                     style: TextStyle(
                       fontSize: 20 * context.fontSizeFactor,
                       fontWeight: FontWeight.bold,
@@ -130,7 +131,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                           ),
                         ),
                         subtitle: Text(
-                          isBuy ? asset.symbol : "$holdings ${asset.symbol} available", 
+                          isBuy ? asset.symbol : l10n.availableAmount(holdings.toString(), asset.symbol), 
                           style: TextStyle(
                             color: AppColors.textSecondary,
                             fontSize: 14 * context.fontSizeFactor,
@@ -162,6 +163,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
   }
 
   void _showMoreMenu(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -185,9 +187,9 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                 ),
               ),
               SizedBox(height: 24 * context.fontSizeFactor),
-              _buildMoreMenuItem(context, Icons.notifications_active_outlined, "Price Alerts", "Get notified when prices change"),
-              _buildMoreMenuItem(context, Icons.history_rounded, "Transaction History", "View your past crypto trades"),
-              _buildMoreMenuItem(context, Icons.account_balance_outlined, "Tax Reports", "Download your investment data"),
+              _buildMoreMenuItem(context, Icons.notifications_active_outlined, l10n.priceAlerts, l10n.priceAlertsDesc),
+              _buildMoreMenuItem(context, Icons.history_rounded, l10n.transactionHistory, l10n.transactionHistoryDesc),
+              _buildMoreMenuItem(context, Icons.account_balance_outlined, l10n.taxReports, l10n.taxReportsDesc),
               SizedBox(height: 20 * context.fontSizeFactor),
             ],
           ),
@@ -249,7 +251,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
               autofocus: true,
               style: TextStyle(color: AppColors.textPrimary, fontSize: 18 * scale),
               decoration: InputDecoration(
-                hintText: "Search assets...",
+                hintText: l10n.searchAssets,
                 hintStyle: TextStyle(color: AppColors.grey, fontSize: 18 * scale),
                 border: InputBorder.none,
               ),
@@ -267,7 +269,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
               }),
             )
           : IconButton(
-              icon: Icon(Icons.arrow_back, color: AppColors.textPrimary, size: 24 * scale),
+              icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
               onPressed: () => Navigator.pop(context),
             ),
         actions: [
@@ -348,7 +350,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                                 Icon(Icons.trending_up, color: Colors.greenAccent, size: 16 * scale),
                                 SizedBox(width: 4 * scale),
                                 Text(
-                                  "+5.2% Today",
+                                  l10n.todayPlus("5.2"),
                                   style: TextStyle(
                                     color: Colors.greenAccent,
                                     fontWeight: FontWeight.bold,
@@ -372,10 +374,10 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                     children: [
                       _buildMurtaaxAction(l10n.buy, Icons.add_circle_outline, AppColors.secondary, () => _showTradeSheet(context, allAssets, isBuy: true)),
                       _buildMurtaaxAction(l10n.sell, Icons.remove_circle_outline, Colors.orange, () => _showTradeSheet(context, allAssets, isBuy: false)),
-                      _buildMurtaaxAction("Exchange", Icons.swap_horizontal_circle_outlined, AppColors.accentTeal, () {
+                      _buildMurtaaxAction(l10n.exchange, Icons.swap_horizontal_circle_outlined, AppColors.accentTeal, () {
                         _showTradeSheet(context, allAssets, isBuy: true);
                       }),
-                      _buildMurtaaxAction("More", Icons.more_horiz_rounded, AppColors.grey, () {
+                      _buildMurtaaxAction(l10n.more, Icons.more_horiz_rounded, AppColors.grey, () {
                         _showMoreMenu(context);
                       }),
                     ],
@@ -389,9 +391,9 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 16 * scale),
                   child: Row(
                     children: [
-                      _buildMurtaaxTab("Portfolio", 0, _selectedMainTab == 0),
+                      _buildMurtaaxTab(l10n.portfolio, 0, _selectedMainTab == 0),
                       SizedBox(width: 16 * scale),
-                      _buildMurtaaxTab("Discover", 1, _selectedMainTab == 1),
+                      _buildMurtaaxTab(l10n.discover, 1, _selectedMainTab == 1),
                     ],
                   ),
                 ),
@@ -408,7 +410,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                     : displayAssets.length,
                   itemBuilder: (context, index) {
                     if (_selectedMainTab == 0 && state.cryptoHoldings.isEmpty) {
-                      return _buildEmptyPortfolio();
+                      return _buildEmptyPortfolio(l10n);
                     }
   
                     var asset = _selectedMainTab == 0
@@ -687,7 +689,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
     );
   }
 
-  Widget _buildEmptyPortfolio() {
+  Widget _buildEmptyPortfolio(AppLocalizations l10n) {
     final scale = context.fontSizeFactor;
     return Container(
       padding: EdgeInsets.all(32 * scale),
@@ -700,7 +702,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
           ),
           SizedBox(height: 16 * scale),
           Text(
-            "No Investments Yet",
+            l10n.noInvestmentsYet,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -709,7 +711,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
           ),
           SizedBox(height: 8 * scale),
           Text(
-            "Start building your crypto portfolio today with Murtaax Pay.",
+            l10n.startBuildingPortfolio,
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.textSecondary, fontSize: 14 * scale),
           ),

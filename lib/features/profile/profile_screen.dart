@@ -1,17 +1,11 @@
-import 'dart:ui';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:animate_do/animate_do.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:murtaaxpay_app/l10n/app_localizations.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:typed_data';
+import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -374,7 +368,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return MaxWidthBox(
           maxWidth: 600,
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.9,
               decoration: BoxDecoration(
@@ -523,7 +517,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context) => MaxWidthBox(
         maxWidth: 600,
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: AlertDialog(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32 * context.fontSizeFactor)),
@@ -640,7 +634,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return MaxWidthBox(
           maxWidth: 600,
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
             child: ListenableBuilder(
               listenable: state,
               builder: (context, _) => Container(
@@ -719,7 +713,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return MaxWidthBox(
           maxWidth: 600,
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
             child: Container(
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               decoration: BoxDecoration(
@@ -782,7 +776,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return MaxWidthBox(
           maxWidth: 600,
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
             child: Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,

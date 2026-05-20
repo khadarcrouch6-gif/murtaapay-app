@@ -12,6 +12,7 @@ class Campaign {
   final String category;
   final int donorCount;
   final String lastDonationAgo;
+  final bool isUrgent;
 
   Campaign({
     required this.id,
@@ -25,5 +26,36 @@ class Campaign {
     required this.category,
     required this.donorCount,
     required this.lastDonationAgo,
+    this.isUrgent = false,
   });
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'description': description,
+    'goalAmount': goalAmount,
+    'raisedAmount': raisedAmount,
+    'creator': creator,
+    'icon': icon.codePoint,
+    'imageUrl': imageUrl,
+    'category': category,
+    'donorCount': donorCount,
+    'lastDonationAgo': lastDonationAgo,
+    'isUrgent': isUrgent,
+  };
+
+  factory Campaign.fromJson(Map<String, dynamic> json) => Campaign(
+    id: json['id'],
+    title: json['title'],
+    description: json['description'],
+    goalAmount: (json['goalAmount'] as num).toDouble(),
+    raisedAmount: (json['raisedAmount'] as num).toDouble(),
+    creator: json['creator'],
+    icon: IconData(json['icon'], fontFamily: 'MaterialIcons'),
+    imageUrl: json['imageUrl'],
+    category: json['category'],
+    donorCount: json['donorCount'],
+    lastDonationAgo: json['lastDonationAgo'],
+    isUrgent: json['isUrgent'] ?? false,
+  );
 }

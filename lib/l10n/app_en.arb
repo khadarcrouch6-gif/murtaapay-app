@@ -1,5 +1,11 @@
 {
   "@@locale": "en",
+  "anonymous": "Anonymous",
+  "donationSuccessful": "Donation Successful!",
+  "donationSuccessMessage": "Thank you for your donation. It will make a big difference in the lives of those in need.",
+  "pleaseEnterValidAmount": "Please enter a valid amount",
+  "facebook": "Facebook",
+  "campaignDescriptionExtra": "This fundraiser was started to handle the urgent costs for Ahmed's surgery. Every dollar brings us closer to the goal and helps save a life. Join the 142 donors who have already contributed.",
   "appTitle": "MurtaaxPay",
   "splashTitle": "MURTAAX PAY",
   "splashSubtitle": "Trusted Somali Partner",
@@ -27,6 +33,7 @@
   "exchange": "Exchange",
   "vouchers": "Vouchers",
   "seeAll": "See All",
+  "more": "More",
   "spendingAnalysis": "Spending Analysis",
   "walletBalance": "Wallet Balance",
   "getStarted": "Get Started",
@@ -570,6 +577,11 @@
   "yourPortfolio": "Your Portfolio",
   "bitcoin": "Bitcoin",
   "ethereum": "Ethereum",
+  "solana": "Solana",
+  "tether": "Tether",
+  "ripple": "Ripple",
+  "cardano": "Cardano",
+  "polkadot": "Polkadot",
   "gold": "Gold",
   "investmentOpportunities": "Investment Opportunities",
   "realEstate": "Real Estate",
@@ -944,6 +956,18 @@
   "sadaqahRaised": "raised",
   "sadaqahRaisedOf": "raised of",
   "sadaqahDonations": "donations",
+  "sadaqahHistory": "Donation History",
+  "sadaqahTotal": "Total",
+  "sadaqahSearchHint": "Search campaigns or creator...",
+  "sadaqahDonateTo": "Donate to",
+  "sadaqahThankYou": "Thank you! Your donation was successful.",
+  "sadaqahConfirmDonation": "Confirm Donation",
+  "sadaqahDonate": "Donate",
+  "sadaqahDonateNow": "Donate Now",
+  "sadaqahBixiHadda": "Bixi Hadda",
+  "sadaqahBixi": "Bixi",
+  "sadaqahXaqiiji": "Xaqiiji",
+  "sadaqahZakatCalcDesc": "Calculate and pay your zakat accurately",
   "sadaqahTrending": "Trending",
   "sadaqahAgo": "ago",
   "catAll": "All",
@@ -1038,5 +1062,55 @@
       "amount": { "type": "String" }
     }
   },
-  "error": "Error"
+  "error": "Error",
+  "noCampaignsFound": "No campaigns found",
+  "tryAdjustingFilters": "Try adjusting your filters or search terms.",
+  "targetWallet": "Target Wallet",
+  "currencyRateFormat": "1 USD = {rate} {code}",
+  "@currencyRateFormat": {
+    "placeholders": {
+      "rate": { "type": "String" },
+      "code": { "type": "String" }
+    }
+  },
+  "mainWallet": "Main Wallet",
+  "invalidPin": "Invalid PIN",
+  "sourceWallet": "Source Wallet",
+  "mainBalance": "Main Balance",
+  "verifiedAccount": "Verified Account",
+  "source": "Source",
+  "wallet": "Wallet",
+  "noAssetsToSell": "You don't have any assets to sell",
+  "selectAssetToBuy": "Select Asset to Buy",
+  "selectAssetToSell": "Select Asset to Sell",
+  "availableAmount": "{amount} {symbol} available",
+  "@availableAmount": {
+    "placeholders": {
+      "amount": { "type": "String" },
+      "symbol": { "type": "String" }
+    }
+  },
+  "priceAlerts": "Price Alerts",
+  "priceAlertsDesc": "Get notified when prices change",
+  "transactionHistory": "Transaction History",
+  "transactionHistoryDesc": "View your past crypto trades",
+  "taxReports": "Tax Reports",
+  "taxReportsDesc": "Download your investment data",
+  "searchAssets": "Search assets...",
+  "todayPlus": "+{percentage}% Today",
+  "@todayPlus": {
+    "placeholders": {
+      "percentage": { "type": "String" }
+    }
+  },
+  "todayMinus": "-{percentage}% Today",
+  "@todayMinus": {
+    "placeholders": {
+      "percentage": { "type": "String" }
+    }
+  },
+  "discover": "Discover",
+  "portfolio": "Portfolio",
+  "noInvestmentsYet": "No Investments Yet",
+  "startBuildingPortfolio": "Start building your crypto portfolio today with Murtaax Pay."
 }

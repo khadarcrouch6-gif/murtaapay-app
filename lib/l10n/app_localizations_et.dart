@@ -9,6 +9,26 @@ class AppLocalizationsEt extends AppLocalizations {
   AppLocalizationsEt([String locale = 'et']) : super(locale);
 
   @override
+  String get anonymous => 'Anonymous';
+
+  @override
+  String get donationSuccessful => 'Donation Successful!';
+
+  @override
+  String get donationSuccessMessage =>
+      'Thank you for your donation. It will make a big difference in the lives of those in need.';
+
+  @override
+  String get pleaseEnterValidAmount => 'Please enter a valid amount';
+
+  @override
+  String get facebook => 'Facebook';
+
+  @override
+  String get campaignDescriptionExtra =>
+      'This fundraiser was started to handle the urgent costs for Ahmed\'s surgery. Every dollar brings us closer to the goal and helps save a life. Join the 142 donors who have already contributed.';
+
+  @override
   String get appTitle => 'MurtaaxPay';
 
   @override
@@ -89,6 +109,9 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get seeAll => 'Vaata kõiki';
+
+  @override
+  String get more => 'Rohkem';
 
   @override
   String get spendingAnalysis => 'Kulude analüüs';
@@ -1338,6 +1361,21 @@ class AppLocalizationsEt extends AppLocalizations {
   String get ethereum => 'Ethereum';
 
   @override
+  String get solana => 'Solana';
+
+  @override
+  String get tether => 'Tether';
+
+  @override
+  String get ripple => 'Ripple';
+
+  @override
+  String get cardano => 'Cardano';
+
+  @override
+  String get polkadot => 'Polkadot';
+
+  @override
   String get gold => 'Kuld';
 
   @override
@@ -2130,6 +2168,42 @@ class AppLocalizationsEt extends AppLocalizations {
   String get sadaqahDonations => 'annetust';
 
   @override
+  String get sadaqahHistory => 'Donation History';
+
+  @override
+  String get sadaqahTotal => 'Total';
+
+  @override
+  String get sadaqahSearchHint => 'Search campaigns or creator...';
+
+  @override
+  String get sadaqahDonateTo => 'Donate to';
+
+  @override
+  String get sadaqahThankYou => 'Thank you! Your donation was successful.';
+
+  @override
+  String get sadaqahConfirmDonation => 'Confirm Donation';
+
+  @override
+  String get sadaqahDonate => 'Donate';
+
+  @override
+  String get sadaqahDonateNow => 'Donate Now';
+
+  @override
+  String get sadaqahBixiHadda => 'Bixi Hadda';
+
+  @override
+  String get sadaqahBixi => 'Bixi';
+
+  @override
+  String get sadaqahXaqiiji => 'Xaqiiji';
+
+  @override
+  String get sadaqahZakatCalcDesc => 'Calculate and pay your zakat accurately';
+
+  @override
   String get sadaqahTrending => 'Populaarne';
 
   @override
@@ -2385,4 +2459,98 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get error => 'Error';
+
+  @override
+  String get noCampaignsFound => 'Kampaaniaid ei leitud';
+
+  @override
+  String get tryAdjustingFilters =>
+      'Proovige filtreid kohandada, et leida otsitav.';
+
+  @override
+  String get targetWallet => 'Target Wallet';
+
+  @override
+  String currencyRateFormat(String rate, String code) {
+    return '1 USD = $rate $code';
+  }
+
+  @override
+  String get mainWallet => 'Main Wallet';
+
+  @override
+  String get invalidPin => 'Invalid PIN';
+
+  @override
+  String get sourceWallet => 'Source Wallet';
+
+  @override
+  String get mainBalance => 'Main Balance';
+
+  @override
+  String get verifiedAccount => 'Verified Account';
+
+  @override
+  String get source => 'Source';
+
+  @override
+  String get wallet => 'Wallet';
+
+  @override
+  String get noAssetsToSell => 'You don\'t have any assets to sell';
+
+  @override
+  String get selectAssetToBuy => 'Select Asset to Buy';
+
+  @override
+  String get selectAssetToSell => 'Select Asset to Sell';
+
+  @override
+  String availableAmount(String amount, String symbol) {
+    return '$amount $symbol available';
+  }
+
+  @override
+  String get priceAlerts => 'Price Alerts';
+
+  @override
+  String get priceAlertsDesc => 'Get notified when prices change';
+
+  @override
+  String get transactionHistory => 'Transaction History';
+
+  @override
+  String get transactionHistoryDesc => 'View your past crypto trades';
+
+  @override
+  String get taxReports => 'Tax Reports';
+
+  @override
+  String get taxReportsDesc => 'Download your investment data';
+
+  @override
+  String get searchAssets => 'Search assets...';
+
+  @override
+  String todayPlus(String percentage) {
+    return '+$percentage% Today';
+  }
+
+  @override
+  String todayMinus(String percentage) {
+    return '-$percentage% Today';
+  }
+
+  @override
+  String get discover => 'Discover';
+
+  @override
+  String get portfolio => 'Portfolio';
+
+  @override
+  String get noInvestmentsYet => 'No Investments Yet';
+
+  @override
+  String get startBuildingPortfolio =>
+      'Start building your crypto portfolio today with Murtaax Pay.';
 }

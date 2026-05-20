@@ -7,7 +7,7 @@ import '../../core/app_colors.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_state.dart';
 import '../../core/widgets/detail_row.dart';
-import 'dart:ui';
+import 'dart:ui' as ui;
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
@@ -195,7 +195,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
       barrierDismissible: false,
       useRootNavigator: true,
       builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Center(
           child: ZoomIn(
             duration: const Duration(milliseconds: 300),
