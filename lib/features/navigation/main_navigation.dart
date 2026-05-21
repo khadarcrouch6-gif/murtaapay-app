@@ -219,10 +219,14 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                   )
                 ]
               ),
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 radius: 20,
                 backgroundColor: AppColors.primaryDark,
-                backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=rayaale'),
+                backgroundImage: const NetworkImage('https://i.pravatar.cc/150?u=rayaale'),
+                onBackgroundImageError: (exception, stackTrace) {
+                  debugPrint("Image Load Error: $exception");
+                },
+                child: const Text("KA", style: TextStyle(color: Colors.white, fontSize: 12)),
               ),
             ),
             const SizedBox(width: 12),

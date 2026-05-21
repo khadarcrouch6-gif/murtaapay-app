@@ -16,6 +16,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:intl/intl.dart';
 import '../../core/models/recurring_payment_model.dart';
+import '../../core/models/transaction.dart';
 import '../more/investments_screen.dart';
 import '../more/savings_screen.dart';
 import '../deposit/deposit_card_screen.dart';
@@ -25,6 +26,7 @@ import '../../l10n/app_localizations.dart';
 import 'models/card_model.dart';
 import 'widgets/elite_virtual_card.dart';
 import 'card_statement_screen.dart';
+import '../navigation/main_navigation.dart';
 
 class CardsScreen extends StatefulWidget {
   const CardsScreen({super.key});
@@ -132,7 +134,11 @@ class _CardsScreenState extends State<CardsScreen> {
                   ),
                   _buildBalanceDisplay(context, state, theme),
                   IconButton(
-                    onPressed: () => _showCardSettings(context, state),
+                    onPressed: () {
+                      if (state.cards.isNotEmpty) {
+                        _showCardSettings(context, state);
+                      }
+                    },
                     icon: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(color: theme.colorScheme.primary.withValues(alpha: 0.1), shape: BoxShape.circle),
@@ -245,13 +251,15 @@ class _CardsScreenState extends State<CardsScreen> {
                                   opacity: value,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                    child: EliteVirtualCard(
-                                      card: state.cards[index],
-                                      showNumber: _showNumber,
-                                      showBack: _showBack,
-                                      onFlip: _flipCard,
-                                      onToggleShowNumber: _toggleShowNumber,
-                                      onCopyNumber: () => _copyCardNumber(context, state),
+                                    child: RepaintBoundary(
+                                      child: EliteVirtualCard(
+                                        card: state.cards[index],
+                                        showNumber: _showNumber,
+                                        showBack: _showBack,
+                                        onFlip: _flipCard,
+                                        onToggleShowNumber: _toggleShowNumber,
+                                        onCopyNumber: () => _copyCardNumber(context, state),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -479,7 +487,6 @@ class _CardsScreenState extends State<CardsScreen> {
 
   void _showCardSettings(BuildContext context, AppState state) {
     if (state.cards.isEmpty) return;
-    final currentCard = state.cards[_currentIndex];
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -488,178 +495,191 @@ class _CardsScreenState extends State<CardsScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (sheetCtx) => StatefulBuilder(
-        builder: (stateCtx, setModalState) => GlassmorphicContainer(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.82,
-          borderRadius: 24,
-          blur: 30,
-          alignment: Alignment.topCenter,
-          border: 2,
-          linearGradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDark 
-                ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
-                : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
-          ),
-          borderGradient: LinearGradient(
-            colors: [
-              (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.2), 
-              (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05)
-            ],
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      l10n.cardSettings,
-                      style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.4)),
-                      ),
-                      child: Text(
-                        currentCard.isFrozen 
-                          ? l10n.frozen
-                          : l10n.active,
-                        style: TextStyle(color: currentCard.isFrozen ? Colors.orange : AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      builder: (sheetCtx) => Consumer<AppState>(
+        builder: (context, state, child) {
+          final currentCardIndex = state.selectedCardIndex;
+          if (currentCardIndex >= state.cards.length) return const SizedBox.shrink();
+          final currentCard = state.cards[currentCardIndex];
+          
+          return GlassmorphicContainer(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.82,
+            borderRadius: 24,
+            blur: 30,
+            alignment: Alignment.topCenter,
+            border: 2,
+            linearGradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark 
+                  ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
+                  : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
+            ),
+            borderGradient: LinearGradient(
+              colors: [
+                (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.2), 
+                (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05)
+              ],
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _walletSection(context, state, currentCard),
-                      const SizedBox(height: 24),
-                      _buildSectionTitle(context, l10n.security, isDark),
-                      _buildSettingsTile(
-                        context: context,
-                        isDark: isDark,
-                        icon: Icons.receipt_long_rounded,
-                        color: Colors.teal,
-                        title: state.translate("Bayaanka Kaadhka", "Card Statement"),
-                        subtitle: state.translate("Eeg taariikhda macaamilka kaadhkaaga", "View your card transaction history"),
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: currentCard)));
-                        },
+                      Text(
+                        l10n.cardSettings,
+                        style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                       ),
-                      _buildSettingsTile(
-                        context: context,
-                        isDark: isDark,
-                        icon: Icons.lock_reset_rounded,
-                        color: Colors.blueAccent,
-                        title: state.translate("Beddel PIN-ka", "Change PIN"),
-                        subtitle: state.translate("Cusboonaysii PIN-ka kaadhkaaga", "Update your card security PIN"),
-                        onTap: () {
-                          _showNewPinVerification(context, l10n, isTerminate: false, isChangePin: true);
-                        },
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: (currentCard.isFrozen ? Colors.orange : AppColors.accentTeal).withValues(alpha: 0.4)),
+                        ),
+                        child: Text(
+                          currentCard.isFrozen 
+                            ? l10n.frozen
+                            : l10n.active,
+                          style: TextStyle(color: currentCard.isFrozen ? Colors.orange : AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      _buildSettingsTile(
-                        context: context,
-                        isDark: isDark,
-                        icon: Icons.ac_unit_rounded,
-                        color: Colors.blue,
-                        title: currentCard.isFrozen 
-                          ? l10n.unfreezeCard
-                          : l10n.freezeCard,
-                        subtitle: l10n.temporarilyDisablePayments,
-                        onTap: () {
-                          // Ask for PIN for freezing/unfreezing
-                          _showNewPinVerification(context, l10n, isTerminate: false, customAction: () {
-                            state.updateCard(_currentIndex, currentCard.copyWith(isFrozen: !currentCard.isFrozen));
-                            setModalState(() {});
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                      _buildSectionTitle(context, l10n.cardControls, isDark),
-                      _buildSettingsTile(
-                        context: context,
-                        isDark: isDark,
-                        icon: Icons.subscriptions_rounded,
-                        color: Colors.purple,
-                        title: state.translate("Maareeyaha Is-qorista", "Subscription Manager"),
-                        subtitle: state.translate("Xakamee adeegyada lacagta kaa goosta", "Manage linked subscriptions & recurring payments"),
-                        onTap: () {
-                          _showSubscriptionManager(context, state, currentCard);
-                        },
-                      ),
-                      _buildSwitchTile(
-                        context: context,
-                        isDark: isDark,
-                        icon: Icons.shopping_basket_outlined,
-                        color: Colors.teal,
-                        title: l10n.onlinePayments,
-                        value: currentCard.allowOnline,
-                        onChanged: (v) {
-                          state.updateCard(_currentIndex, currentCard.copyWith(allowOnline: v));
-                          setModalState(() {});
-                        },
-                      ),
-                      _buildSwitchTile(
-                        context: context,
-                        isDark: isDark,
-                        icon: Icons.public_rounded,
-                        color: Colors.orange,
-                        title: l10n.internationalUsage,
-                        value: currentCard.allowInternational,
-                        onChanged: (v) {
-                          state.updateCard(_currentIndex, currentCard.copyWith(allowInternational: v));
-                          setModalState(() {});
-                        },
-                      ),
-                      _buildSwitchTile(
-                        context: context,
-                        isDark: isDark,
-                        icon: Icons.contactless_rounded,
-                        color: Colors.purple,
-                        title: l10n.contactlessPayments,
-                        value: currentCard.allowContactless,
-                        onChanged: (v) {
-                          state.updateCard(_currentIndex, currentCard.copyWith(allowContactless: v));
-                          setModalState(() {});
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                      _buildSectionTitle(context, state.translate("Xadka Kharashka", "Spending Limit"), isDark),
-                      _buildSpendingLimitTile(context, state, currentCard, isDark, setModalState),
-                      const SizedBox(height: 32),
-                      _buildSettingsTile(
-                        context: context,
-                        isDark: isDark,
-                        icon: Icons.delete_forever_rounded,
-                        color: Colors.redAccent,
-                        title: l10n.terminateCard,
-                        subtitle: l10n.permanentlyDeleteCard,
-                        onTap: () => _showTerminateReasons(context, l10n, state),
-                        isLast: true,
-                      ),
-                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
+                const SizedBox(height: 32),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _walletSection(context, state, currentCard),
+                        const SizedBox(height: 24),
+                        _buildSectionTitle(context, l10n.security, isDark),
+                        _buildSettingsTile(
+                          context: context,
+                          isDark: isDark,
+                          icon: Icons.receipt_long_rounded,
+                          color: Colors.teal,
+                          title: state.translate("Bayaanka Kaadhka", "Card Statement"),
+                          subtitle: state.translate("Eeg taariikhda macaamilka kaadhkaaga", "View your card transaction history"),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: currentCard)));
+                          },
+                        ),
+                        _buildSettingsTile(
+                          context: context,
+                          isDark: isDark,
+                          icon: Icons.lock_reset_rounded,
+                          color: Colors.blueAccent,
+                          title: currentCard.pin == "1122" 
+                            ? state.translate("Samee PIN Cusub", "Set New PIN")
+                            : state.translate("Beddel PIN-ka", "Change PIN"),
+                          subtitle: currentCard.pin == "1122"
+                            ? state.translate("U samee PIN kaadhkaaga hadda", "Set up your card security PIN now")
+                            : state.translate("Cusboonaysii PIN-ka kaadhkaaga", "Update your card security PIN"),
+                          onTap: () {
+                            if (currentCard.pin == "1122") {
+                              _showSetupNewPin(context, l10n, isChange: false);
+                            } else {
+                              _showNewPinVerification(context, l10n, isTerminate: false, isChangePin: true);
+                            }
+                          },
+                        ),
+                        _buildSettingsTile(
+                          context: context,
+                          isDark: isDark,
+                          icon: Icons.ac_unit_rounded,
+                          color: Colors.blue,
+                          title: currentCard.isFrozen 
+                            ? l10n.unfreezeCard
+                            : l10n.freezeCard,
+                          subtitle: l10n.temporarilyDisablePayments,
+                          onTap: () {
+                            // Ask for PIN for freezing/unfreezing
+                            _showNewPinVerification(context, l10n, isTerminate: false, customAction: () {
+                              state.updateCard(state.selectedCardIndex, currentCard.copyWith(isFrozen: !currentCard.isFrozen));
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                        _buildSectionTitle(context, l10n.cardControls, isDark),
+                        _buildSettingsTile(
+                          context: context,
+                          isDark: isDark,
+                          icon: Icons.subscriptions_rounded,
+                          color: Colors.purple,
+                          title: state.translate("Maareeyaha Is-qorista", "Subscription Manager"),
+                          subtitle: state.translate("Xakamee adeegyada lacagta kaa goosta", "Manage linked subscriptions & recurring payments"),
+                          onTap: () {
+                            _showSubscriptionManager(context, state, currentCard);
+                          },
+                        ),
+                        _buildSwitchTile(
+                          context: context,
+                          isDark: isDark,
+                          icon: Icons.shopping_basket_outlined,
+                          color: Colors.teal,
+                          title: l10n.onlinePayments,
+                          value: currentCard.allowOnline,
+                          onChanged: (v) {
+                            state.updateCard(state.selectedCardIndex, currentCard.copyWith(allowOnline: v));
+                          },
+                        ),
+                        _buildSwitchTile(
+                          context: context,
+                          isDark: isDark,
+                          icon: Icons.public_rounded,
+                          color: Colors.orange,
+                          title: l10n.internationalUsage,
+                          value: currentCard.allowInternational,
+                          onChanged: (v) {
+                            state.updateCard(state.selectedCardIndex, currentCard.copyWith(allowInternational: v));
+                          },
+                        ),
+                        _buildSwitchTile(
+                          context: context,
+                          isDark: isDark,
+                          icon: Icons.contactless_rounded,
+                          color: Colors.purple,
+                          title: l10n.contactlessPayments,
+                          value: currentCard.allowContactless,
+                          onChanged: (v) {
+                            state.updateCard(state.selectedCardIndex, currentCard.copyWith(allowContactless: v));
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                        _buildSectionTitle(context, state.translate("Xadka Kharashka", "Spending Limit"), isDark),
+                        _buildSpendingLimitTile(context, state, currentCard, isDark),
+                        const SizedBox(height: 32),
+                        _buildSettingsTile(
+                          context: context,
+                          isDark: isDark,
+                          icon: Icons.delete_forever_rounded,
+                          color: Colors.redAccent,
+                          title: l10n.terminateCard,
+                          subtitle: l10n.permanentlyDeleteCard,
+                          onTap: () {
+                            Navigator.pop(context);
+                            _showTerminateReasons(context, l10n, state);
+                          },
+                          isLast: true,
+                        ),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -848,7 +868,11 @@ class _CardsScreenState extends State<CardsScreen> {
   }
 
   void _showTerminationTypeSelection(BuildContext context, AppLocalizations l10n, AppState state) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // 1. Capture everything needed from context BEFORE showing modal or closing it
+    final navigator = Navigator.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final fSizeFactor = context.fontSizeFactor;
     final currentCard = state.cards[_currentIndex];
 
     showModalBottomSheet(
@@ -857,7 +881,7 @@ class _CardsScreenState extends State<CardsScreen> {
       backgroundColor: Colors.transparent,
       builder: (sheetCtx) => GlassmorphicContainer(
         width: double.infinity,
-        height: 480 * context.fontSizeFactor,
+        height: 480 * fSizeFactor,
         borderRadius: 24,
         blur: 30,
         alignment: Alignment.topCenter,
@@ -884,14 +908,14 @@ class _CardsScreenState extends State<CardsScreen> {
               state.translate("Dooro Nooca Action-ka", "Select Action Type"),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20 * context.fontSizeFactor,
+                fontSize: 20 * fSizeFactor,
                 color: isDark ? Colors.white : AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 32),
             _buildTypeOption(
-              context: context,
-              isDark: isDark,
+              theme: theme,
+              fontSizeFactor: fSizeFactor,
               icon: Icons.pause_circle_outline_rounded,
               color: Colors.orange,
               title: state.translate("Demi Kaadhka (Temporary)", "Deactivate Card (Temporary)"),
@@ -901,23 +925,33 @@ class _CardsScreenState extends State<CardsScreen> {
               ),
               onTap: () {
                 Navigator.pop(sheetCtx);
-                _showNewPinVerification(context, l10n, isTerminate: false);
+                Future.delayed(Duration.zero, () {
+                  if (mounted) {
+                    // Use the captured navigator context which is stable
+                    _showNewPinVerification(navigator.context, l10n, isTerminate: false);
+                  }
+                });
               },
             ),
             const SizedBox(height: 16),
             _buildTypeOption(
-              context: context,
-              isDark: isDark,
+              theme: theme,
+              fontSizeFactor: fSizeFactor,
               icon: Icons.delete_forever_rounded,
               color: Colors.redAccent,
               title: state.translate("Tirtir Joogto ah (Permanent)", "Terminate Permanently"),
               description: state.translate(
-                "Tani waa mid joogto ah. Kaadhkaaga waa la tirtiri doonaa, laakiin waxaad haysataa 30 casho oo aad dib ugu soo ceshan karto haddii aad ka qoomamayso. Wixii intaas ka dambeeya xogtaada waa la tirtirayaa.",
-                "This is permanent. Your card will be deleted, but you have 30 days to restore it if you change your mind. After 30 days, all data will be permanently removed."
+                "Tani waa mid joogto ah. Kaadhkaaga waa la tirtiri doonaa, haraaga kaadhka oo ah \$${currentCard.balance.toStringAsFixed(2)} waxaa lagu celin doonaa Wallet-kaaga.",
+                "This is permanent. Your card will be deleted, and the card balance of \$${currentCard.balance.toStringAsFixed(2)} will be refunded to your wallet."
               ),
               onTap: () {
                 Navigator.pop(sheetCtx);
-                _showNewPinVerification(context, l10n, isTerminate: true);
+                Future.delayed(Duration.zero, () {
+                  if (mounted) {
+                    // Use the captured navigator context which is stable
+                    _showTerminationConfirmationDialog(navigator.context, l10n, state, isDark);
+                  }
+                });
               },
             ),
             const Spacer(),
@@ -935,18 +969,18 @@ class _CardsScreenState extends State<CardsScreen> {
   }
 
   Widget _buildTypeOption({
-    required BuildContext context,
-    required bool isDark,
+    required ThemeData theme,
+    required double fontSizeFactor,
     required IconData icon,
     required Color color,
     required String title,
     required String description,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    final isDark = theme.brightness == Brightness.dark;
+    return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
@@ -959,7 +993,7 @@ class _CardsScreenState extends State<CardsScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-              child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
+              child: Icon(icon, color: color, size: 24 * fontSizeFactor),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -970,7 +1004,7 @@ class _CardsScreenState extends State<CardsScreen> {
                     title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16 * context.fontSizeFactor,
+                      fontSize: 16 * fontSizeFactor,
                       color: isDark ? Colors.white : AppColors.textPrimary,
                     ),
                   ),
@@ -978,7 +1012,7 @@ class _CardsScreenState extends State<CardsScreen> {
                   Text(
                     description,
                     style: TextStyle(
-                      fontSize: 12 * context.fontSizeFactor,
+                      fontSize: 12 * fontSizeFactor,
                       color: isDark ? Colors.white60 : AppColors.textSecondary,
                       height: 1.4,
                     ),
@@ -993,11 +1027,61 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
+  void _showTerminationConfirmationDialog(BuildContext context, AppLocalizations l10n, AppState state, bool isDark) {
+    showDialog(
+      context: context,
+      builder: (ctx) => BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: AlertDialog(
+          backgroundColor: isDark ? AppColors.primaryDark.withValues(alpha: 0.9) : Colors.white.withValues(alpha: 0.9),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Text(
+            state.translate("Xaqiijinta Tirtiridda", "Confirm Termination"),
+            style: TextStyle(
+              color: isDark ? Colors.white : AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            state.translate(
+              "Ma hubtaa inaad rabto inaad si joogto ah u tirtirto kaadhkan? Haraaga ku jira waxaa lagu celin doonaa Wallet-kaaga. Tallaabadan dib looguma noqon karo.",
+              "Are you sure you want to permanently terminate this card? Any remaining balance will be refunded to your wallet. This action cannot be undone."
+            ),
+            style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.cancel, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                _showNewPinVerification(context, l10n, isTerminate: true);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Text(
+                state.translate("Haa, Tirtir", "Yes, Terminate"),
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showNewPinVerification(BuildContext context, AppLocalizations l10n, {required bool isTerminate, VoidCallback? customAction, bool isChangePin = false}) {
+    if (!context.mounted) return;
+    
     final TextEditingController pinController = TextEditingController();
     final state = Provider.of<AppState>(context, listen: false);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final fontSizeFactor = context.fontSizeFactor;
 
     showModalBottomSheet(
       context: context,
@@ -1007,7 +1091,7 @@ class _CardsScreenState extends State<CardsScreen> {
         padding: EdgeInsets.only(bottom: MediaQuery.of(sheetCtx).viewInsets.bottom),
         child: GlassmorphicContainer(
           width: double.infinity,
-          height: 400 * context.fontSizeFactor,
+          height: 400 * fontSizeFactor,
           borderRadius: 24,
           blur: 30,
           alignment: Alignment.topCenter,
@@ -1028,14 +1112,14 @@ class _CardsScreenState extends State<CardsScreen> {
               Icon(
                 isChangePin ? Icons.security_rounded : (isTerminate ? Icons.delete_sweep_rounded : Icons.lock_outline_rounded), 
                 color: isChangePin ? Colors.blueAccent : (isTerminate ? Colors.redAccent : Colors.orange), 
-                size: 48 * context.fontSizeFactor
+                size: 48 * fontSizeFactor
               ),
               const SizedBox(height: 16),
               Text(
                 isChangePin 
                   ? state.translate("Gali PIN-ka Hadda", "Enter Current PIN")
                   : state.translate("Gali PIN-ka Kaadhka", "Enter Card PIN"),
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
               ),
               const SizedBox(height: 8),
               Text(
@@ -1043,32 +1127,37 @@ class _CardsScreenState extends State<CardsScreen> {
                   ? state.translate("Fadlan geli PIN-kaaga hadda si aad u beddesho.", "Please enter your current PIN to change it.")
                   : state.translate("Fadlan geli PIN-kaaga si aad u xaqiijiso talaabadan.", "Please enter your PIN to confirm this action."),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
+                style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * fontSizeFactor),
               ),
               const SizedBox(height: 32),
               SizedBox(
-                width: 220 * context.fontSizeFactor,
+                width: 220 * fontSizeFactor,
                 child: TextField(
                   controller: pinController,
                   obscureText: true,
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
-                  style: TextStyle(fontSize: 28 * context.fontSizeFactor, letterSpacing: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
+                  style: TextStyle(fontSize: 28 * fontSizeFactor, letterSpacing: 20 * fontSizeFactor, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
                   autofocus: true,
                   decoration: InputDecoration(
                     hintText: "****",
-                    hintStyle: TextStyle(letterSpacing: 20 * context.fontSizeFactor, fontSize: 28 * context.fontSizeFactor, color: isDark ? Colors.white24 : Colors.black12),
+                    hintStyle: TextStyle(letterSpacing: 20 * fontSizeFactor, fontSize: 28 * fontSizeFactor, color: isDark ? Colors.white24 : Colors.black12),
                     filled: true,
                     fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                   ),
                   onChanged: (value) {
                     if (value.length == 4) {
-                      if (state.verifyCardPin(value)) {
+                      final currentCardId = state.cards[state.selectedCardIndex].id;
+                      final isValid = isTerminate || isChangePin || customAction != null 
+                          ? state.verifyCardPin(value, cardId: currentCardId) 
+                          : state.verifyPin(value);
+
+                      if (isValid) {
                         Navigator.pop(sheetCtx);
                         if (isChangePin) {
-                          _showSetupNewPin(context, l10n);
+                          _showSetupNewPin(context, l10n, isChange: true);
                         } else if (customAction != null) {
                           customAction();
                         } else {
@@ -1103,7 +1192,7 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  void _showSetupNewPin(BuildContext context, AppLocalizations l10n) {
+  void _showSetupNewPin(BuildContext context, AppLocalizations l10n, {bool isChange = false}) {
     final TextEditingController pinController = TextEditingController();
     final state = Provider.of<AppState>(context, listen: false);
     final theme = Theme.of(context);
@@ -1135,15 +1224,19 @@ class _CardsScreenState extends State<CardsScreen> {
               const SizedBox(height: 12),
               Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
               const SizedBox(height: 24),
-              Icon(Icons.lock_reset_rounded, color: AppColors.accentTeal, size: 48 * context.fontSizeFactor),
+              Icon(isChange ? Icons.lock_outline_rounded : Icons.lock_reset_rounded, color: AppColors.accentTeal, size: 48 * context.fontSizeFactor),
               const SizedBox(height: 16),
               Text(
-                state.translate("Samee PIN Cusub", "Set New PIN"),
+                isChange 
+                  ? state.translate("Beddel PIN-ka", "Change PIN")
+                  : state.translate("Samee PIN Cusub", "Set New PIN"),
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
               ),
               const SizedBox(height: 8),
               Text(
-                state.translate("Fadlan geli 4 god oo PIN cusub ah.", "Please enter a new 4-digit PIN."),
+                isChange
+                  ? state.translate("Fadlan geli 4 god oo PIN cusub ah.", "Please enter a new 4-digit PIN.")
+                  : state.translate("U samee PIN gaar ah kaadhkaaga virtual-ka ah.", "Set a unique PIN for your virtual card."),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
               ),
@@ -1168,7 +1261,7 @@ class _CardsScreenState extends State<CardsScreen> {
                   onChanged: (value) {
                     if (value.length == 4) {
                       Navigator.pop(sheetCtx);
-                      _showConfirmNewPin(context, l10n, value);
+                      _showConfirmNewPin(context, l10n, value, isChange: isChange);
                     }
                   },
                 ),
@@ -1188,7 +1281,7 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  void _showConfirmNewPin(BuildContext context, AppLocalizations l10n, String newPin) {
+  void _showConfirmNewPin(BuildContext context, AppLocalizations l10n, String newPin, {bool isChange = false}) {
     final TextEditingController pinController = TextEditingController();
     final state = Provider.of<AppState>(context, listen: false);
     final theme = Theme.of(context);
@@ -1252,13 +1345,16 @@ class _CardsScreenState extends State<CardsScreen> {
                   ),
                   onChanged: (value) async {
                     if (value.length == 4) {
-                      if (value == newPin) {
+                        if (value == newPin) {
                         Navigator.pop(sheetCtx);
-                        state.updateCardPin(value);
+                        final currentCard = state.cards[state.selectedCardIndex];
+                        state.updateCardPin(value, cardId: currentCard.id);
                         _audioPlayer.play(AssetSource('sounds/success.mp3'));
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(state.translate("PIN-ka waa la beddelay!", "PIN changed successfully!")),
+                            content: Text(isChange 
+                              ? state.translate("PIN-ka waa la beddelay!", "PIN changed successfully!")
+                              : state.translate("PIN-ka waa la sameeyay!", "PIN created successfully!")),
                             backgroundColor: AppColors.accentTeal,
                           ),
                         );
@@ -1354,12 +1450,33 @@ class _CardsScreenState extends State<CardsScreen> {
     Navigator.of(context, rootNavigator: true).pop();
 
     if (isTerminate) {
-      final oldIndex = _currentIndex;
+      final oldIndex = appState.selectedCardIndex;
+      if (oldIndex >= appState.cards.length) return;
       final cardToTerminate = appState.cards[oldIndex];
       final refundAmount = cardToTerminate.balance;
       
       // Update app state first
       appState.addBalance(refundAmount);
+      
+      // Add transaction to the history
+      final now = DateTime.now();
+      final tx = Transaction(
+        id: "TX-REF-${now.millisecondsSinceEpoch}",
+        title: appState.translate("Refund: Kaadhka la tirtiray", "Refund: Card Terminated"),
+        date: "${now.day}/${now.month}/${now.year}",
+        timestamp: now,
+        amount: "+\$${refundAmount.toStringAsFixed(2)}",
+        numericAmount: refundAmount,
+        isNegative: false,
+        category: "Refund",
+        status: "Success",
+        type: "deposit",
+        method: "Virtual Card",
+        purpose: "Card Termination Refund",
+        referenceId: cardToTerminate.id,
+      );
+      appState.addTransaction(tx);
+
       appState.removeCard(oldIndex);
       
       // Update local index to prevent out-of-bounds
@@ -1373,18 +1490,26 @@ class _CardsScreenState extends State<CardsScreen> {
         });
       }
       
-      final currencyFormatter = NumberFormat.currency(symbol: '\$');
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (_) => SuccessScreen(
-            title: l10n.cardTerminated,
-            message: l10n.cardTerminatedSuccess,
-            subMessage: l10n.newBalance(currencyFormatter.format(appState.balance)),
+            title: appState.translate("Kaadhka waa la tirtiray", "Card Terminated"),
+            message: appState.translate(
+              "Kaadhkaaga si joogto ah ayaa loo tirtiray.", 
+              "Your card has been permanently terminated."
+            ),
+            subMessage: appState.translate(
+              "Haraagii kaadhka oo ahaa \$${refundAmount.toStringAsFixed(2)} waxaa si guul leh loogu wareejiyay Wallet-kaaga.",
+              "The card balance of \$${refundAmount.toStringAsFixed(2)} has been successfully transferred to your wallet."
+            ),
             buttonText: l10n.backToHome,
             onPressed: () {
-              appState.setNavIndex(0); // 0 is Home
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              appState.setNavIndex(3); // 3 is Cards
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => MainNavigation()),
+                (route) => false,
+              );
             },
           ),
         ),
@@ -1402,8 +1527,11 @@ class _CardsScreenState extends State<CardsScreen> {
             message: appState.translate("Kaadhkaaga si guul leh ayaa loo demiyay.", "Your card has been successfully deactivated."),
             buttonText: l10n.backToHome,
             onPressed: () {
-              appState.setNavIndex(0); // 0 is Home
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              appState.setNavIndex(3); // 3 is Cards
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => MainNavigation()),
+                (route) => false,
+              );
             },
           ),
         ),
@@ -1418,7 +1546,10 @@ class _CardsScreenState extends State<CardsScreen> {
 
   Widget _buildBalanceDisplay(BuildContext context, AppState state, ThemeData theme) {
     final currencyFormatter = NumberFormat.simpleCurrency(name: state.currencyCode);
-    final cardBalance = state.cards.isNotEmpty ? state.cards[_currentIndex].balance : 0.0;
+    final currentCardIndex = state.selectedCardIndex;
+    final cardBalance = state.cards.isNotEmpty && currentCardIndex < state.cards.length 
+        ? state.cards[currentCardIndex].balance 
+        : 0.0;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       margin: const EdgeInsets.only(right: 8),
@@ -1496,7 +1627,7 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  Widget _buildSpendingLimitTile(BuildContext context, AppState state, VirtualCard card, bool isDark, StateSetter setModalState) {
+  Widget _buildSpendingLimitTile(BuildContext context, AppState state, VirtualCard card, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1534,8 +1665,10 @@ class _CardsScreenState extends State<CardsScreen> {
               max: 5000,
               divisions: 49,
               onChanged: (value) {
-                state.updateCard(_currentIndex, card.copyWith(dailyLimit: value));
-                setModalState(() {});
+                final currentCardIndex = state.selectedCardIndex;
+                if (currentCardIndex < state.cards.length) {
+                  state.updateCard(currentCardIndex, card.copyWith(dailyLimit: value));
+                }
               },
             ),
           ),
@@ -1828,7 +1961,13 @@ class _CardsScreenState extends State<CardsScreen> {
           title: state.translate("Kaadhka waa la sameeyay", "Card Created"),
           message: state.translate("Kaadhkaaga cusub hadda waa diyaar.", "Your new virtual card is now ready."),
           buttonText: l10n.backToHome,
-          onPressed: () => state.setNavIndex(3),
+          onPressed: () {
+            state.setNavIndex(3); // 3 is Cards
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => MainNavigation()),
+              (route) => false,
+            );
+          },
         ),
       ),
     );

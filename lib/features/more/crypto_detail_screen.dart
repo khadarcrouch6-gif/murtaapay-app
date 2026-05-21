@@ -146,10 +146,12 @@ class _CryptoDetailScreenState extends State<CryptoDetailScreen> {
                 SizedBox(
                   height: 220 * context.fontSizeFactor,
                   width: double.infinity,
-                  child: CustomPaint(
-                    painter: LineChartPainter(
-                      data: _chartData,
-                      color: widget.asset.change24h >= 0 ? AppColors.accentTeal : Colors.redAccent,
+                  child: RepaintBoundary(
+                    child: CustomPaint(
+                      painter: LineChartPainter(
+                        data: _chartData,
+                        color: widget.asset.change24h >= 0 ? AppColors.accentTeal : Colors.redAccent,
+                      ),
                     ),
                   ),
                 ),

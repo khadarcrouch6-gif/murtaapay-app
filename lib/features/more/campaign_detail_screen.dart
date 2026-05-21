@@ -36,24 +36,26 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
             expandedHeight: 250,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    widget.campaign.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(color: AppColors.primaryDark),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.black.withValues(alpha: 0.3), Colors.black.withValues(alpha: 0.7)],
+              background: RepaintBoundary(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.network(
+                      widget.campaign.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(color: AppColors.primaryDark),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.black.withValues(alpha: 0.3), Colors.black.withValues(alpha: 0.7)],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             leading: IconButton(
@@ -109,7 +111,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                         SizedBox(height: 32 * context.fontSizeFactor),
                         FadeInUp(
                           delay: const Duration(milliseconds: 300),
-                          child: _buildProgressCard(state, l10n, progress, theme, isDark),
+                          child: RepaintBoundary(child: _buildProgressCard(state, l10n, progress, theme, isDark)),
                         ),
                         SizedBox(height: 32 * context.fontSizeFactor),
                         FadeInUp(

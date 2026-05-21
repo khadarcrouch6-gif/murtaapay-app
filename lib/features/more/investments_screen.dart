@@ -646,8 +646,10 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
             SizedBox(
               width: 60 * scale,
               height: 30 * scale,
-              child: CustomPaint(
-                painter: SparklinePainter(color: isUp ? Colors.green : Colors.red, isUp: isUp),
+              child: RepaintBoundary(
+                child: CustomPaint(
+                  painter: SparklinePainter(color: isUp ? Colors.green : Colors.red, isUp: isUp),
+                ),
               ),
             ),
             SizedBox(width: 12 * scale),

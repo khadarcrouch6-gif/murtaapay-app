@@ -16,6 +16,7 @@ class VirtualCard {
   final double dailyLimit;
   final double currentSpending;
   final double balance;
+  final String pin;
 
   VirtualCard({
     required this.id,
@@ -32,6 +33,7 @@ class VirtualCard {
     this.dailyLimit = 1000.0,
     this.currentSpending = 450.0,
     this.balance = 0.0,
+    this.pin = "1122",
   });
 
   VirtualCard copyWith({
@@ -43,6 +45,7 @@ class VirtualCard {
     double? currentSpending,
     double? balance,
     CardNetwork? network,
+    String? pin,
   }) {
     return VirtualCard(
       id: id,
@@ -59,6 +62,7 @@ class VirtualCard {
       dailyLimit: dailyLimit ?? this.dailyLimit,
       currentSpending: currentSpending ?? this.currentSpending,
       balance: balance ?? this.balance,
+      pin: pin ?? this.pin,
     );
   }
 
@@ -78,6 +82,7 @@ class VirtualCard {
       'dailyLimit': dailyLimit,
       'currentSpending': currentSpending,
       'balance': balance,
+      'pin': pin,
     };
   }
 
@@ -97,6 +102,7 @@ class VirtualCard {
       dailyLimit: (json['dailyLimit'] as num?)?.toDouble() ?? 1000.0,
       currentSpending: (json['currentSpending'] as num?)?.toDouble() ?? 0.0,
       balance: (json['balance'] as num?)?.toDouble() ?? 0.0,
+      pin: json['pin'] ?? "1122",
     );
   }
 }

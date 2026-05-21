@@ -53,20 +53,31 @@ class AppState extends ChangeNotifier {
   String get walletId => _walletId;
 
   String _pin = '1234'; // Default mock PIN
-  String _cardPin = '1122'; // Virtual Card PIN
   
   bool verifyPin(String pin) {
     return _pin == pin;
   }
 
-  bool verifyCardPin(String pin) {
-    return _cardPin == pin;
+  bool verifyCardPin(String pin, {String? cardId}) {
+    if (_cards.isEmpty) return false;
+    final id = cardId ?? _cards[_selectedCardIndex].id;
+    try {
+      final card = _cards.firstWhere((c) => c.id == id);
+      return card.pin == pin;
+    } catch (e) {
+      return false;
+    }
   }
 
-  void updateCardPin(String pin) {
-    _cardPin = pin;
-    _prefs.setString('card_pin', pin);
-    notifyListeners();
+  void updateCardPin(String pin, {String? cardId}) {
+    if (_cards.isEmpty) return;
+    final id = cardId ?? _cards[_selectedCardIndex].id;
+    final index = _cards.indexWhere((c) => c.id == id);
+    if (index != -1) {
+      _cards[index] = _cards[index].copyWith(pin: pin);
+      _saveCards();
+      notifyListeners();
+    }
   }
 
   String _currencyCode = 'USD';
@@ -77,6 +88,10 @@ class AppState extends ChangeNotifier {
 
   List<Transaction> _transactions = [];
   List<Transaction> get transactions => _transactions;
+
+  List<Transaction> getTransactionsForCard(String cardId) {
+    return _transactions.where((tx) => tx.cardId == cardId).toList();
+  }
 
   List<Map<String, String>> _recentWithdrawals = [];
   List<Map<String, String>> get recentWithdrawals => _recentWithdrawals;
@@ -644,6 +659,7 @@ class AppState extends ChangeNotifier {
           theme: CardThemeType.obsidian,
           network: CardNetwork.visa,
           balance: 850.50,
+          pin: "1122",
         ),
         VirtualCard(
           id: "2",
@@ -654,6 +670,7 @@ class AppState extends ChangeNotifier {
           theme: CardThemeType.gold,
           network: CardNetwork.mastercard,
           balance: 150.0,
+          pin: "2233",
         ),
       ];
       _saveCards();
@@ -798,8 +815,6 @@ class AppState extends ChangeNotifier {
     _loadHagbadGroups();
     _loadRecurringPayments();
     _loadCampaigns();
-    
-    _cardPin = _prefs.getString('card_pin') ?? '1122';
     
     _userDailyLimit = _prefs.getDouble('daily_limit') ?? 5000.0;
     _userMonthlyLimit = _prefs.getDouble('monthly_limit') ?? 20000.0;

@@ -88,13 +88,15 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
                     return Transform(
                       alignment: Alignment.center,
                       transform: transform,
-                      child: rotation <= 90 
-                        ? _buildCardFront(context, state) 
-                        : Transform(
-                            alignment: Alignment.center, 
-                            transform: Matrix4.identity()..rotateY(pi), 
-                            child: _buildCardBack(context, state)
-                          ),
+                      child: RepaintBoundary(
+                        child: rotation <= 90 
+                          ? _buildCardFront(context, state) 
+                          : Transform(
+                              alignment: Alignment.center, 
+                              transform: Matrix4.identity()..rotateY(pi), 
+                              child: _buildCardBack(context, state)
+                            ),
+                      ),
                     );
                   },
                 );
@@ -272,7 +274,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
         Container(
           width: 46, height: 34,
           decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))]),
-          child: CustomPaint(painter: RealisticCardChipPainter()),
+          child: RepaintBoundary(child: CustomPaint(painter: RealisticCardChipPainter())),
         ),
         const SizedBox(width: 16),
         Expanded(

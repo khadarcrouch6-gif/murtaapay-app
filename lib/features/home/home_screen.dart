@@ -1175,30 +1175,32 @@ class NotchedWalletCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        CustomPaint(
-          size: size,
-          painter: WalletCardPainter(),
-          child: ClipPath(
-            clipper: WalletCardClipper(),
-            child: BackdropFilter(
-              filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-              child: Container(
-                width: size.width,
-                height: size.height,
-                color: Colors.transparent,
-                child: child,
+    return RepaintBoundary(
+      child: Stack(
+        children: [
+          CustomPaint(
+            size: size,
+            painter: WalletCardPainter(),
+            child: ClipPath(
+              clipper: WalletCardClipper(),
+              child: BackdropFilter(
+                filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: Container(
+                  width: size.width,
+                  height: size.height,
+                  color: Colors.transparent,
+                  child: child,
+                ),
               ),
             ),
           ),
-        ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: action,
-        ),
-      ],
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: action,
+          ),
+        ],
+      ),
     );
   }
 }

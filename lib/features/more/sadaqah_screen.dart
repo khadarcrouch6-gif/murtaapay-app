@@ -64,121 +64,125 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     final theme = Theme.of(context);
     
     return FadeInDown(
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CampaignDetailScreen(campaign: featured)),
-          );
-        },
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 16 * context.fontSizeFactor),
-          height: 400 * context.fontSizeFactor,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20 * context.fontSizeFactor, offset: Offset(0, 10 * context.fontSizeFactor))],
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.network(
-                featured.imageUrl, 
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
+      child: RepaintBoundary(
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CampaignDetailScreen(campaign: featured)),
+            );
+          },
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 16 * context.fontSizeFactor),
+            height: 400 * context.fontSizeFactor,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20 * context.fontSizeFactor, offset: Offset(0, 10 * context.fontSizeFactor))],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.network(
+                  featured.imageUrl, 
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.primaryDark, AppColors.primaryDark.withValues(alpha: 0.8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Center(child: Icon(featured.icon, size: 60 * context.fontSizeFactor, color: Colors.white.withValues(alpha: 0.2))),
+                  ),
+                ),
+                Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primaryDark, AppColors.primaryDark.withValues(alpha: 0.8)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.1),
+                        Colors.black.withValues(alpha: 0.4),
+                        Colors.black.withValues(alpha: 0.9),
+                      ],
                     ),
                   ),
-                  child: Center(child: Icon(featured.icon, size: 60 * context.fontSizeFactor, color: Colors.white.withValues(alpha: 0.2))),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.1),
-                      Colors.black.withValues(alpha: 0.4),
-                      Colors.black.withValues(alpha: 0.9),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: RepaintBoundary(
+                    child: ClipRect(
+                      child: BackdropFilter(
+                        filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: Container(
+                          height: 160 * context.fontSizeFactor,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Colors.black.withValues(alpha: 0.3)],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 24 * context.fontSizeFactor,
+                  left: 24 * context.fontSizeFactor,
+                  right: 24 * context.fontSizeFactor,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
+                        decoration: BoxDecoration(color: AppColors.accentTeal, borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
+                        child: Text(l10n.sadaqahUrgent, style: TextStyle(color: Colors.white, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                      ),
+                      SizedBox(height: 12 * context.fontSizeFactor),
+                      Text(featured.title, style: TextStyle(color: Colors.white, fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("\$${featured.raisedAmount.toInt()} ${l10n.sadaqahRaised}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+                          Text("${(progress * 100).toInt()}%", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+                        ],
+                      ),
+                      SizedBox(height: 8 * context.fontSizeFactor),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10 * context.fontSizeFactor),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          backgroundColor: Colors.white.withValues(alpha: 0.2),
+                          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+                          minHeight: 8 * context.fontSizeFactor,
+                        ),
+                      ),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => _showQuickDonateSheet(context, featured, state),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accentTeal,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                          ),
+                          child: Text(l10n.sadaqahDonateNow, style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                    child: Container(
-                      height: 160 * context.fontSizeFactor,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.3)],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 24 * context.fontSizeFactor,
-                left: 24 * context.fontSizeFactor,
-                right: 24 * context.fontSizeFactor,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
-                      decoration: BoxDecoration(color: AppColors.accentTeal, borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
-                      child: Text(l10n.sadaqahUrgent, style: TextStyle(color: Colors.white, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                    ),
-                    SizedBox(height: 12 * context.fontSizeFactor),
-                    Text(featured.title, style: TextStyle(color: Colors.white, fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("\$${featured.raisedAmount.toInt()} ${l10n.sadaqahRaised}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-                        Text("${(progress * 100).toInt()}%", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-                      ],
-                    ),
-                    SizedBox(height: 8 * context.fontSizeFactor),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10 * context.fontSizeFactor),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        backgroundColor: Colors.white.withValues(alpha: 0.2),
-                        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
-                        minHeight: 8 * context.fontSizeFactor,
-                      ),
-                    ),
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () => _showQuickDonateSheet(context, featured, state),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accentTeal,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-                        ),
-                        child: Text(l10n.sadaqahDonateNow, style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -876,97 +880,99 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     return FadeInUp(
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CampaignDetailScreen(campaign: campaign)),
-          );
-        },
-        child: Container(
-          margin: EdgeInsets.only(bottom: 32 * context.fontSizeFactor),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
-            border: Border.all(color: theme.dividerColor.withValues(alpha: isDark ? 0.08 : 0.05)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-                blurRadius: 30 * context.fontSizeFactor,
-                offset: Offset(0, 15 * context.fontSizeFactor),
-              ),
-              BoxShadow(
-                color: AppColors.accentTeal.withValues(alpha: isDark ? 0.05 : 0.01),
-                blurRadius: 20 * context.fontSizeFactor,
-                offset: Offset(0, 10 * context.fontSizeFactor),
-              ),
-            ],
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              if (isTablet) {
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Stack(
-                        children: [
-                          Image.network(
-                            campaign.imageUrl,
-                            height: 280 * context.fontSizeFactor,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Container(
+      child: RepaintBoundary(
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CampaignDetailScreen(campaign: campaign)),
+            );
+          },
+          child: Container(
+            margin: EdgeInsets.only(bottom: 32 * context.fontSizeFactor),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
+              border: Border.all(color: theme.dividerColor.withValues(alpha: isDark ? 0.08 : 0.05)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
+                  blurRadius: 30 * context.fontSizeFactor,
+                  offset: Offset(0, 15 * context.fontSizeFactor),
+                ),
+                BoxShadow(
+                  color: AppColors.accentTeal.withValues(alpha: isDark ? 0.05 : 0.01),
+                  blurRadius: 20 * context.fontSizeFactor,
+                  offset: Offset(0, 10 * context.fontSizeFactor),
+                ),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                if (isTablet) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Stack(
+                          children: [
+                            Image.network(
+                              campaign.imageUrl,
                               height: 280 * context.fontSizeFactor,
                               width: double.infinity,
-                              color: theme.colorScheme.primary.withValues(alpha: 0.05),
-                              child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Container(
+                                height: 280 * context.fontSizeFactor,
+                                width: double.infinity,
+                                color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                                child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                              ),
                             ),
+                            _buildVerifiedBadge(context, l10n),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                          child: _buildCardContent(context, campaign, l10n, progress),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+  
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      children: [
+                        Image.network(
+                          campaign.imageUrl,
+                          height: 180 * context.fontSizeFactor,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            height: 180 * context.fontSizeFactor,
+                            width: double.infinity,
+                            color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                            child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
                           ),
-                          _buildVerifiedBadge(context, l10n),
-                        ],
-                      ),
+                        ),
+                        _buildVerifiedBadge(context, l10n),
+                      ],
                     ),
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                        child: _buildCardContent(context, campaign, l10n, progress),
-                      ),
+                    Padding(
+                      padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                      child: _buildCardContent(context, campaign, l10n, progress),
                     ),
                   ],
                 );
-              }
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    children: [
-                      Image.network(
-                        campaign.imageUrl,
-                        height: 180 * context.fontSizeFactor,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          height: 180 * context.fontSizeFactor,
-                          width: double.infinity,
-                          color: theme.colorScheme.primary.withValues(alpha: 0.05),
-                          child: Icon(campaign.icon, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
-                        ),
-                      ),
-                      _buildVerifiedBadge(context, l10n),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                    child: _buildCardContent(context, campaign, l10n, progress),
-                  ),
-                ],
-              );
-            },
+              },
+            ),
           ),
         ),
       ),
