@@ -1260,6 +1260,23 @@ class _CardsScreenState extends State<CardsScreen> {
                   ),
                   onChanged: (value) {
                     if (value.length == 4) {
+                      if (isChange) {
+                        final currentCard = state.cards[state.selectedCardIndex];
+                        if (currentCard.pin == value) {
+                          HapticFeedback.vibrate();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.translate(
+                                "PIN-kani waa kii hadda. Fadlan dooro PIN cusub.", 
+                                "This is the current PIN. Please choose a new PIN."
+                              )),
+                              backgroundColor: Colors.orange,
+                            ),
+                          );
+                          pinController.clear();
+                          return;
+                        }
+                      }
                       Navigator.pop(sheetCtx);
                       _showConfirmNewPin(context, l10n, value, isChange: isChange);
                     }
