@@ -76,7 +76,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 color: isSelected ? AppColors.primaryDark : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? AppColors.primaryDark : Colors.grey.withOpacity(0.2),
+                  color: isSelected ? AppColors.primaryDark : Colors.grey.withValues(alpha: 0.2),
                 ),
               ),
               alignment: Alignment.center,
@@ -140,7 +140,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.notifications_off_outlined, size: 80, color: Colors.grey.withOpacity(0.3)),
+            Icon(Icons.notifications_off_outlined, size: 80, color: Colors.grey.withValues(alpha: 0.3)),
             const SizedBox(height: 16),
             Text(
               state.translate("No notifications yet", "Ma jiraan ogeysiisyo wali", ar: "لا توجد إشعارات بعد", de: "Noch keine Benachrichtigungen"),
@@ -172,7 +172,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -184,7 +184,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: notification.iconColor.withOpacity(0.1),
+                          color: notification.iconColor.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: AdaptiveIcon(notification.icon, color: notification.iconColor, size: 20),
@@ -249,16 +249,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.95),
-            Colors.white.withOpacity(0.9),
+            Colors.white.withValues(alpha: 0.95),
+            Colors.white.withValues(alpha: 0.9),
           ],
         ),
         borderGradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primaryDark.withOpacity(0.2),
-            AppColors.primaryDark.withOpacity(0.05),
+            AppColors.primaryDark.withValues(alpha: 0.2),
+            AppColors.primaryDark.withValues(alpha: 0.05),
           ],
         ),
         child: Padding(
@@ -278,7 +278,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: notification.iconColor.withOpacity(0.1),
+                  color: notification.iconColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: AdaptiveIcon(notification.icon, color: notification.iconColor, size: 40),

@@ -23,7 +23,6 @@ class _CardStatementScreenState extends State<CardStatementScreen> {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -77,14 +76,14 @@ class _CardStatementScreenState extends State<CardStatementScreen> {
         gradient: LinearGradient(
           colors: isDark 
               ? [AppColors.primaryDark, const Color(0xFF1E293B)]
-              : [AppColors.primaryDark, AppColors.primaryDark.withOpacity(0.8)],
+              : [AppColors.primaryDark, AppColors.primaryDark.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryDark.withOpacity(0.3),
+            color: AppColors.primaryDark.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           )
@@ -98,7 +97,7 @@ class _CardStatementScreenState extends State<CardStatementScreen> {
             children: [
               Text(
                 widget.card.cardHolder.toUpperCase(),
-                style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2),
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2),
               ),
               Text(
                 widget.card.network == CardNetwork.visa ? "VISA" : "MASTERCARD",
@@ -114,7 +113,7 @@ class _CardStatementScreenState extends State<CardStatementScreen> {
           const SizedBox(height: 24),
           Text(
             state.translate("Baaqiga Hadda", "Current Balance"),
-            style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12),
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12),
           ),
           Text(
             currencyFormatter.format(widget.card.balance),
@@ -144,7 +143,7 @@ class _CardStatementScreenState extends State<CardStatementScreen> {
               onSelected: (selected) {
                 if (selected) setState(() => _selectedPeriod = period);
               },
-              selectedColor: AppColors.accentTeal.withOpacity(0.2),
+              selectedColor: AppColors.accentTeal.withValues(alpha: 0.2),
               checkmarkColor: AppColors.accentTeal,
               labelStyle: TextStyle(
                 color: isSelected ? AppColors.accentTeal : Colors.grey,
@@ -165,14 +164,14 @@ class _CardStatementScreenState extends State<CardStatementScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: theme.dividerColor.withOpacity(0.05))),
+          border: Border(bottom: BorderSide(color: theme.dividerColor.withValues(alpha: 0.05))),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: (tx.isNegative ? Colors.red : AppColors.accentTeal).withOpacity(0.1),
+                color: (tx.isNegative ? Colors.red : AppColors.accentTeal).withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -229,7 +228,7 @@ class _CardStatementScreenState extends State<CardStatementScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.receipt_long_outlined, size: 64, color: Colors.grey.withOpacity(0.2)),
+          Icon(Icons.receipt_long_outlined, size: 64, color: Colors.grey.withValues(alpha: 0.2)),
           const SizedBox(height: 16),
           Text(
             state.translate("Ma jiraan wax dhaqdhaqaaq ah.", "No transactions found."),

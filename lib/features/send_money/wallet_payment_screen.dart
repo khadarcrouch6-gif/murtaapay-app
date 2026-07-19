@@ -76,7 +76,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -219,8 +219,8 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                           decoration: BoxDecoration(
                             color: theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(16 * scale),
-                            border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
-                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10)],
+                            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10)],
                           ),
                           child: Row(
                             children: [
@@ -263,7 +263,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                             ),
                             borderRadius: BorderRadius.circular(24 * scale),
                             boxShadow: [
-                              BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 8)),
+                              BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 15, offset: const Offset(0, 8)),
                             ],
                           ),
                           child: Column(
@@ -319,7 +319,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                                 hintText: "****",
                                 hintStyle: TextStyle(letterSpacing: 24 * scale, fontSize: 32 * scale),
                                 filled: true,
-                                fillColor: theme.dividerColor.withOpacity(0.05),
+                                fillColor: theme.dividerColor.withValues(alpha: 0.05),
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale), borderSide: BorderSide.none),
                                 focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale), borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2)),
                               ),
@@ -377,8 +377,8 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
     final theme = Theme.of(context);
     final scale = context.fontSizeFactor;
     Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withOpacity(0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withOpacity(0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
+    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
+    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
 
     return Column(
       children: [
@@ -387,7 +387,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
           decoration: BoxDecoration(
             color: isActive || isCompleted ? activeColor : inactiveColor, 
             shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withOpacity(0.2), width: 4 * scale) : null
+            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4 * scale) : null
           ),
           child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 16 * scale) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 12 * scale, fontWeight: FontWeight.w900))),
         ),
@@ -403,7 +403,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
   Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
     final theme = Theme.of(context);
     Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withOpacity(0.3))
+      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3))
       : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
     return Expanded(child: Container(height: 3, margin: EdgeInsets.symmetric(horizontal: 6 * context.fontSizeFactor), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
   }

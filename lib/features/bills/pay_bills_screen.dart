@@ -10,7 +10,6 @@ import '../../core/widgets/detail_row.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import '../../core/models/transaction.dart' as model;
 
 class PayBillsScreen extends StatefulWidget {
   const PayBillsScreen({super.key});
@@ -238,10 +237,16 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
                   width: double.infinity,
                   height: 56 * context.fontSizeFactor,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (idController.text.isNotEmpty && amountController.text.isNotEmpty) {
+                        final accountId = idController.text;
+                        final amount = amountController.text;
                         Navigator.pop(context);
-                        _processTransaction(this.context, l10nKey, amountController.text);
+                        
+                        final pinSuccess = await _showSecurityPinDialog(this.context);
+                        if (pinSuccess) {
+                          _processTransaction(this.context, l10nKey, amount, accountId);
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -264,10 +269,10 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
     );
   }
 
-  void _processTransaction(BuildContext context, String l10nKey, String amountStr) async {
+  void _processTransaction(BuildContext context, String l10nKey, String amountStr, String accountId) async {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final state = AppState();
+    final state = Provider.of<AppState>(context, listen: false);
     
     final double? amount = double.tryParse(amountStr.replaceAll(RegExp(r'[^0-9.]'), ''));
     if (amount == null || amount <= 0) {
@@ -352,38 +357,59 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
       ),
     );
 
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      // Use the atomic central state method
+      await state.processBillPayment(
+        category: _getTranslatedCategory(l10n, l10nKey),
+        accountId: accountId,
+        amount: amount,
+        l10nKey: l10nKey,
+      );
 
-    if (!context.mounted) return;
-    Navigator.of(context, rootNavigator: true).pop();
-
-    state.deductBalance(amount);
-    
-    state.addTransaction(model.Transaction(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title: _getTranslatedCategory(l10n, l10nKey),
-      date: DateFormat('MMM dd').format(DateTime.now()),
-      amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(amount)}",
-      isNegative: true,
-      category: "All",
-      status: "Success",
-      type: "payment",
-    ));
-    
-    _showSuccess(context, l10nKey, amountStr, state);
+      if (!context.mounted) return;
+      Navigator.of(context, rootNavigator: true).pop();
+      
+      _showSuccess(context, l10nKey, amountStr, state, accountId);
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')))
+        );
+      }
+    }
   }
 
-  void _showSuccess(BuildContext context, String l10nKey, String amount, AppState state) {
+  void _showSuccess(BuildContext context, String l10nKey, String amountStr, AppState state, String accountId) {
     final l10n = AppLocalizations.of(context)!;
     final translatedCategory = _getTranslatedCategory(l10n, l10nKey);
+    
+    final double? amount = double.tryParse(amountStr.replaceAll(RegExp(r'[^0-9.]'), ''));
+    final fee = state.calculateFee(amount ?? 0);
+    final total = (amount ?? 0) + fee;
+
+    final transactionData = {
+      'title': translatedCategory,
+      'amount': "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(total)}",
+      'date': DateFormat('MMM dd, yyyy').format(DateTime.now()),
+      'status': 'Success',
+      'type': 'payment',
+      'category': 'Bills',
+      'reference': 'TX-BILL-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
+      'method': 'Murtaax Wallet',
+      'accountId': accountId,
+      'isNegative': true,
+    };
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.paymentSuccessful,
-          message: l10n.paymentSuccessMessage(amount, translatedCategory),
+          message: l10n.paymentSuccessMessage(amountStr, translatedCategory),
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToBills,
+          transactionData: transactionData,
         ),
       ),
     );
@@ -510,5 +536,59 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
       case "govServices": return l10n.govServices;
       default: return l10nKey;
     }
+  }
+
+  Future<bool> _showSecurityPinDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final state = Provider.of<AppState>(context, listen: false);
+    final TextEditingController pinController = TextEditingController();
+    
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        scrollable: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(l10n.enterSecurityPin, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.enterTransactionPin, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.grey, fontSize: 14)),
+            const SizedBox(height: 20),
+            TextField(
+              controller: pinController,
+              keyboardType: TextInputType.number,
+              obscureText: true,
+              maxLength: 4,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 10),
+              decoration: InputDecoration(
+                counterText: "",
+                filled: true,
+                fillColor: Colors.grey.withValues(alpha: 0.1),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+          TextButton(
+            onPressed: () {
+              if (state.verifyPin(pinController.text)) {
+                if (context.mounted) Navigator.pop(context, true);
+              } else {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.invalidPin), duration: const Duration(seconds: 2)),
+                  );
+                }
+              }
+            },
+            child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 }

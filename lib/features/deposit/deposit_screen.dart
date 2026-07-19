@@ -382,7 +382,15 @@ class _DepositScreenState extends State<DepositScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              _inputField(context, l10n.cardholderName, Icons.person_outline_rounded, l10n.fullNameOnCard, _field4Controller, onChanged: (_) => setState((){})),
+              _inputField(
+                context, 
+                l10n.cardholderName, 
+                Icons.person_outline_rounded, 
+                l10n.fullNameOnCard, 
+                _field4Controller,
+                maxLength: 25,
+                onChanged: (_) => setState((){}),
+              ),
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
@@ -580,17 +588,22 @@ class _DepositScreenState extends State<DepositScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.cardholderName.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10 * context.fontSizeFactor)),
-                          const SizedBox(height: 4),
-                          Text(
-                            _field4Controller.text.isEmpty ? "YOUR NAME" : _field4Controller.text.toUpperCase(),
-                            style: TextStyle(color: Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w600),
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.cardholderName.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10 * context.fontSizeFactor)),
+                            const SizedBox(height: 4),
+                            Text(
+                              _field4Controller.text.isEmpty ? "YOUR NAME" : _field4Controller.text.toUpperCase(),
+                              style: TextStyle(color: Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w600),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 16),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [

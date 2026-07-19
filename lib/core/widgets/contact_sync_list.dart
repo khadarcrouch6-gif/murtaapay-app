@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../app_state.dart';
-import '../app_colors.dart';
 import '../../l10n/app_localizations.dart';
 
 typedef ContactSelectedCallback = void Function(Contact contact, String? murtaaxName, String? verifiedId);

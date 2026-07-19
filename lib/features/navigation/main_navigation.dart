@@ -354,7 +354,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                 decoration: BoxDecoration(
                   color: isSomali ? Colors.white : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
-                  boxShadow: isSomali ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)] : null,
+                  boxShadow: isSomali ? [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4)] : null,
                 ),
                 alignment: Alignment.center,
                 child: Text(

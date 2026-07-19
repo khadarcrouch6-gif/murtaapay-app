@@ -117,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Switch(
                             value: isDark,
                             onChanged: (value) => state.toggleTheme(value),
-                            activeColor: AppColors.accentTeal,
+                            activeThumbColor: AppColors.accentTeal,
                           ),
                         ),
                       ),
@@ -521,55 +521,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: AlertDialog(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32 * context.fontSizeFactor)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 12 * context.fontSizeFactor),
-                Text(state.translate("Share Profile", "La wadaag Profile-ka", ar: "مشاركة الملف الشخصي", de: "Profil teilen", et: "Jaga profiili"), style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                SizedBox(height: 24 * context.fontSizeFactor),
-                Container(
-                  padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
-                  child: QrImageView(data: state.userEmail, version: QrVersions.auto, size: 200 * context.fontSizeFactor, gapless: false),
-                ),
-                SizedBox(height: 24 * context.fontSizeFactor),
-                Text(state.userName, style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                Text(state.userEmail, style: TextStyle(color: Colors.grey, fontSize: 13 * context.fontSizeFactor)),
-                SizedBox(height: 32 * context.fontSizeFactor),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: Icon(Icons.copy_rounded, size: 18 * context.fontSizeFactor),
-                        label: Text(state.translate("Copy", "Nuuxi", ar: "نسخ", de: "Kopieren", et: "Kopeeri")),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
-                          foregroundColor: AppColors.accentTeal,
-                          elevation: 0,
-                          padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 12 * context.fontSizeFactor),
+                  Text(state.translate("Share Profile", "La wadaag Profile-ka", ar: "مشاركة الملف الشخصي", de: "Profil teilen", et: "Jaga profiili"), style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Container(
+                    padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
+                    child: QrImageView(data: state.userEmail, version: QrVersions.auto, size: 200 * context.fontSizeFactor, gapless: false),
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(state.userName, style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                  Text(state.userEmail, style: TextStyle(color: Colors.grey, fontSize: 13 * context.fontSizeFactor)),
+                  SizedBox(height: 32 * context.fontSizeFactor),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(Icons.copy_rounded, size: 18 * context.fontSizeFactor),
+                          label: Text(state.translate("Copy", "Nuuxi", ar: "نسخ", de: "Kopieren", et: "Kopeeri")),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+                            foregroundColor: AppColors.accentTeal,
+                            elevation: 0,
+                            padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 12 * context.fontSizeFactor),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: Icon(Icons.share_rounded, size: 18 * context.fontSizeFactor),
-                        label: Text(state.translate("Share", "Wadaag", ar: "مشاركة", de: "Teilen", et: "Jaga")),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accentTeal,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
+                      SizedBox(width: 12 * context.fontSizeFactor),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(Icons.share_rounded, size: 18 * context.fontSizeFactor),
+                          label: Text(state.translate("Share", "Wadaag", ar: "مشاركة", de: "Teilen", et: "Jaga")),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accentTeal,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -589,21 +591,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 12 * context.fontSizeFactor),
-                Container(width: 40 * context.fontSizeFactor, height: 5 * context.fontSizeFactor, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-                SizedBox(height: 24 * context.fontSizeFactor),
-                Text(state.translate("Choose Language", "Dooro Luqadda", ar: "اختر اللغة", de: "Sprache wählen", et: "Vali keel"), style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                SizedBox(height: 16 * context.fontSizeFactor),
-                _buildLanguageTile(context, state, "English", "en", "🇺🇸"),
-                _buildLanguageTile(context, state, "Af-Soomaali", "so", "🇸🇴"),
-                _buildLanguageTile(context, state, "العربية", "ar", "🇸🇦"),
-                _buildLanguageTile(context, state, "Deutsch", "de", "🇩🇪"),
-                _buildLanguageTile(context, state, "Eesti", "et", "🇪🇪"),
-                SizedBox(height: 40 * context.fontSizeFactor),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 12 * context.fontSizeFactor),
+                  Container(width: 40 * context.fontSizeFactor, height: 5 * context.fontSizeFactor, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Text(state.translate("Choose Language", "Dooro Luqadda", ar: "اختر اللغة", de: "Sprache wählen", et: "Vali keel"), style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 16 * context.fontSizeFactor),
+                  _buildLanguageTile(context, state, "English", "en", "🇺🇸"),
+                  _buildLanguageTile(context, state, "Af-Soomaali", "so", "🇸🇴"),
+                  _buildLanguageTile(context, state, "العربية", "ar", "🇸🇦"),
+                  _buildLanguageTile(context, state, "Deutsch", "de", "🇩🇪"),
+                  _buildLanguageTile(context, state, "Eesti", "et", "🇪🇪"),
+                  SizedBox(height: 40 * context.fontSizeFactor),
+                ],
+              ),
             ),
           ),
         );
@@ -650,9 +654,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Container(width: 40 * context.fontSizeFactor, height: 5 * context.fontSizeFactor, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
                       SizedBox(height: 24 * context.fontSizeFactor),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20 * context.fontSizeFactor, color: Colors.grey),
+                        ),
                         Text(state.translate("Bank Accounts", "Akoonada Bangiga", ar: "حسابات بنكية", de: "Bankkonten", et: "Pangakontod"), style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                        const Spacer(),
                         IconButton(
                           onPressed: () => _showAddBankForm(context, state),
                           icon: Icon(Icons.add_circle_outline_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
@@ -720,43 +728,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
               ),
-              child: Padding(
-                padding: EdgeInsets.all(32.0 * context.fontSizeFactor),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(child: Container(width: 40 * context.fontSizeFactor, height: 5 * context.fontSizeFactor, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)))),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(32.0 * context.fontSizeFactor),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(child: Container(width: 40 * context.fontSizeFactor, height: 5 * context.fontSizeFactor, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)))),
+                      SizedBox(height: 24 * context.fontSizeFactor),
+                    Text(state.translate("Link New Bank", "Ku xidh Banki Cusub", ar: "ربط بنك جديد", de: "Neues Bankkonto verknüpfen", et: "Seo uus pank"), style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                     SizedBox(height: 24 * context.fontSizeFactor),
-                  Text(state.translate("Link New Bank", "Ku xidh Banki Cusub", ar: "ربط بنك جديد", de: "Neues Bankkonto verknüpfen", et: "Seo uus pank"), style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 24 * context.fontSizeFactor),
-                  _buildEditorField(bankCtrl, state.translate("Bank Name", "Magaca Bangiga", ar: "اسم البنك", de: "Bankname", et: "Panga nimi"), Icons.account_balance_outlined, context: context),
-                  _buildEditorField(accountCtrl, state.translate("Account Number", "Lambarka Akoonka", ar: "رقم الحساب", de: "Kontonummer", et: "Kontonumber"), Icons.numbers_rounded, context: context),
-                  SizedBox(height: 32 * context.fontSizeFactor),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56 * context.fontSizeFactor,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (bankCtrl.text.isNotEmpty && accountCtrl.text.isNotEmpty) {
-                          state.addBank(BankAccount(
-                            id: DateTime.now().millisecondsSinceEpoch.toString(),
-                            bankName: bankCtrl.text,
-                            accountNumber: accountCtrl.text,
-                          ));
-                          Navigator.pop(context);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentTeal,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-                        elevation: 0,
+                    _buildEditorField(bankCtrl, state.translate("Bank Name", "Magaca Bangiga", ar: "اسم البنك", de: "Bankname", et: "Panga nimi"), Icons.account_balance_outlined, context: context),
+                    _buildEditorField(accountCtrl, state.translate("Account Number", "Lambarka Akoonka", ar: "رقم الحساب", de: "Kontonummer", et: "Kontonumber"), Icons.numbers_rounded, context: context),
+                    SizedBox(height: 32 * context.fontSizeFactor),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56 * context.fontSizeFactor,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (bankCtrl.text.isNotEmpty && accountCtrl.text.isNotEmpty) {
+                            state.addBank(BankAccount(
+                              id: DateTime.now().millisecondsSinceEpoch.toString(),
+                              bankName: bankCtrl.text,
+                              accountNumber: accountCtrl.text,
+                            ));
+                            Navigator.pop(context);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accentTeal,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                          elevation: 0,
+                        ),
+                        child: Text(state.translate("Link Account", "Ku xidh Akoonka", ar: "ربط الحساب", de: "Konto verknüpfen", et: "Seo konto"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                       ),
-                      child: Text(state.translate("Link Account", "Ku xidh Akoonka", ar: "ربط الحساب", de: "Konto verknüpfen", et: "Seo konto"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                     ),
+                    ],
                   ),
-                  ],
                 ),
               ),
             ),

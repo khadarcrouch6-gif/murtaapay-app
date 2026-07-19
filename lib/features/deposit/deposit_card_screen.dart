@@ -108,13 +108,18 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
 
   void _showSuccess(BuildContext context, AppLocalizations l10n) {
     final state = Provider.of<AppState>(context, listen: false);
+    final amount = double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0;
+    
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.cardTopUpSuccessful,
-          message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0)),
-          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.cardBalance)),
+          message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(amount)),
+          subMessage: state.translate(
+            "Haraaga Wallet-kaagu waa ${NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)}", 
+            "Wallet Balance: ${NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)}"
+          ),
           buttonText: l10n.backToHome,
           onPressed: () {
             state.setNavIndex(3);
@@ -211,15 +216,30 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
       appState.deductBalance(amount);
       appState.addCardBalance(widget.cardId, amount);
       
+      // 1. Wallet Transaction (Red/Minus)
       appState.addTransaction(model.Transaction(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: "Card Top-up",
+        id: "WLT-${DateTime.now().millisecondsSinceEpoch}",
+        title: "Card Top-up (Wallet)",
         date: DateFormat('MMM dd').format(DateTime.now()),
         amount: "-${NumberFormat.simpleCurrency(name: appState.currencyCode).format(amount)}",
+        numericAmount: amount,
         isNegative: true,
-        category: "All",
+        category: "Transfer",
         status: "Success",
         type: "payment",
+      ));
+
+      // 2. Virtual Card Transaction (Green/Plus)
+      appState.addTransaction(model.Transaction(
+        id: "CRD-${DateTime.now().millisecondsSinceEpoch}",
+        title: "Wallet Deposit",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "+${NumberFormat.simpleCurrency(name: appState.currencyCode).format(amount)}",
+        numericAmount: amount,
+        isNegative: false,
+        category: "Deposit",
+        status: "Success",
+        type: "deposit",
         cardId: widget.cardId,
       ));
     } else {
@@ -245,8 +265,21 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
 
   void _showWalletPinDialog() {
     final l10n = AppLocalizations.of(context)!;
+    final appState = Provider.of<AppState>(context, listen: false);
+    final amount = double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0;
     
     _pinController.clear();
+
+    if (appState.balance < amount) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(appState.translate("Haraagaaga Wallet-ku kuma filna", "Insufficient wallet balance")),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
 
     showDialog(
       context: context,
@@ -254,10 +287,14 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Row(
+          title: Column(
             children: [
-              Icon(Icons.account_balance_wallet_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
-              SizedBox(width: 12 * context.fontSizeFactor),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle),
+                child: Icon(Icons.lock_outline_rounded, color: AppColors.accentTeal, size: 28 * context.fontSizeFactor),
+              ),
+              const SizedBox(height: 16),
               Text(l10n.topUpFromWallet, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
             ],
           ),
@@ -265,7 +302,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                l10n.enterWalletPinMessage,
+                appState.translate("Gali PIN-ka Wallet-ka si aad u bixiso \$${amount.toStringAsFixed(2)}", "Enter Wallet PIN to pay \$${amount.toStringAsFixed(2)}"),
                 style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
                 textAlign: TextAlign.center,
               ),
@@ -276,42 +313,44 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 maxLength: 4,
-                style: TextStyle(
-                  fontSize: 24 * context.fontSizeFactor,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 12,
-                ),
+                autofocus: true,
+                style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 12),
                 decoration: InputDecoration(
                   counterText: "",
                   filled: true,
                   fillColor: AppColors.accentTeal.withValues(alpha: 0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                   hintText: "••••",
                   hintStyle: TextStyle(color: AppColors.grey.withValues(alpha: 0.3), letterSpacing: 8),
                 ),
-                onChanged: (value) => setDialogState(() {}),
+                onChanged: (value) {
+                  if (value.length == 4) {
+                    if (appState.verifyPin(value)) {
+                      Navigator.pop(context);
+                      _processTransaction(this.context, l10n, isWalletDeduction: true);
+                    } else {
+                      _pinController.clear();
+                      HapticFeedback.heavyImpact();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(appState.translate("PIN-ku waa khaldan yahay", "Incorrect PIN entered")),
+                          backgroundColor: Colors.redAccent,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                      setDialogState(() {});
+                    }
+                  }
+                },
               ),
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey))),
-            ElevatedButton(
-              onPressed: _pinController.text.length < 4
-                  ? null
-                  : () {
-                      final localContext = this.context;
-                      Navigator.pop(context);
-                      _processTransaction(localContext, l10n, isWalletDeduction: true);
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.accentTeal,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            Center(
+              child: TextButton(
+                onPressed: () => Navigator.pop(context), 
+                child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold))
               ),
-              child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -499,16 +538,33 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                       ),
                       SizedBox(height: 4 * context.fontSizeFactor),
                       ListenableBuilder(
-                        listenable: state,
+                        listenable: Provider.of<AppState>(context),
                         builder: (context, _) {
+                          final state = Provider.of<AppState>(context, listen: false);
                           final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
-                          return Text(
-                            NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28 * context.fontSizeFactor,
-                              fontWeight: FontWeight.w900,
-                            ),
+                          return Column(
+                            children: [
+                              Text(
+                                NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
+                                style: TextStyle(color: Colors.white, fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.w900),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20)),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.wallet_rounded, color: Colors.white, size: 14),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      "Wallet: ${NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)}",
+                                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           );
                         },
                       ),

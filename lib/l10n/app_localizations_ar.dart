@@ -2138,6 +2138,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin => 'Admin';
 
   @override
+  String get deleteGroup => 'Delete Group';
+
+  @override
+  String get deleteGroupConfirm =>
+      'Are you sure you want to delete this group? All history will be lost.';
+
+  @override
+  String get removeMember => 'Remove Member';
+
+  @override
+  String removeMemberConfirm(String name) {
+    return 'Are you sure you want to remove $name from the group?';
+  }
+
+  @override
   String get history => 'History';
 
   @override

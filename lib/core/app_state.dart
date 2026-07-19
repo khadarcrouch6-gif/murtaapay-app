@@ -49,10 +49,10 @@ class AppState extends ChangeNotifier {
 
   double get cardBalance => _cards.fold(0.0, (sum, card) => sum + card.balance);
 
-  String _walletId = '102234';
+  final String _walletId = '102234';
   String get walletId => _walletId;
 
-  String _pin = '1234'; // Default mock PIN
+  final String _pin = '1234'; // Default mock PIN
   
   bool verifyPin(String pin) {
     return _pin == pin;
@@ -69,18 +69,18 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  void updateCardPin(String pin, {String? cardId}) {
+  Future<void> updateCardPin(String pin, {String? cardId}) async {
     if (_cards.isEmpty) return;
     final id = cardId ?? _cards[_selectedCardIndex].id;
     final index = _cards.indexWhere((c) => c.id == id);
     if (index != -1) {
       _cards[index] = _cards[index].copyWith(pin: pin);
-      _saveCards();
+      await _saveCards();
       notifyListeners();
     }
   }
 
-  String _currencyCode = 'USD';
+  final String _currencyCode = 'USD';
   String get currencyCode => _currencyCode;
 
   List<BankAccount> _linkedBanks = [];
@@ -178,7 +178,27 @@ class AppState extends ChangeNotifier {
     if (_balance < amount) throw Exception('insufficient_funds');
 
     final index = _campaigns.indexWhere((c) => c.id == campaignId);
-    if (index != -1) {
+    if (index == -1) throw Exception('campaign_not_found');
+
+    // Capture state for rollback
+    final double originalBalance = _balance;
+    final List<Campaign> originalCampaigns = List.from(_campaigns.map((e) => Campaign(
+      id: e.id,
+      title: e.title,
+      description: e.description,
+      goalAmount: e.goalAmount,
+      raisedAmount: e.raisedAmount,
+      creator: e.creator,
+      icon: e.icon,
+      imageUrl: e.imageUrl,
+      category: e.category,
+      donorCount: e.donorCount,
+      lastDonationAgo: e.lastDonationAgo,
+      isUrgent: e.isUrgent,
+    )));
+    final List<Transaction> originalTransactions = List.from(_transactions);
+
+    try {
       _balance -= amount;
       final campaign = _campaigns[index];
       _campaigns[index] = Campaign(
@@ -212,9 +232,16 @@ class AppState extends ChangeNotifier {
       _transactions.insert(0, tx);
 
       await _prefs.setDouble('balance', _balance);
-      _saveTransactions();
+      await _saveTransactions();
       _saveCampaigns();
       notifyListeners();
+    } catch (e) {
+      // Rollback
+      _balance = originalBalance;
+      _campaigns = originalCampaigns;
+      _transactions = originalTransactions;
+      notifyListeners();
+      rethrow;
     }
   }
 
@@ -291,6 +318,56 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> processRecurringPayment(String paymentId) async {
+    final index = _recurringPayments.indexWhere((p) => p.id == paymentId);
+    if (index == -1) throw Exception('payment_not_found');
+
+    final payment = _recurringPayments[index];
+    if (_balance < payment.amount) throw Exception('insufficient_funds');
+
+    // Capture state for rollback
+    final double originalBalance = _balance;
+    final List<Transaction> originalTransactions = List.from(_transactions);
+    final List<RecurringPayment> originalPayments = List.from(_recurringPayments.map((e) => e.copyWith()));
+
+    try {
+      _balance -= payment.amount;
+      
+      // Update next payment date (simplified: add 30 days)
+      final updatedPayment = payment.copyWith(
+        nextPaymentDate: payment.nextPaymentDate?.add(const Duration(days: 30)),
+      );
+      _recurringPayments[index] = updatedPayment;
+
+      final tx = Transaction(
+        id: "TX-REC-${DateTime.now().millisecondsSinceEpoch}",
+        title: "Recurring: ${payment.title}",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(payment.amount)}",
+        numericAmount: payment.amount,
+        isNegative: true,
+        category: payment.category,
+        status: "Success",
+        type: "transfer_out",
+        method: "Wallet",
+        referenceId: paymentId,
+      );
+      _transactions.insert(0, tx);
+
+      await _prefs.setDouble('balance', _balance);
+      await _saveTransactions();
+      _saveRecurringPayments();
+      notifyListeners();
+    } catch (e) {
+      // Rollback
+      _balance = originalBalance;
+      _transactions = originalTransactions;
+      _recurringPayments = originalPayments;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   void _loadHagbadGroups() {
     final List<String>? groupsJson = _prefs.getStringList('hagbad_groups');
     if (groupsJson != null) {
@@ -331,6 +408,38 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteHagbadGroup(String groupId) {
+    _hagbadGroups.removeWhere((g) => g.id == groupId);
+    _saveHagbadGroups();
+    logHagbadEvent(groupId, "Group deleted by admin");
+    notifyListeners();
+  }
+
+  void removeHagbadMember(String groupId, int memberIndex) {
+    final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
+    if (gIdx != -1) {
+      final group = _hagbadGroups[gIdx];
+      final member = group.members[memberIndex];
+      
+      final updatedMembers = List<HagbadMember>.from(group.members);
+      updatedMembers.removeAt(memberIndex);
+      
+      // Update order for remaining members if needed
+      for (int i = 0; i < updatedMembers.length; i++) {
+        updatedMembers[i] = updatedMembers[i].copyWith(payoutOrder: i + 1);
+      }
+
+      _hagbadGroups[gIdx] = group.copyWith(
+        members: updatedMembers,
+        totalCycles: updatedMembers.length,
+      );
+      
+      _saveHagbadGroups();
+      logHagbadEvent(groupId, "Member removed: ${member.name}");
+      notifyListeners();
+    }
+  }
+
   void updateHagbadMember(String groupId, int memberIndex, HagbadMember member) {
     final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
     if (gIdx != -1) {
@@ -342,15 +451,22 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  void addHagbadMember(String groupId, HagbadMember member, {double catchUpAmount = 0}) {
+  Future<void> addHagbadMember(String groupId, HagbadMember member, {double catchUpAmount = 0}) async {
     final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
-    if (gIdx != -1) {
-      final group = _hagbadGroups[gIdx];
-      
+    if (gIdx == -1) return;
+
+    final group = _hagbadGroups[gIdx];
+    
+    // Capture state for rollback
+    final double originalBalance = _balance;
+    final List<HagbadGroup> originalGroups = List.from(_hagbadGroups.map((e) => e.copyWith()));
+    final List<Transaction> originalTransactions = List.from(_transactions);
+
+    try {
       if (catchUpAmount > 0) {
         if (_balance < catchUpAmount) throw Exception('insufficient_funds');
         _balance -= catchUpAmount;
-        _prefs.setDouble('balance', _balance);
+        await _prefs.setDouble('balance', _balance);
         
         final tx = Transaction(
           id: "TX-HAG-CATCHUP-${DateTime.now().millisecondsSinceEpoch}",
@@ -367,7 +483,7 @@ class AppState extends ChangeNotifier {
           referenceId: groupId,
         );
         _transactions.insert(0, tx);
-        _saveTransactions();
+        await _saveTransactions();
       }
 
       final updatedMembers = List<HagbadMember>.from(group.members)..add(member);
@@ -378,10 +494,16 @@ class AppState extends ChangeNotifier {
       _saveHagbadGroups();
       logHagbadEvent(groupId, "New member added: ${member.name}${catchUpAmount > 0 ? ' with catch-up payment of \$$catchUpAmount' : ''}");
       notifyListeners();
+    } catch (e) {
+      _balance = originalBalance;
+      _hagbadGroups = originalGroups;
+      _transactions = originalTransactions;
+      notifyListeners();
+      rethrow;
     }
   }
 
-  void logHagbadEvent(String groupId, String event) {
+  Future<void> logHagbadEvent(String groupId, String event) async {
     final tx = Transaction(
       id: "TX-EVENT-${DateTime.now().millisecondsSinceEpoch}",
       title: event,
@@ -396,11 +518,11 @@ class AppState extends ChangeNotifier {
       referenceId: groupId,
     );
     _transactions.insert(0, tx);
-    _saveTransactions();
+    await _saveTransactions();
     notifyListeners();
   }
 
-  void sendHagbadNotification(String walletId, String message, {bool isSms = false}) {
+  Future<void> sendHagbadNotification(String walletId, String message, {bool isSms = false}) async {
     // In a real app, this would call an API or Firebase Cloud Functions
     // For this simulation, we log it and could potentially add to a notification list
     debugPrint("Hagbad Notification [${isSms ? 'SMS' : 'App'}]: To $walletId - $message");
@@ -420,7 +542,7 @@ class AppState extends ChangeNotifier {
       purpose: message,
     );
     _transactions.insert(0, tx);
-    _saveTransactions();
+    await _saveTransactions();
     notifyListeners();
   }
 
@@ -480,10 +602,17 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> payHagbad(String groupId, int memberIndex, double amount) async {
+    final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
+    if (gIdx == -1) return;
+
     if (_balance < amount) throw Exception('insufficient_funds');
 
-    final gIdx = _hagbadGroups.indexWhere((g) => g.id == groupId);
-    if (gIdx != -1) {
+    // Capture state for rollback
+    final double originalBalance = _balance;
+    final List<HagbadGroup> originalGroups = List.from(_hagbadGroups.map((e) => e.copyWith()));
+    final List<Transaction> originalTransactions = List.from(_transactions);
+
+    try {
       _balance -= amount;
       final group = _hagbadGroups[gIdx];
       final updatedMembers = List<HagbadMember>.from(group.members);
@@ -512,9 +641,16 @@ class AppState extends ChangeNotifier {
       _transactions.insert(0, tx);
 
       await _prefs.setDouble('balance', _balance);
-      _saveTransactions();
+      await _saveTransactions();
       _saveHagbadGroups();
       notifyListeners();
+    } catch (e) {
+      // Rollback
+      _balance = originalBalance;
+      _hagbadGroups = originalGroups;
+      _transactions = originalTransactions;
+      notifyListeners();
+      rethrow;
     }
   }
 
@@ -532,7 +668,6 @@ class AppState extends ChangeNotifier {
     if (member.hasReceived) throw Exception('Payout already received for this turn');
 
     // Ensure the pool has enough funds (currentBalance must cover all payouts including this one)
-    final expectedPoolForCurrentCycle = group.amount * group.members.length;
     // For simplicity, we check if the current balance is at least the payout amount 
     // In a real Hagbad, everyone in the current cycle must have paid.
     if (group.currentBalance < group.totalPayout * group.currentCycle / group.totalCycles && group.currentBalance < group.totalPayout) {
@@ -548,7 +683,6 @@ class AppState extends ChangeNotifier {
 
     // Calculate total payout (amount * members)
     // We add any extra funds in the pool (penalties) to the payout for this cycle
-    final expectedBalanceForCurrentCycle = group.amount * group.members.length * group.currentCycle;
     final totalPool = group.currentBalance;
     final alreadyPaidOut = (group.currentCycle - 1) * group.totalPayout;
     
@@ -567,6 +701,7 @@ class AppState extends ChangeNotifier {
 
     // Start Transaction
     final double originalBalance = _balance;
+    final List<HagbadGroup> originalGroups = List.from(_hagbadGroups.map((e) => e.copyWith()));
     final List<Transaction> originalTransactions = List.from(_transactions);
 
     try {
@@ -609,18 +744,19 @@ class AppState extends ChangeNotifier {
         status: nextStatus,
       );
 
-      _saveTransactions();
+      await _saveTransactions();
       _saveHagbadGroups();
       notifyListeners();
     } catch (e) {
       _balance = originalBalance;
+      _hagbadGroups = originalGroups;
       _transactions = originalTransactions;
       notifyListeners();
       rethrow;
     }
   }
 
-  void _loadCryptoHoldings() {
+  Future<void> _loadCryptoHoldings() async {
     final String? cryptoJson = _prefs.getString('crypto_holdings');
     if (cryptoJson != null) {
       final Map<String, dynamic> decoded = json.decode(cryptoJson);
@@ -631,22 +767,22 @@ class AppState extends ChangeNotifier {
         'BTC': 0.45,
         'ETH': 2.5,
       };
-      _saveCryptoHoldings();
+      await _saveCryptoHoldings();
     }
   }
 
-  void _saveCryptoHoldings() {
-    _prefs.setString('crypto_holdings', json.encode(_cryptoHoldings));
+  Future<void> _saveCryptoHoldings() async {
+    await _prefs.setString('crypto_holdings', json.encode(_cryptoHoldings));
   }
 
-  void _loadCards() {
+  Future<void> _loadCards() async {
     final List<String>? cardsJson = _prefs.getStringList('virtual_cards');
     if (cardsJson != null) {
       _cards = cardsJson.map((e) => VirtualCard.fromJson(json.decode(e))).toList();
       // Enforce limit of 2 cards
       if (_cards.length > 2) {
         _cards = _cards.sublist(0, 2);
-        _saveCards();
+        await _saveCards();
       }
     } else {
       _cards = [
@@ -673,7 +809,7 @@ class AppState extends ChangeNotifier {
           pin: "2233",
         ),
       ];
-      _saveCards();
+      await _saveCards();
     }
     
     final List<String>? terminatedJson = _prefs.getStringList('terminated_cards');
@@ -682,43 +818,43 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  void _saveCards() {
+  Future<void> _saveCards() async {
     final List<String> cardsJson = _cards.map((e) => json.encode(e.toJson())).toList();
-    _prefs.setStringList('virtual_cards', cardsJson);
+    await _prefs.setStringList('virtual_cards', cardsJson);
     
     final List<String> terminatedJson = _terminatedCards.map((e) => json.encode(e.toJson())).toList();
-    _prefs.setStringList('terminated_cards', terminatedJson);
+    await _prefs.setStringList('terminated_cards', terminatedJson);
   }
 
-  void updateCard(int index, VirtualCard card) {
+  Future<void> updateCard(int index, VirtualCard card) async {
     _cards[index] = card;
-    _saveCards();
+    await _saveCards();
     notifyListeners();
   }
 
-  void removeCard(int index) {
+  Future<void> removeCard(int index) async {
     final card = _cards.removeAt(index);
     // Add to terminated cards with a timestamp (stored in metadata/id if needed, or we just track here)
     // For simplicity, we add it to the grace period list
     _terminatedCards.add(card);
-    _saveCards();
+    await _saveCards();
     notifyListeners();
   }
 
-  void restoreCard(String cardId) {
+  Future<void> restoreCard(String cardId) async {
     final index = _terminatedCards.indexWhere((c) => c.id == cardId);
     if (index != -1) {
       final card = _terminatedCards.removeAt(index);
       _cards.add(card);
-      _saveCards();
+      await _saveCards();
       notifyListeners();
     }
   }
 
-  void addCard(VirtualCard card) {
+  Future<void> addCard(VirtualCard card) async {
     if (_cards.length >= 2) return;
     _cards.add(card);
-    _saveCards();
+    await _saveCards();
     notifyListeners();
   }
 
@@ -929,18 +1065,18 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  void addTransaction(Transaction tx) {
+  Future<void> addTransaction(Transaction tx) async {
     _transactions.insert(0, tx);
-    _saveTransactions();
+    await _saveTransactions();
     notifyListeners();
   }
 
-  void _saveTransactions() {
+  Future<void> _saveTransactions() async {
     final List<String> txJson = _transactions.map((e) => json.encode(e.toJson())).toList();
-    _prefs.setStringList('transactions', txJson);
+    await _prefs.setStringList('transactions', txJson);
   }
 
-  void _loadSavingsGoals() {
+  Future<void> _loadSavingsGoals() async {
     final List<String>? goalsJson = _prefs.getStringList('savings_goals');
     if (goalsJson != null) {
       _savingsGoals = goalsJson.map((e) => SavingsGoal.fromJson(json.decode(e))).toList();
@@ -988,30 +1124,30 @@ class AppState extends ChangeNotifier {
           isPaused: true,
         ),
       ];
-      _saveSavingsGoals();
+      await _saveSavingsGoals();
     }
   }
 
-  void _saveSavingsGoals() {
+  Future<void> _saveSavingsGoals() async {
     final List<String> goalsJson = _savingsGoals.map((e) => json.encode(e.toJson())).toList();
-    _prefs.setStringList('savings_goals', goalsJson);
+    await _prefs.setStringList('savings_goals', goalsJson);
   }
 
-  void addSavingsGoal(SavingsGoal goal) {
+  Future<void> addSavingsGoal(SavingsGoal goal) async {
     _savingsGoals.add(goal);
-    _saveSavingsGoals();
+    await _saveSavingsGoals();
     notifyListeners();
   }
 
-  void updateSavingsGoal(int index, SavingsGoal goal) {
+  Future<void> updateSavingsGoal(int index, SavingsGoal goal) async {
     _savingsGoals[index] = goal;
-    _saveSavingsGoals();
+    await _saveSavingsGoals();
     notifyListeners();
   }
 
-  void removeSavingsGoal(int index) {
+  Future<void> removeSavingsGoal(int index) async {
     _savingsGoals.removeAt(index);
-    _saveSavingsGoals();
+    await _saveSavingsGoals();
     notifyListeners();
   }
 
@@ -1144,7 +1280,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  static const double transactionFeeRate = 0.0099;
+  final double transactionFeeRate = 0.0099;
 
   double calculateFee(double amount) {
     return amount * transactionFeeRate;
@@ -1222,20 +1358,20 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deductCardBalance(String cardId, double amount) {
+  Future<void> deductCardBalance(String cardId, double amount) async {
     final index = _cards.indexWhere((c) => c.id == cardId);
     if (index != -1) {
       _cards[index] = _cards[index].copyWith(balance: _cards[index].balance - amount);
-      _saveCards();
+      await _saveCards();
       notifyListeners();
     }
   }
 
-  void addCardBalance(String cardId, double amount) {
+  Future<void> addCardBalance(String cardId, double amount) async {
     final index = _cards.indexWhere((c) => c.id == cardId);
     if (index != -1) {
       _cards[index] = _cards[index].copyWith(balance: _cards[index].balance + amount);
-      _saveCards();
+      await _saveCards();
       notifyListeners();
     }
   }
@@ -1332,9 +1468,9 @@ class AppState extends ChangeNotifier {
       // Persist changes
       await _prefs.setDouble('balance', _balance);
       await _prefs.setDouble('savings_balance', _savingsBalance);
-      _saveCards();
-      _saveTransactions();
-      _saveSavingsGoals();
+      await _saveCards();
+      await _saveTransactions();
+      await _saveSavingsGoals();
 
       notifyListeners();
       analytics.logEvent('savings_deposit_success', parameters: {'amount': amount, 'from_card': isFromCard, 'goal': goalName});
@@ -1424,9 +1560,9 @@ class AppState extends ChangeNotifier {
       // Persist changes
       await _prefs.setDouble('balance', _balance);
       await _prefs.setDouble('savings_balance', _savingsBalance);
-      _saveCards();
-      _saveTransactions();
-      _saveSavingsGoals();
+      await _saveCards();
+      await _saveTransactions();
+      await _saveSavingsGoals();
 
       notifyListeners();
       analytics.logEvent('savings_withdraw_success', parameters: {'amount': amount, 'to_card': isToCard});
@@ -1507,7 +1643,7 @@ class AppState extends ChangeNotifier {
       // In a real app, this would be a single DB transaction.
       // Here we use SharedPreferences.
       final bool balanceSaved = await _prefs.setDouble('balance', _balance);
-      _saveTransactions();
+      await _saveTransactions();
       
       if (!balanceSaved) {
         throw Exception('persistence_error');
@@ -1570,7 +1706,7 @@ class AppState extends ChangeNotifier {
       _transactions.insert(0, tx);
 
       final bool saved = await _prefs.setDouble('balance', _balance);
-      _saveTransactions();
+      await _saveTransactions();
 
       if (!saved) {
         throw Exception('persistence_error');
@@ -1633,12 +1769,68 @@ class AppState extends ChangeNotifier {
       _transactions.insert(0, tx);
       
       await _prefs.setDouble('balance', _balance);
-      _saveTransactions();
+      await _saveTransactions();
       
       notifyListeners();
       analytics.logEvent('send_money_success', parameters: {
         'amount': amount,
         'recipient': contactInfo,
+      });
+    } catch (e) {
+      _balance = originalBalance;
+      _transactions = originalTransactions;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  /// Atomically process a bill payment.
+  Future<void> processBillPayment({
+    required String category,
+    required String accountId,
+    required double amount,
+    required String l10nKey,
+  }) async {
+    final fee = calculateFee(amount);
+    final total = amount + fee;
+    
+    if (_balance < total) {
+      throw Exception('insufficient_funds');
+    }
+
+    _checkTransactionLimits(total);
+
+    final double originalBalance = _balance;
+    final List<Transaction> originalTransactions = List.from(_transactions);
+
+    try {
+      _balance -= total;
+      
+      final tx = Transaction(
+        id: "TX-BILL-${DateTime.now().millisecondsSinceEpoch}",
+        title: category,
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(total)}",
+        numericAmount: amount,
+        fee: fee,
+        isNegative: true,
+        category: "Bills",
+        status: "Success",
+        type: "payment",
+        method: "Murtaax Wallet",
+        referenceId: accountId,
+      );
+      
+      _transactions.insert(0, tx);
+      
+      await _prefs.setDouble('balance', _balance);
+      await _saveTransactions();
+      
+      notifyListeners();
+      analytics.logEvent('bill_payment_success', parameters: {
+        'amount': amount,
+        'category': category,
+        'account': accountId,
       });
     } catch (e) {
       _balance = originalBalance;
@@ -1681,8 +1873,8 @@ class AppState extends ChangeNotifier {
       _transactions.insert(0, tx);
 
       await _prefs.setDouble('balance', _balance);
-      _saveCryptoHoldings();
-      _saveTransactions();
+      await _saveCryptoHoldings();
+      await _saveTransactions();
 
       notifyListeners();
       analytics.logEvent('crypto_buy_success', parameters: {
@@ -1730,8 +1922,8 @@ class AppState extends ChangeNotifier {
       _transactions.insert(0, tx);
 
       await _prefs.setDouble('balance', _balance);
-      _saveCryptoHoldings();
-      _saveTransactions();
+      await _saveCryptoHoldings();
+      await _saveTransactions();
 
       notifyListeners();
       analytics.logEvent('crypto_sell_success', parameters: {

@@ -331,8 +331,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
                           ),
                           SizedBox(height: 24 * context.fontSizeFactor),
                           _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                          SizedBox(height: 16 * context.fontSizeFactor),
-                          _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                         ],
                       ),
                     ),
@@ -343,17 +341,18 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 Padding(
                   padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
                   child: ElevatedButton(
-                    onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
-                      if (state.verifyPin(pinController.text)) {
-                        final double amount = double.tryParse(amountController.text) ?? 0.0;
-                        if (amount > state.savingsBalance) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
-                          return;
-                        }
-                        Navigator.pop(context);
+                    onPressed: (amountController.text.isEmpty) ? null : () async {
+                      final double amount = double.tryParse(amountController.text) ?? 0.0;
+                      if (amount > state.savingsBalance) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
+                        return;
+                      }
+                      
+                      Navigator.pop(context);
+                      
+                      final pinSuccess = await _showSecurityPinDialog(screenContext);
+                      if (pinSuccess) {
                         await _processWithdrawal(screenContext, l10n, amountController.text);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.invalidPin), backgroundColor: Colors.red));
                       }
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
@@ -366,6 +365,58 @@ class _SavingsScreenState extends State<SavingsScreen> {
         ),
       ),
     );
+  }
+
+  Future<bool> _showSecurityPinDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final state = Provider.of<AppState>(context, listen: false);
+    final TextEditingController pinController = TextEditingController();
+    
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        scrollable: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
+        title: Text(l10n.enterSecurityPin, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.enterTransactionPin, textAlign: TextAlign.center, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+            SizedBox(height: 20 * context.fontSizeFactor),
+            TextField(
+              controller: pinController,
+              keyboardType: TextInputType.number,
+              obscureText: true,
+              maxLength: 4,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 10 * context.fontSizeFactor),
+              decoration: InputDecoration(
+                counterText: "",
+                filled: true,
+                fillColor: Colors.grey.withValues(alpha: 0.1),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor), borderSide: BorderSide.none),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+          TextButton(
+            onPressed: () {
+              if (state.verifyPin(pinController.text)) {
+                Navigator.pop(context, true);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.invalidPin), duration: const Duration(seconds: 2)),
+                );
+              }
+            },
+            child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 
 
@@ -533,8 +584,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
                           ),
                           SizedBox(height: 24 * context.fontSizeFactor),
                           _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                          SizedBox(height: 16 * context.fontSizeFactor),
-                          _dialogInputField(context, l10n.walletPin, Icons.lock_rounded, pinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                         ],
                       ),
                     ),
@@ -545,17 +594,18 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 Padding(
                   padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
                   child: ElevatedButton(
-                    onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
-                      if (state.verifyPin(pinController.text)) {
-                        final double amount = double.tryParse(amountController.text) ?? 0.0;
-                        if (amount > state.balance) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
-                          return;
-                        }
-                        Navigator.pop(context);
+                    onPressed: (amountController.text.isEmpty) ? null : () async {
+                      final double amount = double.tryParse(amountController.text) ?? 0.0;
+                      if (amount > state.balance) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
+                        return;
+                      }
+                      
+                      Navigator.pop(context);
+                      
+                      final pinSuccess = await _showSecurityPinDialog(screenContext);
+                      if (pinSuccess) {
                         await _processDeposit(screenContext, l10n, amountController.text);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.invalidPin), backgroundColor: Colors.red));
                       }
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),

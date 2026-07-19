@@ -767,7 +767,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                ),
              )
           ] else ...[
-            ...state.transactions.take(5).map((tx) => TransactionItem(
+            ...state.transactions.where((tx) => tx.cardId == null).take(5).map((tx) => TransactionItem(
               title: tx.title, 
               subtitle: tx.category, 
               amount: tx.amount, 

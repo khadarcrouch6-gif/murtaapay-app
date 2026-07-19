@@ -43,6 +43,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     final query = _searchController.text.toLowerCase();
     final filteredTransactions = state.transactions.where((tx) {
+      if (tx.cardId != null) return false;
       bool matchesSearch = tx.title.toLowerCase().contains(query) || tx.type.toLowerCase().contains(query);
       bool matchesFilter = _selectedFilter == "All" || 
                          (_selectedFilter == "Sent" && tx.isNegative) || 

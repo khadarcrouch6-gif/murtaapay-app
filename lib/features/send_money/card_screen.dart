@@ -169,16 +169,21 @@ class _CardScreenState extends State<CardScreen> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(l10n.cardHolder, style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold)),
-                                              Text(
-                                                _nameController.text.isEmpty ? l10n.yourName : _nameController.text.toUpperCase(),
-                                                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
-                                              ),
-                                            ],
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(l10n.cardHolder, style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold)),
+                                                Text(
+                                                  _nameController.text.isEmpty ? l10n.yourName : _nameController.text.toUpperCase(),
+                                                  style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
                                           ),
+                                          const SizedBox(width: 16),
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
@@ -206,6 +211,9 @@ class _CardScreenState extends State<CardScreen> {
                                 hint: l10n.johnDoe,
                                 icon: Icons.person_outline_rounded,
                                 onChanged: (v) => setState(() {}),
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(25),
+                                ],
                               ),
                               const SizedBox(height: 16),
                               _buildTextField(

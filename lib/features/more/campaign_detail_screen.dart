@@ -433,7 +433,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                                 hintText: "****",
                                 hintStyle: TextStyle(letterSpacing: 16 * context.fontSizeFactor, fontSize: 24 * context.fontSizeFactor),
                                 filled: true,
-                                fillColor: theme.dividerColor.withOpacity(0.05),
+                                fillColor: theme.dividerColor.withValues(alpha: 0.05),
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
                                 focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2)),
                               ),
@@ -514,9 +514,9 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           padding: EdgeInsets.all(16 * context.fontSizeFactor),
           margin: EdgeInsets.only(bottom: 24 * context.fontSizeFactor),
           decoration: BoxDecoration(
-            color: theme.colorScheme.secondary.withOpacity(0.1),
+            color: theme.colorScheme.secondary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-            border: Border.all(color: theme.colorScheme.secondary.withOpacity(0.2)),
+            border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [

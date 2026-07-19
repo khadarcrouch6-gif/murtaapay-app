@@ -146,16 +146,21 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.cardHolder, style: TextStyle(color: Colors.white54, fontSize: 10 * context.fontSizeFactor)),
-                  Text(
-                    displayHolder,
-                    style: TextStyle(color: Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.cardHolder, style: TextStyle(color: Colors.white54, fontSize: 10 * context.fontSizeFactor)),
+                    Text(
+                      displayHolder,
+                      style: TextStyle(color: Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -369,7 +374,18 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
       children: [
         _inputField(l10n.cardNumber, _cardNumberController, "1234 5678 9012 3456", Icons.payment_rounded, [CardNumberFormatter()], TextInputType.number, theme),
         SizedBox(height: 16 * context.fontSizeFactor),
-        _inputField(l10n.cardHolderName, _cardHolderController, "John Doe", Icons.person_outline_rounded, [FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]"))], TextInputType.text, theme),
+        _inputField(
+          l10n.cardHolderName, 
+          _cardHolderController, 
+          "John Doe", 
+          Icons.person_outline_rounded, 
+          [
+            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")),
+            LengthLimitingTextInputFormatter(25),
+          ], 
+          TextInputType.text, 
+          theme,
+        ),
         SizedBox(height: 16 * context.fontSizeFactor),
         Row(
           children: [

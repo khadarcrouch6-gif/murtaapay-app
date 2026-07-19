@@ -45,6 +45,16 @@
   "quickActions": "Waxqabad Degdeg ah",
   "scan": "Scan",
   "history": "Taariikhda",
+  "admin": "Maamule",
+  "deleteGroup": "Tirtir Kooxda",
+  "deleteGroupConfirm": "Ma hubtaa inaad tirtirto kooxdan? Dhammaan xogta waa la waayi doonaa.",
+  "removeMember": "Ka saar Xubinta",
+  "removeMemberConfirm": "Ma hubtaa inaad {name} ka saarto kooxda?",
+  "@removeMemberConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
   "profile": "Profile-ka",
   "editProfile": "Wax ka beddel Profile-ka",
   "logout": "Ka bax",

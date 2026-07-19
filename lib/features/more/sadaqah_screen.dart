@@ -425,9 +425,9 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                 Container(
                   padding: EdgeInsets.all(16 * context.fontSizeFactor),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.secondary.withOpacity(0.1),
+                    color: theme.colorScheme.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-                    border: Border.all(color: theme.colorScheme.secondary.withOpacity(0.2)),
+                    border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.2)),
                   ),
                   child: Row(
                     children: [
@@ -461,7 +461,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                         decoration: BoxDecoration(
                           color: isSel ? AppColors.accentTeal : Colors.transparent,
                           borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
-                          border: Border.all(color: isSel ? AppColors.accentTeal : AppColors.grey.withOpacity(0.3)),
+                          border: Border.all(color: isSel ? AppColors.accentTeal : AppColors.grey.withValues(alpha: 0.3)),
                         ),
                         child: Text("\$$val", style: TextStyle(color: isSel ? Colors.white : theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold)),
                       ),
@@ -518,7 +518,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                       hintText: "****",
                       hintStyle: TextStyle(letterSpacing: 16 * context.fontSizeFactor, fontSize: 24 * context.fontSizeFactor),
                       filled: true,
-                      fillColor: theme.dividerColor.withOpacity(0.05),
+                      fillColor: theme.dividerColor.withValues(alpha: 0.05),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
                       focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2)),
                     ),

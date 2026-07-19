@@ -26,6 +26,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _field1Controller = TextEditingController();
   final TextEditingController _field2Controller = TextEditingController();
+  final TextEditingController _customBankController = TextEditingController();
+  String? _selectedBank;
+  bool _isCustomBank = false;
   final double _cardBalance = 850.50; // Mock card balance
   String? _selectedPurpose;
 
@@ -61,6 +64,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     _amountController.dispose();
     _field1Controller.dispose();
     _field2Controller.dispose();
+    _customBankController.dispose();
     super.dispose();
   }
 
@@ -270,9 +274,6 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   void _showWalletWithdrawDialog(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final state = Provider.of<AppState>(context, listen: false);
-    _field1Controller.clear(); // Using field1 as PIN controller
-    final purposes = _getPurposes(l10n);
-    _selectedPurpose ??= purposes.first;
 
     showDialog(
       context: context,
@@ -371,50 +372,6 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 24 * context.fontSizeFactor),
-                      Text(
-                        l10n.purposeOfRemittance,
-                        style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 12 * context.fontSizeFactor),
-                      _buildPurposeDropdown(theme, l10n, setDialogState),
-                      SizedBox(height: 24 * context.fontSizeFactor),
-                      Text(
-                        l10n.enterVirtualCardPin,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14 * context.fontSizeFactor,
-                          color: AppColors.grey,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 20 * context.fontSizeFactor),
-                      SizedBox(
-                        width: 200 * context.fontSizeFactor,
-                        child: TextField(
-                          controller: _field1Controller,
-                          keyboardType: TextInputType.number,
-                          obscureText: true,
-                          maxLength: 4,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 32 * context.fontSizeFactor,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 20,
-                            color: theme.textTheme.bodyLarge?.color,
-                          ),
-                          onChanged: (_) => setDialogState(() {}),
-                          decoration: InputDecoration(
-                            counterText: "",
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
-                            ),
-                            focusedBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: AppColors.accentTeal, width: 3),
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -429,25 +386,10 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 8, bottom: 8),
               child: ElevatedButton(
-                onPressed: _field1Controller.text.length < 4
-                    ? null
-                    : () {
-                        if (state.verifyCardPin(_field1Controller.text)) {
-                          final localContext = this.context;
-                          Navigator.pop(context);
-                          _processTransaction(localContext, l10n, state, type: "wallet");
-                        } else {
-                          HapticFeedback.vibrate();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.translate("PIN-kaagu waa khalad.", "Incorrect PIN.")),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          _field1Controller.clear();
-                          setDialogState(() {});
-                        }
-                      },
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showPinDialog(context, l10n, state, type: "wallet");
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.accentTeal,
                   foregroundColor: Colors.white,
@@ -465,13 +407,108 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     );
   }
 
+  void _showPinDialog(BuildContext context, AppLocalizations l10n, AppState state, {required String type}) {
+    final TextEditingController pinController = TextEditingController();
+    final theme = Theme.of(context);
+    
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          title: Column(
+            children: [
+              Icon(Icons.lock_outline_rounded, color: type == "wallet" ? AppColors.accentTeal : Colors.blue, size: 40),
+              SizedBox(height: 16),
+              Text(l10n.enterVirtualCardPin, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                state.translate("Fadlan geli PIN-kaaga 4-ta god ah si aad u xaqiijiso.", "Please enter your 4-digit PIN to confirm."),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
+              ),
+              SizedBox(height: 24),
+              SizedBox(
+                width: 200 * context.fontSizeFactor,
+                child: TextField(
+                  controller: pinController,
+                  keyboardType: TextInputType.number,
+                  obscureText: true,
+                  maxLength: 4,
+                  textAlign: TextAlign.center,
+                  autofocus: true,
+                  style: TextStyle(
+                    fontSize: 32 * context.fontSizeFactor,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 20,
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
+                  onChanged: (_) => setDialogState(() {}),
+                  decoration: InputDecoration(
+                    counterText: "",
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: (type == "wallet" ? AppColors.accentTeal : Colors.blue).withValues(alpha: 0.2), width: 2),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: type == "wallet" ? AppColors.accentTeal : Colors.blue, width: 3),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 8, bottom: 8),
+              child: ElevatedButton(
+                onPressed: pinController.text.length < 4
+                    ? null
+                    : () {
+                        if (state.verifyCardPin(pinController.text, cardId: widget.cardId)) {
+                          final localContext = this.context;
+                          Navigator.pop(context);
+                          _processTransaction(localContext, l10n, state, type: type);
+                        } else {
+                          HapticFeedback.vibrate();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.translate("waa khalad", "Incorrect PIN.")),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          pinController.clear();
+                          setDialogState(() {});
+                        }
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: type == "wallet" ? AppColors.accentTeal : Colors.blue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showBankWithdrawDialog(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final state = Provider.of<AppState>(context, listen: false);
-    String? selectedBank;
-    bool isCustomBank = false;
-    final TextEditingController customBankController = TextEditingController();
-    final TextEditingController bankPinController = TextEditingController();
+    _selectedBank = null;
+    _isCustomBank = false;
+    _customBankController.clear();
     _field1Controller.clear(); // Account Number
     _field2Controller.clear(); // Account Name
 
@@ -589,14 +626,14 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                         items: banks.map((bank) => DropdownMenuItem(value: bank, child: Text(bank, style: TextStyle(fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.w600, color: theme.textTheme.bodyLarge?.color)))).toList(),
                         onChanged: (val) {
                           setDialogState(() {
-                            selectedBank = val;
-                            isCustomBank = val == "Other (Custom)";
+                            _selectedBank = val;
+                            _isCustomBank = val == "Other (Custom)";
                           });
                         },
                       ),
-                      if (isCustomBank) ...[
+                      if (_isCustomBank) ...[
                         SizedBox(height: 16 * context.fontSizeFactor),
-                        _withdrawInputField(context, "Bank Name", Icons.business_rounded, customBankController, onChanged: (_) => setDialogState(() {})),
+                        _withdrawInputField(context, "Bank Name", Icons.business_rounded, _customBankController, onChanged: (_) => setDialogState(() {})),
                       ],
                       SizedBox(height: 16 * context.fontSizeFactor),
                       _withdrawInputField(context, l10n.accountNumber, Icons.numbers, _field1Controller, isNumber: true, onChanged: (_) => setDialogState(() {})),
@@ -604,8 +641,6 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       _withdrawInputField(context, l10n.accountName, Icons.person, _field2Controller, onChanged: (_) => setDialogState(() {})),
                       SizedBox(height: 16 * context.fontSizeFactor),
                       _buildPurposeDropdown(theme, l10n, setDialogState),
-                      SizedBox(height: 16 * context.fontSizeFactor),
-                      _withdrawInputField(context, l10n.cardPin, Icons.lock_rounded, bankPinController, isNumber: true, isObscure: true, maxLength: 4, onChanged: (_) => setDialogState(() {})),
                     ],
                   ),
                 ),
@@ -620,24 +655,11 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 8, bottom: 8),
               child: ElevatedButton(
-                onPressed: (selectedBank == null || (isCustomBank && customBankController.text.isEmpty) || _field1Controller.text.isEmpty || _field2Controller.text.isEmpty || bankPinController.text.length < 4)
+                onPressed: (_selectedBank == null || (_isCustomBank && _customBankController.text.isEmpty) || _field1Controller.text.isEmpty || _field2Controller.text.isEmpty)
                     ? null
                     : () {
-                        if (state.verifyCardPin(bankPinController.text)) {
-                          final localContext = this.context;
-                          Navigator.pop(context);
-                          _processTransaction(localContext, l10n, state, type: "bank");
-                        } else {
-                          HapticFeedback.vibrate();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.translate("PIN-ka kaarkaagu waa khalad.", "Incorrect Card PIN.")),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          bankPinController.clear();
-                          setDialogState(() {});
-                        }
+                        Navigator.pop(context);
+                        _showPinDialog(context, l10n, state, type: "bank");
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -744,36 +766,59 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       // Card -> Wallet: Decrease Card Balance, Increase Wallet Balance
       state.deductCardBalance(widget.cardId, amountVal);
       state.addBalance(amountVal);
-      state.addTransaction(model.Transaction(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: "Card to Wallet",
-        date: DateFormat('MMM dd').format(DateTime.now()),
-        amount: "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal)}",
-        isNegative: false,
-        category: "Transfer",
-        status: "Success",
-        type: "deposit",
-        method: "Virtual Card",
-        purpose: _selectedPurpose ?? l10n.familySupport,
-        cardId: widget.cardId,
-      ));
-    } else if (type == "bank") {
-      // Card -> Bank: Decrease Card Balance, No change to Wallet Balance
-      state.deductCardBalance(widget.cardId, amountVal);
-      final String receiverName = _field2Controller.text.isNotEmpty ? _field2Controller.text : "Bank Transfer";
-      final String purpose = _selectedPurpose ?? l10n.familySupport;
       
+      final now = DateTime.now();
+      final dateStr = DateFormat('MMM dd').format(now);
+      final formattedAmount = NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal);
+
+      // 1. Negative entry for Card history (Red)
       state.addTransaction(model.Transaction(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: "$receiverName ($purpose)",
-        date: DateFormat('MMM dd').format(DateTime.now()),
-        amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal)}",
+        id: "${now.millisecondsSinceEpoch}-out",
+        title: "Wallet Withdrawal",
+        date: dateStr,
+        amount: "-$formattedAmount",
+        numericAmount: amountVal,
         isNegative: true,
         category: "Withdraw",
         status: "Success",
         type: "withdraw",
         method: "Virtual Card",
-        purpose: purpose,
+        purpose: "Transfer",
+        cardId: widget.cardId,
+      ));
+
+      // 2. Positive entry for Wallet history (Green)
+      state.addTransaction(model.Transaction(
+        id: "${now.millisecondsSinceEpoch}-in",
+        title: "Card Topup",
+        date: dateStr,
+        amount: "+$formattedAmount",
+        numericAmount: amountVal,
+        isNegative: false,
+        category: "Transfer",
+        status: "Success",
+        type: "deposit",
+        method: "Virtual Card",
+        purpose: "Transfer",
+        cardId: null, // Shown in main wallet history
+      ));
+    } else if (type == "bank") {
+      // Card -> Bank: Decrease Card Balance, No change to Wallet Balance
+      state.deductCardBalance(widget.cardId, amountVal);
+      final String receiverName = _field2Controller.text.isNotEmpty ? _field2Controller.text : "Bank Transfer";
+      
+      state.addTransaction(model.Transaction(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: "$receiverName",
+        date: DateFormat('MMM dd').format(DateTime.now()),
+        amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal)}",
+        numericAmount: amountVal,
+        isNegative: true,
+        category: "Withdraw",
+        status: "Success",
+        type: "withdraw",
+        method: "Virtual Card",
+        purpose: _selectedPurpose ?? "Bank Transfer",
         cardId: widget.cardId,
       ));
     }
@@ -782,13 +827,14 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   }
 
   void _showSuccess(BuildContext context, AppLocalizations l10n, AppState state) {
+    final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.withdrawalRequested,
           message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0)),
-          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
+          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance)),
           buttonText: l10n.backToHome,
           onPressed: () {
             state.setNavIndex(3);

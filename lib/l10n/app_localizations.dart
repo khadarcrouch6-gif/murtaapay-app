@@ -4124,6 +4124,30 @@ abstract class AppLocalizations {
   /// **'Admin'**
   String get admin;
 
+  /// No description provided for @deleteGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Group'**
+  String get deleteGroup;
+
+  /// No description provided for @deleteGroupConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this group? All history will be lost.'**
+  String get deleteGroupConfirm;
+
+  /// No description provided for @removeMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Member'**
+  String get removeMember;
+
+  /// No description provided for @removeMemberConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove {name} from the group?'**
+  String removeMemberConfirm(String name);
+
   /// No description provided for @history.
   ///
   /// In en, this message translates to:

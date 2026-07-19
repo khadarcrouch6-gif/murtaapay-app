@@ -2148,6 +2148,21 @@ class AppLocalizationsSo extends AppLocalizations {
   String get admin => 'Maamule';
 
   @override
+  String get deleteGroup => 'Tirtir Kooxda';
+
+  @override
+  String get deleteGroupConfirm =>
+      'Ma hubtaa inaad tirtirto kooxdan? Dhammaan xogta waa la waayi doonaa.';
+
+  @override
+  String get removeMember => 'Ka saar Xubinta';
+
+  @override
+  String removeMemberConfirm(String name) {
+    return 'Ma hubtaa inaad $name ka saarto kooxda?';
+  }
+
+  @override
   String get history => 'Taariikhda';
 
   @override

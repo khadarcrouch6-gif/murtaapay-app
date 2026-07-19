@@ -294,7 +294,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
     
     final nameController = TextEditingController();
     final amountController = TextEditingController();
-    final cyclesController = TextEditingController(text: "12");
     final searchController = TextEditingController();
     HagbadFrequency selectedFreq = HagbadFrequency.monthly;
     List<HagbadMember> invitedMembers = [
@@ -309,6 +308,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
         isConfirmed: true
       ),
     ];
+    final cyclesController = TextEditingController(text: invitedMembers.length.toString());
     bool isSearching = false;
     List<Map<String, String>> searchMatches = [];
 
@@ -358,8 +358,18 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 const SizedBox(height: 16),
                 TextField(
                   controller: cyclesController,
+                  readOnly: true,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: l10n.totalCycles, border: const OutlineInputBorder()),
+                  decoration: InputDecoration(
+                    labelText: l10n.totalCycles, 
+                    border: const OutlineInputBorder(),
+                    filled: true,
+                    fillColor: theme.disabledColor.withValues(alpha: 0.05),
+                    suffixIcon: const Icon(Icons.lock_outline, size: 16),
+                    helperText: invitedMembers.length > 1 
+                        ? "Cycles match the ${invitedMembers.length} members"
+                        : "Starting with Admin only (1 Cycle)",
+                  ),
                 ),
                 const Divider(height: 32),
                 Align(
@@ -439,6 +449,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                                   isConfirmed: isMe,
                                   hasSignedOath: isMe,
                                 ));
+                                cyclesController.text = invitedMembers.length.toString();
                                 searchController.clear();
                                 searchMatches = [];
                               });
@@ -503,6 +514,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                               isConfirmed: isMe,
                               hasSignedOath: isMe,
                             ));
+                            cyclesController.text = invitedMembers.length.toString();
                             searchController.clear();
                             searchMatches = [];
                           });
@@ -539,7 +551,10 @@ class _HagbadScreenState extends State<HagbadScreen> {
                         subtitle: m.walletId != null ? Text(m.walletId!, style: const TextStyle(fontSize: 11)) : null,
                         trailing: m.name == "Me" ? null : IconButton(
                           icon: const Icon(Icons.remove_circle_outline, color: Colors.red, size: 20),
-                          onPressed: () => setDialogState(() => invitedMembers.removeAt(index)),
+                          onPressed: () => setDialogState(() {
+                            invitedMembers.removeAt(index);
+                            cyclesController.text = invitedMembers.length.toString();
+                          }),
                         ),
                       );
                     },
@@ -565,7 +580,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       frequency: selectedFreq,
                       status: HagbadStatus.pending,
                       startDate: DateTime.now(),
-                      totalCycles: int.parse(cyclesController.text),
+                      totalCycles: invitedMembers.length,
                       currentCycle: 1,
                       members: invitedMembers,
                     );
@@ -626,6 +641,12 @@ class _HagbadScreenState extends State<HagbadScreen> {
                         runSpacing: 0,
                         spacing: 0,
                         children: [
+                          if (group.adminName == "Me" || group.adminName == "Khadar Abdi")
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                            onPressed: () => _showDeleteGroupDialog(group),
+                            tooltip: l10n.deleteGroup,
+                          ),
                           TextButton.icon(
                             onPressed: (group.adminName == "Me" || group.adminName == "Khadar Abdi") 
                                 ? () => _showInviteMemberDialog(group) 
@@ -873,46 +894,31 @@ class _HagbadScreenState extends State<HagbadScreen> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_getTurnLabel(freq, member.payoutOrder, l10n), style: const TextStyle(fontSize: 12)),
-            if (member.guarantorName != null)
-              Text("${l10n.guarantor}: ${member.guarantorName}", style: const TextStyle(fontSize: 11, color: Colors.green, fontWeight: FontWeight.w500)),
+            Wrap(
+              spacing: 8,
+              runSpacing: 2,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(_getTurnLabel(freq, member.payoutOrder, l10n), style: const TextStyle(fontSize: 12)),
+                if (member.guarantorName != null)
+                  Text("• ${l10n.guarantor}: ${member.guarantorName}", style: const TextStyle(fontSize: 11, color: Colors.green, fontWeight: FontWeight.w500)),
+              ],
+            ),
             if (!member.isConfirmed)
-              Text(l10n.invitationPending, style: const TextStyle(color: Colors.orange, fontSize: 11, fontWeight: FontWeight.bold)),
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(l10n.invitationPending, style: const TextStyle(color: Colors.orange, fontSize: 11, fontWeight: FontWeight.bold)),
+              ),
             if (member.penaltyAmount > 0)
-              Text(l10n.penalty(member.penaltyAmount.toString()), style: const TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold)),
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(l10n.penalty(member.penaltyAmount.toString()), style: const TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold)),
+              ),
           ],
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (!member.hasSignedOath)
-              IconButton(
-                tooltip: l10n.signOathDhaar,
-                icon: const Icon(Icons.mosque_outlined, color: Colors.purple, size: 20), 
-                onPressed: () => _showDhaarDialog(group, member, index)
-              ),
-            IconButton(
-              tooltip: l10n.applyPenalty,
-              icon: const Icon(Icons.report_problem_outlined, color: Colors.red, size: 20), 
-              onPressed: () => _showPenaltyDialog(group, index)
-            ),
-            if (group.adminName == "Me" || group.adminName == "Khadar Abdi") ...[
-              IconButton(
-                tooltip: l10n.guarantor,
-                icon: Icon(Icons.security, color: member.guarantorId != null ? Colors.green : Colors.orange, size: 20),
-                onPressed: () => _showGuarantorDialog(group, member, index),
-              ),
-              IconButton(
-                tooltip: "Swap Turn",
-                icon: const Icon(Icons.swap_vert_outlined, color: Colors.blueGrey, size: 20),
-                onPressed: () => _showSwapTurnDialog(group, member, index),
-              ),
-              IconButton(
-                tooltip: "Edit Member",
-                icon: const Icon(Icons.edit_outlined, color: Colors.grey, size: 20),
-                onPressed: () => _showEditMemberDialog(group, member, index),
-              ),
-            ],
             if (member.hasReceived)
               const Icon(Icons.check_circle, color: Colors.green, size: 20)
             else if (member.name == "Me" && member.paidAmount < group.amount)
@@ -921,6 +927,49 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 icon: const Icon(Icons.payment, color: Colors.blue, size: 20),
                 onPressed: () => _showPayContributionDialog(group, index),
               ),
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert, size: 20),
+              tooltip: "Actions",
+              onSelected: (value) {
+                switch (value) {
+                  case 'dhaar': _showDhaarDialog(group, member, index); break;
+                  case 'penalty': _showPenaltyDialog(group, index); break;
+                  case 'guarantor': _showGuarantorDialog(group, member, index); break;
+                  case 'swap': _showSwapTurnDialog(group, member, index); break;
+                  case 'edit': _showEditMemberDialog(group, member, index); break;
+                  case 'remove': _showRemoveMemberDialog(group, member, index); break;
+                }
+              },
+              itemBuilder: (context) => [
+                if (!member.hasSignedOath)
+                  PopupMenuItem(
+                    value: 'dhaar', 
+                    child: Row(children: [const Icon(Icons.mosque_outlined, color: Colors.purple, size: 18), const SizedBox(width: 8), Text(l10n.signOathDhaar, style: const TextStyle(fontSize: 13))]),
+                  ),
+                PopupMenuItem(
+                  value: 'penalty', 
+                  child: Row(children: [const Icon(Icons.report_problem_outlined, color: Colors.red, size: 18), const SizedBox(width: 8), Text(l10n.applyPenalty, style: const TextStyle(fontSize: 13))]),
+                ),
+                if (group.adminName == "Me" || group.adminName == "Khadar Abdi") ...[
+                  PopupMenuItem(
+                    value: 'guarantor', 
+                    child: Row(children: [const Icon(Icons.security, color: Colors.green, size: 18), const SizedBox(width: 8), Text(l10n.guarantor, style: const TextStyle(fontSize: 13))]),
+                  ),
+                  const PopupMenuItem(
+                    value: 'swap', 
+                    child: Row(children: [Icon(Icons.swap_vert_outlined, color: Colors.blueGrey, size: 18), SizedBox(width: 8), Text("Swap Turn", style: TextStyle(fontSize: 13))]),
+                  ),
+                  PopupMenuItem(
+                    value: 'edit', 
+                    child: Row(children: [const Icon(Icons.edit_outlined, color: Colors.grey, size: 18), const SizedBox(width: 8), Text(l10n.edit, style: const TextStyle(fontSize: 13))]),
+                  ),
+                  PopupMenuItem(
+                    value: 'remove', 
+                    child: Row(children: [const Icon(Icons.person_remove_outlined, color: Colors.red, size: 18), const SizedBox(width: 8), Text(l10n.removeMember, style: const TextStyle(fontSize: 13))]),
+                  ),
+                ],
+              ],
+            ),
           ],
         ),
       ),
@@ -940,13 +989,19 @@ class _HagbadScreenState extends State<HagbadScreen> {
           TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
           ElevatedButton(
             onPressed: () async {
+              final pinSuccess = await _showSecurityPinDialog(context);
+              if (!pinSuccess || !context.mounted) return;
+
               final appState = Provider.of<AppState>(context, listen: false);
               try {
                 await appState.payHagbad(group.id, memberIndex, amount);
                 if (context.mounted) {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.success)),
+                    SnackBar(
+                      content: Text(l10n.success),
+                      behavior: SnackBarBehavior.floating,
+                    ),
                   );
                 }
               } catch (e) {
@@ -1467,6 +1522,54 @@ class _HagbadScreenState extends State<HagbadScreen> {
             TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDeleteGroupDialog(HagbadGroup group) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteGroup),
+        content: Text(l10n.deleteGroupConfirm),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          TextButton(
+            onPressed: () async {
+              final success = await _showSecurityPinDialog(context);
+              if (success && context.mounted) {
+                Provider.of<AppState>(context, listen: false).deleteHagbadGroup(group.id);
+                Navigator.pop(context);
+              }
+            },
+            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRemoveMemberDialog(HagbadGroup group, HagbadMember member, int index) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.removeMember),
+        content: Text(l10n.removeMemberConfirm(member.name)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          TextButton(
+            onPressed: () async {
+              final success = await _showSecurityPinDialog(context);
+              if (success && context.mounted) {
+                Provider.of<AppState>(context, listen: false).removeHagbadMember(group.id, index);
+                Navigator.pop(context);
+              }
+            },
+            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }

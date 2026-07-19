@@ -176,16 +176,21 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.cardHolder, style: TextStyle(color: Colors.white54, fontSize: 10 * scale)),
-                  Text(
-                    displayHolder,
-                    style: TextStyle(color: Colors.white, fontSize: 14 * scale, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.cardHolder, style: TextStyle(color: Colors.white54, fontSize: 10 * scale)),
+                    Text(
+                      displayHolder,
+                      style: TextStyle(color: Colors.white, fontSize: 14 * scale, fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -495,6 +500,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                                 textCapitalization: TextCapitalization.words,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")),
+                                  LengthLimitingTextInputFormatter(25),
                                 ],
                                 decoration: InputDecoration(
                                   hintText: "John Doe",

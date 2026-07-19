@@ -68,7 +68,7 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
-          backgroundColor: AppColors.primaryDark.withAlpha(25),
+          backgroundColor: AppColors.primaryDark.withValues(alpha: 25 / 255),
           child: const Icon(Icons.repeat, color: AppColors.primaryDark),
         ),
         title: Text(payment.title, style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -82,28 +82,59 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
             ),
           ],
         ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (val) {
-            if (val == 'delete') {
-              Provider.of<AppState>(context, listen: false).deleteRecurringPayment(index);
-            } else if (val == 'pause') {
-              final updated = payment.copyWith(status: payment.status == RecurringStatus.active ? RecurringStatus.paused : RecurringStatus.active);
-              Provider.of<AppState>(context, listen: false).updateRecurringPayment(index, updated);
-            }
-          },
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'pause',
-              child: Text(payment.status == RecurringStatus.active ? "Pause" : "Resume"),
-            ),
-            const PopupMenuItem(
-              value: 'delete',
-              child: Text("Delete", style: TextStyle(color: Colors.red)),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (payment.status == RecurringStatus.active)
+              IconButton(
+                icon: const Icon(Icons.play_circle_outline, color: AppColors.accentTeal),
+                onPressed: () => _processNow(payment),
+                tooltip: "Process Now",
+              ),
+            PopupMenuButton<String>(
+              onSelected: (val) {
+                if (val == 'delete') {
+                  Provider.of<AppState>(context, listen: false).deleteRecurringPayment(index);
+                } else if (val == 'pause') {
+                  final updated = payment.copyWith(status: payment.status == RecurringStatus.active ? RecurringStatus.paused : RecurringStatus.active);
+                  Provider.of<AppState>(context, listen: false).updateRecurringPayment(index, updated);
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'pause',
+                  child: Text(payment.status == RecurringStatus.active ? "Pause" : "Resume"),
+                ),
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Text("Delete", style: TextStyle(color: Colors.red)),
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _processNow(RecurringPayment payment) async {
+    final state = Provider.of<AppState>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
+
+    try {
+      await state.processRecurringPayment(payment.id);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Payment for ${payment.title} processed successfully")),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   void _showAddRecurringDialog(BuildContext context) {
