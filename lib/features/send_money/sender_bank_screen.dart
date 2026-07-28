@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
@@ -39,6 +40,8 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
   final FocusNode _bankNameFocus = FocusNode();
   
   String _selectedBank = "IBS Bank";
+  String? _resolvedAccountName;
+  bool _isVerifying = false;
   final List<Map<String, String>> _banks = [
     {"name": "IBS Bank", "image": "assets/images/bank.png"},
     {"name": "Premier Bank", "image": "assets/images/bank.png"},
@@ -109,23 +112,44 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                 color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
                 borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
               ),
-              padding: const EdgeInsets.only(bottom: 20),
+              padding: const EdgeInsets.only(bottom: 25, left: 20, right: 20),
               child: Center(
                 child: MaxWidthBox(
                   maxWidth: 500,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                        _buildStepLine(context, true, isHeader: true),
-                        _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
-                        _buildStepLine(context, true, isHeader: true),
-                        _buildStepIndicator(context, 3, l10n.stepPayment, true, false, isHeader: true),
-                        _buildStepLine(context, false, isHeader: true),
-                        _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
-                      ],
-                    ),
+                  child: Column(
+                    children: [
+                      // Amount & Source Display in Header
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.account_balance_outlined, color: Colors.white70, size: 16),
+                            const SizedBox(width: 8),
+                            Text(
+                              "${l10n.bankTransfer}: ${widget.currencyCode} ${widget.amount}",
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
+                          _buildStepLine(context, true, isHeader: true),
+                          _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
+                          _buildStepLine(context, true, isHeader: true),
+                          _buildStepIndicator(context, 3, l10n.stepPayment, true, false, isHeader: true),
+                          _buildStepLine(context, false, isHeader: true),
+                          _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -169,7 +193,57 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                             icon: Icons.account_balance_wallet_rounded,
                             type: TextInputType.number,
                             theme: theme,
+                            onChanged: (val) async {
+                              if (val.length >= 8) {
+                                setState(() {
+                                  _isVerifying = true;
+                                  _resolvedAccountName = null;
+                                });
+                                final name = await Provider.of<AppState>(context, listen: false).resolveAccountName(val, type: 'bank');
+                                if (mounted) {
+                                  setState(() {
+                                    _isVerifying = false;
+                                    _resolvedAccountName = name;
+                                    if (name != null) {
+                                      _nameController.text = name;
+                                      HapticFeedback.lightImpact();
+                                    }
+                                  });
+                                }
+                              } else {
+                                setState(() {
+                                  _resolvedAccountName = null;
+                                  _isVerifying = false;
+                                });
+                              }
+                            },
                           ),
+
+                          if (_isVerifying)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8, left: 16),
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
+                                  const SizedBox(width: 8),
+                                  Text(l10n.verifyingAccount, style: TextStyle(fontSize: 12, color: theme.colorScheme.secondary, fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ),
+
+                          if (_resolvedAccountName != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8, left: 16),
+                              child: FadeIn(
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.check_circle, color: Colors.green, size: 14),
+                                    const SizedBox(width: 4),
+                                    Text(_resolvedAccountName!, style: const TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ),
+                            ),
 
                           const SizedBox(height: 20),
                           Text(l10n.accountName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
@@ -202,7 +276,7 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
-                                  l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotal(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0))),
+                                  l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Bank Transfer"))),
                                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                                 ),
                               ),
@@ -229,6 +303,7 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
     required IconData icon,
     required TextInputType type,
     required ThemeData theme,
+    void Function(String)? onChanged,
   }) {
     return ListenableBuilder(
       listenable: focusNode,
@@ -237,10 +312,10 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
         return Container(
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1),
-              width: 2,
+              width: 1.5,
             ),
             boxShadow: hasFocus ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10)] : null,
           ),
@@ -248,7 +323,11 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
             controller: controller,
             focusNode: focusNode,
             keyboardType: type,
-            onChanged: (v) => setState(() {}),
+            onChanged: (v) {
+              if (v.isNotEmpty) HapticFeedback.selectionClick();
+              if (onChanged != null) onChanged(v);
+              setState(() {});
+            },
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
             decoration: InputDecoration(
               hintText: hint,
@@ -266,10 +345,10 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: theme.dividerColor.withValues(alpha: 0.1),
-          width: 2,
+          width: 1.5,
         ),
       ),
       child: DropdownButtonFormField<String>(
@@ -320,7 +399,7 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
         ),
         const SizedBox(height: 4),
         SizedBox(
-          width: 60,
+          width: 65,
           child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor), maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
       ],

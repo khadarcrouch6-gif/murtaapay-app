@@ -10,7 +10,8 @@ class Transaction {
   final String category; // e.g. "Food", "Transport", "Savings"
   final String status; // "Success", "Pending", "Failed"
   final String type; // "deposit", "withdrawal", "transfer_in", "transfer_out", "payment"
-  final String? method; // "Wallet", "Bank", "EVC Plus"
+  final String? method; // "EVC Plus", "Bank Account", etc (Payout Method)
+  final String? paymentMethod; // "Main Wallet", "Debit Card", etc (Sender Source)
   final String? purpose;
   final String? referenceId; // External ID or Wallet ID
   final String? cardId; // Associated Virtual Card ID
@@ -28,6 +29,7 @@ class Transaction {
     required this.status,
     required this.type,
     this.method,
+    this.paymentMethod,
     this.purpose,
     this.referenceId,
     this.cardId,
@@ -47,6 +49,7 @@ class Transaction {
       'status': status,
       'type': type,
       'method': method,
+      'paymentMethod': paymentMethod,
       'purpose': purpose,
       'referenceId': referenceId,
       'cardId': cardId,
@@ -69,6 +72,7 @@ class Transaction {
       status: json['status'] ?? 'Success',
       type: json['type'] ?? 'payment',
       method: json['method'],
+      paymentMethod: json['paymentMethod'],
       purpose: json['purpose'],
       referenceId: json['referenceId'],
       cardId: json['cardId'],

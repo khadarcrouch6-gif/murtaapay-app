@@ -141,8 +141,9 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   final state = Provider.of<AppState>(context, listen: false);
+                  final l10nLocal = AppLocalizations.of(context)!;
                   final double? amountValue = double.tryParse(_amount);
                   
                   if (amountValue != null && amountValue > 0) {
@@ -161,14 +162,16 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                         method: "Scan & Pay",
                       ));
 
+                      if (!context.mounted) return;
+
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => SuccessScreen(
-                            title: l10n.paymentSuccessful,
-                            message: l10n.paymentSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(amountValue), _receiverName),
-                            subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
-                            buttonText: l10n.backToHome,
+                            title: l10nLocal.paymentSuccessful,
+                            message: l10nLocal.paymentSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(amountValue), _receiverName),
+                            subMessage: l10nLocal.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
+                            buttonText: l10nLocal.backToHome,
                             onPressed: () {
                               Navigator.of(context).popUntil((route) => route.settings.name == 'SendAmountScreen' || route.isFirst);
                             },
@@ -177,7 +180,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.insufficientBalance)),
+                        SnackBar(content: Text(l10nLocal.insufficientBalance)),
                       );
                     }
                   } else if (_amount == "0.00" || _amount == "Flexible") {
@@ -198,14 +201,16 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                          method: "Scan & Pay",
                        ));
 
+                       if (!context.mounted) return;
+
                        Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => SuccessScreen(
-                            title: l10n.paymentSuccessful,
-                            message: l10n.paymentSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(flexibleAmount), _receiverName),
-                            subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
-                            buttonText: l10n.backToHome,
+                            title: l10nLocal.paymentSuccessful,
+                            message: l10nLocal.paymentSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(flexibleAmount), _receiverName),
+                            subMessage: l10nLocal.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
+                            buttonText: l10nLocal.backToHome,
                             onPressed: () {
                               Navigator.of(context).popUntil((route) => route.settings.name == 'SendAmountScreen' || route.isFirst);
                             },
@@ -214,12 +219,12 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.insufficientBalance)),
+                        SnackBar(content: Text(l10nLocal.insufficientBalance)),
                       );
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(l10n.invalidAmount)),
+                      SnackBar(content: Text(l10nLocal.invalidAmount)),
                     );
                   }
                 },

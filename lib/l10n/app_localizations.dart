@@ -614,11 +614,113 @@ abstract class AppLocalizations {
   /// **'Payout Via'**
   String get payoutVia;
 
+  /// No description provided for @payoutMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout Method'**
+  String get payoutMethod;
+
+  /// No description provided for @instantTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Instant Transfer'**
+  String get instantTransfer;
+
+  /// No description provided for @arrivesIn24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrives in 24h'**
+  String get arrivesIn24h;
+
+  /// No description provided for @directToMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct to Mobile'**
+  String get directToMobile;
+
+  /// No description provided for @continueToReceiver.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Receiver'**
+  String get continueToReceiver;
+
+  /// No description provided for @continueToBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Bank Details'**
+  String get continueToBank;
+
+  /// No description provided for @continueToWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Wallet ID'**
+  String get continueToWallet;
+
   /// No description provided for @paidUsing.
   ///
   /// In en, this message translates to:
   /// **'Paid Using'**
   String get paidUsing;
+
+  /// No description provided for @receiptDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt downloaded to your gallery'**
+  String get receiptDownloaded;
+
+  /// No description provided for @receiverSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiver/Source'**
+  String get receiverSource;
+
+  /// No description provided for @transactionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID'**
+  String get transactionId;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @purpose.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose'**
+  String get purpose;
+
+  /// No description provided for @downloadPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Download PDF'**
+  String get downloadPdf;
+
+  /// No description provided for @shareReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Receipt'**
+  String get shareReceipt;
+
+  /// No description provided for @transactionSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Successful!'**
+  String get transactionSuccessful;
+
+  /// No description provided for @topUpSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Top-up Successful!'**
+  String get topUpSuccessful;
+
+  /// No description provided for @withdrawalSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal Successful!'**
+  String get withdrawalSuccessful;
 
   /// No description provided for @cancel.
   ///
@@ -643,12 +745,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ID Copied'**
   String get idCopied;
-
-  /// No description provided for @shareReceipt.
-  ///
-  /// In en, this message translates to:
-  /// **'Share Receipt'**
-  String get shareReceipt;
 
   /// No description provided for @reference.
   ///
@@ -1766,35 +1862,11 @@ abstract class AppLocalizations {
   /// **'Download Receipt'**
   String get downloadReceipt;
 
-  /// No description provided for @downloadPdf.
-  ///
-  /// In en, this message translates to:
-  /// **'Download PDF'**
-  String get downloadPdf;
-
   /// No description provided for @viewReceipt.
   ///
   /// In en, this message translates to:
   /// **'View Receipt'**
   String get viewReceipt;
-
-  /// No description provided for @transactionSuccessful.
-  ///
-  /// In en, this message translates to:
-  /// **'Transaction Successful!'**
-  String get transactionSuccessful;
-
-  /// No description provided for @topUpSuccessful.
-  ///
-  /// In en, this message translates to:
-  /// **'Top-up Successful!'**
-  String get topUpSuccessful;
-
-  /// No description provided for @withdrawalSuccessful.
-  ///
-  /// In en, this message translates to:
-  /// **'Withdrawal Successful!'**
-  String get withdrawalSuccessful;
 
   /// No description provided for @cardPaymentSuccessful.
   ///
@@ -1819,24 +1891,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Source/Receiver'**
   String get sourceReceiver;
-
-  /// No description provided for @receiverSource.
-  ///
-  /// In en, this message translates to:
-  /// **'Receiver/Source'**
-  String get receiverSource;
-
-  /// No description provided for @transactionId.
-  ///
-  /// In en, this message translates to:
-  /// **'Transaction ID'**
-  String get transactionId;
-
-  /// No description provided for @date.
-  ///
-  /// In en, this message translates to:
-  /// **'Date'**
-  String get date;
 
   /// No description provided for @close.
   ///
@@ -1909,6 +1963,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Processing...'**
   String get processing;
+
+  /// No description provided for @processingTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing Transaction...'**
+  String get processingTransaction;
 
   /// No description provided for @copiedToClipboard.
   ///
@@ -3446,12 +3506,6 @@ abstract class AppLocalizations {
   /// **'Payout after {fee} fee'**
   String payoutAfterFee(String fee);
 
-  /// No description provided for @receiptDownloaded.
-  ///
-  /// In en, this message translates to:
-  /// **'Receipt downloaded to your gallery'**
-  String get receiptDownloaded;
-
   /// No description provided for @yourTurnInDays.
   ///
   /// In en, this message translates to:
@@ -3523,12 +3577,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Service Fee'**
   String get serviceFee;
-
-  /// No description provided for @payoutMethod.
-  ///
-  /// In en, this message translates to:
-  /// **'Payout Method'**
-  String get payoutMethod;
 
   /// No description provided for @payoutReady.
   ///
@@ -3919,12 +3967,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Purpose of Remittance'**
   String get purposeOfRemittance;
-
-  /// No description provided for @purpose.
-  ///
-  /// In en, this message translates to:
-  /// **'Purpose'**
-  String get purpose;
 
   /// No description provided for @familySupport.
   ///
@@ -4909,6 +4951,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start building your crypto portfolio today with Murtaax Pay.'**
   String get startBuildingPortfolio;
+
+  /// No description provided for @checkingName.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking name...'**
+  String get checkingName;
+
+  /// No description provided for @recentTransfers.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Transfers'**
+  String get recentTransfers;
+
+  /// No description provided for @saveBeneficiary.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to Beneficiaries'**
+  String get saveBeneficiary;
+
+  /// No description provided for @swiftCode.
+  ///
+  /// In en, this message translates to:
+  /// **'SWIFT/BIC Code'**
+  String get swiftCode;
+
+  /// No description provided for @internationalTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'International Transfer'**
+  String get internationalTransfer;
+
+  /// No description provided for @verifyingAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying account...'**
+  String get verifyingAccount;
 }
 
 class _AppLocalizationsDelegate

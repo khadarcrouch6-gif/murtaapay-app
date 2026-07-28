@@ -125,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           final verifiedName = await state.verifyWalletId(phoneNumber).catchError((_) => null);
 
           if (verifiedName != null) {
+            if (!context.mounted) return;
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -132,6 +133,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 builder: (context) => SendAmountScreen(
                   prefilledWalletId: phoneNumber,
                   prefilledName: verifiedName.split(' ').first,
+                  prefilledSenderMethod: "Main Wallet",
+                  prefilledReceiverMethod: "Murtaax Wallet",
                 ),
               ),
             );
@@ -781,6 +784,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 'status': tx.status,
                 'transactionId': tx.id,
                 'isNegative': tx.isNegative,
+                'method': tx.method,
+                'paymentMethod': tx.paymentMethod,
+                'purpose': tx.purpose,
               }),
             )),
           ],

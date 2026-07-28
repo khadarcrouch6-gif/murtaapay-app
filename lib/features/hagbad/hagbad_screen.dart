@@ -26,6 +26,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
     final appState = Provider.of<AppState>(context);
     final groups = appState.hagbadGroups.where((g) => g.status != HagbadStatus.pending || g.members.any((m) => m.name == "Me" && m.isConfirmed)).toList();
     final invitations = appState.hagbadGroups.where((g) => g.status == HagbadStatus.pending && g.members.any((m) => m.name == "Me" && !m.isConfirmed)).toList();
+    final guarantorInvites = appState.hagbadGroups.where((g) => g.members.any((m) => m.guarantorId == appState.walletId && !m.isGuarantorConfirmed)).toList();
 
     final totalHagbadBalance = groups.fold(0.0, (sum, g) => sum + g.currentBalance);
 
@@ -40,7 +41,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
         ],
       ),
       body: context.responsiveBody(
-        child: groups.isEmpty && invitations.isEmpty
+        child: groups.isEmpty && invitations.isEmpty && guarantorInvites.isEmpty
             ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -77,6 +78,21 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: _buildInvitationCard(g, l10n, theme),
                     )),
+                    const SizedBox(height: 24),
+                  ],
+                  if (guarantorInvites.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text("GUARANTOR REQUESTS (UUL)", style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.grey, fontSize: 12, letterSpacing: 1.2)),
+                    ),
+                    const SizedBox(height: 12),
+                    ...guarantorInvites.map((g) {
+                      final memberToGuarantee = g.members.firstWhere((m) => m.guarantorId == appState.walletId && !m.isGuarantorConfirmed);
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: _buildGuarantorInviteCard(g, memberToGuarantee, l10n, theme),
+                      );
+                    }),
                     const SizedBox(height: 24),
                   ],
                   if (groups.isNotEmpty) ...[
@@ -597,6 +613,108 @@ class _HagbadScreenState extends State<HagbadScreen> {
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildGuarantorInviteCard(HagbadGroup group, HagbadMember member, AppLocalizations l10n, ThemeData theme) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.purple.withValues(alpha: 0.2)),
+      ),
+      color: Colors.purple.withValues(alpha: 0.05),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const CircleAvatar(
+                  backgroundColor: Colors.purple,
+                  child: Icon(Icons.security, color: Colors.white, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${member.name} needs a Guarantor (Uul)",
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        "Group: ${group.name} • Amount: \$${group.amount.toStringAsFixed(0)}",
+                        style: TextStyle(fontSize: 12, color: theme.textTheme.bodySmall?.color),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "By accepting, you agree to cover their debt if they fail to pay. This is a sacred social trust (Aaminaad).",
+              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: theme.textTheme.bodySmall?.color),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      final appState = Provider.of<AppState>(context, listen: false);
+                      final mIdx = group.members.indexWhere((m) => m.name == member.name && m.guarantorId == appState.walletId);
+                      if (mIdx != -1) {
+                         final updatedMember = group.members[mIdx].copyWith(
+                           guarantorName: null,
+                           guarantorId: null,
+                           isGuarantorConfirmed: false,
+                         );
+                         appState.updateHagbadMember(group.id, mIdx, updatedMember);
+                         appState.logHagbadEvent(group.id, "Guarantor request declined by ${appState.userName} for ${member.name}");
+                      }
+                    },
+                    child: Text(l10n.cancel),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final success = await _showSecurityPinDialog(context);
+                      if (!success || !context.mounted) return;
+
+                      final appState = Provider.of<AppState>(context, listen: false);
+                      final mIdx = group.members.indexWhere((m) => m.name == member.name && m.guarantorId == appState.walletId);
+                      if (mIdx != -1) {
+                         final updatedMember = group.members[mIdx].copyWith(
+                           isGuarantorConfirmed: true,
+                         );
+                         appState.updateHagbadMember(group.id, mIdx, updatedMember);
+                         appState.logHagbadEvent(group.id, "Guarantor request accepted by ${appState.userName} for ${member.name}");
+                         
+                         if (context.mounted) {
+                           ScaffoldMessenger.of(context).showSnackBar(
+                             SnackBar(content: Text("You are now the guarantor for ${member.name}"))
+                           );
+                         }
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text("Accept Uul"),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

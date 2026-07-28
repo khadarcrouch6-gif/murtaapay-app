@@ -63,4 +63,25 @@ class ApiService {
 
     return defaultRates;
   }
+
+  static Future<String?> verifyBankAccount(String bank, String accountNumber) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/bank/verify'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'bank': bank,
+          'account_number': accountNumber,
+        }),
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['account_name'];
+      }
+    } catch (e) {
+      print('Error verifying bank account: $e');
+    }
+    return null;
+  }
 }

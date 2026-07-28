@@ -10,6 +10,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'receiver_screen.dart';
 import 'wallet_receiver_screen.dart';
 import 'bank_screen.dart';
+import 'card_screen.dart';
 
 class SendAmountScreen extends StatefulWidget {
   final bool showBackButton;
@@ -92,9 +93,14 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
   double get _fee {
     double amount = double.tryParse(_sendController.text.replaceAll(',', '')) ?? 0;
     if (amount <= 0) return 0.00;
-    double feeRate = 0.0099;
-    double calculatedFee = amount * feeRate;
-    return double.parse(calculatedFee.toStringAsFixed(_sendCurrencyDecimals));
+    
+    // Get fee in USD from AppState
+    double feeInUsd = state.calculateFeeForSource(amount / (rates[_sendCurrency] ?? 1.0), _selectedMethod);
+    
+    // Convert fee to current send currency
+    double feeInCurrentCurrency = feeInUsd * (rates[_sendCurrency] ?? 1.0);
+    
+    return double.parse(feeInCurrentCurrency.toStringAsFixed(_sendCurrencyDecimals));
   }
 
   double get _totalToPay {
@@ -215,8 +221,8 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         setState(() {
           double inUsd = amount / toRate;
           if (_isFeeIncluded) {
-            double feeRate = 0.0099;
-            inUsd = inUsd / (1 - feeRate);
+            double feeInUsd = state.calculateFeeForSource(inUsd, _selectedMethod);
+            inUsd = inUsd + feeInUsd; 
           }
           _sendController.text = _formatCurrency(inUsd * fromRate, _sendCurrencyDecimals);
           _isCalculating = false;
@@ -229,8 +235,10 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     HapticFeedback.mediumImpact();
     double balanceInUsd = state.balance > 2500 ? 2500 : state.balance;
     double fromRate = rates[_sendCurrency] ?? 1.0;
-    double feeRate = 0.0099;
-    double maxSend = _isFeeIncluded ? (balanceInUsd * fromRate) : ((balanceInUsd / (1 + feeRate)) * fromRate);
+    double feeInUsd = state.calculateFeeForSource(balanceInUsd, _selectedMethod);
+    
+    double maxSend = _isFeeIncluded ? (balanceInUsd * fromRate) : ((balanceInUsd - feeInUsd) * fromRate);
+    if (maxSend < 0) maxSend = 0;
     setState(() {
       _sendController.text = _formatCurrency(maxSend, _sendCurrencyDecimals);
       _updateReceiveAmount(_sendController.text);
@@ -473,12 +481,31 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                               ),
                               
                               const SizedBox(height: 8),
-                              Text(l10n.selectPaymentMethod, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: theme.textTheme.titleMedium?.color)),
+                              
+                              const SizedBox(height: 16),
+                              Text(l10n.payoutMethod, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: theme.textTheme.titleMedium?.color)),
                               const SizedBox(height: 4),
-                              _buildPaymentMethodsGrid(theme),
+                              _buildPayoutMethodsGrid(theme, l10n),
                               
                               const SizedBox(height: 8),
                               
+                              // Financial Safety Indicators
+                              if (!isInputEmpty) ...[
+                                Row(
+                                  children: [
+                                    Icon(Icons.security_rounded, size: 18, color: theme.colorScheme.secondary),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      state.translate("Transaction Limits", "Xadka Macaamilka"),
+                                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: theme.textTheme.titleMedium?.color),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                _buildLimitIndicators(state, l10n, theme),
+                                const SizedBox(height: 16),
+                              ],
+
                               // Summary Card
                               Container(
                                 padding: const EdgeInsets.all(12), // Padding-ka waa la yareeyay (hore 16)
@@ -528,7 +555,12 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                     disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
                                     disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
                                   ),
-                                  child: Text(l10n.continueLabel, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                                  child: Text(
+                                    _selectedMethod == "Bank Transfer" 
+                                      ? l10n.continueToBank 
+                                      : (_selectedMethod == "Murtaax Wallet" ? l10n.continueToWallet : l10n.continueToReceiver), 
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 0.5)
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -568,6 +600,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           amount: cleanAmount, 
           method: _selectedMethod, 
           currencyCode: _sendCurrency,
+          senderSource: "Main Wallet",
           prefilledName: widget.prefilledName,
           prefilledPhone: widget.prefilledWalletId,
         )
@@ -578,6 +611,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           amount: cleanAmount, 
           method: _selectedMethod, 
           currencyCode: _sendCurrency,
+          senderSource: "Main Wallet",
           prefilledName: widget.prefilledName,
           prefilledPhone: widget.prefilledWalletId,
         )
@@ -588,7 +622,18 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           amount: cleanAmount, 
           method: _selectedMethod, 
           currencyCode: _sendCurrency,
+          senderSource: "Main Wallet",
           prefilledName: widget.prefilledName,
+          prefilledAccount: widget.prefilledWalletId,
+        )
+      ));
+    } else if (_selectedMethod == "Visa / MasterCard") {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => CardScreen(
+          amount: cleanAmount, 
+          method: _selectedMethod, 
+          currencyCode: _sendCurrency,
+          senderSource: "Main Wallet",
         )
       ));
     }
@@ -749,14 +794,14 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     );
   }
 
-  Widget _buildPaymentMethodsGrid(ThemeData theme) {
+  Widget _buildPayoutMethodsGrid(ThemeData theme, AppLocalizations l10n) {
     final allMethods = [
-      {"name": "EVC Plus", "image": "assets/images/evc.png", "category": "Mobile Money"},
-      {"name": "ZAAD Service", "image": "assets/images/zaad.png", "category": "Mobile Money"},
-      {"name": "e-Dahab", "image": "assets/images/edahab.png", "category": "Mobile Money"},
-      {"name": "Murtaax Wallet", "image": "assets/images/walletlogo.png", "category": "Murtaax Wallet"},
-      {"name": "Sahal", "image": "assets/images/evc.png", "category": "Mobile Money"},
-      {"name": "Bank Transfer", "image": "assets/images/bank.png", "category": "Bank"},
+      {"name": "EVC Plus", "image": "assets/images/evc.png", "category": "Mobile Money", "sublabel": l10n.instantTransfer},
+      {"name": "ZAAD Service", "image": "assets/images/zaad.png", "category": "Mobile Money", "sublabel": l10n.instantTransfer},
+      {"name": "e-Dahab", "image": "assets/images/edahab.png", "category": "Mobile Money", "sublabel": l10n.instantTransfer},
+      {"name": "Murtaax Wallet", "image": "assets/images/walletlogo.png", "category": "Murtaax Wallet", "sublabel": l10n.instantTransfer},
+      {"name": "Sahal", "image": "assets/images/evc.png", "category": "Mobile Money", "sublabel": l10n.instantTransfer},
+      {"name": "Bank Transfer", "image": "assets/images/bank.png", "category": "Bank", "sublabel": l10n.arrivesIn24h},
     ];
 
     final categories = ["All", "Bank", "Mobile Money", "Murtaax Wallet"];
@@ -800,7 +845,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         const SizedBox(height: 12),
         // Methods
         SizedBox(
-          height: 56,
+          height: 70,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: filteredMethods.length,
@@ -834,9 +879,19 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                           child: Image.asset(method["image"]!, width: 22, height: 22, errorBuilder: (c, e, s) => Icon(Icons.payment, size: 20, color: isSelected ? Colors.white : AppColors.grey)),
                         ),
                         const SizedBox(width: 10),
-                        Text(
-                          method["name"]!, 
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: isSelected ? Colors.white : theme.textTheme.bodyLarge?.color),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              method["name"]!, 
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: isSelected ? Colors.white : theme.textTheme.bodyLarge?.color),
+                            ),
+                            Text(
+                              method["sublabel"]!,
+                              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isSelected ? Colors.white70 : AppColors.grey),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -862,6 +917,156 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
             fit: BoxFit.scaleDown,
             child: Text(value, style: TextStyle(color: isError ? Colors.red : (isTotal ? (theme.brightness == Brightness.dark ? Colors.white : AppColors.primaryDark) : AppColors.grey), fontSize: isTotal ? 20 : 15, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLimitIndicators(AppState state, AppLocalizations l10n, ThemeData theme) {
+    double dailyRemaining = state.getDailyRemaining();
+    double monthlyRemaining = state.getMonthlyRemaining();
+    
+    // Convert current total to pay to USD for limit comparison
+    double amountInUsd = _totalToPay / (rates[_sendCurrency] ?? 1.0);
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        children: [
+          _buildLimitBar(
+            label: l10n.dailyLimit,
+            remaining: dailyRemaining,
+            limit: state.dailyLimit,
+            projected: amountInUsd,
+            theme: theme,
+          ),
+          const SizedBox(height: 12),
+          _buildLimitBar(
+            label: l10n.monthlyLimit,
+            remaining: monthlyRemaining,
+            limit: state.monthlyLimit,
+            projected: amountInUsd,
+            theme: theme,
+          ),
+          if (amountInUsd > dailyRemaining || amountInUsd > monthlyRemaining)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Row(
+                children: [
+                  const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      state.translate(
+                        "This transaction exceeds your remaining limit.",
+                        "Lacagtan waxay ka badan tahay xadka kuu hadhay."
+                      ),
+                      style: const TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else if (amountInUsd > dailyRemaining * 0.8)
+             Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline, color: Colors.orange, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      state.translate(
+                        "You are approaching your daily limit.",
+                        "Waxaad ku dhowdahay xadkaaga maalinlaha ah."
+                      ),
+                      style: const TextStyle(color: Colors.orange, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLimitBar({
+    required String label,
+    required double remaining,
+    required double limit,
+    required double projected,
+    required ThemeData theme,
+  }) {
+    double currentPercent = (remaining / limit).clamp(0.0, 1.0);
+    double afterPercent = ((remaining - projected) / limit).clamp(0.0, 1.0);
+    bool exceeds = projected > remaining;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.grey)),
+            Text(
+              exceeds 
+                ? state.translate("Limit Exceeded", "Xadkii waa la dhaafay") 
+                : "${_formatCurrency(remaining - projected, 2)} USD ${state.translate("remaining", "haray")}",
+              style: TextStyle(
+                fontSize: 11, 
+                fontWeight: FontWeight.w900, 
+                color: exceeds ? Colors.red : (afterPercent < 0.2 ? Colors.orange : theme.colorScheme.secondary)
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Stack(
+          children: [
+            // Background
+            Container(
+              height: 6,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: theme.dividerColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+            // Projected Progress (What will be left after this transaction)
+            if (!exceeds)
+              FractionallySizedBox(
+                widthFactor: afterPercent,
+                child: Container(
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: afterPercent < 0.2 ? Colors.orange : theme.colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+            // Deduction visual (The part being spent)
+            if (!exceeds && projected > 0)
+              Positioned(
+                left: null,
+                right: (1 - currentPercent) * MediaQuery.of(context).size.width * 0.8, // Approximation
+                child: Container() // This is getting complex for a simple bar, let's stick to the color change
+              ),
+            if (exceeds)
+              Container(
+                height: 6,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+          ],
         ),
       ],
     );

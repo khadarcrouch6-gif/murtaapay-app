@@ -6,7 +6,7 @@ import '../../core/responsive_utils.dart';
 import '../../core/models/transaction.dart' as model;
 
 import '../../core/widgets/transaction_item.dart';
-import '../../core/widgets/wallet_receipt_view.dart';
+import '../../core/widgets/receipt_view.dart';
 import '../../core/utils/export_helper.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
@@ -177,7 +177,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   void _showTransactionDetails(BuildContext context, AppState state, ThemeData theme, model.Transaction tx) {
-    WalletReceiptView.show(context, {
+    ReceiptView.show(context, {
       "title": tx.title,
       "amount": tx.amount,
       "date": tx.date,
@@ -185,6 +185,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
       "isNegative": tx.isNegative,
       "transactionId": tx.id,
       "purpose": tx.purpose,
+      "method": tx.method,
+      "paymentMethod": tx.paymentMethod,
     });
   }
 

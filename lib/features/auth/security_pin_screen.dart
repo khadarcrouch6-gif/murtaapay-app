@@ -8,7 +8,6 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_state.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 import '../navigation/main_navigation.dart';
 
 class SecurityPinScreen extends StatefulWidget {

@@ -86,6 +86,9 @@ class AppState extends ChangeNotifier {
   List<BankAccount> _linkedBanks = [];
   List<BankAccount> get linkedBanks => _linkedBanks;
 
+  List<BankAccount> _savedBeneficiaries = [];
+  List<BankAccount> get savedBeneficiaries => _savedBeneficiaries;
+
   List<Transaction> _transactions = [];
   List<Transaction> get transactions => _transactions;
 
@@ -944,6 +947,7 @@ class AppState extends ChangeNotifier {
     _loadRecentWithdrawals();
     _loadQuickProfiles();
     _loadBanks();
+    _loadSavedBeneficiaries();
     _loadCards();
     _loadTransactions();
     _loadCryptoHoldings();
@@ -1076,6 +1080,14 @@ class AppState extends ChangeNotifier {
     await _prefs.setStringList('transactions', txJson);
   }
 
+  Future<void> _saveBalance() async {
+    await _prefs.setDouble('balance', _balance);
+  }
+
+  Future<void> _saveSavingsBalance() async {
+    await _prefs.setDouble('savings_balance', _savingsBalance);
+  }
+
   Future<void> _loadSavingsGoals() async {
     final List<String>? goalsJson = _prefs.getStringList('savings_goals');
     if (goalsJson != null) {
@@ -1183,6 +1195,39 @@ class AppState extends ChangeNotifier {
     _prefs.setStringList('linked_banks', banksJson);
   }
 
+  void _loadSavedBeneficiaries() {
+    final List<String>? beneficiariesJson = _prefs.getStringList('saved_beneficiaries');
+    if (beneficiariesJson != null) {
+      _savedBeneficiaries = beneficiariesJson.map((e) => BankAccount.fromJson(e)).toList();
+    } else {
+      // Mock initial beneficiaries if none saved
+      _savedBeneficiaries = [
+        BankAccount(id: 'b1', bankName: 'IBS Bank', accountNumber: '10223499', accountHolder: 'Ahmed Ali'),
+        BankAccount(id: 'b2', bankName: 'Premier Bank', accountNumber: '55678902', accountHolder: 'Fartun Omar'),
+      ];
+    }
+  }
+
+  void saveBeneficiary(BankAccount beneficiary) {
+    final index = _savedBeneficiaries.indexWhere((b) => b.accountNumber == beneficiary.accountNumber && b.bankName == beneficiary.bankName);
+    if (index != -1) {
+      _savedBeneficiaries[index] = beneficiary;
+    } else {
+      _savedBeneficiaries.insert(0, beneficiary);
+    }
+    
+    // Keep a reasonable limit for recents
+    if (_savedBeneficiaries.length > 10) _savedBeneficiaries.removeLast();
+
+    _saveBeneficiaries();
+    notifyListeners();
+  }
+
+  void _saveBeneficiaries() {
+    final List<String> beneficiariesJson = _savedBeneficiaries.map((e) => e.toJson()).toList();
+    _prefs.setStringList('saved_beneficiaries', beneficiariesJson);
+  }
+
   void _loadRecentWithdrawals() {
     final List<String>? recents = _prefs.getStringList('recent_withdrawals');
     if (recents != null) {
@@ -1280,19 +1325,78 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  final double transactionFeeRate = 0.0099;
+  // FX Rates (Mock)
+  final Map<String, double> _fxRates = {
+    'USD_EUR': 0.92,
+    'EUR_USD': 1.09,
+    'USD_GBP': 0.79,
+    'GBP_USD': 1.27,
+    'USD_KES': 130.50,
+    'USD_SOS': 575.00,
+    'USD_AED': 3.67,
+    'USD_TRY': 32.20,
+    'USD_DJF': 177.72,
+    'USD_ETB': 57.15,
+    'USD_SAR': 3.75,
+    'USD_CAD': 1.35,
+    'USD_AUD': 1.52,
+    'USD_CNY': 7.23,
+    'USD_JPY': 151.80,
+    'USD_INR': 83.30,
+    'USD_UGX': 3780.00,
+    'USD_RWF': 1285.00,
+    'USD_TZS': 2580.00,
+  };
 
-  double calculateFee(double amount) {
-    return amount * transactionFeeRate;
+  double getExchangeRate(String from, String to) {
+    if (from == to) return 1.0;
+    final key = '${from}_${to}';
+    return _fxRates[key] ?? 1.0;
   }
 
-  double calculateTotal(double amount) {
-    return amount + calculateFee(amount);
+  double convertAmount(double amount, String from, String to) {
+    double rate = getExchangeRate(from, to);
+    // Use 4 decimal places for SOS (high nominal value), 2 for others
+    int decimals = to == 'SOS' ? 0 : 2;
+    return double.parse((amount * rate).toStringAsFixed(decimals));
+  }
+
+  final double walletFeeRate = 0.005; // 0.5% for Wallet
+  final double cardFeeRate = 0.015;   // 1.5% for Cards
+  final double savingsFeeRate = 0.0099; // 0.99% for Savings
+  final double bankFeeRate = 0.02;    // 2.0% for External Bank
+  final double mobileMoneyFeeRate = 0.012; // 1.2% for Mobile Money
+
+  double calculateFeeForSource(double amount, String source) {
+    if (source.contains("Bank")) return 2.00;
+    if (source.contains("Wallet") || source == "Main Wallet" || source == "Murtaax Wallet") return 0.50;
+    if (source.contains("Savings")) return 0.50; // Assuming same as wallet or customize if needed
+    if (source.contains("Mobile") || source.contains("Money") || 
+        source.toUpperCase().contains("EVC") || 
+        source.toUpperCase().contains("ZAAD") || 
+        source.toUpperCase().contains("SAHAL") || 
+        source.toUpperCase().contains("DAHAB")) return 0.99;
+    if (source.contains("Card") || source.contains("Debit")) return 3.00;
+
+    return 0.50; // Default
+  }
+
+  double calculateTotalForSource(double amount, String source) {
+    return amount + calculateFeeForSource(amount, source);
   }
 
   // Validation: Check if balance is sufficient
-  bool hasSufficientBalance(double amount) {
-    return _balance >= calculateTotal(amount);
+  bool hasSufficientBalanceForSource(double amount, String source, {String? cardId}) {
+    double total = calculateTotalForSource(amount, source);
+    if (source == "Main Wallet" || source == "Murtaax Wallet") {
+      return _balance >= total;
+    } else if (source == "Savings Account") {
+      return _savingsBalance >= total;
+    } else if (source.contains("Card") && cardId != null) {
+      final card = _cards.firstWhere((c) => c.id == cardId, orElse: () => throw Exception('card_not_found'));
+      return card.balance >= total;
+    }
+    return true; // For external sources like Bank Transfer/Mobile Money
   }
 
   // Security Limits
@@ -1314,7 +1418,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  double getDailyRemaining() {
+  double getDailySpent() {
     final now = DateTime.now();
     final todayTransactions = _transactions.where((tx) => 
       tx.isNegative && 
@@ -1322,7 +1426,11 @@ class AppState extends ChangeNotifier {
       tx.timestamp.month == now.month &&
       tx.timestamp.day == now.day
     );
-    double spentToday = todayTransactions.fold(0.0, (sum, tx) => sum + (tx.numericAmount + tx.fee));
+    return todayTransactions.fold(0.0, (sum, tx) => sum + (tx.numericAmount + tx.fee));
+  }
+
+  double getDailyRemaining() {
+    double spentToday = getDailySpent();
     return (dailyLimit - spentToday).clamp(0.0, dailyLimit);
   }
 
@@ -1352,10 +1460,53 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deductSavings(double amount) {
+    _savingsBalance -= amount;
+    _prefs.setDouble('savings_balance', _savingsBalance);
+    notifyListeners();
+  }
+
+  Future<void> autoTopUpMainFromSavings(double neededAmount) async {
+    if (_savingsBalance < neededAmount) {
+      throw Exception('insufficient_savings');
+    }
+    
+    _savingsBalance -= neededAmount;
+    _balance += neededAmount;
+    
+    // Log internal transfer
+    final tx = Transaction(
+      id: "TOPUP${DateTime.now().millisecondsSinceEpoch}",
+      title: "Auto Top-up from Savings",
+      date: DateFormat('MMM dd').format(DateTime.now()),
+      amount: "+${NumberFormat.simpleCurrency(name: _currencyCode).format(neededAmount)}",
+      numericAmount: neededAmount,
+      fee: 0,
+      isNegative: false,
+      category: "Transfer",
+      status: "Success",
+      type: "transfer_in",
+      timestamp: DateTime.now(),
+    );
+    
+    _transactions.insert(0, tx);
+    await _saveBalance();
+    await _saveSavingsBalance();
+    await _saveTransactions();
+    notifyListeners();
+  }
+
   void addBalance(double amount) {
     _balance += amount;
     _prefs.setDouble('balance', _balance);
     notifyListeners();
+  }
+
+  double calculateFee(double amount) => amount * 0.005; // Default legacy wallet fee
+  double calculateTotal(double amount) => amount + calculateFee(amount);
+
+  bool hasSufficientBalance(double amount) {
+    return _balance >= calculateTotal(amount);
   }
 
   Future<void> deductCardBalance(String cardId, double amount) async {
@@ -1579,19 +1730,32 @@ class AppState extends ChangeNotifier {
   }
 
 
-  // Wallet ID Verification Logic
-  Future<String?> verifyWalletId(String id) async {
-    // Simulate API delay
-    await Future.delayed(const Duration(milliseconds: 1000));
+  // Wallet ID / Account Inquiry Logic
+  Future<String?> resolveAccountName(String id, {String? type}) async {
+    // Simulate network delay for professional feel
+    await Future.delayed(const Duration(milliseconds: 1200));
     
-    // Cannot send to self
-    if (id == _walletId) {
-      throw Exception('self_transfer_error');
+    // Check mock users (covers Wallet IDs and some phone numbers)
+    if (_mockUsers.containsKey(id)) {
+      return _mockUsers[id];
+    }
+
+    // Additional mock logic for Bank Accounts if needed
+    if (type == 'bank' && id.length >= 8) {
+      final List<String> mockNames = ["Abshir Duale", "Leyla Ahmed", "Xasan Kaafi", "Muna Omar"];
+      return mockNames[id.length % mockNames.length];
+    }
+
+    if (type == 'mobile' && id.length == 9) {
+      final List<String> mockNames = ["Farah Saney", "Hawa Abdi", "Bile Raage", "Ubax Cali"];
+      return mockNames[int.parse(id.substring(id.length - 1)) % mockNames.length];
     }
     
-    // Return name if found, otherwise null
-    return _mockUsers[id];
+    return null;
   }
+
+  // Legacy helper
+  Future<String?> verifyWalletId(String id) => resolveAccountName(id);
 
   /// Atomically process a P2P transfer between Murtaax Wallets.
   /// This simulates a transactional backend operation.
@@ -1600,12 +1764,18 @@ class AppState extends ChangeNotifier {
     required double amount,
     required String currencyCode,
     required String purpose,
+    String paymentMethod = "Main Wallet",
+    String? cardId,
   }) async {
     // 1. Validation
-    final fee = calculateFee(amount);
+    String sourceKey = paymentMethod;
+    if (paymentMethod.contains("Virtual Card")) sourceKey = "Debit Card";
+    if (paymentMethod == "Savings") sourceKey = "Savings Account";
+
+    final fee = calculateFeeForSource(amount, sourceKey);
     final total = amount + fee;
     
-    if (_balance < total) {
+    if (!hasSufficientBalanceForSource(amount, sourceKey, cardId: cardId)) {
       throw Exception('insufficient_funds');
     }
 
@@ -1613,12 +1783,26 @@ class AppState extends ChangeNotifier {
 
     // Capture state for rollback
     final double originalBalance = _balance;
+    final double originalSavingsBalance = _savingsBalance;
     final List<Transaction> originalTransactions = List.from(_transactions);
+    final List<VirtualCard> originalCards = _cards.map((c) => c.copyWith()).toList();
 
     // 2. Start Simulation (Atomic Block)
     try {
       // Update in-memory state
-      _balance -= total;
+      if (paymentMethod == "Savings Account") {
+        _savingsBalance = double.parse((_savingsBalance - total).toStringAsFixed(2));
+      } else if (paymentMethod.contains("Virtual Card") && cardId != null) {
+        final index = _cards.indexWhere((c) => c.id == cardId);
+        if (index != -1) {
+          _cards[index] = _cards[index].copyWith(
+            balance: double.parse((_cards[index].balance - total).toStringAsFixed(2))
+          );
+          await _saveCards();
+        }
+      } else {
+        _balance = double.parse((_balance - total).toStringAsFixed(2));
+      }
       
       // Record Transaction
       final tx = Transaction(
@@ -1633,31 +1817,34 @@ class AppState extends ChangeNotifier {
         status: "Success",
         type: "send",
         method: "Murtaax Wallet",
+        paymentMethod: paymentMethod,
         purpose: purpose,
         referenceId: receiverId,
+        cardId: cardId,
       );
       
       _transactions.insert(0, tx);
       
       // 3. Persist changes (Critical Section)
-      // In a real app, this would be a single DB transaction.
-      // Here we use SharedPreferences.
-      final bool balanceSaved = await _prefs.setDouble('balance', _balance);
-      await _saveTransactions();
-      
-      if (!balanceSaved) {
-        throw Exception('persistence_error');
+      if (paymentMethod == "Savings Account") {
+        await _prefs.setDouble('savings_balance', _savingsBalance);
+      } else if (!paymentMethod.contains("Virtual Card")) {
+        await _prefs.setDouble('balance', _balance);
       }
+      await _saveTransactions();
       
       notifyListeners();
       analytics.logEvent('p2p_transfer_success', parameters: {
         'amount': amount,
         'receiver': receiverId,
+        'source': paymentMethod,
       });
     } catch (e) {
       // 4. Rollback Logic
       _balance = originalBalance;
+      _savingsBalance = originalSavingsBalance;
       _transactions = originalTransactions;
+      _cards = originalCards;
       notifyListeners();
       rethrow;
     }

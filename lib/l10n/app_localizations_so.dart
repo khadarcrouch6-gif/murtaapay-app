@@ -26,7 +26,7 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get campaignDescriptionExtra =>
-      'Ururintan lacageed waxaa loo bilaabay si loo daboolo kharashaadka degdegga ah ee qalliinka Axmed. Doollar kasta wuxuu noo soo dhoweynayaa yoolka wuxuuna gacan ka geysanayaa badbaadinta nolosha. Ku biir 142-da deeq-bixiyeyaal ee horay uga qayb qaatay.';
+      'Ururintan lacageed waxaa loo bilaabay si loo daboolo kharashaadka degdegga ah ee qalliinka Axmed. Doollar kasta wuxuu noo soo dhoweynayaa yoolka wuxuuna gacan ka geysanayaa badbaadinta nolosha. Ku biir 142-da deeq-bixiyeyaal ee horay uga qayp qaatay.';
 
   @override
   String get appTitle => 'MurtaaxPay';
@@ -118,7 +118,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get spendingAnalysis => 'Spending Analysis';
 
   @override
-  String get walletBalance => 'Wallet Balance';
+  String get walletBalance => 'Haraaga Wallet-ka';
 
   @override
   String get getStarted => 'Bilow';
@@ -161,10 +161,10 @@ class AppLocalizationsSo extends AppLocalizations {
   String get mobileMoney => 'Mobile Money';
 
   @override
-  String get transactionFee => 'Kharashka dhaqdhaqaaqa';
+  String get transactionFee => 'Transaction Fee';
 
   @override
-  String get totalToPay => 'Wadarta la bixinayo';
+  String get totalToPay => 'Total to Pay';
 
   @override
   String get insufficientBalance => 'Haraagaagu kuguma filna';
@@ -197,7 +197,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get reviewTransfer => 'Review Transfer';
 
   @override
-  String get paymentMethod => 'Habka lacag bixinta';
+  String get paymentMethod => 'Payment Method';
 
   @override
   String get fee => 'Fee';
@@ -262,16 +262,67 @@ class AppLocalizationsSo extends AppLocalizations {
   String get accountNumber => 'Account Number';
 
   @override
-  String get walletId => 'ID-ga Wallet-ka';
+  String get walletId => 'ID-ga Boorsada';
 
   @override
   String get cardNumber => 'Card Number';
 
   @override
-  String get payoutVia => 'Payout Via';
+  String get payoutVia => 'Qaadashada Via';
 
   @override
-  String get paidUsing => 'Paid Using';
+  String get payoutMethod => 'Habka Qaadashada';
+
+  @override
+  String get instantTransfer => 'Wareejin Degdeg ah';
+
+  @override
+  String get arrivesIn24h => 'Wuxuu ku dhacaa 24 saac';
+
+  @override
+  String get directToMobile => 'Toos ugu dhaca moobilka';
+
+  @override
+  String get continueToReceiver => 'Sii wad xaqiijinta qaataha';
+
+  @override
+  String get continueToBank => 'Sii wad faahfaahinta Bangiga';
+
+  @override
+  String get continueToWallet => 'Sii wad aqoonsiga Wallet-ka';
+
+  @override
+  String get paidUsing => 'Bixinta Via';
+
+  @override
+  String get receiptDownloaded => 'Receipt downloaded to your gallery';
+
+  @override
+  String get receiverSource => 'Qaataha/Isha';
+
+  @override
+  String get transactionId => 'ID-ga Dhaqdhaqaaqa';
+
+  @override
+  String get date => 'Taariikhda';
+
+  @override
+  String get purpose => 'Ujeedada';
+
+  @override
+  String get downloadPdf => 'Soo deji PDF';
+
+  @override
+  String get shareReceipt => 'La wadaag rasiidhka';
+
+  @override
+  String get transactionSuccessful => 'Dhaqdhaqaaqa wuu guulaystay!';
+
+  @override
+  String get topUpSuccessful => 'Shubista way guulaysatay!';
+
+  @override
+  String get withdrawalSuccessful => 'Kala bixitaanka way guulaysatay!';
 
   @override
   String get cancel => 'Jooji';
@@ -284,9 +335,6 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get idCopied => 'ID-ga waa la koobiyey';
-
-  @override
-  String get shareReceipt => 'Share Receipt';
 
   @override
   String get reference => 'Reference';
@@ -880,19 +928,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get downloadReceipt => 'Download Receipt';
 
   @override
-  String get downloadPdf => 'Download PDF';
-
-  @override
   String get viewReceipt => 'View Receipt';
-
-  @override
-  String get transactionSuccessful => 'Transaction Successful!';
-
-  @override
-  String get topUpSuccessful => 'Top-up Successful!';
-
-  @override
-  String get withdrawalSuccessful => 'Withdrawal Successful!';
 
   @override
   String get cardPaymentSuccessful => 'Card Payment Successful!';
@@ -905,15 +941,6 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get sourceReceiver => 'Source/Receiver';
-
-  @override
-  String get receiverSource => 'Receiver/Source';
-
-  @override
-  String get transactionId => 'ID-ga Dhaqdhaqaaqa';
-
-  @override
-  String get date => 'Taariikhda';
 
   @override
   String get close => 'Close';
@@ -949,7 +976,10 @@ class AppLocalizationsSo extends AppLocalizations {
   String get justAMoment => 'Just a moment';
 
   @override
-  String get processing => 'Processing...';
+  String get processing => 'Waa la socodsiiyay';
+
+  @override
+  String get processingTransaction => 'Lacagta ayaa la socodsiinayaa...';
 
   @override
   String get copiedToClipboard => 'Copied to clipboard';
@@ -1073,7 +1103,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get noMessages => 'No messages';
 
   @override
-  String get now => 'Hadda';
+  String get now => 'now';
 
   @override
   String minutesAgo(int minutes) {
@@ -1516,7 +1546,8 @@ class AppLocalizationsSo extends AppLocalizations {
   String get save => 'Keydi';
 
   @override
-  String get pinChangedSuccess => 'PIN-ka waa la beddelay';
+  String get pinChangedSuccess =>
+      'Your PIN has been updated successfully. Use your new PIN for future transactions.';
 
   @override
   String get done => 'Done';
@@ -1627,10 +1658,10 @@ class AppLocalizationsSo extends AppLocalizations {
   String get activeGroups => 'Kooxaha firfircoon';
 
   @override
-  String get nextPayout => 'Lacag bixinta xigta';
+  String get nextPayout => 'Next Payout';
 
   @override
-  String get days => 'maalmood';
+  String get days => 'Days';
 
   @override
   String get nextInLine => 'Next in line';
@@ -1639,7 +1670,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get rotation => 'Rotation';
 
   @override
-  String get groupChat => 'Wada-hadalka Kooxda';
+  String get groupChat => 'Group Chat';
 
   @override
   String get payContribution => 'Pay Contribution';
@@ -1757,9 +1788,6 @@ class AppLocalizationsSo extends AppLocalizations {
   }
 
   @override
-  String get receiptDownloaded => 'Receipt downloaded to your gallery';
-
-  @override
   String yourTurnInDays(int days) {
     return 'Your turn in $days days';
   }
@@ -1807,9 +1835,6 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get serviceFee => 'Service Fee';
-
-  @override
-  String get payoutMethod => 'Payout Method';
 
   @override
   String get payoutReady => 'Payout Ready';
@@ -2036,9 +2061,6 @@ class AppLocalizationsSo extends AppLocalizations {
   String get purposeOfRemittance => 'Sababta Lacag Dirista';
 
   @override
-  String get purpose => 'Ujeedada';
-
-  @override
   String get familySupport => 'Taageerada Qoyska';
 
   @override
@@ -2166,10 +2188,10 @@ class AppLocalizationsSo extends AppLocalizations {
   String get history => 'Taariikhda';
 
   @override
-  String get confirmPayout => 'Xaqiiji lacag bixinta';
+  String get confirmPayout => 'Confirm Payout';
 
   @override
-  String get payoutAmount => 'Cadadka la bixinayo';
+  String get payoutAmount => 'Payout Amount';
 
   @override
   String get sadaqahUrgent => 'URGENT';
@@ -2396,7 +2418,7 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get descriptionHint =>
-      'Sharax sababta aad caawimo ugu baahan tahay iyo sida lacagta loo isticmaali doono...';
+      'Sharax sababta aad caawimo ugu baahan tay iyo sida lacagta loo isticmaali doono...';
 
   @override
   String get coverPhoto => 'Sawirka Daboolka';
@@ -2432,7 +2454,7 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String cryptoDescription(String asset) {
-    return '$asset waa lacag dhijitaal ah oo aan lahayn bangi dhexe ama maamule keliya, taas oo qof loogu diri karo qof kale iyada oo aan loo baahnayn dhex-dhexaadiye.';
+    return '$asset waa lacag dhijitaal ah oo aan lahayn bangi dhexe ama maamule keliya, taas qof loogu diri karo qof kale iyada oo aan loo baahnayn dhex-dhexaadiye.';
   }
 
   @override
@@ -2496,7 +2518,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get mainWallet => 'Boorsada Weyn';
 
   @override
-  String get invalidPin => 'PIN-kaagu waa khalad.';
+  String get invalidPin => 'PIN-ku waa khalad';
 
   @override
   String get sourceWallet => 'Boorsada Isha';
@@ -2570,4 +2592,22 @@ class AppLocalizationsSo extends AppLocalizations {
   @override
   String get startBuildingPortfolio =>
       'Bilow dhisidda portfolio-kaaga krifto maanta adoo isticmaalaya Murtaax Pay.';
+
+  @override
+  String get checkingName => 'Hubinta magaca...';
+
+  @override
+  String get recentTransfers => 'Recent Transfers';
+
+  @override
+  String get saveBeneficiary => 'Save to Beneficiaries';
+
+  @override
+  String get swiftCode => 'SWIFT/BIC Code';
+
+  @override
+  String get internationalTransfer => 'International Transfer';
+
+  @override
+  String get verifyingAccount => 'Hubinta xisaabta...';
 }

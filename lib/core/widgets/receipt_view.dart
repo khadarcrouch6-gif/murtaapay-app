@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
-import 'dart:typed_data';
 import '../app_colors.dart';
 import '../../l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
-import '../app_state.dart';
 
 class ReceiptView extends StatelessWidget {
   final Map<String, dynamic> transaction;
@@ -26,72 +24,146 @@ class ReceiptView extends StatelessWidget {
 
   Future<Uint8List> _generatePdf(BuildContext context, AppLocalizations l10n) async {
     final pdf = pw.Document();
-    // Using context safely before async gap
-    final state = Provider.of<AppState>(context, listen: false);
-    final purposeLabel = state.translate("Purpose", "Ujeedada");
     
+    // Load Logo
+    pw.ImageProvider? logo;
+    try {
+      final logoData = await rootBundle.load('assets/images/logo.png');
+      logo = pw.MemoryImage(logoData.buffer.asUint8List());
+    } catch (e) {
+      debugPrint("Could not load logo for PDF: $e");
+    }
+
     final isNegative = transaction['isNegative'] ??
         (transaction['type'] == 'withdraw' || transaction['type'] == 'payment');
+    
+    final primaryColor = PdfColor.fromInt(AppColors.primaryDark.toARGB32());
+    final tealColor = PdfColor.fromInt(AppColors.accentTeal.toARGB32());
 
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(32),
         build: (pw.Context context) {
-          return pw.Padding(
-            padding: const pw.EdgeInsets.all(40),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Header(
-                  level: 0,
-                  child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              // Header with Branding
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  if (logo != null)
+                    pw.Image(logo, height: 50)
+                  else
+                    pw.Text('MURTAAX PAY',
+                        style: pw.TextStyle(
+                            fontSize: 24, 
+                            fontWeight: pw.FontWeight.bold,
+                            color: primaryColor)),
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
-                      pw.Text('MurtaaxPay Receipt',
+                      pw.Text('RECEIPT', style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold, color: PdfColors.grey700)),
+                      pw.Text(transaction['transactionId'] ?? transaction['id'] ?? "#MTX-98234-AX",
+                          style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey)),
+                    ],
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 20),
+              pw.Divider(thickness: 0.5, color: PdfColors.grey300),
+              pw.SizedBox(height: 30),
+              
+              // Summary Section
+              pw.Container(
+                padding: const pw.EdgeInsets.all(20),
+                decoration: pw.BoxDecoration(
+                  color: PdfColors.grey100,
+                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(12)),
+                ),
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          isNegative
+                              ? l10n.transactionSuccessful
+                              : l10n.topUpSuccessful,
+                          style: pw.TextStyle(fontSize: 12, color: PdfColors.grey700),
+                        ),
+                        pw.SizedBox(height: 4),
+                        pw.Text(
+                          transaction['amount']?.toString() ?? "0.00",
                           style: pw.TextStyle(
-                              fontSize: 24, fontWeight: pw.FontWeight.bold)),
-                      pw.Text(transaction['date'] ?? '',
-                          style: const pw.TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                ),
-                pw.SizedBox(height: 20),
-                pw.Center(
-                  child: pw.Column(
-                    children: [
-                      pw.Text(
-                        isNegative
-                            ? l10n.transactionSuccessful
-                            : l10n.topUpSuccessful,
-                        style: pw.TextStyle(
-                            fontSize: 18, fontWeight: pw.FontWeight.bold),
+                              fontSize: 28, 
+                              fontWeight: pw.FontWeight.bold,
+                              color: isNegative ? PdfColors.red : tealColor),
+                        ),
+                      ],
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: pw.BoxDecoration(
+                        color: tealColor,
+                        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(20)),
                       ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        transaction['amount']?.toString() ?? "0.00",
-                        style: pw.TextStyle(
-                            fontSize: 36, fontWeight: pw.FontWeight.bold),
+                      child: pw.Text(
+                        'SUCCESSFUL',
+                        style: pw.TextStyle(color: PdfColors.white, fontSize: 10, fontWeight: pw.FontWeight.bold),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                pw.SizedBox(height: 40),
-                pw.Divider(),
-                _pdfRow(l10n.receiverSource, transaction['title'] ?? ""),
-                if (transaction['purpose'] != null)
-                  _pdfRow(purposeLabel, transaction['purpose'].toString()),
-                _pdfRow(l10n.transactionId, transaction['transactionId'] ?? transaction['id'] ?? "#MTX-98234-AX"),
-                _pdfRow(l10n.date, transaction['date'] ?? ""),
-                _pdfRow(l10n.paymentMethod, transaction['method'] ?? "Wallet"),
-                pw.Divider(),
-                pw.SizedBox(height: 20),
-                pw.Text(
-                  'Thank you for using MurtaaxPay!',
-                  style: pw.TextStyle(
-                      fontStyle: pw.FontStyle.italic, color: PdfColors.grey),
-                ),
+              ),
+              
+              pw.SizedBox(height: 40),
+              
+              // Transaction Details
+              pw.Text('TRANSACTION DETAILS', 
+                style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: primaryColor, letterSpacing: 1.2)),
+              pw.SizedBox(height: 16),
+              _pdfRow(l10n.date, transaction['date'] ?? ""),
+              pw.Divider(thickness: 0.5, color: PdfColors.grey200),
+              _pdfRow(l10n.receiverSource, transaction['title'] ?? ""),
+              pw.Divider(thickness: 0.5, color: PdfColors.grey200),
+              if (transaction['purpose'] != null && transaction['purpose'].toString().isNotEmpty) ...[
+                _pdfRow(l10n.purpose, transaction['purpose'].toString()),
+                pw.Divider(thickness: 0.5, color: PdfColors.grey200),
               ],
-            ),
+              _pdfRow(l10n.payoutVia, transaction['method'] ?? l10n.murtaaxWallet),
+              pw.Divider(thickness: 0.5, color: PdfColors.grey200),
+              _pdfRow(l10n.paidUsing, transaction['paymentMethod'] ?? l10n.walletBalance),
+              pw.Divider(thickness: 0.5, color: PdfColors.grey200),
+              _pdfRow(l10n.transactionId, transaction['transactionId'] ?? transaction['id'] ?? "#MTX-98234-AX"),
+              
+              pw.Spacer(),
+              
+              // Branding Footer
+              pw.Container(
+                width: double.infinity,
+                padding: const pw.EdgeInsets.symmetric(vertical: 20),
+                child: pw.Column(
+                  children: [
+                    pw.Text('MurtaaxPay - Trusted Somali Partner', 
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: primaryColor)),
+                    pw.SizedBox(height: 4),
+                    pw.Text('This is a computer-generated receipt. No signature is required.', 
+                      style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey)),
+                    pw.SizedBox(height: 12),
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.center,
+                      children: [
+                        pw.Text('www.murtaaxpay.com', style: const pw.TextStyle(fontSize: 8, color: PdfColors.blue)),
+                        pw.SizedBox(width: 20),
+                        pw.Text('support@murtaaxpay.com', style: const pw.TextStyle(fontSize: 8, color: PdfColors.blue)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           );
         },
       ),
@@ -102,12 +174,12 @@ class ReceiptView extends StatelessWidget {
 
   pw.Widget _pdfRow(String label, String value) {
     return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(vertical: 8),
+      padding: const pw.EdgeInsets.symmetric(vertical: 10),
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Text(label, style: const pw.TextStyle(color: PdfColors.grey700, fontSize: 10)),
-          pw.Text(value, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+          pw.Text(label, style: const pw.TextStyle(color: PdfColors.grey600, fontSize: 10)),
+          pw.Text(value, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: PdfColors.black)),
         ],
       ),
     );
@@ -243,30 +315,17 @@ class ReceiptView extends StatelessWidget {
   }
 
   Widget _buildDetails(BuildContext context, ThemeData theme, AppLocalizations l10n) {
-    final isNegative = transaction['isNegative'] ??
-        (transaction['type'] == 'withdraw' || transaction['type'] == 'payment');
-    final state = Provider.of<AppState>(context, listen: false);
-
-    String methodTitle = transaction['method'] ??
-        (isNegative ? l10n.virtualCard : l10n.walletBalance);
-    if (transaction['type'] == 'deposit') {
-      methodTitle = "TopUP from ${transaction['method'] ?? l10n.murtaaxWallet}";
-    } else if (transaction['type'] == 'withdraw') {
-      methodTitle = l10n.bankTransfer;
-    } else if (isNegative) {
-      methodTitle = "Payment method ${l10n.virtualCard}";
-    }
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         children: [
           _buildDetailRow(theme, l10n.receiverSource, transaction['title'] ?? ""),
-          if (transaction['purpose'] != null)
-            _buildDetailRow(theme, state.translate("Purpose", "Ujeedada"), transaction['purpose'].toString()),
+          if (transaction['purpose'] != null && transaction['purpose'].toString().isNotEmpty)
+            _buildDetailRow(theme, l10n.purpose, transaction['purpose'].toString()),
           _buildDetailRow(theme, l10n.transactionId, transaction['transactionId'] ?? transaction['id'] ?? "#MTX-98234-AX"),
           _buildDetailRow(theme, l10n.date, transaction['date'] ?? ""),
-          _buildDetailRow(theme, l10n.paymentMethod, methodTitle),
+          _buildDetailRow(theme, l10n.payoutVia, transaction['method'] ?? l10n.murtaaxWallet),
+          _buildDetailRow(theme, l10n.paidUsing, transaction['paymentMethod'] ?? l10n.walletBalance),
         ],
       ),
     );
@@ -353,15 +412,15 @@ class ReceiptView extends StatelessWidget {
             onPressed: () async {
               try {
                 final pdfData = await _generatePdf(context, l10n);
-                await Share.shareXFiles(
+                  await Share.shareXFiles(
                   [
                     XFile.fromData(
                       pdfData,
-                      name: 'Receipt.pdf',
+                      name: 'MurtaaxPay_Receipt.pdf',
                       mimeType: 'application/pdf',
                     )
                   ],
-                  text: 'My MurtaaxPay Transaction Receipt',
+                  text: 'Here is my transaction receipt from MurtaaxPay.',
                 );
               } catch (e) {
                 if (context.mounted) {

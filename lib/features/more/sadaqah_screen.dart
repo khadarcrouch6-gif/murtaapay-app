@@ -524,7 +524,9 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                     ),
                     onChanged: (val) {
                       if (val.length == 4) {
-                        _handleDonation(context, campaign, state, amount, val);
+                        if (context.mounted) {
+                          _handleDonation(context, campaign, state, amount, val);
+                        }
                       }
                     },
                   ),
@@ -541,7 +543,11 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                     SizedBox(width: 16 * context.fontSizeFactor),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => _handleDonation(context, campaign, state, amount, pinController.text),
+                        onPressed: () {
+                          if (context.mounted) {
+                            _handleDonation(context, campaign, state, amount, pinController.text);
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accentTeal,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),

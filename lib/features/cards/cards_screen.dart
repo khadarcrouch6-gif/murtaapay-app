@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'dart:ui' as ui;
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -17,10 +16,8 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:intl/intl.dart';
 import '../../core/models/recurring_payment_model.dart';
 import '../../core/models/transaction.dart';
-import '../more/investments_screen.dart';
-import '../more/savings_screen.dart';
 import '../deposit/deposit_card_screen.dart';
-import '../../core/widgets/card_receipt_view.dart';
+import '../../core/widgets/receipt_view.dart';
 import '../withdraw/withdraw_screen.dart';
 import '../../l10n/app_localizations.dart';
 import 'models/card_model.dart';
@@ -522,7 +519,7 @@ class _CardsScreenState extends State<CardsScreen> {
                             tx.isNegative,
                             onTap: () {
                               HapticFeedback.lightImpact();
-                              CardReceiptView.show(context, tx.toJson());
+                              ReceiptView.show(context, tx.toJson());
                             },
                           );
                         },

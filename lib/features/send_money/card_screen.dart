@@ -11,12 +11,14 @@ class CardScreen extends StatefulWidget {
   final String amount;
   final String method;
   final String currencyCode;
+  final String senderSource;
 
   const CardScreen({
     super.key,
     required this.amount,
     required this.method,
     required this.currencyCode,
+    required this.senderSource,
   });
 
   @override
@@ -50,6 +52,7 @@ class _CardScreenState extends State<CardScreen> {
             receiverName: _nameController.text,
             receiverPhone: "**** **** **** ${_cardNumberController.text.substring(_cardNumberController.text.length - 4)}",
             payoutMethod: widget.method,
+            paymentMethod: widget.senderSource,
             currencyCode: widget.currencyCode,
             purpose: AppLocalizations.of(context)!.familySupport, // Default purpose
           ),
@@ -97,15 +100,39 @@ class _CardScreenState extends State<CardScreen> {
                     maxWidth: 500,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
+                      child: Column(
                         children: [
-                          _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                          _buildStepLine(context, true, isHeader: true),
-                          _buildStepIndicator(context, 2, l10n.stepReceiver, true, false, isHeader: true),
-                          _buildStepLine(context, false, isHeader: true),
-                          _buildStepIndicator(context, 3, l10n.stepPayment, false, false, isHeader: true),
-                          _buildStepLine(context, false, isHeader: true),
-                          _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                          // Source Display in Header
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(widget.senderSource == "Main Wallet" ? Icons.account_balance_wallet_outlined : Icons.credit_card_outlined, color: Colors.white70, size: 16),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "${widget.senderSource}: ${widget.currencyCode} ${widget.amount}",
+                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
+                              _buildStepLine(context, true, isHeader: true),
+                              _buildStepIndicator(context, 2, l10n.stepReceiver, true, false, isHeader: true),
+                              _buildStepLine(context, false, isHeader: true),
+                              _buildStepIndicator(context, 3, l10n.stepPayment, false, false, isHeader: true),
+                              _buildStepLine(context, false, isHeader: true),
+                              _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                            ],
+                          ),
                         ],
                       ),
                     ),

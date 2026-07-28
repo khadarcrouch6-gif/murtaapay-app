@@ -18,6 +18,11 @@ class WalletPaymentScreen extends StatefulWidget {
   final String payoutMethod;
   final String currencyCode;
   final String purpose;
+  final String? sourceOfFunds;
+  final String? swiftCode;
+  final String? address;
+  final String? city;
+  final String? country;
 
   const WalletPaymentScreen({
     super.key,
@@ -27,6 +32,11 @@ class WalletPaymentScreen extends StatefulWidget {
     required this.payoutMethod,
     required this.currencyCode,
     required this.purpose,
+    this.sourceOfFunds,
+    this.swiftCode,
+    this.address,
+    this.city,
+    this.country,
   });
 
   @override
@@ -42,6 +52,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
     final appState = Provider.of<AppState>(context, listen: false);
     
     if (_pinController.text.length < 4) {
+      HapticFeedback.vibrate();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.enterSecurityPin)),
       );
@@ -49,6 +60,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
     }
 
     if (!appState.verifyPin(_pinController.text)) {
+      HapticFeedback.heavyImpact();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("PIN-kaagu waa khalad. Fadlan isku day markale."),
@@ -58,6 +70,55 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
       return;
     }
 
+    final amountVal = double.tryParse(widget.amount.replaceAll(',', '')) ?? 0;
+    final total = appState.calculateTotal(amountVal);
+    
+    if (appState.balance < total) {
+      final needed = total - appState.balance;
+      if (appState.savingsBalance >= needed) {
+        bool? confirm = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(appState.translate("Insufficient Funds", "Haraagaagu kuma filna")),
+            content: Text(appState.translate(
+              "Your main wallet is missing \$${needed.toStringAsFixed(2)}. Would you like to auto-top up from your Savings Account to complete this transaction?",
+              "Wallet-kaaga weyn waxaa ka dhiman \$${needed.toStringAsFixed(2)}. Ma rabtaa in laga soo qaado Savings-ka si loo dhamaystiro xawaaladdan?"
+            )),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                style: ElevatedButton.styleFrom(backgroundColor: theme.colorScheme.secondary),
+                child: Text(appState.translate("Yes, Top-up", "Haa, ka soo qaad")),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm == true) {
+          try {
+            await appState.autoTopUpMainFromSavings(needed);
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+            );
+            return;
+          }
+        } else {
+          return;
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(appState.translate("Insufficient total balance", "Haraagaagu guud ahaan kuma filna")),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
+    HapticFeedback.mediumImpact();
     // Standardized transaction loader
     showDialog(
       context: context,
@@ -147,6 +208,11 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
             paymentMethod: "Murtaax Wallet",
             currencyCode: widget.currencyCode,
             purpose: widget.purpose,
+            sourceOfFunds: widget.sourceOfFunds,
+            swiftCode: widget.swiftCode,
+            address: widget.address,
+            city: widget.city,
+            country: widget.country,
           ),
         ),
       );
@@ -245,6 +311,53 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                         ),
                       ),
 
+                      SizedBox(height: 16 * scale),
+                      // Daily Limit Progress Bar
+                      FadeInDown(
+                        delay: const Duration(milliseconds: 100),
+                        child: Container(
+                          padding: EdgeInsets.all(16 * scale),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surface,
+                            borderRadius: BorderRadius.circular(16 * scale),
+                            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    appState.translate("Daily Limit", "Xadka Maalinta"),
+                                    style: TextStyle(fontSize: 12 * scale, fontWeight: FontWeight.bold, color: AppColors.grey),
+                                  ),
+                                  Text(
+                                    "${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.getDailySpent())} / ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.dailyLimit)}",
+                                    style: TextStyle(fontSize: 12 * scale, fontWeight: FontWeight.w900, color: theme.colorScheme.secondary),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: LinearProgressIndicator(
+                                  value: (appState.getDailySpent() / appState.dailyLimit).clamp(0.0, 1.0),
+                                  backgroundColor: theme.dividerColor.withValues(alpha: 0.05),
+                                  valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
+                                  minHeight: 8,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                "${appState.translate("Remaining", "Hambada")}: ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.getDailyRemaining())}",
+                                style: TextStyle(fontSize: 10 * scale, fontWeight: FontWeight.bold, color: AppColors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
                       SizedBox(height: 32 * scale),
                       
                       // Visual Card
@@ -302,29 +415,54 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                       // PIN Input
                       FadeInUp(
                         delay: const Duration(milliseconds: 100),
-                        child: Center(
-                          child: SizedBox(
-                            width: 240 * scale,
-                            child: TextField(
-                              controller: _pinController,
-                              obscureText: true,
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
-                              style: TextStyle(fontSize: 32 * scale, letterSpacing: 24 * scale, fontWeight: FontWeight.bold),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(4),
-                              ],
-                              decoration: InputDecoration(
-                                hintText: "****",
-                                hintStyle: TextStyle(letterSpacing: 24 * scale, fontSize: 32 * scale),
-                                filled: true,
-                                fillColor: theme.dividerColor.withValues(alpha: 0.05),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale), borderSide: BorderSide.none),
-                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale), borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2)),
+                        child: Column(
+                          children: [
+                            Center(
+                              child: SizedBox(
+                                width: 240 * scale,
+                                child: TextField(
+                                  controller: _pinController,
+                                  obscureText: true,
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (val) {
+                                    if (val.isNotEmpty) HapticFeedback.selectionClick();
+                                  },
+                                  style: TextStyle(fontSize: 32 * scale, letterSpacing: 24 * scale, fontWeight: FontWeight.bold),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(4),
+                                  ],
+                                  decoration: InputDecoration(
+                                    hintText: "****",
+                                    hintStyle: TextStyle(letterSpacing: 24 * scale, fontSize: 32 * scale),
+                                    filled: true,
+                                    fillColor: theme.dividerColor.withValues(alpha: 0.05),
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale), borderSide: BorderSide.none),
+                                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * scale), borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2)),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(height: 24),
+                            // Digital Signature / Security Mark
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.verified_user_rounded, color: theme.colorScheme.secondary.withValues(alpha: 0.5), size: 16),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "SECURE DIGITAL SIGNATURE ACTIVE",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    color: theme.colorScheme.secondary.withValues(alpha: 0.5),
+                                    letterSpacing: 1.2
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
 

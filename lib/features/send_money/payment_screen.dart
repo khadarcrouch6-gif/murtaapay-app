@@ -14,13 +14,21 @@ import 'credit_card_screen.dart';
 import 'sender_bank_screen.dart';
 import 'mobile_money_screen.dart';
 
+import 'package:shimmer/shimmer.dart';
+
 class PaymentScreen extends StatefulWidget {
   final String amount;
   final String receiverName;
   final String receiverPhone;
   final String payoutMethod;
+  final String paymentMethod;
   final String currencyCode;
   final String purpose;
+  final String? sourceOfFunds;
+  final String? swiftCode;
+  final String? address;
+  final String? city;
+  final String? country;
 
   const PaymentScreen({
     super.key,
@@ -28,8 +36,14 @@ class PaymentScreen extends StatefulWidget {
     required this.receiverName,
     required this.receiverPhone,
     required this.payoutMethod,
+    required this.paymentMethod,
     required this.currencyCode,
     required this.purpose,
+    this.sourceOfFunds,
+    this.swiftCode,
+    this.address,
+    this.city,
+    this.country,
   });
 
   @override
@@ -37,25 +51,52 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  String _selectedPaymentMethod = "Murtaax Wallet";
+  late String _selectedPaymentMethod;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedPaymentMethod = widget.paymentMethod;
+    _simulateLoading();
+  }
+
+  Future<void> _simulateLoading() async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
+  }
 
   void _handleContinue(AppLocalizations l10n) {
-    HapticFeedback.mediumImpact();
+    HapticFeedback.heavyImpact();
     final appState = Provider.of<AppState>(context, listen: false);
     final amountVal = double.tryParse(widget.amount.replaceAll(',', '')) ?? 0;
-    final totalCost = appState.calculateTotal(amountVal);
 
-    if (_selectedPaymentMethod == "Murtaax Wallet" && !appState.hasSufficientBalance(amountVal)) {
+    String sourceKey = _selectedPaymentMethod;
+    String? selectedCardId;
+
+    if (_selectedPaymentMethod.startsWith("card_")) {
+      sourceKey = "Debit Card";
+      selectedCardId = _selectedPaymentMethod.replaceFirst("card_", "");
+    } else if (_selectedPaymentMethod == "Savings") {
+      sourceKey = "Savings Account";
+    }
+
+    if (!appState.hasSufficientBalanceForSource(amountVal, sourceKey, cardId: selectedCardId)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(appState.translate("Insufficient balance in your Murtaax Wallet", "Haraagaagu kuguma filna Murtaax Wallet")),
+          content: Text(appState.translate(
+            "Insufficient balance in the selected source", 
+            "Haraagaagu kuguma filna meesha aad dooratay"
+          )),
           backgroundColor: Colors.red,
         ),
       );
       return;
     }
 
-    if (_selectedPaymentMethod == "Murtaax Wallet") {
+    if (_selectedPaymentMethod == "Main Wallet") {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -66,10 +107,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
             payoutMethod: widget.payoutMethod,
             currencyCode: widget.currencyCode,
             purpose: widget.purpose,
+            sourceOfFunds: widget.sourceOfFunds,
+            swiftCode: widget.swiftCode,
+            address: widget.address,
+            city: widget.city,
+            country: widget.country,
           ),
         ),
       );
-    } else if (_selectedPaymentMethod == "Visa / MasterCard") {
+    } else if (_selectedPaymentMethod == "New Card") {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -80,6 +126,53 @@ class _PaymentScreenState extends State<PaymentScreen> {
             payoutMethod: widget.payoutMethod,
             currencyCode: widget.currencyCode,
             purpose: widget.purpose,
+          ),
+        ),
+      );
+    } else if (_selectedPaymentMethod.startsWith("card_")) {
+      final cardId = _selectedPaymentMethod.replaceFirst("card_", "");
+      final card = appState.cards.firstWhere((c) => c.id == cardId);
+      
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ReviewScreen(
+            amount: widget.amount,
+            receiverName: widget.receiverName,
+            receiverPhone: widget.receiverPhone,
+            method: widget.payoutMethod,
+            paymentMethod: "Virtual Card (${card.cardHolder})",
+            cardId: card.id,
+            currencyCode: widget.currencyCode,
+            purpose: widget.purpose,
+            sourceOfFunds: widget.sourceOfFunds,
+            swiftCode: widget.swiftCode,
+            address: widget.address,
+            city: widget.city,
+            country: widget.country,
+          ),
+        ),
+      );
+    } else if (_selectedPaymentMethod.startsWith("bank_")) {
+      final bankId = _selectedPaymentMethod.replaceFirst("bank_", "");
+      final bank = appState.linkedBanks.firstWhere((b) => b.id == bankId);
+      
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ReviewScreen(
+            amount: widget.amount,
+            receiverName: widget.receiverName,
+            receiverPhone: widget.receiverPhone,
+            method: widget.payoutMethod,
+            paymentMethod: "Bank Account (${bank.bankName})",
+            currencyCode: widget.currencyCode,
+            purpose: widget.purpose,
+            sourceOfFunds: widget.sourceOfFunds,
+            swiftCode: widget.swiftCode,
+            address: widget.address,
+            city: widget.city,
+            country: widget.country,
           ),
         ),
       );
@@ -113,6 +206,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
       );
     } else {
       String displayMethod = _selectedPaymentMethod;
+      if (_selectedPaymentMethod == "Savings") {
+        displayMethod = "Savings Account";
+      }
 
       Navigator.push(
         context,
@@ -125,6 +221,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentMethod: displayMethod,
             currencyCode: widget.currencyCode,
             purpose: widget.purpose,
+            sourceOfFunds: widget.sourceOfFunds,
+            swiftCode: widget.swiftCode,
+            address: widget.address,
+            city: widget.city,
+            country: widget.country,
           ),
         ),
       );
@@ -137,11 +238,75 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final l10n = AppLocalizations.of(context)!;
     final appState = Provider.of<AppState>(context);
 
-    final List<Map<String, dynamic>> paymentMethods = [
-      {"id": "Murtaax Wallet", "name": l10n.murtaaxWallet, "icon": Icons.account_balance_wallet_rounded, "desc": l10n.murtaaxWalletDesc},
-      {"id": "Visa / MasterCard", "name": l10n.visaMastercard, "icon": Icons.credit_card_rounded, "desc": l10n.visaMastercardDesc},
-      {"id": "Bank Transfer", "name": l10n.bankTransfer, "icon": Icons.account_balance_rounded, "desc": l10n.bankTransferDesc},
-      {"id": "Mobile Money", "name": l10n.mobileMoney, "icon": Icons.phone_android_rounded, "desc": l10n.mobileMoneyDesc},
+    final List<Map<String, dynamic>> sections = [
+      {
+        "title": appState.translate("Murtaax Wallet", "Murtaax Wallet"),
+        "items": [
+          {
+            "id": "Main Wallet", 
+            "name": appState.translate("Main Wallet", "Boorsada rasmiga ah"), 
+            "icon": Icons.account_balance_wallet_rounded, 
+            "desc": "Balance: ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.balance)}",
+            "type": "wallet",
+            "subDesc": appState.balance < (double.tryParse(widget.amount.replaceAll(',', '')) ?? 0) && appState.savingsBalance > 0 
+                ? appState.translate("Auto top-up from savings available", "Waxa laga soo buuxin karaa Kaydka")
+                : null
+          },
+          {
+            "id": "Savings", 
+            "name": appState.translate("Savings Account", "Xisaabta Kaydka"), 
+            "icon": Icons.savings_rounded, 
+            "desc": "Balance: ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.savingsBalance)}",
+            "type": "savings"
+          },
+        ]
+      },
+      {
+        "title": appState.translate("Debit Cards", "Kaadhadhka Debit-ka"),
+        "items": [
+          // Virtual Cards
+          ...appState.cards.map((card) => {
+            "id": "card_${card.id}",
+            "name": card.cardHolder,
+            "icon": Icons.credit_card_rounded,
+            "desc": "Virtual Card •••• ${card.cardNumber.substring(card.cardNumber.length - 4)}",
+            "balance": "Balance: ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(card.balance)}",
+            "type": "card",
+            "cardId": card.id
+          }),
+          {
+            "id": "New Card", 
+            "name": appState.translate("Add New Card", "Ku dar kaadh cusub"), 
+            "icon": Icons.add_card_rounded, 
+            "desc": "Visa / Mastercard / Amex", 
+            "type": "external_card"
+          },
+        ]
+      },
+      {
+        "title": appState.translate("Bank Transfer", "Xawaalad Bangi"),
+        "items": [
+          {
+            "id": "Bank Transfer", 
+            "name": appState.translate("Bank Account", "Xisaab Bangi"), 
+            "icon": Icons.account_balance_rounded, 
+            "desc": appState.translate("Transfer from linked bank", "Ka soo dir bangi ku xidhan"), 
+            "type": "external"
+          },
+        ]
+      },
+      {
+        "title": appState.translate("Mobile Money", "Lacagta Mobilka"),
+        "items": [
+          {
+            "id": "Mobile Money", 
+            "name": "EVC Plus / Sahal / Zaad", 
+            "icon": Icons.phone_android_rounded, 
+            "desc": appState.translate("Instant mobile payment", "Lacag bixin mobilka ah"), 
+            "type": "external"
+          },
+        ]
+      }
     ];
 
     return Scaffold(
@@ -169,30 +334,53 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
                 borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
               ),
-              padding: const EdgeInsets.only(bottom: 20),
+              padding: const EdgeInsets.only(bottom: 25, left: 20, right: 20),
               child: Center(
                 child: MaxWidthBox(
                   maxWidth: 500,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                        _buildStepLine(context, true, isHeader: true),
-                        _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
-                        _buildStepLine(context, true, isHeader: true),
-                        _buildStepIndicator(context, 3, l10n.stepPayment, true, false, isHeader: true),
-                        _buildStepLine(context, false, isHeader: true),
-                        _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
-                      ],
-                    ),
+                  child: Column(
+                    children: [
+                      // Source Display in Header
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.send_rounded, color: Colors.white70, size: 16),
+                            const SizedBox(width: 8),
+                            Text(
+                              "${l10n.amount}: ${widget.currencyCode} ${widget.amount}",
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
+                          _buildStepLine(context, true, isHeader: true),
+                          _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
+                          _buildStepLine(context, true, isHeader: true),
+                          _buildStepIndicator(context, 3, l10n.stepPayment, true, false, isHeader: true),
+                          _buildStepLine(context, false, isHeader: true),
+                          _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
             
             Expanded(
-              child: SingleChildScrollView(
+              child: _isLoading 
+                ? _buildSkeletonLoader(theme)
+                : SingleChildScrollView(
                 child: Center(
                   child: MaxWidthBox(
                     maxWidth: 500,
@@ -222,14 +410,97 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 8),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(l10n.transactionFee, style: const TextStyle(color: AppColors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-                                      Text(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.calculateFee(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.grey)),
-                                    ],
+                                  Builder(
+                                    builder: (context) {
+                                      final amountVal = double.tryParse(widget.amount.replaceAll(',', '')) ?? 0;
+                                      String sourceKey = _selectedPaymentMethod;
+                                      if (_selectedPaymentMethod.startsWith("card_")) sourceKey = "Debit Card";
+                                      if (_selectedPaymentMethod == "Savings") sourceKey = "Savings Account";
+                                      
+                                      final fee = appState.calculateFeeForSource(amountVal, sourceKey);
+                                      final total = amountVal + fee;
+                                      
+                                      String feeLabel = "0.50";
+                                      if (sourceKey.contains("Savings")) feeLabel = "0.50";
+                                      else if (sourceKey.contains("Card")) feeLabel = "3.00";
+                                      else if (sourceKey.contains("Bank")) feeLabel = "2.00";
+                                      else if (sourceKey.contains("Mobile Money")) feeLabel = "0.99";
+
+                                      return Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("${l10n.transactionFee} (${widget.currencyCode} $feeLabel)",
+                                                style: const TextStyle(color: AppColors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+                                              Text(NumberFormat.simpleCurrency(name: widget.currencyCode).format(fee), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.grey)),
+                                            ],
+                                          ),
+                                          const Divider(height: 24),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(appState.translate("Total to Pay", "Warta guud ee baxaaya"), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+                                              Text(NumberFormat.simpleCurrency(name: widget.currencyCode).format(total), 
+                                                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: theme.colorScheme.secondary)),
+                                            ],
+                                          ),
+                                        ],
+                                      );
+                                    }
                                   ),
                                   const Divider(height: 30),
+                                  // Daily Limit Info
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: theme.dividerColor.withValues(alpha: 0.05),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              appState.translate("Daily Limit", "Xadka Maalinta"),
+                                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.grey),
+                                            ),
+                                            Text(
+                                              "${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.getDailySpent())} / ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.dailyLimit)}",
+                                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: theme.colorScheme.secondary),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: LinearProgressIndicator(
+                                            value: (appState.getDailySpent() / appState.dailyLimit).clamp(0.0, 1.0),
+                                            backgroundColor: theme.dividerColor.withValues(alpha: 0.1),
+                                            valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
+                                            minHeight: 6,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            const Icon(Icons.info_outline_rounded, size: 14, color: AppColors.grey),
+                                            const SizedBox(width: 6),
+                                            Expanded(
+                                              child: Text(
+                                                "${appState.translate("Remaining", "Hambada")}: ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.getDailyRemaining())}",
+                                                style: const TextStyle(fontSize: 11, color: AppColors.grey, fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
                                   _buildSummaryRow(l10n.receiver, widget.receiverName, Icons.person_outline),
                                   const SizedBox(height: 12),
                                   _buildSummaryRow(
@@ -255,11 +526,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             l10n.selectPaymentMethod,
                             style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
                           ),
-                          const SizedBox(height: 16),
                           
-                          ...paymentMethods.map((method) => FadeInLeft(
-                            delay: Duration(milliseconds: paymentMethods.indexOf(method) * 100),
-                            child: _buildPaymentMethodTile(method, theme, l10n),
+                          ...sections.map((section) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 24, bottom: 12, left: 4),
+                                child: Text(
+                                  section["title"],
+                                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: AppColors.grey),
+                                ),
+                              ),
+                              ...(section["items"] as List).map((method) => FadeInLeft(
+                                child: _buildPaymentMethodTile(method, theme, l10n),
+                              )),
+                            ],
                           )),
                           
                           const SizedBox(height: 30),
@@ -327,10 +608,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final appState = Provider.of<AppState>(context, listen: false);
     
     final amountVal = double.tryParse(widget.amount.replaceAll(',', '')) ?? 0;
-    final hasEnough = appState.hasSufficientBalance(amountVal);
+    
+    String sourceKey = method["id"];
+    String? cardId = method["cardId"];
+    if (sourceKey.startsWith("card_")) sourceKey = "Debit Card";
+    if (sourceKey == "Savings") sourceKey = "Savings Account";
+
+    bool hasEnough = appState.hasSufficientBalanceForSource(amountVal, sourceKey, cardId: cardId);
     
     return GestureDetector(
-      onTap: () => setState(() => _selectedPaymentMethod = method["id"]),
+      onTap: () {
+        HapticFeedback.selectionClick();
+        setState(() => _selectedPaymentMethod = method["id"]);
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         margin: const EdgeInsets.only(bottom: 12),
@@ -340,11 +630,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected 
-              ? (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary) 
+              ? (!hasEnough ? Colors.red : theme.colorScheme.secondary) 
               : theme.dividerColor.withValues(alpha: 0.1),
             width: 2,
           ),
-          boxShadow: isSelected ? [BoxShadow(color: (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary).withValues(alpha: 0.1), blurRadius: 10)] : null,
+          boxShadow: isSelected ? [BoxShadow(color: (!hasEnough ? Colors.red : theme.colorScheme.secondary).withValues(alpha: 0.1), blurRadius: 10)] : null,
         ),
         child: Row(
           children: [
@@ -352,11 +642,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: isSelected 
-                  ? (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red.withValues(alpha: 0.1) : theme.colorScheme.secondary.withValues(alpha: 0.1)) 
+                  ? (!hasEnough ? Colors.red.withValues(alpha: 0.1) : theme.colorScheme.secondary.withValues(alpha: 0.1)) 
                   : theme.dividerColor.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
-              child: Icon(method["icon"], color: isSelected ? (method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary) : AppColors.grey, size: 24),
+              child: Icon(method["icon"], color: isSelected ? (!hasEnough ? Colors.red : theme.colorScheme.secondary) : AppColors.grey, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -367,19 +657,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(method["name"], style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-                      if (method["id"] == "Murtaax Wallet")
-                        Text(
-                          "Bal: ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.balance)}", 
-                          style: TextStyle(
-                            color: hasEnough ? theme.colorScheme.secondary : Colors.red, 
-                            fontSize: 12, 
-                            fontWeight: FontWeight.w900
-                          )
-                        ),
                     ],
                   ),
                   Text(method["desc"], style: const TextStyle(color: AppColors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-                  if (method["id"] == "Murtaax Wallet" && !hasEnough)
+                  if (method["balance"] != null)
+                     Text(method["balance"], style: TextStyle(color: theme.colorScheme.secondary, fontSize: 12, fontWeight: FontWeight.w800)),
+                  if (method["subDesc"] != null)
+                     Text(method["subDesc"], style: const TextStyle(color: Colors.blue, fontSize: 11, fontWeight: FontWeight.w600)),
+                  if (method["type"] != "external" && !hasEnough)
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
@@ -392,8 +677,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
             if (isSelected)
               Icon(
-                method["id"] == "Murtaax Wallet" && !hasEnough ? Icons.error_outline_rounded : Icons.check_circle_rounded, 
-                color: method["id"] == "Murtaax Wallet" && !hasEnough ? Colors.red : theme.colorScheme.secondary, 
+                method["type"] != "external" && !hasEnough ? Icons.error_outline_rounded : Icons.check_circle_rounded, 
+                color: method["type"] != "external" && !hasEnough ? Colors.red : theme.colorScheme.secondary,
                 size: 24
               ),
           ],
@@ -434,5 +719,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3))
       : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
     return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
+  }
+
+  Widget _buildSkeletonLoader(ThemeData theme) {
+    final isDark = theme.brightness == Brightness.dark;
+    return Shimmer.fromColors(
+      baseColor: isDark ? Colors.grey[900]! : Colors.grey[300]!,
+      highlightColor: isDark ? Colors.grey[800]! : Colors.grey[100]!,
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Container(height: 180, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24))),
+              const SizedBox(height: 30),
+              Row(children: [Container(width: 150, height: 20, color: Colors.white)]),
+              const SizedBox(height: 20),
+              ...List.generate(3, (index) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Container(height: 80, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20))),
+              )),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

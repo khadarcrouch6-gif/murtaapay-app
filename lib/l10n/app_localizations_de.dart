@@ -270,7 +270,58 @@ class AppLocalizationsDe extends AppLocalizations {
   String get payoutVia => 'Auszahlung über';
 
   @override
+  String get payoutMethod => 'Payout Method';
+
+  @override
+  String get instantTransfer => 'Instant Transfer';
+
+  @override
+  String get arrivesIn24h => 'Arrives in 24h';
+
+  @override
+  String get directToMobile => 'Direct to Mobile';
+
+  @override
+  String get continueToReceiver => 'Continue to Receiver';
+
+  @override
+  String get continueToBank => 'Continue to Bank Details';
+
+  @override
+  String get continueToWallet => 'Continue to Wallet ID';
+
+  @override
   String get paidUsing => 'Bezahlt mit';
+
+  @override
+  String get receiptDownloaded => 'Receipt downloaded to your gallery';
+
+  @override
+  String get receiverSource => 'Receiver/Source';
+
+  @override
+  String get transactionId => 'Transaction ID';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get purpose => 'Purpose';
+
+  @override
+  String get downloadPdf => 'Download PDF';
+
+  @override
+  String get shareReceipt => 'Beleg teilen';
+
+  @override
+  String get transactionSuccessful => 'Transaction Successful!';
+
+  @override
+  String get topUpSuccessful => 'Top-up Successful!';
+
+  @override
+  String get withdrawalSuccessful => 'Withdrawal Successful!';
 
   @override
   String get cancel => 'Abbrechen';
@@ -283,9 +334,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get idCopied => 'ID kopiert';
-
-  @override
-  String get shareReceipt => 'Beleg teilen';
 
   @override
   String get reference => 'Referenz';
@@ -884,19 +932,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get downloadReceipt => 'Beleg herunterladen';
 
   @override
-  String get downloadPdf => 'Download PDF';
-
-  @override
   String get viewReceipt => 'View Receipt';
-
-  @override
-  String get transactionSuccessful => 'Transaction Successful!';
-
-  @override
-  String get topUpSuccessful => 'Top-up Successful!';
-
-  @override
-  String get withdrawalSuccessful => 'Withdrawal Successful!';
 
   @override
   String get cardPaymentSuccessful => 'Card Payment Successful!';
@@ -909,15 +945,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get sourceReceiver => 'Source/Receiver';
-
-  @override
-  String get receiverSource => 'Receiver/Source';
-
-  @override
-  String get transactionId => 'Transaction ID';
-
-  @override
-  String get date => 'Date';
 
   @override
   String get close => 'Schließen';
@@ -954,6 +981,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get processing => 'Verarbeitung...';
+
+  @override
+  String get processingTransaction => 'Processing Transaction...';
 
   @override
   String get copiedToClipboard => 'In Zwischenablage kopiert';
@@ -1771,9 +1801,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get receiptDownloaded => 'Receipt downloaded to your gallery';
-
-  @override
   String yourTurnInDays(int days) {
     return 'Your turn in $days days';
   }
@@ -1821,9 +1848,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get serviceFee => 'Service Fee';
-
-  @override
-  String get payoutMethod => 'Payout Method';
 
   @override
   String get payoutReady => 'Payout Ready';
@@ -2047,9 +2071,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get purposeOfRemittance => 'Purpose of Remittance';
-
-  @override
-  String get purpose => 'Purpose';
 
   @override
   String get familySupport => 'Family Support';
@@ -2582,4 +2603,22 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get startBuildingPortfolio =>
       'Start building your crypto portfolio today with Murtaax Pay.';
+
+  @override
+  String get checkingName => 'Checking name...';
+
+  @override
+  String get recentTransfers => 'Recent Transfers';
+
+  @override
+  String get saveBeneficiary => 'Save to Beneficiaries';
+
+  @override
+  String get swiftCode => 'SWIFT/BIC Code';
+
+  @override
+  String get internationalTransfer => 'International Transfer';
+
+  @override
+  String get verifyingAccount => 'Verifying account...';
 }

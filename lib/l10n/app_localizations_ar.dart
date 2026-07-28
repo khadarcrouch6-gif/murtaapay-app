@@ -54,7 +54,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recurringPaymentsDesc =>
-      'جدولة المدفوعات التلقائية (مثل إرسال الأموال إلى العائلة في الأول من كل شهر).';
+      'Schedule automatic payments (e.g. send money to family on the 1st of every month).';
 
   @override
   String get receiveMoney => 'استلام';
@@ -151,7 +151,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get selectPaymentMethod => 'اختر طريقة الدفع';
 
   @override
-  String get murtaaxWallet => 'Murtaax Wallet';
+  String get murtaaxWallet => 'محفظة مرتاح';
 
   @override
   String get visaMastercard => 'Visa / MasterCard';
@@ -270,7 +270,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String get payoutVia => 'صرف عبر';
 
   @override
+  String get payoutMethod => 'Payout Method';
+
+  @override
+  String get instantTransfer => 'Instant Transfer';
+
+  @override
+  String get arrivesIn24h => 'Arrives in 24h';
+
+  @override
+  String get directToMobile => 'Direct to Mobile';
+
+  @override
+  String get continueToReceiver => 'Continue to Receiver';
+
+  @override
+  String get continueToBank => 'Continue to Bank Details';
+
+  @override
+  String get continueToWallet => 'Continue to Wallet ID';
+
+  @override
   String get paidUsing => 'دفع باستخدام';
+
+  @override
+  String get receiptDownloaded => 'تم تنزيل الإيصال في معرض الصور الخاص بك';
+
+  @override
+  String get receiverSource => 'المستلم/المصدر';
+
+  @override
+  String get transactionId => 'معرف المعاملة';
+
+  @override
+  String get date => 'التاريخ';
+
+  @override
+  String get purpose => 'الغرض';
+
+  @override
+  String get downloadPdf => 'تحميل PDF';
+
+  @override
+  String get shareReceipt => 'مشاركة الإيصال';
+
+  @override
+  String get transactionSuccessful => 'نجحت المعاملة!';
+
+  @override
+  String get topUpSuccessful => 'تم الشحن بنجاح!';
+
+  @override
+  String get withdrawalSuccessful => 'تم السحب بنجاح!';
 
   @override
   String get cancel => 'إلغاء';
@@ -283,9 +334,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get idCopied => 'تم نسخ الرقم';
-
-  @override
-  String get shareReceipt => 'مشاركة الإيصال';
 
   @override
   String get reference => 'المرجع';
@@ -877,19 +925,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get downloadReceipt => 'تنزيل الإيصال';
 
   @override
-  String get downloadPdf => 'Download PDF';
-
-  @override
   String get viewReceipt => 'View Receipt';
-
-  @override
-  String get transactionSuccessful => 'Transaction Successful!';
-
-  @override
-  String get topUpSuccessful => 'Top-up Successful!';
-
-  @override
-  String get withdrawalSuccessful => 'Withdrawal Successful!';
 
   @override
   String get cardPaymentSuccessful => 'Card Payment Successful!';
@@ -902,15 +938,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sourceReceiver => 'Source/Receiver';
-
-  @override
-  String get receiverSource => 'Receiver/Source';
-
-  @override
-  String get transactionId => 'Transaction ID';
-
-  @override
-  String get date => 'Date';
 
   @override
   String get close => 'إغلاق';
@@ -947,6 +974,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get processing => 'جاري المعالجة...';
+
+  @override
+  String get processingTransaction => 'Processing Transaction...';
 
   @override
   String get copiedToClipboard => 'تم النسخ إلى الحافظة';
@@ -1750,9 +1780,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get receiptDownloaded => 'Receipt downloaded to your gallery';
-
-  @override
   String yourTurnInDays(int days) {
     return 'Your turn in $days days';
   }
@@ -1800,9 +1827,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get serviceFee => 'Service Fee';
-
-  @override
-  String get payoutMethod => 'Payout Method';
 
   @override
   String get payoutReady => 'Payout Ready';
@@ -2028,9 +2052,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get purposeOfRemittance => 'Purpose of Remittance';
 
   @override
-  String get purpose => 'Purpose';
-
-  @override
   String get familySupport => 'Family Support';
 
   @override
@@ -2129,7 +2150,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invalidWalletFormat => 'Invalid Wallet ID format';
 
   @override
-  String get searching => 'Searching...';
+  String get searching => 'جاري البحث...';
 
   @override
   String get invite => 'Invite';
@@ -2469,11 +2490,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get error => 'Error';
 
   @override
-  String get noCampaignsFound => 'لم يتم العثور على حملات';
+  String get noCampaignsFound => 'No campaigns found';
 
   @override
   String get tryAdjustingFilters =>
-      'حاول تعديل الفلاتر للعثور على ما تبحث عنه.';
+      'Try adjusting your filters or search terms.';
 
   @override
   String get targetWallet => 'Target Wallet';
@@ -2499,10 +2520,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get verifiedAccount => 'Verified Account';
 
   @override
-  String get source => 'Source';
+  String get source => 'المصدر';
 
   @override
-  String get wallet => 'Wallet';
+  String get wallet => 'المحفظة';
 
   @override
   String get noAssetsToSell => 'You don\'t have any assets to sell';
@@ -2561,4 +2582,22 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get startBuildingPortfolio =>
       'Start building your crypto portfolio today with Murtaax Pay.';
+
+  @override
+  String get checkingName => 'جاري التحقق من الاسم...';
+
+  @override
+  String get recentTransfers => 'Recent Transfers';
+
+  @override
+  String get saveBeneficiary => 'Save to Beneficiaries';
+
+  @override
+  String get swiftCode => 'SWIFT/BIC Code';
+
+  @override
+  String get internationalTransfer => 'International Transfer';
+
+  @override
+  String get verifyingAccount => 'Verifying account...';
 }

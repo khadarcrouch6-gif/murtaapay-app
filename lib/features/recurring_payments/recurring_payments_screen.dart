@@ -100,7 +100,7 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
                   Provider.of<AppState>(context, listen: false).updateRecurringPayment(index, updated);
                 }
               },
-              itemBuilder: (context) => [
+              itemBuilder: (ctx) => [
                 PopupMenuItem(
                   value: 'pause',
                   child: Text(payment.status == RecurringStatus.active ? "Pause" : "Resume"),

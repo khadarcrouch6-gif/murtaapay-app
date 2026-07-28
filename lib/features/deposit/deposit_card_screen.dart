@@ -9,7 +9,6 @@ import '../../core/app_colors.dart';
 
 import 'package:provider/provider.dart';
 import '../../core/app_state.dart';
-import '../../core/widgets/detail_row.dart';
 import 'dart:ui' as ui;
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
@@ -38,7 +37,6 @@ class DepositCardScreen extends StatefulWidget {
 
 class _DepositCardScreenState extends State<DepositCardScreen> {
   final TextEditingController _amountController = TextEditingController();
-  final double _cardBalance = 850.50; // Mock card balance
   final TextEditingController _pinController = TextEditingController();
   final TextEditingController _accountNumberController = TextEditingController();
   final TextEditingController _accountNameController = TextEditingController();

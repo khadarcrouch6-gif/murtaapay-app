@@ -212,12 +212,12 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    if (_cardNumberController.text.isEmpty ||
+    if (_cardNumberController.text.length < 16 ||
         _cardHolderController.text.isEmpty ||
-        _expiryController.text.isEmpty ||
-        _cvvController.text.isEmpty) {
+        _expiryController.text.length < 5 ||
+        _cvvController.text.length < 3) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.pleaseFillAllFields)),
+        SnackBar(content: Text(l10n.pleaseEnterDetails)),
       );
       return;
     }
@@ -328,10 +328,10 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
     if (widget.initialCardType == "visa") title = l10n.visaDetails;
     if (widget.initialCardType == "mastercard") title = l10n.mastercardDetails;
 
-    bool isFormValid = _cardNumberController.text.isNotEmpty &&
+    bool isFormValid = _cardNumberController.text.replaceAll(' ', '').length == 16 &&
                        _cardHolderController.text.isNotEmpty &&
-                       _expiryController.text.isNotEmpty &&
-                       _cvvController.text.isNotEmpty;
+                       _expiryController.text.length == 5 &&
+                       _cvvController.text.length == 3;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -358,23 +358,44 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                 color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
                 borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
               ),
-              padding: EdgeInsets.only(bottom: 20 * scale),
+              padding: EdgeInsets.only(bottom: 25 * scale, left: 20 * scale, right: 20 * scale),
               child: Center(
                 child: MaxWidthBox(
                   maxWidth: 800,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20 * scale),
-                    child: Row(
-                      children: [
-                        _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                        _buildStepLine(context, true, isHeader: true),
-                        _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
-                        _buildStepLine(context, true, isHeader: true),
-                        _buildStepIndicator(context, 3, l10n.stepPayment, true, false, isHeader: true),
-                        _buildStepLine(context, false, isHeader: true),
-                        _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
-                      ],
-                    ),
+                  child: Column(
+                    children: [
+                      // Amount & Source Display in Header
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 8 * scale),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12 * scale),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.credit_card_outlined, color: Colors.white70, size: 16 * scale),
+                            SizedBox(width: 8 * scale),
+                            Text(
+                              "${l10n.visaMastercard}: ${widget.currencyCode} ${widget.amount}",
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14 * scale),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20 * scale),
+                      Row(
+                        children: [
+                          _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
+                          _buildStepLine(context, true, isHeader: true),
+                          _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
+                          _buildStepLine(context, true, isHeader: true),
+                          _buildStepIndicator(context, 3, l10n.stepPayment, true, false, isHeader: true),
+                          _buildStepLine(context, false, isHeader: true),
+                          _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -393,8 +414,8 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                             padding: EdgeInsets.all(16 * scale),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.secondary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(12 * scale),
-                              border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.3)),
+                              borderRadius: BorderRadius.circular(24 * scale),
+                              border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.3), width: 1.5),
                             ),
                             child: Row(
                               children: [

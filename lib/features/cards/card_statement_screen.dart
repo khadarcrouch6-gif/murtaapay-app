@@ -3,9 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
-import '../../core/responsive_utils.dart';
-import '../../core/widgets/card_receipt_view.dart';
-import '../../l10n/app_localizations.dart';
+import '../../core/widgets/receipt_view.dart';
 import 'models/card_model.dart';
 
 class CardStatementScreen extends StatefulWidget {
@@ -160,7 +158,7 @@ class _CardStatementScreenState extends State<CardStatementScreen> {
   Widget _buildStatementItem(BuildContext context, AppState state, dynamic tx) {
     final theme = Theme.of(context);
     return InkWell(
-      onTap: () => CardReceiptView.show(context, tx.toJson()),
+      onTap: () => ReceiptView.show(context, tx.toJson()),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(

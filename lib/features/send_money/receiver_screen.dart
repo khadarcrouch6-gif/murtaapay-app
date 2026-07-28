@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,6 +13,7 @@ class ReceiverScreen extends StatefulWidget {
   final String amount;
   final String method;
   final String currencyCode;
+  final String senderSource;
   final String? prefilledName;
   final String? prefilledPhone;
 
@@ -20,6 +22,7 @@ class ReceiverScreen extends StatefulWidget {
     required this.amount, 
     required this.method, 
     required this.currencyCode,
+    required this.senderSource,
     this.prefilledName,
     this.prefilledPhone,
   });
@@ -39,7 +42,6 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
   String _selectedCountryCode = "+252";
   String _selectedFlag = "🇸🇴";
   String? _detectedProvider;
-  String _selectedBank = "IBS Bank";
   String? _selectedPurpose;
   bool _isVerifying = false;
   bool _isFavorite = false;
@@ -108,22 +110,14 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
   String? _getValidationError(AppLocalizations l10n) {
     if (_idController.text.isEmpty) return null;
 
-    if (widget.method == "Bank Transfer") {
-      // Return null to allow any length for bank accounts as requested
-      return null;
-    } else {
-      final phone = _idController.text.replaceAll(' ', '');
-      if (phone.length < 7) return l10n.phoneLengthError;
-      return null;
-    }
+    final phone = _idController.text.replaceAll(' ', '');
+    if (phone.length < 7) return l10n.phoneLengthError;
+    return null;
   }
 
   void _verifyReceiver() async {
     final rawId = _idController.text.replaceAll(' ', '');
-    // For Bank Transfer, we might need a different length check for auto-verification
-    // but the user wants it flexible. Let's trigger verification if length >= 5 for banks
-    final minLength = widget.method == "Bank Transfer" ? 5 : 7;
-    if (rawId.length < minLength) return;
+    if (rawId.length < 7) return;
     
     setState(() => _isVerifying = true);
     
@@ -276,10 +270,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
 
   void _handleContinue(AppLocalizations l10n) {
     HapticFeedback.mediumImpact();
-    String bankInfo = _selectedBank == "Add Bank" ? _bankNameController.text : _selectedBank;
-    String finalMethod = widget.method == "Bank Transfer" 
-        ? "${widget.method} ($bankInfo)" 
-        : (_detectedProvider ?? widget.method);
+    String finalMethod = _detectedProvider ?? widget.method;
     
     Navigator.push(
       context,
@@ -289,6 +280,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
           receiverName: _nameController.text,
           receiverPhone: "$_selectedCountryCode ${_idController.text}",
           payoutMethod: finalMethod,
+          paymentMethod: widget.senderSource,
           currencyCode: widget.currencyCode,
           purpose: _selectedPurpose ?? _getPurposes(l10n).first,
         ),
@@ -354,11 +346,11 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.account_balance_wallet_outlined, color: Colors.white70, size: 16),
+                                Icon(widget.senderSource == "Main Wallet" ? Icons.account_balance_wallet_outlined : Icons.credit_card_outlined, color: Colors.white70, size: 16),
                                 const SizedBox(width: 8),
                                 Text(
-                                  "${widget.currencyCode} ${widget.amount}",
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16),
+                                  "${widget.senderSource}: ${widget.currencyCode} ${widget.amount}",
+                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
                                 ),
                               ],
                             ),
@@ -390,29 +382,9 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 16),
-                        if (widget.method == "Bank Transfer") ...[
-                          Text(l10n.selectBank, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                          const SizedBox(height: 12),
-                          RepaintBoundary(child: _buildBankDropdown(theme, l10n)),
-
-                          if (_selectedBank == "Add Bank") ...[
-                            const SizedBox(height: 20),
-                            Text(l10n.bankName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                            const SizedBox(height: 12),
-                            _buildTextField(
-                              controller: _bankNameController,
-                              focusNode: _bankNameFocus,
-                              hint: l10n.enterBankName,
-                              icon: Icons.account_balance_rounded,
-                              type: TextInputType.text,
-                              theme: theme,
-                            ),
-                          ],
-                          const SizedBox(height: 20),
-                        ],
                         
                         Text(
-                          widget.method == "Bank Transfer" ? l10n.accountNumber : l10n.enterReceiverPhone,
+                          l10n.enterReceiverPhone,
                           style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
                         ),
                         const SizedBox(height: 12),
@@ -420,18 +392,18 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                         _buildTextField(
                           controller: _idController,
                           focusNode: _idFocus,
-                          hint: widget.method == "Bank Transfer" ? l10n.accountNumber : "XXX XXX XXX",
-                          icon: widget.method == "Bank Transfer" ? Icons.account_balance_wallet_rounded : Icons.phone_android_rounded,
-                          type: widget.method == "Bank Transfer" ? TextInputType.text : TextInputType.number,
+                          hint: "XXX XXX XXX",
+                          icon: Icons.phone_android_rounded,
+                          type: TextInputType.number,
                           theme: theme,
                           errorText: _getValidationError(l10n),
                           suffixWidget: _isVerifying 
                             ? const Padding(padding: EdgeInsets.all(12), child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.grey)))
-                            : (widget.method == "Bank Transfer" ? null : IconButton(
+                            : IconButton(
                                 icon: Icon(Icons.contact_phone_rounded, color: theme.colorScheme.secondary),
                                 onPressed: _pickContact,
-                              )),
-                          prefixWidget: widget.method == "Bank Transfer" ? null : InkWell(
+                              ),
+                          prefixWidget: InkWell(
                             onTap: _showCountryPicker,
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -448,12 +420,6 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                             ),
                           ),
                           onChanged: (val) {
-                            if (widget.method == "Bank Transfer") {
-                               if (val.length >= 8) _verifyReceiver();
-                               setState(() {});
-                               return;
-                            }
-
                             final rawVal = val.replaceAll(' ', '');
                             _idController.value = TextEditingValue(
                               text: _applyMask(rawVal),
@@ -463,7 +429,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                             if (rawVal.length >= 7) {
                               _verifyReceiver();
                             }
-                            if (widget.method != "Bank Transfer" && _selectedCountryCode == "+252" && rawVal.length >= 2) {
+                            if (_selectedCountryCode == "+252" && rawVal.length >= 2) {
                               if (rawVal.startsWith('61')) {
                                 _detectedProvider = l10n.evcPlus;
                               } else if (rawVal.startsWith('65')) {
@@ -481,7 +447,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                             setState(() {});
                           },
                         ),
-                        if (widget.method != "Bank Transfer" && _detectedProvider != null)
+                        if (_detectedProvider != null)
                           Padding(
                             padding: const EdgeInsets.only(top: 8, left: 16),
                             child: Row(
@@ -496,11 +462,64 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                             ),
                           ),
 
+                        if (_nameController.text.isNotEmpty || _isVerifying) ...[
+                          const SizedBox(height: 24),
+                          FadeInDown(
+                            duration: const Duration(milliseconds: 400),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: _isVerifying ? Colors.grey[100] : theme.colorScheme.secondary.withValues(alpha: 0.05),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: _isVerifying ? Colors.grey[300]! : theme.colorScheme.secondary.withValues(alpha: 0.2)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: _isVerifying ? Colors.grey[300] : theme.colorScheme.secondary.withValues(alpha: 0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      _isVerifying ? Icons.sync : Icons.verified_user_rounded,
+                                      color: _isVerifying ? Colors.grey[600] : theme.colorScheme.secondary,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          _isVerifying ? l10n.searching : l10n.verifiedReceiverLabel,
+                                          style: TextStyle(
+                                            color: _isVerifying ? Colors.grey[600] : theme.colorScheme.secondary,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 12,
+                                            letterSpacing: 1,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          _isVerifying ? l10n.checkingName : _nameController.text,
+                                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(l10n.receiver, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                            Text(l10n.fullName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
                             if (_nameController.text.isNotEmpty)
                               IconButton(
                                 icon: Icon(_isFavorite ? Icons.star_rounded : Icons.star_outline_rounded, 
@@ -513,7 +532,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                         _buildTextField(
                           controller: _nameController,
                           focusNode: _nameFocus,
-                          hint: l10n.receiver,
+                          hint: l10n.fullName,
                           icon: Icons.person_rounded,
                           type: TextInputType.name,
                           theme: theme,
@@ -538,7 +557,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
-                            onPressed: (_idController.text.isNotEmpty && _nameController.text.isNotEmpty && (widget.method != "Bank Transfer" || (_selectedBank != "Add Bank" || _bankNameController.text.isNotEmpty)) && (widget.method == "Bank Transfer" || _idController.text.length >= 7))
+                            onPressed: (_idController.text.isNotEmpty && _nameController.text.isNotEmpty && _idController.text.length >= 7)
                                 ? () => _handleContinue(l10n) : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.secondary,
@@ -563,78 +582,6 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildBankDropdown(ThemeData theme, AppLocalizations l10n) {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
-          width: 2,
-        ),
-      ),
-      child: DropdownButtonFormField<String>(
-        initialValue: _selectedBank,
-        dropdownColor: theme.colorScheme.surface,
-        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w900, fontSize: 16),
-        decoration: InputDecoration(
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Image.asset(
-                _banks.firstWhere((b) => b["name"] == _selectedBank, orElse: () => _banks.first)["image"]!,
-                width: 24,
-                height: 24,
-                errorBuilder: (context, error, stackTrace) => Icon(Icons.account_balance_rounded, color: theme.colorScheme.secondary),
-              ),
-            ),
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        ),
-        icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.secondary),
-        items: [
-          ..._banks.map((bank) => DropdownMenuItem(
-            value: bank["name"],
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Image.asset(bank["image"]!, width: 24, height: 24, errorBuilder: (c, e, s) => const Icon(Icons.account_balance, size: 20)),
-                ),
-                const SizedBox(width: 12),
-                Text(bank["name"]!),
-              ],
-            ),
-          )),
-          DropdownMenuItem(
-            value: "Add Bank",
-            child: Row(
-              children: [
-                const Icon(Icons.add_circle_outline, size: 20),
-                const SizedBox(width: 12),
-                Text(l10n.addBank),
-              ],
-            ),
-          ),
-        ],
-        onChanged: (value) {
-          if (value != null) {
-            setState(() {
-              _selectedBank = value;
-              _idController.clear();
-              _nameController.clear();
-              _bankNameController.clear();
-              _isVerifying = false;
-              _detectedProvider = null;
-            });
-          }
-        },
       ),
     );
   }

@@ -241,11 +241,12 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
                       if (idController.text.isNotEmpty && amountController.text.isNotEmpty) {
                         final accountId = idController.text;
                         final amount = amountController.text;
-                        Navigator.pop(context);
                         
-                        final pinSuccess = await _showSecurityPinDialog(this.context);
+                        final pinSuccess = await _showSecurityPinDialog(context);
                         if (pinSuccess) {
-                          _processTransaction(this.context, l10nKey, amount, accountId);
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
+                          _processTransaction(context, l10nKey, amount, accountId);
                         }
                       }
                     },
