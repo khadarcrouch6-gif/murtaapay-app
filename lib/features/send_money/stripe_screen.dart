@@ -135,7 +135,7 @@ class _StripeScreenState extends State<StripeScreen> {
             ),
             buttonText: l10n.backToHome,
             onPressed: () {
-              Navigator.of(context).popUntil((route) => route.settings.name == 'SendAmountScreen' || route.isFirst);
+              Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
         ),

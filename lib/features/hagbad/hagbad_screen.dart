@@ -1264,26 +1264,6 @@ class _HagbadScreenState extends State<HagbadScreen> {
       ),
     );
   }
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
-              ElevatedButton(
-                onPressed: () async {
-                  final pinSuccess = await _showSecurityPinDialog(context);
-                  if (!pinSuccess || !context.mounted) return;
-
-                  final amount = double.tryParse(controller.text) ?? 1.0;
-                  final member = group.members[index];
-                  final updatedMember = member.copyWith(
-                    penaltyAmount: member.penaltyAmount + amount
-                  );
-                  Provider.of<AppState>(context, listen: false).updateHagbadMember(group.id, index, updatedMember);
-                  if (context.mounted) Navigator.pop(context);
-                },
-                child: Text(l10n.confirm),
-              ),
-        ],
-      ),
-    );
-  }
 
   void _showQoriTuur(HagbadGroup group) {
     final l10n = AppLocalizations.of(context)!;
@@ -1299,8 +1279,8 @@ class _HagbadScreenState extends State<HagbadScreen> {
       barrierDismissible: false,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Text(l10n.qoriTuur, textAlign: TextAlign.center),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
+          title: Text(l10n.qoriTuur, textAlign: TextAlign.center, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -1309,16 +1289,16 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   Column(
                     children: [
                       SizedBox(
-                        height: 150,
-                        width: 150,
+                        height: 150 * context.fontSizeFactor,
+                        width: 150 * context.fontSizeFactor,
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            const SizedBox(
-                              height: 150,
-                              width: 150,
+                            SizedBox(
+                              height: 150 * context.fontSizeFactor,
+                              width: 150 * context.fontSizeFactor,
                               child: CircularProgressIndicator(
-                                strokeWidth: 10, 
+                                strokeWidth: 10 * context.fontSizeFactor, 
                                 color: AppColors.primary,
                                 backgroundColor: AppColors.accentTeal,
                               ),
@@ -1327,46 +1307,46 @@ class _HagbadScreenState extends State<HagbadScreen> {
                               duration: const Duration(milliseconds: 100),
                               child: CircleAvatar(
                                 key: ValueKey<String>(currentName ?? ""),
-                                radius: 50,
+                                radius: 50 * context.fontSizeFactor,
                                 backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                                 child: Text(
                                   currentName?[0] ?? "?",
-                                  style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: AppColors.primary),
+                                  style: TextStyle(fontSize: 40 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.primary),
                                 ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24 * context.fontSizeFactor),
                       Text(
                         currentName ?? "Selecting...", 
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
                       ),
-                      const SizedBox(height: 8),
-                      const Text("Randomizing turns...", style: TextStyle(color: AppColors.grey)),
+                      SizedBox(height: 8 * context.fontSizeFactor),
+                      Text("Randomizing turns...", style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
                     ],
                   )
                 else
                   Column(
                     children: [
-                      AdaptiveIcon(FontAwesomeIcons.dice, size: 60, color: AppColors.accentTeal),
-                      const SizedBox(height: 16),
+                      AdaptiveIcon(FontAwesomeIcons.dice, size: 60 * context.fontSizeFactor, color: AppColors.accentTeal),
+                      SizedBox(height: 16 * context.fontSizeFactor),
                       Text(
                         l10n.qoriTuurDesc,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 14),
+                        style: TextStyle(fontSize: 14 * context.fontSizeFactor),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16 * context.fontSizeFactor),
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: EdgeInsets.all(12 * context.fontSizeFactor),
                         decoration: BoxDecoration(
                           color: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                         ),
                         child: Text(
                           "Participants: ${remainingMembers.length}",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
                         ),
                       ),
                     ],
@@ -1376,7 +1356,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
           ),
           actions: [
             if (!isSpinning)
-              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
             if (!isSpinning)
               ElevatedButton(
                 onPressed: () async {
@@ -1409,7 +1389,10 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     );
                   }
                 },
-                child: Text(l10n.randomize),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
+                ),
+                child: Text(l10n.randomize, style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
               ),
           ],
         ),
@@ -1434,41 +1417,43 @@ class _HagbadScreenState extends State<HagbadScreen> {
               height: MediaQuery.of(context).size.height * 0.85,
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20 * context.fontSizeFactor)),
               ),
               child: Column(
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(top: 8),
-                    width: 40,
-                    height: 4,
+                    margin: EdgeInsets.only(top: 8 * context.fontSizeFactor),
+                    width: 40 * context.fontSizeFactor,
+                    height: 4 * context.fontSizeFactor,
                     decoration: BoxDecoration(
                       color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2),
+                      borderRadius: BorderRadius.circular(2 * context.fontSizeFactor),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(16.0 * context.fontSizeFactor),
                     child: Text(
                       l10n.inviteToGroup(group.name),
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: EdgeInsets.symmetric(horizontal: 16.0 * context.fontSizeFactor),
                     child: Row(
                       children: [
                         Expanded(
                           child: TextField(
                             controller: searchController,
+                            style: TextStyle(fontSize: 14 * context.fontSizeFactor),
                             decoration: InputDecoration(
                               hintText: l10n.enterWalletOrPhoneHint,
+                              hintStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
                               border: const OutlineInputBorder(),
-                              suffixIcon: isSearching ? const SizedBox(width: 20, height: 20, child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(strokeWidth: 2))) : null,
+                              suffixIcon: isSearching ? SizedBox(width: 20 * context.fontSizeFactor, height: 20 * context.fontSizeFactor, child: Padding(padding: EdgeInsets.all(10 * context.fontSizeFactor), child: CircularProgressIndicator(strokeWidth: 2))) : null,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8 * context.fontSizeFactor),
                         IconButton.filled(
                           onPressed: isSearching ? null : () async {
                             final id = searchController.text.trim();
@@ -1499,11 +1484,12 @@ class _HagbadScreenState extends State<HagbadScreen> {
                                     final confirmed = await showDialog<bool>(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                        title: const Text("Add Late Member"),
-                                        content: Text("Since the group is in cycle ${group.currentCycle}, the new member must pay \$${catchUpAmount.toStringAsFixed(2)} to catch up with previous contributions. Add them now?"),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
+                                        title: Text("Add Late Member", style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                                        content: Text("Since the group is in cycle ${group.currentCycle}, the new member must pay \$${catchUpAmount.toStringAsFixed(2)} to catch up with previous contributions. Add them now?", style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
                                         actions: [
-                                          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
-                                          ElevatedButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.confirm)),
+                                          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
+                                          ElevatedButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.confirm, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
                                         ],
                                       ),
                                     );
@@ -1550,12 +1536,12 @@ class _HagbadScreenState extends State<HagbadScreen> {
                               }
                             }
                           },
-                          icon: const Icon(Icons.person_add),
+                          icon: Icon(Icons.person_add, size: 20 * context.fontSizeFactor),
                         ),
                       ],
                     ),
                   ),
-                  const Divider(height: 32),
+                  Divider(height: 32 * context.fontSizeFactor),
                 ],
               ),
             ),
@@ -1576,37 +1562,37 @@ class _HagbadScreenState extends State<HagbadScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           scrollable: true,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text(l10n.guarantorDetails),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
+          title: Text(l10n.guarantorDetails, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.requireGuarantor, style: const TextStyle(fontSize: 13, color: AppColors.grey)),
-              const SizedBox(height: 16),
+              Text(l10n.requireGuarantor, style: TextStyle(fontSize: 13 * context.fontSizeFactor, color: AppColors.grey)),
+              SizedBox(height: 16 * context.fontSizeFactor),
               if (member.guarantorName != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(12 * context.fontSizeFactor),
                   decoration: BoxDecoration(
                     color: Colors.green.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                     border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.check_circle, color: Colors.green, size: 20),
-                      const SizedBox(width: 12),
+                      Icon(Icons.check_circle, color: Colors.green, size: 20 * context.fontSizeFactor),
+                      SizedBox(width: 12 * context.fontSizeFactor),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(member.guarantorName!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                            if (member.guarantorId != null) Text(member.guarantorId!, style: const TextStyle(fontSize: 12)),
+                            Text(member.guarantorName!, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                            if (member.guarantorId != null) Text(member.guarantorId!, style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
                           ],
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, size: 18),
+                        icon: Icon(Icons.close, size: 18 * context.fontSizeFactor),
                         onPressed: () {
                           final updatedMember = member.copyWith(
                             guarantorName: null,
@@ -1620,21 +1606,23 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16 * context.fontSizeFactor),
               ],
               Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: searchController,
+                      style: TextStyle(fontSize: 14 * context.fontSizeFactor),
                       decoration: InputDecoration(
                         hintText: l10n.guarantorIdLabel,
+                        hintStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
                         border: const OutlineInputBorder(),
-                        suffixIcon: isSearching ? const SizedBox(width: 20, height: 20, child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(strokeWidth: 2))) : null,
+                        suffixIcon: isSearching ? SizedBox(width: 20 * context.fontSizeFactor, height: 20 * context.fontSizeFactor, child: Padding(padding: EdgeInsets.all(10 * context.fontSizeFactor), child: CircularProgressIndicator(strokeWidth: 2))) : null,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8 * context.fontSizeFactor),
                   IconButton.filled(
                     onPressed: isSearching ? null : () async {
                       final id = searchController.text.trim();
@@ -1675,11 +1663,11 @@ class _HagbadScreenState extends State<HagbadScreen> {
                         if (context.mounted) setDialogState(() => isSearching = false);
                       }
                     },
-                    icon: const Icon(Icons.search),
+                    icon: Icon(Icons.search, size: 20 * context.fontSizeFactor),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16 * context.fontSizeFactor),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
@@ -1697,13 +1685,16 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   appState.logHagbadEvent(group.id, "Admin (${group.adminName}) vouched for ${member.name}");
                   if (context.mounted) Navigator.pop(context);
                 },
-                  child: const Text("Skip (Admin Accepted)"),
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
+                  ),
+                  child: Text("Skip (Admin Accepted)", style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
                 ),
               ),
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
           ],
         ),
       ),
@@ -1715,10 +1706,11 @@ class _HagbadScreenState extends State<HagbadScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.deleteGroup),
-        content: Text(l10n.deleteGroupConfirm),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
+        title: Text(l10n.deleteGroup, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+        content: Text(l10n.deleteGroupConfirm, style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
           TextButton(
             onPressed: () async {
               final success = await _showSecurityPinDialog(context);
@@ -1727,7 +1719,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 Navigator.pop(context);
               }
             },
-            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+            child: Text(l10n.delete, style: TextStyle(color: Colors.red, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -1739,10 +1731,11 @@ class _HagbadScreenState extends State<HagbadScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.removeMember),
-        content: Text(l10n.removeMemberConfirm(member.name)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
+        title: Text(l10n.removeMember, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+        content: Text(l10n.removeMemberConfirm(member.name), style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
           TextButton(
             onPressed: () async {
               final success = await _showSecurityPinDialog(context);
@@ -1751,7 +1744,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 Navigator.pop(context);
               }
             },
-            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+            child: Text(l10n.delete, style: TextStyle(color: Colors.red, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -1775,11 +1768,12 @@ class _HagbadScreenState extends State<HagbadScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           scrollable: true,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
           title: Row(
             children: [
-              const Icon(Icons.admin_panel_settings, color: Colors.blue),
-              const SizedBox(width: 8),
-              Text(l10n.edit),
+              Icon(Icons.admin_panel_settings, color: Colors.blue, size: 24 * context.fontSizeFactor),
+              SizedBox(width: 8 * context.fontSizeFactor),
+              Text(l10n.edit, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
             ],
           ),
           content: SingleChildScrollView(
@@ -1787,70 +1781,78 @@ class _HagbadScreenState extends State<HagbadScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.personalDetails.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
-                const SizedBox(height: 8),
+                Text(l10n.personalDetails.toUpperCase(), style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.grey)),
+                SizedBox(height: 8 * context.fontSizeFactor),
                 TextField(
                   controller: nameController,
+                  style: TextStyle(fontSize: 14 * context.fontSizeFactor),
                   decoration: InputDecoration(
                     labelText: l10n.fullName,
-                    prefixIcon: const Icon(Icons.person),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    labelStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
+                    prefixIcon: Icon(Icons.person, size: 20 * context.fontSizeFactor),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16 * context.fontSizeFactor),
                 TextField(
                   controller: walletIdController,
+                  style: TextStyle(fontSize: 14 * context.fontSizeFactor),
                   decoration: InputDecoration(
                     labelText: "Wallet ID / Phone",
-                    prefixIcon: const Icon(Icons.account_balance_wallet),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    labelStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
+                    prefixIcon: Icon(Icons.account_balance_wallet, size: 20 * context.fontSizeFactor),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                   ),
                 ),
-                const SizedBox(height: 24),
-                const Text("TRUST & STATUS", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+                SizedBox(height: 24 * context.fontSizeFactor),
+                Text("TRUST & STATUS", style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.grey)),
                 SwitchListTile(
-                  title: Text(l10n.trustedMember),
-                  subtitle: const Text("Admin vouching for this member"),
+                  title: Text(l10n.trustedMember, style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
+                  subtitle: Text("Admin vouching for this member", style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
                   value: isTrusted,
                   onChanged: (val) => setDialogState(() => isTrusted = val),
                   contentPadding: EdgeInsets.zero,
                 ),
                 SwitchListTile(
-                  title: const Text("Confirmed Participation"),
-                  subtitle: const Text("Member has accepted invitation"),
+                  title: Text("Confirmed Participation", style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
+                  subtitle: Text("Member has accepted invitation", style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
                   value: isConfirmed,
                   onChanged: (val) => setDialogState(() => isConfirmed = val),
                   contentPadding: EdgeInsets.zero,
                 ),
                 SwitchListTile(
-                  title: const Text("Payout Completed"),
-                  subtitle: const Text("Manually override payout status"),
+                  title: Text("Payout Completed", style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
+                  subtitle: Text("Manually override payout status", style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
                   value: hasReceived,
                   onChanged: (val) => setDialogState(() => hasReceived = val),
                   contentPadding: EdgeInsets.zero,
                 ),
-                const SizedBox(height: 24),
-                const Text("GUARANTOR (HAG-DOR)", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
-                const SizedBox(height: 8),
+                SizedBox(height: 24 * context.fontSizeFactor),
+                Text("GUARANTOR (HAG-DOR)", style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.grey)),
+                SizedBox(height: 8 * context.fontSizeFactor),
                 TextField(
                   controller: guarantorNameController,
+                  style: TextStyle(fontSize: 14 * context.fontSizeFactor),
                   decoration: InputDecoration(
                     labelText: "Guarantor Name",
-                    prefixIcon: const Icon(Icons.security),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    labelStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
+                    prefixIcon: Icon(Icons.security, size: 20 * context.fontSizeFactor),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16 * context.fontSizeFactor),
                 TextField(
                   controller: guarantorIdController,
+                  style: TextStyle(fontSize: 14 * context.fontSizeFactor),
                   decoration: InputDecoration(
                     labelText: "Guarantor Wallet ID",
-                    prefixIcon: const Icon(Icons.vpn_key),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    labelStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
+                    prefixIcon: Icon(Icons.vpn_key, size: 20 * context.fontSizeFactor),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                   ),
                 ),
                 SwitchListTile(
-                  title: const Text("Guarantor Confirmed"),
+                  title: Text("Guarantor Confirmed", style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
                   value: isGuarantorConfirmed,
                   onChanged: (val) => setDialogState(() => isGuarantorConfirmed = val),
                   contentPadding: EdgeInsets.zero,
@@ -1859,7 +1861,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
             ElevatedButton(
               onPressed: () async {
                 // PIN verification before sensitive administrative actions
@@ -1892,7 +1894,10 @@ class _HagbadScreenState extends State<HagbadScreen> {
 
                 if (context.mounted) Navigator.pop(context);
               },
-              child: Text(l10n.saveChanges),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
+              ),
+              child: Text(l10n.saveChanges, style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
             ),
           ],
         ),
@@ -1908,20 +1913,21 @@ class _HagbadScreenState extends State<HagbadScreen> {
       context: context,
       builder: (context) => AlertDialog(
         scrollable: false,
-        title: Text(l10n.swapTurn),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
+        title: Text(l10n.swapTurn, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Select a member to swap turns with ${member.name}.", style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-            const SizedBox(height: 16),
+            Text("Select a member to swap turns with ${member.name}.", style: TextStyle(color: Colors.grey[600], fontSize: 13 * context.fontSizeFactor)),
+            SizedBox(height: 16 * context.fontSizeFactor),
             SizedBox(
               width: double.maxFinite,
-              height: 300,
+              height: 300 * context.fontSizeFactor,
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: group.members.length,
-                separatorBuilder: (context, i) => i == index ? const SizedBox.shrink() : const Divider(height: 1),
+                separatorBuilder: (context, i) => i == index ? const SizedBox.shrink() : Divider(height: 1 * context.fontSizeFactor),
                 itemBuilder: (context, i) {
                   if (i == index) return const SizedBox.shrink();
                   final otherMember = group.members[i];
@@ -1929,12 +1935,13 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     contentPadding: EdgeInsets.zero,
                     dense: true,
                     leading: CircleAvatar(
+                      radius: 18 * context.fontSizeFactor,
                       backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                      child: Text(otherMember.avatar, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
+                      child: Text(otherMember.avatar, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
                     ),
-                    title: Text(otherMember.name, style: const TextStyle(fontWeight: FontWeight.w500)),
-                    subtitle: Text("Current: ${_getTurnLabel(group.frequency, otherMember.payoutOrder, l10n)}"),
-                    trailing: const Icon(Icons.swap_horiz, color: Colors.blue),
+                    title: Text(otherMember.name, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor)),
+                    subtitle: Text("Current: ${_getTurnLabel(group.frequency, otherMember.payoutOrder, l10n)}", style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
+                    trailing: Icon(Icons.swap_horiz, color: Colors.blue, size: 20 * context.fontSizeFactor),
                     onTap: () async {
                       // PIN verification before sensitive administrative actions
                       final success = await _showSecurityPinDialog(context);
@@ -1950,7 +1957,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
         ],
       ),
     );
@@ -1975,31 +1982,31 @@ class _HagbadScreenState extends State<HagbadScreen> {
       context: context,
       builder: (context) => AlertDialog(
         scrollable: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(l10n.enterSecurityPin, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
+        title: Text(l10n.enterSecurityPin, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(l10n.enterTransactionPin, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.grey, fontSize: 14)),
-            const SizedBox(height: 20),
+            Text(l10n.enterTransactionPin, textAlign: TextAlign.center, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+            SizedBox(height: 20 * context.fontSizeFactor),
             TextField(
               controller: pinController,
               keyboardType: TextInputType.number,
               obscureText: true,
               maxLength: 4,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 10),
+              style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 10 * context.fontSizeFactor),
               decoration: InputDecoration(
                 counterText: "",
                 filled: true,
                 fillColor: Colors.grey.withValues(alpha: 0.1),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor), borderSide: BorderSide.none),
               ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
           TextButton(
             onPressed: () {
               if (state.verifyPin(pinController.text)) {
@@ -2012,7 +2019,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 }
               }
             },
-            child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
+            child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor)),
           ),
         ],
       ),

@@ -560,5 +560,7 @@
   "wallet": "المحفظة",
   "searching": "جاري البحث...",
   "verifiedReceiver": "مستلم موثق",
-  "checkingName": "جاري التحقق من الاسم..."
+  "checkingName": "جاري التحقق من الاسم...",
+  "sourceOfFunds": "مصدر الأموال",
+  "securedBySSL": "مؤمن بواسطة تشفير Murtaax SSL"
 }

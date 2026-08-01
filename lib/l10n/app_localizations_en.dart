@@ -22,6 +22,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseEnterValidAmount => 'Please enter a valid amount';
 
   @override
+  String get apply => 'Apply';
+
+  @override
   String get facebook => 'Facebook';
 
   @override
@@ -784,6 +787,198 @@ class AppLocalizationsEn extends AppLocalizations {
   String cardEndingIn(String lastFour) {
     return 'Card ending in $lastFour';
   }
+
+  @override
+  String get verifyOwnership => 'Verify Ownership';
+
+  @override
+  String enterPinForCard(String lastFour) {
+    return 'Enter PIN for card ending in $lastFour';
+  }
+
+  @override
+  String get incorrectPin => 'Incorrect PIN';
+
+  @override
+  String get pleaseUnlockCard => 'Please unlock card';
+
+  @override
+  String get noTransactionsForCard => 'No transactions found for this card.';
+
+  @override
+  String get cardStatement => 'Card Statement';
+
+  @override
+  String get viewCardHistory => 'View your card transaction history';
+
+  @override
+  String get updateCardPin => 'Update your card security PIN';
+
+  @override
+  String get subscriptionManager => 'Subscription Manager';
+
+  @override
+  String get manageSubscriptions =>
+      'Manage linked subscriptions & recurring payments';
+
+  @override
+  String get spendingLimit => 'Spending Limit';
+
+  @override
+  String get whyTerminateCard => 'Why are you terminating the card?';
+
+  @override
+  String get shareReasonImprove =>
+      'Please share your reason with us to help us improve.';
+
+  @override
+  String get reasonLostStolen => 'I lost my card or it was stolen';
+
+  @override
+  String get reasonBetterService => 'I found a better service';
+
+  @override
+  String get reasonNotUsed => 'I don\'t use this card anymore';
+
+  @override
+  String get reasonHighFees => 'The service fees are too high';
+
+  @override
+  String get reasonSecurityConcerns => 'I have security concerns';
+
+  @override
+  String get reasonTechnicalIssues => 'I experienced technical issues';
+
+  @override
+  String get reasonOther => 'Other reason';
+
+  @override
+  String get selectActionType => 'Select Action Type';
+
+  @override
+  String get deactivateCardTemp => 'Deactivate Card (Temporary)';
+
+  @override
+  String get deactivateCardDesc =>
+      'This is temporary. Your card will be frozen, and you cannot use it until you reactivate it. Your balance stays on the card.';
+
+  @override
+  String get terminatePermanently => 'Terminate Permanently';
+
+  @override
+  String terminatePermanentlyDesc(String amount) {
+    return 'This is permanent. Your card will be deleted, and the card balance of $amount will be refunded to your wallet.';
+  }
+
+  @override
+  String get confirmTermination => 'Confirm Termination';
+
+  @override
+  String get confirmTerminationDesc =>
+      'Are you sure you want to permanently terminate this card? Any remaining balance will be refunded to your wallet. This action cannot be undone.';
+
+  @override
+  String get yesTerminate => 'Yes, Terminate';
+
+  @override
+  String get enterCurrentPin => 'Enter Current PIN';
+
+  @override
+  String get enterCardPin => 'Enter Card PIN';
+
+  @override
+  String get enterCurrentPinDesc =>
+      'Please enter your current PIN to change it.';
+
+  @override
+  String get enterPinConfirmAction =>
+      'Please enter your PIN to confirm this action.';
+
+  @override
+  String get setNewPin => 'Set New PIN';
+
+  @override
+  String get enterNew4DigitPin => 'Please enter a new 4-digit PIN.';
+
+  @override
+  String get setUniquePinDesc => 'Set a unique PIN for your virtual card.';
+
+  @override
+  String get currentPinError =>
+      'This is the current PIN. Please choose a new PIN.';
+
+  @override
+  String get confirmPin => 'Confirm PIN';
+
+  @override
+  String get reEnterNewPin => 'Please re-enter the new PIN to confirm.';
+
+  @override
+  String get pinChangedSuccessfully => 'PIN changed successfully!';
+
+  @override
+  String get pinCreatedSuccessfully => 'PIN created successfully!';
+
+  @override
+  String get pleaseConfirmNewPin => 'Please confirm new PIN';
+
+  @override
+  String get refundCardTerminated => 'Refund: Card Terminated';
+
+  @override
+  String get cardTerminatedPermanently =>
+      'Your card has been permanently terminated.';
+
+  @override
+  String refundSuccessMessage(String amount) {
+    return 'The card balance of $amount has been successfully transferred to your wallet.';
+  }
+
+  @override
+  String get cardDeactivated => 'Card Deactivated';
+
+  @override
+  String get cardDeactivatedSuccess =>
+      'Your card has been successfully deactivated.';
+
+  @override
+  String usedToday(String amount) {
+    return 'You\'ve used $amount today';
+  }
+
+  @override
+  String get cardLimitReached => 'Card Limit Reached';
+
+  @override
+  String get cardLimitReachedDesc =>
+      'You can only have a maximum of 2 virtual cards at a time. Please terminate an existing card to order a new one.';
+
+  @override
+  String get understood => 'Understood';
+
+  @override
+  String get linkedServices => 'Services linked to this card';
+
+  @override
+  String get noLinkedSubscriptions => 'No subscriptions linked to this card';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get maxTwoCardsError =>
+      'You cannot create more than two virtual cards.';
+
+  @override
+  String insufficientBalanceFee(String fee) {
+    return 'Error: Insufficient balance ($fee fee).';
+  }
+
+  @override
+  String get cardCreated => 'Card Created';
+
+  @override
+  String get newCardReady => 'Your new virtual card is now ready.';
 
   @override
   String get withdrawMoney => 'Withdraw Money';
@@ -1594,9 +1789,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmNewPin => 'Confirm New PIN';
 
   @override
-  String get pleaseConfirmNewPin => 'Please confirm new PIN';
-
-  @override
   String get pinsDoNotMatch => 'PINs do not match';
 
   @override
@@ -1720,9 +1912,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tenDays => '10 Days';
-
-  @override
-  String get monthly => 'Monthly';
 
   @override
   String get yearly => 'Yearly';
@@ -2615,4 +2804,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verifyingAccount => 'Verifying account...';
+
+  @override
+  String get personalPayment => 'Personal Payment';
+
+  @override
+  String get merchantPayment => 'Merchant Payment';
+
+  @override
+  String get tillNumber => 'Till Number';
+
+  @override
+  String get merchantId => 'Merchant ID';
+
+  @override
+  String get enterMerchantTill => 'Enter Merchant Till Number';
+
+  @override
+  String get invalidTill => 'Invalid Till Number';
+
+  @override
+  String get merchantResolved => 'Merchant Verified';
 }

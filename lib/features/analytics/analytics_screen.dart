@@ -39,12 +39,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
           appBar: AppBar(
-            title: Text(state.translate("Analytics", "Taxliilka", ar: "التحليلات", de: "Analysen")),
+            title: Text(state.translate("Analytics", "Taxliilka", ar: "التحليلات", de: "Analysen"), style: TextStyle(fontSize: (theme.appBarTheme.titleTextStyle?.fontSize ?? 20) * context.fontSizeFactor)),
             backgroundColor: Colors.transparent,
             elevation: 0,
             actions: [
               IconButton(
-                icon: const Icon(Icons.calendar_month_rounded),
+                icon: Icon(Icons.calendar_month_rounded, size: 24 * context.fontSizeFactor),
                 onPressed: () => _showPeriodSelector(context, state),
               ),
             ],
@@ -62,13 +62,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildTotalSpendingCard(theme, state),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   _buildCategoryDistribution(theme, state),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   _buildTrendChart(theme, state),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   _buildTopCategoriesList(theme, state),
-                  const SizedBox(height: 100),
+                  SizedBox(height: 100 * context.fontSizeFactor),
                 ],
               ),
             ),
@@ -81,18 +81,18 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   void _showPeriodSelector(BuildContext context, AppState state) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20 * context.fontSizeFactor))),
       builder: (context) {
         return Container(
-          padding: const EdgeInsets.symmetric(vertical: 24),
+          padding: EdgeInsets.symmetric(vertical: 24 * context.fontSizeFactor),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 state.translate("Select Period", "Xulo Muddada"),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16 * context.fontSizeFactor),
               _periodItem(context, 'Weekly', state.translate("Weekly", "Todobaadle")),
               _periodItem(context, 'Monthly', state.translate("Monthly", "Bille")),
               _periodItem(context, 'Yearly', state.translate("Yearly", "Sanadle")),
@@ -105,8 +105,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   Widget _periodItem(BuildContext context, String value, String label) {
     return ListTile(
-      title: Text(label),
-      trailing: _selectedPeriod == value ? const Icon(Icons.check_circle, color: AppColors.accentTeal) : null,
+      title: Text(label, style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
+      trailing: _selectedPeriod == value ? Icon(Icons.check_circle, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor) : null,
       onTap: () {
         setState(() => _selectedPeriod = value);
         Navigator.pop(context);
@@ -133,15 +133,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return FadeInDown(
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24 * context.fontSizeFactor),
         decoration: BoxDecoration(
           gradient: AppColors.primaryGradient,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(28 * context.fontSizeFactor),
           boxShadow: [
             BoxShadow(
               color: AppColors.primaryDark.withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+              blurRadius: 20 * context.fontSizeFactor,
+              offset: Offset(0, 10 * context.fontSizeFactor),
             )
           ],
         ),
@@ -150,31 +150,31 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           children: [
             Text(
               "${state.translate("Total Spent", "Wixii baxay")} $periodLabel",
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14 * context.fontSizeFactor),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8 * context.fontSizeFactor),
             ShimmerLoading(
               isLoading: _isLoading,
               child: Text(
                 NumberFormat.simpleCurrency(name: state.currencyCode).format(spending),
-                style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.bold),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16 * context.fontSizeFactor),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.analytics_outlined, color: AppColors.accentTeal, size: 16),
-                  const SizedBox(width: 4),
+                  Icon(Icons.analytics_outlined, color: AppColors.accentTeal, size: 16 * context.fontSizeFactor),
+                  SizedBox(width: 4 * context.fontSizeFactor),
                   Text(
                     state.translate("Insights ready", "Taxliilka waa diyaar"),
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                    style: TextStyle(color: Colors.white, fontSize: 12 * context.fontSizeFactor),
                   ),
                 ],
               ),
@@ -202,24 +202,24 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return FadeInUp(
       delay: const Duration(milliseconds: 200),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24 * context.fontSizeFactor),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(28 * context.fontSizeFactor),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               state.translate("Spending by Category", "Qaybaha Lacagtu u Baxday"),
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) * context.fontSizeFactor),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32 * context.fontSizeFactor),
             if (sortedCategories.isEmpty)
-              const SizedBox(height: 200, child: Center(child: Text("No data for this period")))
+              SizedBox(height: 200 * context.fontSizeFactor, child: Center(child: Text("No data for this period", style: TextStyle(fontSize: 14 * context.fontSizeFactor))))
             else
               SizedBox(
-                height: 200,
+                height: 200 * context.fontSizeFactor,
                 child: Stack(
                   children: [
                     PieChart(
@@ -238,9 +238,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           },
                         ),
                         borderData: FlBorderData(show: false),
-                        sectionsSpace: 4,
-                        centerSpaceRadius: 60,
-                        sections: _isLoading ? _buildDefaultSections() : _buildRealSections(sortedCategories),
+                        sectionsSpace: 4 * context.fontSizeFactor,
+                        centerSpaceRadius: 60 * context.fontSizeFactor,
+                        sections: _isLoading ? _buildDefaultSections(context) : _buildRealSections(context, sortedCategories),
                       ),
                     ),
                     Center(
@@ -249,11 +249,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         children: [
                           Text(
                             _isLoading ? "--" : "${sortedCategories.length}",
-                            style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+                            style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.headlineMedium?.fontSize ?? 28) * context.fontSizeFactor),
                           ),
                           Text(
                             state.translate("Categories", "Qaybaha"),
-                            style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey),
+                            style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey, fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) * context.fontSizeFactor),
                           ),
                         ],
                       ),
@@ -267,18 +267,18 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  List<PieChartSectionData> _buildDefaultSections() {
+  List<PieChartSectionData> _buildDefaultSections(BuildContext context) {
     return List.generate(1, (i) {
-      return PieChartSectionData(color: Colors.grey.withValues(alpha: 0.1), value: 100, radius: 25, showTitle: false);
+      return PieChartSectionData(color: Colors.grey.withValues(alpha: 0.1), value: 100, radius: 25 * context.fontSizeFactor, showTitle: false);
     });
   }
 
-  List<PieChartSectionData> _buildRealSections(List<MapEntry<String, double>> categories) {
+  List<PieChartSectionData> _buildRealSections(BuildContext context, List<MapEntry<String, double>> categories) {
     final colors = [Colors.blue, Colors.orange, AppColors.accentTeal, Colors.purple, Colors.red, Colors.green];
     
     return List.generate(categories.length.clamp(0, 6), (i) {
       final isTouched = i == _touchedIndex;
-      final radius = isTouched ? 35.0 : 25.0;
+      final radius = (isTouched ? 35.0 : 25.0) * context.fontSizeFactor;
       return PieChartSectionData(
         color: colors[i % colors.length],
         value: categories[i].value,
@@ -292,10 +292,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return FadeInUp(
       delay: const Duration(milliseconds: 400),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24 * context.fontSizeFactor),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(28 * context.fontSizeFactor),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,14 +304,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               _selectedPeriod == 'Yearly' 
                 ? state.translate("Monthly Trend", "Isbeddelka Billaha")
                 : state.translate("Daily Trend", "Isbeddelka Maalmaha"),
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) * context.fontSizeFactor),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32 * context.fontSizeFactor),
             SizedBox(
-              height: 180,
+              height: 180 * context.fontSizeFactor,
               child: BarChart(
                 BarChartData(
-                  barGroups: _isLoading ? _buildDefaultBars() : _buildTrendBars(state),
+                  barGroups: _isLoading ? _buildDefaultBars(context) : _buildTrendBars(context, state),
                   borderData: FlBorderData(show: false),
                   gridData: const FlGridData(show: false),
                   titlesData: FlTitlesData(
@@ -325,15 +325,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                              int idx = value.toInt() ~/ 2;
                              if (value.toInt() % 2 != 0 || idx >= labels.length) return const SizedBox();
                              return Padding(
-                               padding: const EdgeInsets.only(top: 8),
-                               child: Text(labels[idx], style: const TextStyle(color: Colors.grey, fontSize: 10)),
+                               padding: EdgeInsets.only(top: 8 * context.fontSizeFactor),
+                               child: Text(labels[idx], style: TextStyle(color: Colors.grey, fontSize: 10 * context.fontSizeFactor)),
                              );
                           } else {
                             const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                             if (value.toInt() < 0 || value.toInt() >= labels.length) return const SizedBox();
                             return Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(labels[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 10)),
+                              padding: EdgeInsets.only(top: 8 * context.fontSizeFactor),
+                              child: Text(labels[value.toInt()], style: TextStyle(color: Colors.grey, fontSize: 10 * context.fontSizeFactor)),
                             );
                           }
                         },
@@ -352,13 +352,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  List<BarChartGroupData> _buildDefaultBars() {
+  List<BarChartGroupData> _buildDefaultBars(BuildContext context) {
     return List.generate(7, (i) {
-      return BarChartGroupData(x: i, barRods: [BarChartRodData(toY: 10, color: Colors.grey.withValues(alpha: 0.1), width: 12, borderRadius: BorderRadius.circular(4))]);
+      return BarChartGroupData(x: i, barRods: [BarChartRodData(toY: 10, color: Colors.grey.withValues(alpha: 0.1), width: 12 * context.fontSizeFactor, borderRadius: BorderRadius.circular(4 * context.fontSizeFactor))]);
     });
   }
 
-  List<BarChartGroupData> _buildTrendBars(AppState state) {
+  List<BarChartGroupData> _buildTrendBars(BuildContext context, AppState state) {
     final now = DateTime.now();
     if (_selectedPeriod == 'Yearly') {
       final List<double> monthlyTotals = List.filled(12, 0.0);
@@ -372,8 +372,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             BarChartRodData(
               toY: monthlyTotals[i] > 0 ? monthlyTotals[i] : 2,
               gradient: i == now.month - 1 ? AppColors.accentGradient : LinearGradient(colors: [Colors.grey.withValues(alpha: 0.2), Colors.grey.withValues(alpha: 0.3)]),
-              width: 10,
-              borderRadius: BorderRadius.circular(4),
+              width: 10 * context.fontSizeFactor,
+              borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
             )
           ],
         );
@@ -394,8 +394,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             BarChartRodData(
               toY: dailyTotals[i] > 0 ? dailyTotals[i] : 2,
               gradient: i == 6 ? AppColors.accentGradient : LinearGradient(colors: [Colors.grey.withValues(alpha: 0.2), Colors.grey.withValues(alpha: 0.3)]),
-              width: 16,
-              borderRadius: BorderRadius.circular(4),
+              width: 16 * context.fontSizeFactor,
+              borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
             )
           ],
         );
@@ -426,13 +426,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         children: [
           Text(
             state.translate("Top Categories", "Qaybaha ugu sarreeya"),
-            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) * context.fontSizeFactor),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * context.fontSizeFactor),
           if (sortedCategories.isEmpty)
-             const Center(child: Padding(
-               padding: EdgeInsets.all(20.0),
-               child: Text("No transactions recorded yet"),
+             Center(child: Padding(
+               padding: EdgeInsets.all(20.0 * context.fontSizeFactor),
+               child: Text("No transactions recorded yet", style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
              ))
           else
             ...sortedCategories.take(5).map((entry) {
@@ -457,40 +457,40 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   Widget _buildCategoryItem(BuildContext context, String title, String amount, Color color, dynamic icon, double percentage) {
     final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
+      padding: EdgeInsets.all(16 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(12 * context.fontSizeFactor),
             decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: AdaptiveIcon(icon, color: color, size: 18),
+            child: AdaptiveIcon(icon, color: color, size: 18 * context.fontSizeFactor),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16 * context.fontSizeFactor),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
+                Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                SizedBox(height: 4 * context.fontSizeFactor),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
                   child: LinearProgressIndicator(
                     value: percentage,
                     backgroundColor: Colors.grey.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(color),
-                    minHeight: 4,
+                    minHeight: 4 * context.fontSizeFactor,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 16),
-          Text(amount, style: const TextStyle(fontWeight: FontWeight.bold)),
+          SizedBox(width: 16 * context.fontSizeFactor),
+          Text(amount, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
         ],
       ),
     );

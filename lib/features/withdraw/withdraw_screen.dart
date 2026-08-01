@@ -156,7 +156,10 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 4 * context.fontSizeFactor),
                               child: Text(
-                                "Limit: \$10.00 - \$2,500.00",
+                                l10n.withdrawalLimitRange(
+                                  NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 2).format(10.00),
+                                  NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 2).format(2500.00),
+                                ),
                                 style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.6),
                                   fontSize: 12 * context.fontSizeFactor,
@@ -430,7 +433,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                state.translate("Fadlan geli PIN-kaaga 4-ta god ah si aad u xaqiijiso.", "Please enter your 4-digit PIN to confirm."),
+                l10n.enterSecurityPin,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
               ),
@@ -483,7 +486,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                           HapticFeedback.vibrate();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(state.translate("waa khalad", "Incorrect PIN.")),
+                              content: Text(l10n.invalidPin),
                               backgroundColor: Colors.red,
                             ),
                           );

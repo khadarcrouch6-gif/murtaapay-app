@@ -128,6 +128,12 @@ abstract class AppLocalizations {
   /// **'Please enter a valid amount'**
   String get pleaseEnterValidAmount;
 
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
   /// No description provided for @facebook.
   ///
   /// In en, this message translates to:
@@ -1603,6 +1609,348 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Card ending in {lastFour}'**
   String cardEndingIn(String lastFour);
+
+  /// No description provided for @verifyOwnership.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Ownership'**
+  String get verifyOwnership;
+
+  /// No description provided for @enterPinForCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter PIN for card ending in {lastFour}'**
+  String enterPinForCard(String lastFour);
+
+  /// No description provided for @incorrectPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect PIN'**
+  String get incorrectPin;
+
+  /// No description provided for @pleaseUnlockCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Please unlock card'**
+  String get pleaseUnlockCard;
+
+  /// No description provided for @noTransactionsForCard.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions found for this card.'**
+  String get noTransactionsForCard;
+
+  /// No description provided for @cardStatement.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Statement'**
+  String get cardStatement;
+
+  /// No description provided for @viewCardHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'View your card transaction history'**
+  String get viewCardHistory;
+
+  /// No description provided for @updateCardPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your card security PIN'**
+  String get updateCardPin;
+
+  /// No description provided for @subscriptionManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Manager'**
+  String get subscriptionManager;
+
+  /// No description provided for @manageSubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage linked subscriptions & recurring payments'**
+  String get manageSubscriptions;
+
+  /// No description provided for @spendingLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending Limit'**
+  String get spendingLimit;
+
+  /// No description provided for @whyTerminateCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Why are you terminating the card?'**
+  String get whyTerminateCard;
+
+  /// No description provided for @shareReasonImprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Please share your reason with us to help us improve.'**
+  String get shareReasonImprove;
+
+  /// No description provided for @reasonLostStolen.
+  ///
+  /// In en, this message translates to:
+  /// **'I lost my card or it was stolen'**
+  String get reasonLostStolen;
+
+  /// No description provided for @reasonBetterService.
+  ///
+  /// In en, this message translates to:
+  /// **'I found a better service'**
+  String get reasonBetterService;
+
+  /// No description provided for @reasonNotUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'I don\'t use this card anymore'**
+  String get reasonNotUsed;
+
+  /// No description provided for @reasonHighFees.
+  ///
+  /// In en, this message translates to:
+  /// **'The service fees are too high'**
+  String get reasonHighFees;
+
+  /// No description provided for @reasonSecurityConcerns.
+  ///
+  /// In en, this message translates to:
+  /// **'I have security concerns'**
+  String get reasonSecurityConcerns;
+
+  /// No description provided for @reasonTechnicalIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'I experienced technical issues'**
+  String get reasonTechnicalIssues;
+
+  /// No description provided for @reasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other reason'**
+  String get reasonOther;
+
+  /// No description provided for @selectActionType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Action Type'**
+  String get selectActionType;
+
+  /// No description provided for @deactivateCardTemp.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate Card (Temporary)'**
+  String get deactivateCardTemp;
+
+  /// No description provided for @deactivateCardDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This is temporary. Your card will be frozen, and you cannot use it until you reactivate it. Your balance stays on the card.'**
+  String get deactivateCardDesc;
+
+  /// No description provided for @terminatePermanently.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminate Permanently'**
+  String get terminatePermanently;
+
+  /// No description provided for @terminatePermanentlyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This is permanent. Your card will be deleted, and the card balance of {amount} will be refunded to your wallet.'**
+  String terminatePermanentlyDesc(String amount);
+
+  /// No description provided for @confirmTermination.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Termination'**
+  String get confirmTermination;
+
+  /// No description provided for @confirmTerminationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to permanently terminate this card? Any remaining balance will be refunded to your wallet. This action cannot be undone.'**
+  String get confirmTerminationDesc;
+
+  /// No description provided for @yesTerminate.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Terminate'**
+  String get yesTerminate;
+
+  /// No description provided for @enterCurrentPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Current PIN'**
+  String get enterCurrentPin;
+
+  /// No description provided for @enterCardPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Card PIN'**
+  String get enterCardPin;
+
+  /// No description provided for @enterCurrentPinDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your current PIN to change it.'**
+  String get enterCurrentPinDesc;
+
+  /// No description provided for @enterPinConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your PIN to confirm this action.'**
+  String get enterPinConfirmAction;
+
+  /// No description provided for @setNewPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Set New PIN'**
+  String get setNewPin;
+
+  /// No description provided for @enterNew4DigitPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a new 4-digit PIN.'**
+  String get enterNew4DigitPin;
+
+  /// No description provided for @setUniquePinDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a unique PIN for your virtual card.'**
+  String get setUniquePinDesc;
+
+  /// No description provided for @currentPinError.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the current PIN. Please choose a new PIN.'**
+  String get currentPinError;
+
+  /// No description provided for @confirmPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm PIN'**
+  String get confirmPin;
+
+  /// No description provided for @reEnterNewPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Please re-enter the new PIN to confirm.'**
+  String get reEnterNewPin;
+
+  /// No description provided for @pinChangedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN changed successfully!'**
+  String get pinChangedSuccessfully;
+
+  /// No description provided for @pinCreatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN created successfully!'**
+  String get pinCreatedSuccessfully;
+
+  /// No description provided for @pleaseConfirmNewPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm new PIN'**
+  String get pleaseConfirmNewPin;
+
+  /// No description provided for @refundCardTerminated.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund: Card Terminated'**
+  String get refundCardTerminated;
+
+  /// No description provided for @cardTerminatedPermanently.
+  ///
+  /// In en, this message translates to:
+  /// **'Your card has been permanently terminated.'**
+  String get cardTerminatedPermanently;
+
+  /// No description provided for @refundSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The card balance of {amount} has been successfully transferred to your wallet.'**
+  String refundSuccessMessage(String amount);
+
+  /// No description provided for @cardDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Deactivated'**
+  String get cardDeactivated;
+
+  /// No description provided for @cardDeactivatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your card has been successfully deactivated.'**
+  String get cardDeactivatedSuccess;
+
+  /// No description provided for @usedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used {amount} today'**
+  String usedToday(String amount);
+
+  /// No description provided for @cardLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Limit Reached'**
+  String get cardLimitReached;
+
+  /// No description provided for @cardLimitReachedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You can only have a maximum of 2 virtual cards at a time. Please terminate an existing card to order a new one.'**
+  String get cardLimitReachedDesc;
+
+  /// No description provided for @understood.
+  ///
+  /// In en, this message translates to:
+  /// **'Understood'**
+  String get understood;
+
+  /// No description provided for @linkedServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services linked to this card'**
+  String get linkedServices;
+
+  /// No description provided for @noLinkedSubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscriptions linked to this card'**
+  String get noLinkedSubscriptions;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
+  /// No description provided for @maxTwoCardsError.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot create more than two virtual cards.'**
+  String get maxTwoCardsError;
+
+  /// No description provided for @insufficientBalanceFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: Insufficient balance ({fee} fee).'**
+  String insufficientBalanceFee(String fee);
+
+  /// No description provided for @cardCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Created'**
+  String get cardCreated;
+
+  /// No description provided for @newCardReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Your new virtual card is now ready.'**
+  String get newCardReady;
 
   /// No description provided for @withdrawMoney.
   ///
@@ -3146,12 +3494,6 @@ abstract class AppLocalizations {
   /// **'Confirm New PIN'**
   String get confirmNewPin;
 
-  /// No description provided for @pleaseConfirmNewPin.
-  ///
-  /// In en, this message translates to:
-  /// **'Please confirm new PIN'**
-  String get pleaseConfirmNewPin;
-
   /// No description provided for @pinsDoNotMatch.
   ///
   /// In en, this message translates to:
@@ -3391,12 +3733,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'10 Days'**
   String get tenDays;
-
-  /// No description provided for @monthly.
-  ///
-  /// In en, this message translates to:
-  /// **'Monthly'**
-  String get monthly;
 
   /// No description provided for @yearly.
   ///
@@ -5005,6 +5341,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verifying account...'**
   String get verifyingAccount;
+
+  /// No description provided for @personalPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Payment'**
+  String get personalPayment;
+
+  /// No description provided for @merchantPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Merchant Payment'**
+  String get merchantPayment;
+
+  /// No description provided for @tillNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Till Number'**
+  String get tillNumber;
+
+  /// No description provided for @merchantId.
+  ///
+  /// In en, this message translates to:
+  /// **'Merchant ID'**
+  String get merchantId;
+
+  /// No description provided for @enterMerchantTill.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Merchant Till Number'**
+  String get enterMerchantTill;
+
+  /// No description provided for @invalidTill.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Till Number'**
+  String get invalidTill;
+
+  /// No description provided for @merchantResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Merchant Verified'**
+  String get merchantResolved;
 }
 
 class _AppLocalizationsDelegate

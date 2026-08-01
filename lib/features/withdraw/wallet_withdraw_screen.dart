@@ -109,7 +109,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
         backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: Icon(
-            Directionality.of(context) == TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+            Directionality.of(context) == ui.TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
             color: theme.colorScheme.primary,
           ),
           onPressed: () => Navigator.pop(context),
@@ -365,7 +365,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                 Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor)
                               else
                                 Icon(
-                                  Directionality.of(context) == TextDirection.rtl ? Icons.arrow_back_ios_rounded : Icons.arrow_forward_ios_rounded, 
+                                  Directionality.of(context) == ui.TextDirection.rtl ? Icons.arrow_back_ios_rounded : Icons.arrow_forward_ios_rounded,
                                   size: 16 * context.fontSizeFactor, 
                                   color: AppColors.grey.withValues(alpha: 0.4)
                                 ),
@@ -587,10 +587,10 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
           ),
           SizedBox(height: 16 * context.fontSizeFactor),
           if (_selectedProvider == l10n.otherBank) ...[
-            _withdrawInputField(context, l10n.bankName, Icons.account_balance_outlined, _field3Controller, hint: "Enter bank name"),
+            _withdrawInputField(context, l10n.bankName, Icons.account_balance_outlined, _field3Controller, hint: l10n.enterBankName),
             SizedBox(height: 16 * context.fontSizeFactor),
           ],
-          _withdrawInputField(context, l10n.accountNumber, Icons.numbers, _field1Controller, isNumber: true, hint: "123456789"),
+          _withdrawInputField(context, l10n.accountNumber, Icons.numbers, _field1Controller, isNumber: true, hint: l10n.enterAccountNumber),
           SizedBox(height: 16 * context.fontSizeFactor),
           _withdrawInputField(context, l10n.accountName, Icons.person, _field2Controller, hint: l10n.fullName),
           SizedBox(height: 16 * context.fontSizeFactor),
@@ -821,7 +821,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
             _processWithdrawal(this.context, l10n, state);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.translate("Incorrect PIN.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red),
+              SnackBar(content: Text(l10n.incorrectPin), backgroundColor: Colors.red),
             );
           }
         },
@@ -896,9 +896,9 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
       
       String errorMsg = l10n.transactionFailedMessage;
       if (e.toString().contains('daily_limit_exceeded')) {
-        errorMsg = state.translate("Daily transaction limit exceeded.", "Xadiga xawaaladda maalinlaha ah waa laga gudbay.");
+        errorMsg = l10n.dailyLimitExceeded(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.dailyLimit));
       } else if (e.toString().contains('monthly_limit_exceeded')) {
-        errorMsg = state.translate("Monthly transaction limit exceeded.", "Xadiga xawaaladda bishii waa laga gudbay.");
+        errorMsg = l10n.monthlyLimitExceeded(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.monthlyLimit));
       } else if (e.toString().contains('insufficient_funds')) {
         errorMsg = l10n.insufficientBalance;
       }

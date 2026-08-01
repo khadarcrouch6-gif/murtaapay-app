@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import '../app_colors.dart';
 import '../responsive_utils.dart';
 import '../../l10n/app_localizations.dart';

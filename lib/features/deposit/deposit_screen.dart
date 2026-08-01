@@ -765,7 +765,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 Text(currentProvider ?? provider, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor)),
               ],
             ),
-            child: Column(
+            content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

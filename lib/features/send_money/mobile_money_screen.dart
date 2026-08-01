@@ -35,9 +35,12 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
   String? _selectedProvider;
   String? _resolvedAccountName;
   bool _isVerifying = false;
+  bool _isMerchantMode = false;
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _merchantController = TextEditingController();
   final TextEditingController _pinController = TextEditingController();
   final FocusNode _phoneFocus = FocusNode();
+  final FocusNode _merchantFocus = FocusNode();
   final FocusNode _pinFocus = FocusNode();
 
   final List<Map<String, dynamic>> _providers = [
@@ -50,14 +53,17 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
   @override
   void dispose() {
     _phoneController.dispose();
+    _merchantController.dispose();
     _pinController.dispose();
     _phoneFocus.dispose();
+    _merchantFocus.dispose();
     _pinFocus.dispose();
     super.dispose();
   }
 
   void _handleContinue() {
-    if (_selectedProvider == null || _phoneController.text.isEmpty) return;
+    final identifier = _isMerchantMode ? _merchantController.text : _phoneController.text;
+    if (_selectedProvider == null || identifier.isEmpty) return;
     
     HapticFeedback.mediumImpact();
     Navigator.push(
@@ -65,10 +71,10 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
       MaterialPageRoute(
         builder: (context) => ReviewScreen(
           amount: widget.amount,
-          receiverName: widget.receiverName,
-          receiverPhone: widget.receiverPhone,
+          receiverName: _resolvedAccountName ?? (_isMerchantMode ? "Merchant" : widget.receiverName),
+          receiverPhone: _isMerchantMode ? identifier : widget.receiverPhone,
           method: widget.payoutMethod,
-          paymentMethod: "Mobile Money ($_selectedProvider - ${_phoneController.text})",
+          paymentMethod: "Mobile Money ($_selectedProvider - $identifier)",
           currencyCode: widget.currencyCode,
           purpose: widget.purpose,
         ),
@@ -80,16 +86,16 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
     if (_phoneController.text.isEmpty) return null;
     final val = _phoneController.text;
     if (_selectedProvider == l10n.evcPlus && !(val.startsWith('61') || val.startsWith('77'))) {
-      return "EVC Plus waa inay ku bilaabataa 61 ama 77";
+      return "${l10n.evcPlus} waa inay ku bilaabataa 61 ama 77";
     }
     if (_selectedProvider == l10n.edahab && !val.startsWith('65')) {
-      return "e-Dahab waa inay ku bilaabataa 65";
+      return "${l10n.edahab} waa inay ku bilaabataa 65";
     }
     if (_selectedProvider == l10n.zaad && !val.startsWith('63')) {
-      return "ZAAD waa inay ku bilaabataa 63";
+      return "${l10n.zaad} waa inay ku bilaabataa 63";
     }
     if (_selectedProvider == l10n.sahal && !val.startsWith('90')) {
-      return "Sahal waa inay ku bilaabataa 90";
+      return "${l10n.sahal} waa inay ku bilaabataa 90";
     }
     return null;
   }
@@ -202,7 +208,10 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                             return FadeInUp(
                               delay: Duration(milliseconds: index * 100),
                               child: GestureDetector(
-                                onTap: () => setState(() => _selectedProvider = provider["id"] as String),
+                                onTap: () {
+                                  setState(() => _selectedProvider = provider["id"] as String);
+                                  HapticFeedback.selectionClick();
+                                },
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 200),
                                   decoration: BoxDecoration(
@@ -232,53 +241,153 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                         ),
 
                         const SizedBox(height: 32),
-                        Text(l10n.phoneNumber, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                        
+                        // Payment Mode Toggle
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: theme.brightness == Brightness.dark ? Colors.grey[900] : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => setState(() {
+                                    _isMerchantMode = false;
+                                    _resolvedAccountName = null;
+                                  }),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    decoration: BoxDecoration(
+                                      color: !_isMerchantMode ? theme.colorScheme.secondary : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        l10n.personalPayment,
+                                        style: TextStyle(
+                                          color: !_isMerchantMode ? Colors.white : AppColors.grey,
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => setState(() {
+                                    _isMerchantMode = true;
+                                    _resolvedAccountName = null;
+                                  }),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    decoration: BoxDecoration(
+                                      color: _isMerchantMode ? theme.colorScheme.secondary : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        l10n.merchantPayment,
+                                        style: TextStyle(
+                                          color: _isMerchantMode ? Colors.white : AppColors.grey,
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 32),
+                        Text(
+                          _isMerchantMode ? l10n.tillNumber : l10n.phoneNumber,
+                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)
+                        ),
                         const SizedBox(height: 12),
                         
-                        _buildTextField(
-                          controller: _phoneController,
-                          focusNode: _phoneFocus,
-                          hint: "61xxxxxxx",
-                          icon: Icons.phone_android_rounded,
-                          theme: theme,
-                          prefix: "+252 ",
-                          maxLength: 9,
-                          errorText: prefixError,
-                          onChanged: (val) async {
-                            if (val.length >= 2) {
-                              if (val.startsWith('61') || val.startsWith('77')) {
-                                _selectedProvider = l10n.evcPlus;
-                              } else if (val.startsWith('65')) {
-                                _selectedProvider = l10n.edahab;
-                              } else if (val.startsWith('63')) {
-                                _selectedProvider = l10n.zaad;
-                              } else if (val.startsWith('90')) {
-                                _selectedProvider = l10n.sahal;
+                        if (!_isMerchantMode)
+                          _buildTextField(
+                            controller: _phoneController,
+                            focusNode: _phoneFocus,
+                            hint: "61xxxxxxx",
+                            icon: Icons.phone_android_rounded,
+                            theme: theme,
+                            prefix: "+252 ",
+                            maxLength: 9,
+                            errorText: prefixError,
+                            onChanged: (val) async {
+                              if (val.length >= 2) {
+                                if (val.startsWith('61') || val.startsWith('77')) {
+                                  _selectedProvider = l10n.evcPlus;
+                                } else if (val.startsWith('65')) {
+                                  _selectedProvider = l10n.edahab;
+                                } else if (val.startsWith('63')) {
+                                  _selectedProvider = l10n.zaad;
+                                } else if (val.startsWith('90')) {
+                                  _selectedProvider = l10n.sahal;
+                                }
                               }
-                            }
-                            
-                            if (val.length == 9 && _getPrefixError(l10n) == null) {
-                               setState(() {
-                                 _isVerifying = true;
-                                 _resolvedAccountName = null;
-                               });
-                               final name = await Provider.of<AppState>(context, listen: false).resolveAccountName(val, type: 'mobile');
-                               if (mounted) {
+                              
+                              if (val.length == 9 && _getPrefixError(l10n) == null) {
                                  setState(() {
-                                   _isVerifying = false;
-                                   _resolvedAccountName = name;
-                                   if (name != null) HapticFeedback.lightImpact();
+                                   _isVerifying = true;
+                                   _resolvedAccountName = null;
                                  });
-                               }
-                            } else {
-                              setState(() {
-                                _resolvedAccountName = null;
-                                _isVerifying = false;
-                              });
-                            }
-                            setState(() {});
-                          },
-                        ),
+                                 final name = await Provider.of<AppState>(context, listen: false).resolveAccountName(val, type: 'mobile');
+                                 if (mounted) {
+                                   setState(() {
+                                     _isVerifying = false;
+                                     _resolvedAccountName = name;
+                                     if (name != null) HapticFeedback.lightImpact();
+                                   });
+                                 }
+                              } else {
+                                setState(() {
+                                  _resolvedAccountName = null;
+                                  _isVerifying = false;
+                                });
+                              }
+                              setState(() {});
+                            },
+                          )
+                        else
+                          _buildTextField(
+                            controller: _merchantController,
+                            focusNode: _merchantFocus,
+                            hint: l10n.enterMerchantTill,
+                            icon: Icons.store_rounded,
+                            theme: theme,
+                            maxLength: 7,
+                            onChanged: (val) async {
+                              if (val.length >= 5) {
+                                 setState(() {
+                                   _isVerifying = true;
+                                   _resolvedAccountName = null;
+                                 });
+                                 final name = await Provider.of<AppState>(context, listen: false).resolveAccountName(val, type: 'merchant');
+                                 if (mounted) {
+                                   setState(() {
+                                     _isVerifying = false;
+                                     _resolvedAccountName = name;
+                                     if (name != null) HapticFeedback.lightImpact();
+                                   });
+                                 }
+                              } else {
+                                setState(() {
+                                  _resolvedAccountName = null;
+                                  _isVerifying = false;
+                                });
+                              }
+                              setState(() {});
+                            },
+                          ),
                         if (_isVerifying)
                           Padding(
                             padding: const EdgeInsets.only(top: 8, left: 16),
@@ -297,14 +406,17 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                             child: FadeIn(
                               child: Row(
                                 children: [
-                                  const Icon(Icons.check_circle, color: Colors.green, size: 14),
+                                  Icon(Icons.check_circle, color: Colors.green, size: 14),
                                   const SizedBox(width: 4),
-                                  Text(_resolvedAccountName!, style: const TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.bold)),
+                                  Text(
+                                    _isMerchantMode ? "${l10n.merchantResolved}: $_resolvedAccountName" : _resolvedAccountName!,
+                                    style: const TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.bold)
+                                  ),
                                 ],
                               ),
                             ),
                           ),
-                        if (_phoneController.text.isNotEmpty && _phoneController.text.length < 9)
+                        if (!_isMerchantMode && _phoneController.text.isNotEmpty && _phoneController.text.length < 9)
                           Padding(
                             padding: const EdgeInsets.only(top: 8, left: 16),
                             child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
@@ -316,7 +428,10 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
-                            onPressed: (_selectedProvider != null && _phoneController.text.length == 9 && prefixError == null) ? _handleContinue : null,
+                            onPressed: (_selectedProvider != null && 
+                              ((!_isMerchantMode && _phoneController.text.length == 9 && prefixError == null) ||
+                               (_isMerchantMode && _merchantController.text.length >= 5 && _resolvedAccountName != null))) 
+                              ? _handleContinue : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.secondary,
                               foregroundColor: Colors.white,

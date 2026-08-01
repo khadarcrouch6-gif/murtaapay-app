@@ -933,6 +933,11 @@ class AppState extends ChangeNotifier {
     '634987654': 'Ahmed Ismail Hersi', // ZAAD mock
     '615112233': 'Aisha Farah',
     '615445566': 'Omar Dheere',
+    // Merchant / Till Numbers
+    '889900': 'Somali Electronics Store',
+    '776655': 'Bakara Market Wholesale',
+    '554433': 'Murtaax Supermarket',
+    '221100': 'Hormuud Coffee Shop',
   };
 
   Map<String, String> get mockUsers => _mockUsers;
@@ -1780,6 +1785,13 @@ class AppState extends ChangeNotifier {
     if (type == 'mobile' && id.length == 9) {
       final List<String> mockNames = ["Farah Saney", "Hawa Abdi", "Bile Raage", "Ubax Cali"];
       return mockNames[int.parse(id.substring(id.length - 1)) % mockNames.length];
+    }
+
+    if (type == 'merchant' || (id.length >= 5 && id.length <= 7)) {
+       // Mock resolution for any 5-7 digit number if not in _mockUsers
+       if (_mockUsers.containsKey(id)) return _mockUsers[id];
+       final List<String> merchantNames = ["Global Trade Ltd", "Local Retailer", "Premium Services", "East Africa Hub"];
+       return merchantNames[int.parse(id.substring(id.length - 1)) % merchantNames.length];
     }
     
     return null;

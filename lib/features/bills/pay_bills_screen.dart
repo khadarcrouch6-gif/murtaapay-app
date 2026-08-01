@@ -402,15 +402,18 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
       'isNegative': true,
     };
 
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.paymentSuccessful,
           message: l10n.paymentSuccessMessage(amountStr, translatedCategory),
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
-          buttonText: l10n.backToBills,
+          buttonText: l10n.backToHome,
           transactionData: transactionData,
+          onPressed: () {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
         ),
       ),
     );

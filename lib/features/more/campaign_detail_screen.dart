@@ -60,7 +60,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
             ),
             leading: IconButton(
               icon: Icon(
-                Directionality.of(context) == TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+                Directionality.of(context) == ui.TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
                 color: Colors.white,
               ),
               onPressed: () => Navigator.pop(context),
@@ -401,7 +401,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                 Row(
                   children: [
                      if (currentStep > 0) IconButton(
-                       icon: Icon(Directionality.of(context) == TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded),
+                       icon: Icon(Directionality.of(context) == ui.TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded),
                        onPressed: () => setModalState(() => currentStep--),
                      ),
                      const Spacer(),

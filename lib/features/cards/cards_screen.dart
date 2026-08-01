@@ -213,15 +213,12 @@ class _CardsScreenState extends State<CardsScreen> {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          state.translate("Xaqiiji Lahaanshaha", "Verify Ownership"),
+                          l10n.verifyOwnership,
                           style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          state.translate(
-                            "Gali PIN-ka kaadhka kudhamaada ${targetCard.cardNumber.substring(targetCard.cardNumber.length - 4)}",
-                            "Enter PIN for card ending in ${targetCard.cardNumber.substring(targetCard.cardNumber.length - 4)}"
-                          ),
+                          l10n.enterPinForCard(targetCard.cardNumber.substring(targetCard.cardNumber.length - 4)),
                           textAlign: TextAlign.center,
                           style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
                         ),
@@ -254,7 +251,7 @@ class _CardsScreenState extends State<CardsScreen> {
                                 HapticFeedback.heavyImpact();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(state.translate("PIN-kaagu waa khalad", "Incorrect PIN")),
+                                    content: Text(l10n.incorrectPin),
                                     backgroundColor: Colors.redAccent,
                                     behavior: SnackBarBehavior.floating,
                                     margin: const EdgeInsets.all(20),
@@ -538,7 +535,7 @@ class _CardsScreenState extends State<CardsScreen> {
                             Icon(Icons.lock_outline_rounded, size: 40, color: Colors.grey.withValues(alpha: 0.5)),
                             const SizedBox(height: 16),
                             Text(
-                              state.translate("Fadlan furi kaadhka", "Please unlock card"),
+                              l10n.pleaseUnlockCard,
                               style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -554,7 +551,7 @@ class _CardsScreenState extends State<CardsScreen> {
                                 Icon(Icons.receipt_long_outlined, size: 48 * context.fontSizeFactor, color: Colors.grey.withValues(alpha: 0.2)),
                                 const SizedBox(height: 16),
                                 Text(
-                                  _isSearching ? l10n.noTransactionsFound : state.translate("Ma jiro wax macaamil ah oo kaadhkan loo helay.", "No transactions found for this card."), 
+                                  _isSearching ? l10n.noTransactionsFound : l10n.noTransactionsForCard,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)
                                 ),
@@ -730,8 +727,8 @@ class _CardsScreenState extends State<CardsScreen> {
                           isDark: isDark,
                           icon: Icons.receipt_long_rounded,
                           color: Colors.teal,
-                          title: state.translate("Bayaanka Kaadhka", "Card Statement"),
-                          subtitle: state.translate("Eeg taariikhda macaamilka kaadhkaaga", "View your card transaction history"),
+                          title: l10n.cardStatement,
+                          subtitle: l10n.viewCardHistory,
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: currentCard)));
                           },
@@ -741,8 +738,8 @@ class _CardsScreenState extends State<CardsScreen> {
                           isDark: isDark,
                           icon: Icons.lock_reset_rounded,
                           color: Colors.blueAccent,
-                          title: state.translate("Beddel PIN-ka", "Change PIN"),
-                          subtitle: state.translate("Cusboonaysii PIN-ka kaadhkaaga", "Update your card security PIN"),
+                          title: l10n.changePin,
+                          subtitle: l10n.updateCardPin,
                           onTap: () {
                             _showNewPinVerification(context, l10n, isTerminate: false, isChangePin: true);
                           },
@@ -770,8 +767,8 @@ class _CardsScreenState extends State<CardsScreen> {
                           isDark: isDark,
                           icon: Icons.subscriptions_rounded,
                           color: Colors.purple,
-                          title: state.translate("Maareeyaha Is-qorista", "Subscription Manager"),
-                          subtitle: state.translate("Xakamee adeegyada lacagta kaa goosta", "Manage linked subscriptions & recurring payments"),
+                          title: l10n.subscriptionManager,
+                          subtitle: l10n.manageSubscriptions,
                           onTap: () {
                             _showSubscriptionManager(context, state, currentCard);
                           },
@@ -810,7 +807,7 @@ class _CardsScreenState extends State<CardsScreen> {
                           },
                         ),
                         const SizedBox(height: 24),
-                        _buildSectionTitle(context, state.translate("Xadka Kharashka", "Spending Limit"), isDark),
+                        _buildSectionTitle(context, l10n.spendingLimit, isDark),
                         _buildSpendingLimitTile(context, state, currentCard, isDark),
                         const SizedBox(height: 32),
                         _buildSettingsTile(
@@ -846,12 +843,8 @@ class _CardsScreenState extends State<CardsScreen> {
       context: context,
       barrierDismissible: true,
       builder: (context) => PinEntryDialog(
-        title: state.translate("Card PIN", "Gali PIN-ka Kaadhka", ar: "رمز PIN للبطاقة"),
-        description: state.translate(
-          "Please enter the unique PIN for card ending in ${currentCard.cardNumber.substring(currentCard.cardNumber.length - 4)} to continue.",
-          "Fadlan gali PIN-ka u gaarka ah kaadhka ku dhamaanaya ${currentCard.cardNumber.substring(currentCard.cardNumber.length - 4)} si aad u sii wadato.",
-          ar: "يرجى إدخال رمز PIN الفريد للبطاقة التي تنتهي بـ ${currentCard.cardNumber.substring(currentCard.cardNumber.length - 4)} للمتابعة."
-        ),
+        title: l10n.cardPin,
+        description: l10n.enterPinForCard(currentCard.cardNumber.substring(currentCard.cardNumber.length - 4)),
         isCardPin: true,
         cardId: currentCard.id,
         onConfirm: (pin) {
@@ -859,7 +852,7 @@ class _CardsScreenState extends State<CardsScreen> {
             onResult(true);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.translate("Incorrect card PIN.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red),
+              SnackBar(content: Text(l10n.incorrectPin), backgroundColor: Colors.red),
             );
             onResult(false);
           }
@@ -871,13 +864,13 @@ class _CardsScreenState extends State<CardsScreen> {
   void _showTerminateReasons(BuildContext context, AppLocalizations l10n, AppState state) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final reasons = [
-      {"so": "Kaadhku waa iga lumay ama waa la iga xaday", "en": "I lost my card or it was stolen"},
-      {"so": "Waxaan helay adeeg ka fiican", "en": "I found a better service"},
-      {"so": "Ma isticmaalo hadda kaadhkan", "en": "I don't use this card anymore"},
-      {"so": "Lacagaha adeegga ayaa aad u sarreeya", "en": "The service fees are too high"},
-      {"so": "Waxaan qabaa walaac dhanka amniga ah", "en": "I have security concerns"},
-      {"so": "Dhibaato farsamo ayaan kala kulmay", "en": "I experienced technical issues"},
-      {"so": "Sabab kale", "en": "Other reason"},
+      {"label": l10n.reasonLostStolen},
+      {"label": l10n.reasonBetterService},
+      {"label": l10n.reasonNotUsed},
+      {"label": l10n.reasonHighFees},
+      {"label": l10n.reasonSecurityConcerns},
+      {"label": l10n.reasonTechnicalIssues},
+      {"label": l10n.reasonOther},
     ];
 
     showModalBottomSheet(
@@ -912,7 +905,7 @@ class _CardsScreenState extends State<CardsScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
-                state.translate("Maxaad u tirtiraysaa kaadhka?", "Why are you terminating the card?"),
+                l10n.whyTerminateCard,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20 * context.fontSizeFactor,
@@ -925,7 +918,7 @@ class _CardsScreenState extends State<CardsScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
-                state.translate("Fadlan nala wadaag sababta si aan adeegga u hagaajino.", "Please share your reason with us to help us improve."),
+                l10n.shareReasonImprove,
                 style: TextStyle(
                   fontSize: 13 * context.fontSizeFactor,
                   color: isDark ? Colors.white70 : AppColors.textSecondary,
@@ -961,7 +954,7 @@ class _CardsScreenState extends State<CardsScreen> {
                         child: Icon(Icons.help_outline_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
                       ),
                       title: Text(
-                        state.translate(reason["so"]!, reason["en"]!),
+                        reason["label"]!,
                         style: TextStyle(
                           fontSize: 14 * context.fontSizeFactor,
                           fontWeight: FontWeight.w500,
@@ -1031,7 +1024,7 @@ class _CardsScreenState extends State<CardsScreen> {
             Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
             const SizedBox(height: 24),
             Text(
-              state.translate("Dooro Nooca Action-ka", "Select Action Type"),
+              l10n.selectActionType,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20 * fSizeFactor,
@@ -1044,11 +1037,8 @@ class _CardsScreenState extends State<CardsScreen> {
               fontSizeFactor: fSizeFactor,
               icon: Icons.pause_circle_outline_rounded,
               color: Colors.orange,
-              title: state.translate("Demi Kaadhka (Temporary)", "Deactivate Card (Temporary)"),
-              description: state.translate(
-                "Tani waa muddo kooban. Kaadhkaaga waa la xidhi doonaa (Freeze), mana isticmaali kartid ilaa aad dib u furato. Lacagtaadu way ku dhex jiraysaa kaadhka.",
-                "This is temporary. Your card will be frozen, and you cannot use it until you reactivate it. Your balance stays on the card."
-              ),
+              title: l10n.deactivateCardTemp,
+              description: l10n.deactivateCardDesc,
               onTap: () {
                 Navigator.pop(sheetCtx);
                 Future.delayed(Duration.zero, () {
@@ -1065,11 +1055,8 @@ class _CardsScreenState extends State<CardsScreen> {
               fontSizeFactor: fSizeFactor,
               icon: Icons.delete_forever_rounded,
               color: Colors.redAccent,
-              title: state.translate("Tirtir Joogto ah (Permanent)", "Terminate Permanently"),
-              description: state.translate(
-                "Tani waa mid joogto ah. Kaadhkaaga waa la tirtiri doonaa, haraaga kaadhka oo ah \$${currentCard.balance.toStringAsFixed(2)} waxaa lagu celin doonaa Wallet-kaaga.",
-                "This is permanent. Your card will be deleted, and the card balance of \$${currentCard.balance.toStringAsFixed(2)} will be refunded to your wallet."
-              ),
+              title: l10n.terminatePermanently,
+              description: l10n.terminatePermanentlyDesc(currentCard.balance.toStringAsFixed(2)),
               onTap: () {
                 Navigator.pop(sheetCtx);
                 Future.delayed(Duration.zero, () {
@@ -1162,7 +1149,7 @@ class _CardsScreenState extends State<CardsScreen> {
           backgroundColor: isDark ? AppColors.primaryDark.withValues(alpha: 0.9) : Colors.white.withValues(alpha: 0.9),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
           title: Text(
-            state.translate("Xaqiijinta Tirtiridda", "Confirm Termination"),
+            l10n.confirmTermination,
             style: TextStyle(
               color: isDark ? Colors.white : AppColors.textPrimary,
               fontWeight: FontWeight.bold,
@@ -1170,10 +1157,7 @@ class _CardsScreenState extends State<CardsScreen> {
             ),
           ),
           content: Text(
-            state.translate(
-              "Ma hubtaa inaad rabto inaad si joogto ah u tirtirto kaadhkan? Haraaga ku jira waxaa lagu celin doonaa Wallet-kaaga. Tallaabadan dib looguma noqon karo.",
-              "Are you sure you want to permanently terminate this card? Any remaining balance will be refunded to your wallet. This action cannot be undone."
-            ),
+            l10n.confirmTerminationDesc,
             style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 14 * context.fontSizeFactor),
           ),
           actions: [
@@ -1191,14 +1175,7 @@ class _CardsScreenState extends State<CardsScreen> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                 padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
               ),
-              child: Text(state.translate("Haa, Tirtir", "Yes, Terminate"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
-            ),
-          ],
-              ),
-              child: Text(
-                state.translate("Haa, Tirtir", "Yes, Terminate"),
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
+              child: Text(l10n.yesTerminate, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
             ),
           ],
         ),
@@ -1249,15 +1226,15 @@ class _CardsScreenState extends State<CardsScreen> {
               SizedBox(height: 16 * fontSizeFactor),
               Text(
                 isChangePin 
-                  ? state.translate("Gali PIN-ka Hadda", "Enter Current PIN")
-                  : state.translate("Gali PIN-ka Kaadhka", "Enter Card PIN"),
+                  ? l10n.enterCurrentPin
+                  : l10n.enterCardPin,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
               ),
               SizedBox(height: 8 * fontSizeFactor),
               Text(
                 isChangePin 
-                  ? state.translate("Fadlan geli PIN-kaaga hadda si aad u beddesho.", "Please enter your current PIN to change it.")
-                  : state.translate("Fadlan geli PIN-kaaga si aad u xaqiijiso talaabadan.", "Please enter your PIN to confirm this action."),
+                  ? l10n.enterCurrentPinDesc
+                  : l10n.enterPinConfirmAction,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * fontSizeFactor),
               ),
@@ -1299,7 +1276,7 @@ class _CardsScreenState extends State<CardsScreen> {
                         HapticFeedback.vibrate();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(state.translate("PIN-ku waa khalad.", "Incorrect PIN.")),
+                            content: Text(l10n.incorrectPin),
                             backgroundColor: Colors.red,
                             behavior: SnackBarBehavior.floating,
                           ),

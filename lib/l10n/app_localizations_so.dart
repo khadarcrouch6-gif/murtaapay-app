@@ -22,6 +22,9 @@ class AppLocalizationsSo extends AppLocalizations {
   String get pleaseEnterValidAmount => 'Fadlan geli cadad sax ah';
 
   @override
+  String get apply => 'Codso';
+
+  @override
   String get facebook => 'Facebook';
 
   @override
@@ -786,6 +789,203 @@ class AppLocalizationsSo extends AppLocalizations {
   String cardEndingIn(String lastFour) {
     return 'Kaadhka ku dhammaada $lastFour';
   }
+
+  @override
+  String get verifyOwnership => 'Xaqiiji Lahaanshaha';
+
+  @override
+  String enterPinForCard(String lastFour) {
+    return 'Geli PIN-ka kaadhka ku dhammaada $lastFour';
+  }
+
+  @override
+  String get incorrectPin => 'PIN-kaagu waa khalad';
+
+  @override
+  String get pleaseUnlockCard => 'Fadlan fur kaadhka';
+
+  @override
+  String get noTransactionsForCard =>
+      'Wax dhaqdhaqaaq ah looma helin kaadhkan.';
+
+  @override
+  String get cardStatement => 'Warbixinta Kaadhka';
+
+  @override
+  String get viewCardHistory => 'Fiiri taariikhda dhaqdhaqaaqa kaadhkaaga';
+
+  @override
+  String get updateCardPin => 'Cusboonaysii PIN-ka amniga kaadhka';
+
+  @override
+  String get subscriptionManager => 'Maareeyaha Isdiiwaangelinta';
+
+  @override
+  String get manageSubscriptions =>
+      'Maaree isdiiwaangelinta iyo lacagaha joogtada ah';
+
+  @override
+  String get spendingLimit => 'Xadka Kharashka';
+
+  @override
+  String get whyTerminateCard => 'Maxaad u tirtiraysaa kaadhka?';
+
+  @override
+  String get shareReasonImprove =>
+      'Fadlan nala wadaag sababta si aan adeegga u horumarinno.';
+
+  @override
+  String get reasonLostStolen =>
+      'Kaadhkaygii baa iga lumay ama waa la iga xaday';
+
+  @override
+  String get reasonBetterService => 'Waxaan helay adeeg ka fiican';
+
+  @override
+  String get reasonNotUsed => 'Ma isticmaalo kaadhkan mar dambe';
+
+  @override
+  String get reasonHighFees => 'Kharashka adeegga ayaa aad u sarreeya';
+
+  @override
+  String get reasonSecurityConcerns => 'Waxaan qabaa walaac dhinaca amniga ah';
+
+  @override
+  String get reasonTechnicalIssues => 'Waxaan kala kulmay caqabado farsamo';
+
+  @override
+  String get reasonOther => 'Sabab kale';
+
+  @override
+  String get selectActionType => 'Dooro Nooca Waxqabadka';
+
+  @override
+  String get deactivateCardTemp => 'Dami Kaadhka (Kumeel-gaar)';
+
+  @override
+  String get deactivateCardDesc =>
+      'Tani waa kumeel-gaar. Kaadhkaaga waa la xirayaa, mana isticmaali kartid ilaa aad mar kale dhaqaajiso. Haraagaagu wuxuu ku sii jirayaa kaadhka.';
+
+  @override
+  String get terminatePermanently => 'Tirtir Weligaa';
+
+  @override
+  String terminatePermanentlyDesc(String amount) {
+    return 'Tani waa joogto. Kaadhkaaga waa la tirtiri doonaa, haraaga kaadhka ee dhan $amount waxaa lagu soo celin doonaa wallet-kaaga.';
+  }
+
+  @override
+  String get confirmTermination => 'Xaqiiji Tirtirista';
+
+  @override
+  String get confirmTerminationDesc =>
+      'Ma hubtaa inaad si joogto ah u tirtirto kaadhkan? Haraaga haray waxaa lagu soo celin doonaa wallet-kaaga. Ficilkan dib looma celin karo.';
+
+  @override
+  String get yesTerminate => 'Haa, Tirtir';
+
+  @override
+  String get enterCurrentPin => 'Geli PIN-ka Hadda';
+
+  @override
+  String get enterCardPin => 'Geli PIN-ka Kaadhka';
+
+  @override
+  String get enterCurrentPinDesc =>
+      'Fadlan geli PIN-kaaga hadda si aad u beddesho.';
+
+  @override
+  String get enterPinConfirmAction =>
+      'Fadlan geli PIN-kaaga si aad u xaqiijiso ficilkan.';
+
+  @override
+  String get setNewPin => 'Deji PIN Cusub';
+
+  @override
+  String get enterNew4DigitPin => 'Fadlan geli PIN cusub oo 4-digit ah.';
+
+  @override
+  String get setUniquePinDesc => 'U deji PIN gaar ah kaadhkaaga virtual-ka ah.';
+
+  @override
+  String get currentPinError =>
+      'Kani waa PIN-ka hadda. Fadlan dooro PIN cusub.';
+
+  @override
+  String get confirmPin => 'Xaqiiji PIN-ka';
+
+  @override
+  String get reEnterNewPin =>
+      'Fadlan mar kale geli PIN-ka cusub si aad u xaqiijiso.';
+
+  @override
+  String get pinChangedSuccessfully => 'PIN-ka waa la beddelay si guul leh!';
+
+  @override
+  String get pinCreatedSuccessfully => 'PIN-ka waa la abuuray si guul leh!';
+
+  @override
+  String get pleaseConfirmNewPin => 'Fadlan xaqiiji PIN-ka cusub.';
+
+  @override
+  String get refundCardTerminated => 'Lacag-celin: Kaadhka waa la tirtiray';
+
+  @override
+  String get cardTerminatedPermanently =>
+      'Kaadhkaaga si joogto ah ayaa loo tirtiray.';
+
+  @override
+  String refundSuccessMessage(String amount) {
+    return 'Haraaga kaadhka ee dhan $amount si guul leh ayaa loogu wareejiyay wallet-kaaga.';
+  }
+
+  @override
+  String get cardDeactivated => 'Kaadhka waa la damiyay';
+
+  @override
+  String get cardDeactivatedSuccess =>
+      'Kaadhkaaga si guul leh ayaa loo damiyay.';
+
+  @override
+  String usedToday(String amount) {
+    return 'Maanta waxaad isticmaashay $amount';
+  }
+
+  @override
+  String get cardLimitReached => 'Xadka Kaadhka waa la gaadhay';
+
+  @override
+  String get cardLimitReachedDesc =>
+      'Waxaad haysan kartaa ugu badnaan 2 kaadh oo virtual ah markiiba. Fadlan tirtir kaadh jira si aad u dalbato mid cusub.';
+
+  @override
+  String get understood => 'Waan fahmay';
+
+  @override
+  String get linkedServices => 'Adeegyada ku xiran kaadhkan';
+
+  @override
+  String get noLinkedSubscriptions =>
+      'Ma jiraan isdiiwaagelin ku xiran kaadhkan';
+
+  @override
+  String get monthly => 'Bil kasta';
+
+  @override
+  String get maxTwoCardsError =>
+      'Ma abuuri kartid wax ka badan laba kaadh oo virtual ah.';
+
+  @override
+  String insufficientBalanceFee(String fee) {
+    return 'Khalad: Haraagaagu kuguma filna (khidmaddu waa $fee).';
+  }
+
+  @override
+  String get cardCreated => 'Kaadhka waa la abuuray';
+
+  @override
+  String get newCardReady =>
+      'Kaadhkaaga cusub ee virtual-ka ah hadda waa diyaar.';
 
   @override
   String get withdrawMoney => 'Withdraw Money';
@@ -1595,9 +1795,6 @@ class AppLocalizationsSo extends AppLocalizations {
   String get confirmNewPin => 'Confirm New PIN';
 
   @override
-  String get pleaseConfirmNewPin => 'Please confirm new PIN';
-
-  @override
   String get pinsDoNotMatch => 'PINs do not match';
 
   @override
@@ -1721,9 +1918,6 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get tenDays => '10 Days';
-
-  @override
-  String get monthly => 'Bil kasta';
 
   @override
   String get yearly => 'Yearly';
@@ -2621,4 +2815,25 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get verifyingAccount => 'Hubinta xisaabta...';
+
+  @override
+  String get personalPayment => 'Bixinta Shakhsiga';
+
+  @override
+  String get merchantPayment => 'Bixinta Ganacsiga';
+
+  @override
+  String get tillNumber => 'Lambarka Till-ka';
+
+  @override
+  String get merchantId => 'ID-ga Ganacsiga';
+
+  @override
+  String get enterMerchantTill => 'Geli Lambarka Till-ka Ganacsiga';
+
+  @override
+  String get invalidTill => 'Lambarka Till-ku waa khaldan yahay';
+
+  @override
+  String get merchantResolved => 'Ganacsiga waa la hubiyay';
 }

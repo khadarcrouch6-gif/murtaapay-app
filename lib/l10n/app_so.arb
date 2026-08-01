@@ -645,6 +645,7 @@
   "oathRequirementDesc": "Si aad si rasmi ah ugu biirto kooxda, waa inaad saxiixdaa dhaarta (Dhaarta).",
   "signOathNow": "Hadda Dhaaro",
   "apr2026": "Abriil 2026",
+  "transactionLimits": "Xadka Macaamilka",
   "scanQR": "Sawirka QR-ka",
   "alignQRCode": "QR Code-ka ku aadi sanduuqa si uu u scan-gareeyo",
   "myQrCode": "Sawirkayga QR-ka",
@@ -939,5 +940,125 @@
   "checkingName": "Hubinta magaca...",
   "noInvestmentsYet": "Weli wax maalgashi ah ma jiraan",
   "startBuildingPortfolio": "Bilow dhisidda portfolio-kaaga krifto maanta adoo isticmaalaya Murtaax Pay.",
-  "verifyingAccount": "Hubinta xisaabta..."
+  "verifyingAccount": "Hubinta xisaabta...",
+  "verifyOwnership": "Xaqiiji Lahaanshaha",
+  "enterPinForCard": "Geli PIN-ka kaadhka ku dhammaada {lastFour}",
+  "@enterPinForCard": {
+    "placeholders": {
+      "lastFour": {
+        "type": "String"
+      }
+    }
+  },
+  "incorrectPin": "PIN-kaagu waa khalad",
+  "pleaseUnlockCard": "Fadlan fur kaadhka",
+  "noTransactionsForCard": "Wax dhaqdhaqaaq ah looma helin kaadhkan.",
+  "cardStatement": "Warbixinta Kaadhka",
+  "viewCardHistory": "Fiiri taariikhda dhaqdhaqaaqa kaadhkaaga",
+  "updateCardPin": "Cusboonaysii PIN-ka amniga kaadhka",
+  "subscriptionManager": "Maareeyaha Isdiiwaangelinta",
+  "manageSubscriptions": "Maaree isdiiwaangelinta iyo lacagaha joogtada ah",
+  "spendingLimit": "Xadka Kharashka",
+  "whyTerminateCard": "Maxaad u tirtiraysaa kaadhka?",
+  "shareReasonImprove": "Fadlan nala wadaag sababta si aan adeegga u horumarinno.",
+  "reasonLostStolen": "Kaadhkaygii baa iga lumay ama waa la iga xaday",
+  "reasonBetterService": "Waxaan helay adeeg ka fiican",
+  "reasonNotUsed": "Ma isticmaalo kaadhkan mar dambe",
+  "reasonHighFees": "Kharashka adeegga ayaa aad u sarreeya",
+  "reasonSecurityConcerns": "Waxaan qabaa walaac dhinaca amniga ah",
+  "reasonTechnicalIssues": "Waxaan kala kulmay caqabado farsamo",
+  "reasonOther": "Sabab kale",
+  "selectActionType": "Dooro Nooca Waxqabadka",
+  "deactivateCardTemp": "Dami Kaadhka (Kumeel-gaar)",
+  "deactivateCardDesc": "Tani waa kumeel-gaar. Kaadhkaaga waa la xirayaa, mana isticmaali kartid ilaa aad mar kale dhaqaajiso. Haraagaagu wuxuu ku sii jirayaa kaadhka.",
+  "terminatePermanently": "Tirtir Weligaa",
+  "terminatePermanentlyDesc": "Tani waa joogto. Kaadhkaaga waa la tirtiri doonaa, haraaga kaadhka ee dhan {amount} waxaa lagu soo celin doonaa wallet-kaaga.",
+  "@terminatePermanentlyDesc": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "confirmTermination": "Xaqiiji Tirtirista",
+  "confirmTerminationDesc": "Ma hubtaa inaad si joogto ah u tirtirto kaadhkan? Haraaga haray waxaa lagu soo celin doonaa wallet-kaaga. Ficilkan dib looma celin karo.",
+  "yesTerminate": "Haa, Tirtir",
+  "enterCurrentPin": "Geli PIN-ka Hadda",
+  "enterCardPin": "Geli PIN-ka Kaadhka",
+  "enterCurrentPinDesc": "Fadlan geli PIN-kaaga hadda si aad u beddesho.",
+  "enterPinConfirmAction": "Fadlan geli PIN-kaaga si aad u xaqiijiso ficilkan.",
+  "setNewPin": "Deji PIN Cusub",
+  "enterNew4DigitPin": "Fadlan geli PIN cusub oo 4-digit ah.",
+  "setUniquePinDesc": "U deji PIN gaar ah kaadhkaaga virtual-ka ah.",
+  "currentPinError": "Kani waa PIN-ka hadda. Fadlan dooro PIN cusub.",
+  "confirmPin": "Xaqiiji PIN-ka",
+  "reEnterNewPin": "Fadlan mar kale geli PIN-ka cusub si aad u xaqiijiso.",
+  "pinChangedSuccessfully": "PIN-ka waa la beddelay si guul leh!",
+  "pinCreatedSuccessfully": "PIN-ka waa la abuuray si guul leh!",
+  "pleaseConfirmNewPin": "Fadlan xaqiiji PIN-ka cusub.",
+  "refundCardTerminated": "Lacag-celin: Kaadhka waa la tirtiray",
+  "cardTerminatedPermanently": "Kaadhkaaga si joogto ah ayaa loo tirtiray.",
+  "refundSuccessMessage": "Haraaga kaadhka ee dhan {amount} si guul leh ayaa loogu wareejiyay wallet-kaaga.",
+  "@refundSuccessMessage": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "cardDeactivated": "Kaadhka waa la damiyay",
+  "cardDeactivatedSuccess": "Kaadhkaaga si guul leh ayaa loo damiyay.",
+  "usedToday": "Maanta waxaad isticmaashay {amount}",
+  "@usedToday": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "cardLimitReached": "Xadka Kaadhka waa la gaadhay",
+  "cardLimitReachedDesc": "Waxaad haysan kartaa ugu badnaan 2 kaadh oo virtual ah markiiba. Fadlan tirtir kaadh jira si aad u dalbato mid cusub.",
+  "understood": "Waan fahmay",
+  "linkedServices": "Adeegyada ku xiran kaadhkan",
+  "noLinkedSubscriptions": "Ma jiraan isdiiwaagelin ku xiran kaadhkan",
+  "monthly": "Bil kasta",
+  "maxTwoCardsError": "Ma abuuri kartid wax ka badan laba kaadh oo virtual ah.",
+  "insufficientBalanceFee": "Khalad: Haraagaagu kuguma filna (khidmaddu waa {fee}).",
+  "@insufficientBalanceFee": {
+    "placeholders": {
+      "fee": { "type": "String" }
+    }
+  },
+  "cardCreated": "Kaadhka waa la abuuray",
+  "newCardReady": "Kaadhkaaga cusub ee virtual-ka ah hadda waa diyaar.",
+  "personalPayment": "Bixinta Shakhsiga",
+  "merchantPayment": "Bixinta Ganacsiga",
+  "tillNumber": "Lambarka Till-ka",
+  "merchantId": "ID-ga Ganacsiga",
+  "enterMerchantTill": "Geli Lambarka Till-ka Ganacsiga",
+  "invalidTill": "Lambarka Till-ku waa khaldan yahay",
+  "merchantResolved": "Ganacsiga waa la hubiyay",
+  "sourceOfFunds": "Isha Lacagta",
+  "securedBySSL": "Waxaa lagu sugay Murtaax SSL Encryption",
+  "dailyLimitExceeded": "Waxaad dhaaftay xadkii maalinlaha ahaa. Waxaad maalinkii la bixi kartaa ilaa {amount}.",
+  "@dailyLimitExceeded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyLimitExceeded": "Waxaad dhaaftay xadkii bishii ahaa. Waxaad bishii la bixi kartaa ilaa {amount}.",
+  "@monthlyLimitExceeded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "withdrawalLimitRange": "Xadka: {min} - {max}",
+  "@withdrawalLimitRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  }
 }

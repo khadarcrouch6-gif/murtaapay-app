@@ -4,6 +4,7 @@
   "donationSuccessful": "Donation Successful!",
   "donationSuccessMessage": "Thank you for your donation. It will make a big difference in the lives of those in need.",
   "pleaseEnterValidAmount": "Please enter a valid amount",
+  "apply": "Apply",
   "facebook": "Facebook",
   "campaignDescriptionExtra": "This fundraiser was started to handle the urgent costs for Ahmed's surgery. Every dollar brings us closer to the goal and helps save a life. Join the 142 donors who have already contributed.",
   "appTitle": "MurtaaxPay",
@@ -309,6 +310,90 @@
       }
     }
   },
+  "verifyOwnership": "Verify Ownership",
+  "enterPinForCard": "Enter PIN for card ending in {lastFour}",
+  "@enterPinForCard": {
+    "placeholders": {
+      "lastFour": {
+        "type": "String"
+      }
+    }
+  },
+  "incorrectPin": "Incorrect PIN",
+  "pleaseUnlockCard": "Please unlock card",
+  "noTransactionsForCard": "No transactions found for this card.",
+  "cardStatement": "Card Statement",
+  "viewCardHistory": "View your card transaction history",
+  "updateCardPin": "Update your card security PIN",
+  "subscriptionManager": "Subscription Manager",
+  "manageSubscriptions": "Manage linked subscriptions & recurring payments",
+  "spendingLimit": "Spending Limit",
+  "whyTerminateCard": "Why are you terminating the card?",
+  "shareReasonImprove": "Please share your reason with us to help us improve.",
+  "reasonLostStolen": "I lost my card or it was stolen",
+  "reasonBetterService": "I found a better service",
+  "reasonNotUsed": "I don't use this card anymore",
+  "reasonHighFees": "The service fees are too high",
+  "reasonSecurityConcerns": "I have security concerns",
+  "reasonTechnicalIssues": "I experienced technical issues",
+  "reasonOther": "Other reason",
+  "selectActionType": "Select Action Type",
+  "deactivateCardTemp": "Deactivate Card (Temporary)",
+  "deactivateCardDesc": "This is temporary. Your card will be frozen, and you cannot use it until you reactivate it. Your balance stays on the card.",
+  "terminatePermanently": "Terminate Permanently",
+  "terminatePermanentlyDesc": "This is permanent. Your card will be deleted, and the card balance of {amount} will be refunded to your wallet.",
+  "@terminatePermanentlyDesc": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "confirmTermination": "Confirm Termination",
+  "confirmTerminationDesc": "Are you sure you want to permanently terminate this card? Any remaining balance will be refunded to your wallet. This action cannot be undone.",
+  "yesTerminate": "Yes, Terminate",
+  "enterCurrentPin": "Enter Current PIN",
+  "enterCardPin": "Enter Card PIN",
+  "enterCurrentPinDesc": "Please enter your current PIN to change it.",
+  "enterPinConfirmAction": "Please enter your PIN to confirm this action.",
+  "setNewPin": "Set New PIN",
+  "enterNew4DigitPin": "Please enter a new 4-digit PIN.",
+  "setUniquePinDesc": "Set a unique PIN for your virtual card.",
+  "currentPinError": "This is the current PIN. Please choose a new PIN.",
+  "confirmPin": "Confirm PIN",
+  "reEnterNewPin": "Please re-enter the new PIN to confirm.",
+  "pinChangedSuccessfully": "PIN changed successfully!",
+  "pinCreatedSuccessfully": "PIN created successfully!",
+  "pleaseConfirmNewPin": "Please confirm the new PIN.",
+  "refundCardTerminated": "Refund: Card Terminated",
+  "cardTerminatedPermanently": "Your card has been permanently terminated.",
+  "refundSuccessMessage": "The card balance of {amount} has been successfully transferred to your wallet.",
+  "@refundSuccessMessage": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "cardDeactivated": "Card Deactivated",
+  "cardDeactivatedSuccess": "Your card has been successfully deactivated.",
+  "usedToday": "You've used {amount} today",
+  "@usedToday": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "cardLimitReached": "Card Limit Reached",
+  "cardLimitReachedDesc": "You can only have a maximum of 2 virtual cards at a time. Please terminate an existing card to order a new one.",
+  "understood": "Understood",
+  "linkedServices": "Services linked to this card",
+  "noLinkedSubscriptions": "No subscriptions linked to this card",
+  "monthly": "Monthly",
+  "maxTwoCardsError": "You cannot create more than two virtual cards.",
+  "insufficientBalanceFee": "Error: Insufficient balance ({fee} fee).",
+  "@insufficientBalanceFee": {
+    "placeholders": {
+      "fee": { "type": "String" }
+    }
+  },
+  "cardCreated": "Card Created",
+  "newCardReady": "Your new virtual card is now ready.",
   "withdrawMoney": "Withdraw Money",
   "withdrawToStripe": "Withdraw to your Stripe account",
   "withdrawalMethod": "Withdrawal Method",
@@ -916,6 +1001,7 @@
   "oathRequirementDesc": "To join the group officially, you must sign the religious oath (Dhaar).",
   "signOathNow": "Sign Oath Now",
   "apr2026": "Apr 2026",
+  "transactionLimits": "Transaction Limits",
   "scanQR": "Scan QR Code",
   "alignQRCode": "Align the QR code within the frame to scan",
   "myQrCode": "My QR Code",
@@ -1156,5 +1242,41 @@
   "swiftCode": "SWIFT/BIC Code",
   "internationalTransfer": "International Transfer",
   "selectBank": "Select Bank",
-  "verifyingAccount": "Verifying account..."
+  "verifyingAccount": "Verifying account...",
+  "personalPayment": "Personal Payment",
+  "merchantPayment": "Merchant Payment",
+  "tillNumber": "Till Number",
+  "merchantId": "Merchant ID",
+  "enterMerchantTill": "Enter Merchant Till Number",
+  "invalidTill": "Invalid Till Number",
+  "merchantResolved": "Merchant Verified",
+  "sourceOfFunds": "Source of Funds",
+  "securedBySSL": "Secured by Murtaax SSL Encryption",
+  "dailyLimitExceeded": "Daily limit exceeded. You can withdraw up to {amount} per day.",
+  "@dailyLimitExceeded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyLimitExceeded": "Monthly limit exceeded. You can withdraw up to {amount} per month.",
+  "@monthlyLimitExceeded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "withdrawalLimitRange": "Limit: {min} - {max}",
+  "@withdrawalLimitRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -6,6 +6,7 @@ import '../../core/api_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
+import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'receiver_screen.dart';
 import 'wallet_receiver_screen.dart';

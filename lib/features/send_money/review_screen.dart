@@ -118,7 +118,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
       if (!isPinValid) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.translate("Invalid PIN", "PIN-ku waa khalad")), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.invalidPin), backgroundColor: Colors.red),
         );
         return;
       }
@@ -456,7 +456,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           _buildSummaryRow(l10n.purposeOfRemittance, widget.purpose, Icons.info_outline_rounded),
           if (widget.sourceOfFunds != null) ...[
             const SizedBox(height: 12),
-            _buildSummaryRow("Source of Funds", widget.sourceOfFunds!, Icons.source_rounded),
+            _buildSummaryRow(l10n.sourceOfFunds, widget.sourceOfFunds!, Icons.source_rounded),
           ],
           if (widget.swiftCode != null) ...[
             const SizedBox(height: 12),
@@ -522,7 +522,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
             Icon(Icons.security_rounded, size: 14, color: theme.brightness == Brightness.dark ? Colors.white54 : AppColors.grey.withValues(alpha: 0.6)),
             const SizedBox(width: 6),
             Text(
-              "Secured by Murtaax SSL Encryption",
+              l10n.securedBySSL,
               style: TextStyle(color: theme.brightness == Brightness.dark ? Colors.white54 : AppColors.grey.withValues(alpha: 0.6), fontSize: 12, fontWeight: FontWeight.bold),
             ),
           ],
