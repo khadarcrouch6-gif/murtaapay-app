@@ -49,7 +49,12 @@ class _VouchersScreenState extends State<VouchersScreen> {
             style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_rounded, color: theme.iconTheme.color),
+          icon: Icon(
+            Directionality.of(context) == TextDirection.rtl 
+                ? Icons.arrow_forward_rounded 
+                : Icons.arrow_back_rounded, 
+            color: theme.iconTheme.color
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -199,11 +204,15 @@ class _VouchersScreenState extends State<VouchersScreen> {
                     children: [
                       Icon(icon, color: Colors.white, size: 32 * context.fontSizeFactor),
                       SizedBox(height: 10 * context.fontSizeFactor),
-                      RotatedBox(
-                        quarterTurns: -1,
-                        child: Text(
-                          l10n.reward,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 3, fontSize: 10 * context.fontSizeFactor),
+                      Flexible(
+                        child: RotatedBox(
+                          quarterTurns: Directionality.of(context) == TextDirection.rtl ? 1 : -1,
+                          child: Text(
+                            l10n.reward,
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 3, fontSize: 10 * context.fontSizeFactor),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                     ],

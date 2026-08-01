@@ -248,8 +248,8 @@ class ReceiptView extends StatelessWidget {
 
     return Stack(
       children: [
-        Positioned(
-          right: 16,
+        PositionedDirectional(
+          end: 16,
           top: 16,
           child: IconButton(
             onPressed: () => Navigator.pop(context),
@@ -350,7 +350,7 @@ class ReceiptView extends StatelessWidget {
             child: Text(
               value,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-              textAlign: TextAlign.right,
+              textAlign: TextAlign.end,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

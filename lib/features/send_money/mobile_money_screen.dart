@@ -76,10 +76,29 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
     );
   }
 
+  String? _getPrefixError(AppLocalizations l10n) {
+    if (_phoneController.text.isEmpty) return null;
+    final val = _phoneController.text;
+    if (_selectedProvider == l10n.evcPlus && !(val.startsWith('61') || val.startsWith('77'))) {
+      return "EVC Plus waa inay ku bilaabataa 61 ama 77";
+    }
+    if (_selectedProvider == l10n.edahab && !val.startsWith('65')) {
+      return "e-Dahab waa inay ku bilaabataa 65";
+    }
+    if (_selectedProvider == l10n.zaad && !val.startsWith('63')) {
+      return "ZAAD waa inay ku bilaabataa 63";
+    }
+    if (_selectedProvider == l10n.sahal && !val.startsWith('90')) {
+      return "Sahal waa inay ku bilaabataa 90";
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final prefixError = _getPrefixError(l10n);
 
     final providerList = [
       {"id": l10n.evcPlus, "name": l10n.evcPlus, "desc": "Hormuud Telecom", "color": const Color(0xFF1B5E20), "icon": Icons.phone_android_rounded},
@@ -224,9 +243,10 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                           theme: theme,
                           prefix: "+252 ",
                           maxLength: 9,
+                          errorText: prefixError,
                           onChanged: (val) async {
                             if (val.length >= 2) {
-                              if (val.startsWith('61')) {
+                              if (val.startsWith('61') || val.startsWith('77')) {
                                 _selectedProvider = l10n.evcPlus;
                               } else if (val.startsWith('65')) {
                                 _selectedProvider = l10n.edahab;
@@ -237,7 +257,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                               }
                             }
                             
-                            if (val.length == 9) {
+                            if (val.length == 9 && _getPrefixError(l10n) == null) {
                                setState(() {
                                  _isVerifying = true;
                                  _resolvedAccountName = null;
@@ -296,7 +316,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
-                            onPressed: (_selectedProvider != null && _phoneController.text.length == 9) ? _handleContinue : null,
+                            onPressed: (_selectedProvider != null && _phoneController.text.length == 9 && prefixError == null) ? _handleContinue : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.secondary,
                               foregroundColor: Colors.white,
@@ -334,44 +354,60 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
     bool isPin = false,
     String? prefix,
     int? maxLength,
+    String? errorText,
     void Function(String)? onChanged,
   }) {
     return ListenableBuilder(
       listenable: focusNode,
       builder: (context, child) {
         bool hasFocus = focusNode.hasFocus;
-        return Container(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1), width: 1.5),
-            boxShadow: hasFocus ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10)] : null,
-          ),
-          child: TextField(
-            controller: controller,
-            focusNode: focusNode,
-            keyboardType: TextInputType.number,
-            obscureText: isPin,
-            maxLength: maxLength,
-            onChanged: (v) {
-              if (v.isNotEmpty) HapticFeedback.selectionClick();
-              if (onChanged != null) onChanged(v);
-              setState(() {});
-            },
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-            decoration: InputDecoration(
-              hintText: hint,
-              counterText: "",
-              prefixIcon: prefix != null
-                ? Padding(
-                    padding: const EdgeInsets.only(left: 16, top: 15),
-                    child: Text(prefix, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                  )
-                : Icon(icon, color: theme.colorScheme.secondary, size: 24),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: errorText != null 
+                    ? Colors.red 
+                    : (hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1)), 
+                  width: 1.5
+                ),
+                boxShadow: hasFocus && errorText == null ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10)] : null,
+              ),
+              child: TextField(
+                controller: controller,
+                focusNode: focusNode,
+                keyboardType: TextInputType.number,
+                obscureText: isPin,
+                maxLength: maxLength,
+                onChanged: (v) {
+                  if (v.isNotEmpty) HapticFeedback.selectionClick();
+                  if (onChanged != null) onChanged(v);
+                  setState(() {});
+                },
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                decoration: InputDecoration(
+                  hintText: hint,
+                  counterText: "",
+                  prefixIcon: prefix != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 16, top: 15),
+                        child: Text(prefix, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                      )
+                    : Icon(icon, color: theme.colorScheme.secondary, size: 24),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+              ),
             ),
-          ),
+            if (errorText != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8, left: 16),
+                child: Text(errorText, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
+              ),
+          ],
         );
       },
     );

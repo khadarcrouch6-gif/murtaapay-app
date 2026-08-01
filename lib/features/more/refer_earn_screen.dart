@@ -45,7 +45,13 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
             style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_rounded, color: theme.iconTheme.color, size: 24 * context.fontSizeFactor),
+          icon: Icon(
+            Directionality.of(context) == ui.TextDirection.rtl 
+                ? Icons.arrow_forward_rounded 
+                : Icons.arrow_back_rounded, 
+            color: theme.iconTheme.color, 
+            size: 24 * context.fontSizeFactor
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),

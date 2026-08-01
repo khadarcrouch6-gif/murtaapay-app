@@ -173,11 +173,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildHeader(BuildContext context, AppState state, bool isDark) {
     return Container(
-      padding: EdgeInsets.only(
+      padding: EdgeInsetsDirectional.only(
         top: MediaQuery.of(context).padding.top + 20,
         bottom: 30 * context.fontSizeFactor,
-        left: 24 * context.fontSizeFactor,
-        right: 24 * context.fontSizeFactor,
+        start: 24 * context.fontSizeFactor,
+        end: 24 * context.fontSizeFactor,
       ),
       decoration: BoxDecoration(
         color: isDark ? AppColors.primaryDark : Colors.white,
@@ -225,9 +225,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  Positioned(
+                  PositionedDirectional(
                     bottom: 0,
-                    right: 0,
+                    end: 0,
                     child: Container(
                       padding: EdgeInsets.all(4 * context.fontSizeFactor),
                       decoration: const BoxDecoration(color: AppColors.accentTeal, shape: BoxShape.circle),
@@ -311,7 +311,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildSectionHeader(String title, BuildContext context) {
     return Align(
-      alignment: Alignment.centerLeft,
+      alignment: AlignmentDirectional.centerStart,
       child: Text(
         title.toUpperCase(),
         style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w800, color: Colors.grey, letterSpacing: 1.2),
@@ -373,7 +373,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: MediaQuery.of(context).size.height * 0.9,
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(36 * context.fontSizeFactor)),
               ),
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Column(
@@ -481,7 +481,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildFormHeader(String title, BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 16 * context.fontSizeFactor, left: 4),
+      padding: EdgeInsetsDirectional.only(bottom: 16 * context.fontSizeFactor, start: 4),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w800, color: AppColors.accentTeal, letterSpacing: 1.2),
@@ -543,12 +543,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: ElevatedButton.icon(
                           onPressed: () {},
                           icon: Icon(Icons.copy_rounded, size: 18 * context.fontSizeFactor),
-                          label: Text(state.translate("Copy", "Nuuxi", ar: "نسخ", de: "Kopieren", et: "Kopeeri")),
+                          label: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(state.translate("Copy", "Nuuxi", ar: "نسخ", de: "Kopieren", et: "Kopeeri")),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                             foregroundColor: AppColors.accentTeal,
                             elevation: 0,
-                            padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
+                            padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor, horizontal: 8 * context.fontSizeFactor),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                           ),
                         ),
@@ -558,12 +561,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: ElevatedButton.icon(
                           onPressed: () {},
                           icon: Icon(Icons.share_rounded, size: 18 * context.fontSizeFactor),
-                          label: Text(state.translate("Share", "Wadaag", ar: "مشاركة", de: "Teilen", et: "Jaga")),
+                          label: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(state.translate("Share", "Wadaag", ar: "مشاركة", de: "Teilen", et: "Jaga")),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.accentTeal,
                             foregroundColor: Colors.white,
                             elevation: 0,
-                            padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
+                            padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor, horizontal: 8 * context.fontSizeFactor),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                           ),
                         ),
@@ -589,7 +595,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(36 * context.fontSizeFactor)),
             ),
             child: SingleChildScrollView(
               child: Column(
@@ -644,7 +650,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               builder: (context, _) => Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(36 * context.fontSizeFactor)),
                 ),
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(32 * context.fontSizeFactor),
@@ -657,7 +663,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         IconButton(
                           onPressed: () => Navigator.pop(context),
-                          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20 * context.fontSizeFactor, color: Colors.grey),
+                          icon: Icon(
+                            Directionality.of(context) == TextDirection.rtl 
+                                ? Icons.arrow_forward_ios_rounded 
+                                : Icons.arrow_back_ios_new_rounded, 
+                            size: 20 * context.fontSizeFactor, 
+                            color: Colors.grey
+                          ),
                         ),
                         Text(state.translate("Bank Accounts", "Akoonada Bangiga", ar: "حسابات بنكية", de: "Bankkonten", et: "Pangakontod"), style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                         const Spacer(),
@@ -726,7 +738,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(36 * context.fontSizeFactor)),
               ),
               child: SingleChildScrollView(
                 child: Padding(
@@ -790,7 +802,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(36 * context.fontSizeFactor)),
               ),
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(32 * context.fontSizeFactor),

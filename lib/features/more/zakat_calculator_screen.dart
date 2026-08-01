@@ -71,7 +71,11 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: Icon(
+            Directionality.of(context) == TextDirection.rtl 
+                ? Icons.arrow_forward_rounded 
+                : Icons.arrow_back_rounded
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -102,7 +106,10 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                               style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 16 * scale)
                             ),
                             SizedBox(height: 8 * scale),
-                            Text("\$${_totalZakat.toStringAsFixed(2)}", style: TextStyle(color: Colors.white, fontSize: 42 * scale, fontWeight: FontWeight.bold)),
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text("\$${_totalZakat.toStringAsFixed(2)}", style: TextStyle(color: Colors.white, fontSize: 42 * scale, fontWeight: FontWeight.bold))
+                            ),
                           ],
                         ),
                       ),

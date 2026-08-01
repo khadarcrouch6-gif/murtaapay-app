@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../app_colors.dart';
+import '../responsive_utils.dart';
 
 class DetailRow extends StatelessWidget {
   final String label;
@@ -21,14 +22,17 @@ class DetailRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: 16 * context.fontSizeFactor),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Text(
               label,
-              style: TextStyle(color: labelColor ?? AppColors.grey),
+              style: TextStyle(
+                color: labelColor ?? AppColors.grey,
+                fontSize: 14 * context.fontSizeFactor,
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -39,6 +43,7 @@ class DetailRow extends StatelessWidget {
               style: TextStyle(
                 fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
                 color: valueColor ?? theme.textTheme.bodyLarge?.color,
+                fontSize: 14 * context.fontSizeFactor,
               ),
             ),
           ),

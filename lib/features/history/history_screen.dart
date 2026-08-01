@@ -73,7 +73,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               children: [
                 const SizedBox(height: 16),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+                  padding: EdgeInsetsDirectional.symmetric(horizontal: context.horizontalPadding),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -126,7 +126,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   Widget _buildSearchAndFilter(BuildContext context, AppState state, ThemeData theme) {
     return Padding(
-      padding: EdgeInsets.all(context.horizontalPadding),
+      padding: EdgeInsetsDirectional.all(context.horizontalPadding),
       child: Column(
         children: [
           TextField(
@@ -147,9 +147,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
             child: Row(
               children: [
                 _buildFilterChip(context, state, "All", state.translate("All", "Dhammaan", ar: "الكل", de: "Alle", et: "Kõik")),
-                const SizedBox(width: 8),
+                SizedBox(width: 8 * context.fontSizeFactor),
                 _buildFilterChip(context, state, "Sent", state.translate("Sent", "La Diray", ar: "تم الإرسال", de: "Gesendet", et: "Saadetud")),
-                const SizedBox(width: 8),
+                SizedBox(width: 8 * context.fontSizeFactor),
                 _buildFilterChip(context, state, "Received", state.translate("Received", "La Helay", ar: "تم الاستلام", de: "Empfangen", et: "Vastuvõetud")),
               ],
             ),

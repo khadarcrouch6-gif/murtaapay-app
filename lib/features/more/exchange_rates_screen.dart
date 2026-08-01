@@ -105,7 +105,10 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
             centerTitle: true,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+              icon: Icon(
+                Directionality.of(context) == TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+                color: theme.colorScheme.primary,
+              ),
               onPressed: () => Navigator.pop(context),
             ),
           ),

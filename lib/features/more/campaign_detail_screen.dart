@@ -59,7 +59,10 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
               ),
             ),
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+              icon: Icon(
+                Directionality.of(context) == TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+                color: Colors.white,
+              ),
               onPressed: () => Navigator.pop(context),
             ),
             actions: [
@@ -186,9 +189,19 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
             children: [
               Text("\$${widget.campaign.raisedAmount.toInt()}", style: TextStyle(fontSize: 28 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
               SizedBox(width: 8 * context.fontSizeFactor),
-              Text(l10n.sadaqahRaisedOf, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
-              SizedBox(width: 4 * context.fontSizeFactor),
-              Text("\$${widget.campaign.goalAmount.toInt()} ${l10n.goal}", style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+              Expanded(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Row(
+                    children: [
+                      Text(l10n.sadaqahRaisedOf, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+                      SizedBox(width: 4 * context.fontSizeFactor),
+                      Text("\$${widget.campaign.goalAmount.toInt()} ${l10n.goal}", style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
           SizedBox(height: 16 * context.fontSizeFactor),
@@ -387,7 +400,10 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                 SizedBox(height: 24 * context.fontSizeFactor),
                 Row(
                   children: [
-                     if (currentStep > 0) IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => setModalState(() => currentStep--)),
+                     if (currentStep > 0) IconButton(
+                       icon: Icon(Directionality.of(context) == TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded),
+                       onPressed: () => setModalState(() => currentStep--),
+                     ),
                      const Spacer(),
                      Text(
                        currentStep == 0 ? l10n.selectAmount : 

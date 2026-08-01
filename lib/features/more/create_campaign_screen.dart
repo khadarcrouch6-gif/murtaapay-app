@@ -38,7 +38,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(
-            state.isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded,
+            Directionality.of(context) == TextDirection.rtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded,
             color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
           ),
           onPressed: () => Navigator.pop(context),

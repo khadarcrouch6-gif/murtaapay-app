@@ -37,7 +37,7 @@ class TransactionItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsetsDirectional.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
@@ -159,7 +159,7 @@ class TransactionItem extends StatelessWidget {
     final theme = Theme.of(context);
     return ShimmerLoading(
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsetsDirectional.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,

@@ -93,7 +93,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
                           ? _buildCardFront(context, state) 
                           : Transform(
                               alignment: Alignment.center, 
-                              transform: Matrix4.identity()..rotateY(pi), 
+                              transform: Matrix4.identity()..rotateY(pi),
                               child: _buildCardBack(context, state)
                             ),
                       ),
@@ -279,7 +279,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
         const SizedBox(width: 16),
         Expanded(
           child: FittedBox(
-            alignment: Alignment.centerLeft,
+            alignment: AlignmentDirectional.centerStart,
             fit: BoxFit.scaleDown,
             child: _buildAnimatedNumber(),
           ),

@@ -14,6 +14,7 @@ import '../../l10n/app_localizations.dart';
 import '../../core/widgets/detail_row.dart';
 import '../../core/models/transaction.dart' as model;
 import 'package:responsive_framework/responsive_framework.dart';
+import '../../core/widgets/pin_entry_dialog.dart';
 
 class WalletWithdrawScreen extends StatefulWidget {
   const WalletWithdrawScreen({super.key});
@@ -75,6 +76,24 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
     super.dispose();
   }
 
+  String? _getWithdrawPrefixError(AppLocalizations l10n) {
+    if (_field1Controller.text.isEmpty) return null;
+    final val = _field1Controller.text;
+    if (_selectedProvider == l10n.evcPlus && !(val.startsWith('61') || val.startsWith('77'))) {
+      return "EVC Plus prefix must be 61 or 77";
+    }
+    if (_selectedProvider == l10n.edahab && !val.startsWith('65')) {
+      return "e-Dahab prefix must be 65";
+    }
+    if (_selectedProvider == l10n.zaad && !val.startsWith('63')) {
+      return "ZAAD prefix must be 63";
+    }
+    if (_selectedProvider == l10n.sahal && !val.startsWith('90')) {
+      return "Sahal prefix must be 90";
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -88,6 +107,13 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Directionality.of(context) == TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+            color: theme.colorScheme.primary,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Center(
         child: MaxWidthBox(
@@ -335,7 +361,11 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                               if (isSelected)
                                 const Icon(Icons.check_circle_rounded, color: AppColors.accentTeal)
                               else
-                                Icon(Icons.arrow_forward_ios_rounded, size: 16 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.4)),
+                                Icon(
+                                  Directionality.of(context) == TextDirection.rtl ? Icons.arrow_back_ios_rounded : Icons.arrow_forward_ios_rounded, 
+                                  size: 16 * context.fontSizeFactor, 
+                                  color: AppColors.grey.withValues(alpha: 0.4)
+                                ),
                             ],
                           ),
                         ),
@@ -450,7 +480,12 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
             maxLength: 9,
             onChanged: (val) => _handlePhoneInput(val, l10n, state),
           ),
-          if (_detectedName != null && _field1Controller.text.length >= 6)
+          if (_getWithdrawPrefixError(l10n) != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8, left: 4),
+              child: Text(_getWithdrawPrefixError(l10n)!, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
+            )
+          else if (_detectedName != null && _field1Controller.text.length >= 6)
             Padding(
               padding: const EdgeInsets.only(top: 8, left: 12),
               child: FadeIn(
@@ -466,7 +501,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                 ),
               ),
             ),
-          if (_field1Controller.text.isNotEmpty && _field1Controller.text.length < 9 && _detectedName == null)
+          if (_field1Controller.text.isNotEmpty && _field1Controller.text.length < 9 && _detectedName == null && _getWithdrawPrefixError(l10n) == null)
             Padding(
               padding: const EdgeInsets.only(top: 8, left: 4),
               child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12)),
@@ -652,7 +687,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
       error = l10n.insufficientBalanceWithFee;
     } else {
       if (_selectedMethodId == "mobile") {
-        isFormValid = _selectedProvider != null && _field1Controller.text.length == 9;
+        isFormValid = _selectedProvider != null && _field1Controller.text.length == 9 && _getWithdrawPrefixError(l10n) == null;
       } else if (_selectedMethodId == "bank") {
         if (_selectedProvider == l10n.otherBank) {
           isFormValid = _field3Controller.text.isNotEmpty && _field1Controller.text.isNotEmpty && _field2Controller.text.isNotEmpty;
@@ -766,45 +801,20 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
   }
 
   void _showPinDialog(BuildContext context, AppLocalizations l10n, AppState state) {
-    final TextEditingController pinController = TextEditingController();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(l10n.enterSecurityPin, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l10n.enterTransactionPin, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.grey, fontSize: 14)),
-            const SizedBox(height: 20),
-            TextField(
-              controller: pinController,
-              keyboardType: TextInputType.number,
-              obscureText: true,
-              maxLength: 4,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 10),
-              decoration: InputDecoration(
-                counterText: "",
-                filled: true,
-                fillColor: Colors.grey.withValues(alpha: 0.1),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
-          TextButton(
-            onPressed: () {
-              if (pinController.text.length == 4) {
-                Navigator.pop(context);
-                _processWithdrawal(this.context, l10n, state);
-              }
-            },
-            child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
-          ),
-        ],
+      builder: (context) => PinEntryDialog(
+        title: l10n.enterSecurityPin,
+        description: l10n.enterTransactionPin,
+        onConfirm: (pin) {
+          if (state.verifyPin(pin)) {
+            _processWithdrawal(this.context, l10n, state);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.translate("Incorrect PIN.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red),
+            );
+          }
+        },
       ),
     );
   }
@@ -908,7 +918,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
   void _handlePhoneInput(String val, AppLocalizations l10n, AppState state) {
     // 1. Auto-select Provider logic
     if (val.length >= 2) {
-      if (val.startsWith('61')) {
+      if (val.startsWith('61') || val.startsWith('77')) {
         _selectedProvider = l10n.evcPlus;
       } else if (val.startsWith('65')) {
         _selectedProvider = l10n.edahab;

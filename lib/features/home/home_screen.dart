@@ -229,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           
           return Container(
             width: double.infinity,
-            padding: EdgeInsets.fromLTRB(
+            padding: EdgeInsetsDirectional.fromSTEB(
               horizontalPadding, 
               topPadding, 
               horizontalPadding, 
@@ -256,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               IconButton(
                 onPressed: () => Scaffold.of(context).openDrawer(),
                 icon: const Icon(Icons.menu_rounded, color: Colors.white),
-                padding: const EdgeInsets.only(right: 12),
+                padding: const EdgeInsetsDirectional.only(end: 12),
                 constraints: const BoxConstraints(),
               ),
             Expanded(
@@ -301,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             ),
                             FittedBox(
                               fit: BoxFit.scaleDown,
-                              alignment: Alignment.centerLeft,
+                              alignment: AlignmentDirectional.centerStart,
                               child: Text(
                                 _displayedName, 
                                 style: theme.textTheme.titleLarge?.copyWith(
@@ -415,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, 40),
+      padding: EdgeInsetsDirectional.fromSTEB(horizontalPadding, 0, horizontalPadding, 40),
       decoration: const BoxDecoration(
         gradient: AppColors.primaryGradient, 
         borderRadius: BorderRadius.only(
@@ -432,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               NotchedWalletCard(
                 size: Size(double.infinity, (isWide ? 160 : 180) * context.fontSizeFactor),
                 action: Padding(
-                  padding: const EdgeInsets.only(right: 4, bottom: 4),
+                  padding: const EdgeInsetsDirectional.only(end: 4, bottom: 4),
                   child: GestureDetector(
                     onTap: () {
                       HapticFeedback.mediumImpact();
@@ -499,7 +499,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       const SizedBox(height: 8),
                       Expanded(
                         child: Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: AlignmentDirectional.centerStart,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
@@ -849,7 +849,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       onTap: () => setState(() => _selectedChartType = type),
       child: Container(
         padding: EdgeInsets.all(isSmall ? 4 : 6),
-        margin: const EdgeInsets.only(left: 4),
+        margin: const EdgeInsetsDirectional.only(start: 4),
         decoration: BoxDecoration(color: isSelected ? AppColors.primaryDark.withValues(alpha: 0.1) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
         child: AdaptiveIcon(icon, size: isSmall ? 14 : 16, color: isSelected ? AppColors.primaryDark : Colors.grey),
       ),
@@ -1086,7 +1086,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                     width: 60,
                                     height: 60,
                                     errorBuilder: (context, error, stackTrace) {
-                                      return Icon(
+                                      return const Icon(
                                         Icons.person_rounded,
                                         color: AppColors.accentTeal,
                                         size: 30,
@@ -1181,28 +1181,37 @@ class NotchedWalletCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isRtl = Directionality.of(context) == ui.TextDirection.rtl;
     return RepaintBoundary(
       child: Stack(
         children: [
-          CustomPaint(
-            size: size,
-            painter: WalletCardPainter(),
-            child: ClipPath(
-              clipper: WalletCardClipper(),
-              child: BackdropFilter(
-                filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: Container(
-                  width: size.width,
-                  height: size.height,
-                  color: Colors.transparent,
-                  child: child,
+          Transform(
+            alignment: Alignment.center,
+            transform: isRtl ? Matrix4.rotationY(3.141592653589793) : Matrix4.identity(),
+            child: CustomPaint(
+              size: size,
+              painter: WalletCardPainter(),
+              child: ClipPath(
+                clipper: WalletCardClipper(),
+                child: BackdropFilter(
+                  filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  child: Container(
+                    width: size.width,
+                    height: size.height,
+                    color: Colors.transparent,
+                  ),
                 ),
               ),
             ),
           ),
-          Positioned(
+          SizedBox(
+            width: size.width,
+            height: size.height,
+            child: child,
+          ),
+          PositionedDirectional(
             bottom: 0,
-            right: 0,
+            end: 0,
             child: action,
           ),
         ],

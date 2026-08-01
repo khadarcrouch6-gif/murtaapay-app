@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'app_analytics.dart';
 import 'package:intl/intl.dart';
 import 'models/bank_account.dart';
@@ -20,6 +21,7 @@ class AppState extends ChangeNotifier {
 
   late final analytics = AppAnalytics();
   late SharedPreferences _prefs;
+  final _secureStorage = const FlutterSecureStorage();
   bool _isInitialized = false;
 
   double _balance = 12450.80;
@@ -52,32 +54,39 @@ class AppState extends ChangeNotifier {
   final String _walletId = '102234';
   String get walletId => _walletId;
 
-  final String _pin = '1234'; // Default mock PIN
+  String _pin = '1234'; // Default mock PIN
   
   bool verifyPin(String pin) {
     return _pin == pin;
   }
 
+  Future<void> updatePin(String newPin) async {
+    _pin = newPin;
+    await _secureStorage.write(key: 'user_pin', value: newPin);
+    notifyListeners();
+  }
+
+  bool _biometricEnabled = true;
+  bool get biometricEnabled => _biometricEnabled;
+
+  Future<void> setBiometricEnabled(bool enabled) async {
+    _biometricEnabled = enabled;
+    await _prefs.setBool('biometric_enabled', enabled);
+    notifyListeners();
+  }
+
   bool verifyCardPin(String pin, {String? cardId}) {
     if (_cards.isEmpty) return false;
     final id = cardId ?? _cards[_selectedCardIndex].id;
-    try {
-      final card = _cards.firstWhere((c) => c.id == id);
-      return card.pin == pin;
-    } catch (e) {
-      return false;
-    }
+    return _cardPins[id] == pin;
   }
 
   Future<void> updateCardPin(String pin, {String? cardId}) async {
     if (_cards.isEmpty) return;
     final id = cardId ?? _cards[_selectedCardIndex].id;
-    final index = _cards.indexWhere((c) => c.id == id);
-    if (index != -1) {
-      _cards[index] = _cards[index].copyWith(pin: pin);
-      await _saveCards();
-      notifyListeners();
-    }
+    _cardPins[id] = pin;
+    await _secureStorage.write(key: 'card_pin_$id', value: pin);
+    notifyListeners();
   }
 
   final String _currencyCode = 'USD';
@@ -101,6 +110,8 @@ class AppState extends ChangeNotifier {
 
   List<VirtualCard> _cards = [];
   List<VirtualCard> get cards => _cards;
+
+  Map<String, String> _cardPins = {};
 
   List<VirtualCard> _terminatedCards = [];
   List<VirtualCard> get terminatedCards => _terminatedCards;
@@ -798,7 +809,6 @@ class AppState extends ChangeNotifier {
           theme: CardThemeType.obsidian,
           network: CardNetwork.visa,
           balance: 850.50,
-          pin: "1122",
         ),
         VirtualCard(
           id: "2",
@@ -809,7 +819,6 @@ class AppState extends ChangeNotifier {
           theme: CardThemeType.gold,
           network: CardNetwork.mastercard,
           balance: 150.0,
-          pin: "2233",
         ),
       ];
       await _saveCards();
@@ -955,6 +964,28 @@ class AppState extends ChangeNotifier {
     _loadHagbadGroups();
     _loadRecurringPayments();
     _loadCampaigns();
+
+    // Load secure data
+    final savedPin = await _secureStorage.read(key: 'user_pin');
+    if (savedPin != null) {
+      _pin = savedPin;
+    } else {
+      await _secureStorage.write(key: 'user_pin', value: _pin);
+    }
+    
+    _biometricEnabled = _prefs.getBool('biometric_enabled') ?? true;
+
+    // Load card pins
+    for (var card in _cards) {
+      final cardPin = await _secureStorage.read(key: 'card_pin_${card.id}');
+      if (cardPin != null) {
+        _cardPins[card.id] = cardPin;
+      } else {
+        // Default pin if not found, and save it
+        _cardPins[card.id] = "1122";
+        await _secureStorage.write(key: 'card_pin_${card.id}', value: "1122");
+      }
+    }
     
     _userDailyLimit = _prefs.getDouble('daily_limit') ?? 5000.0;
     _userMonthlyLimit = _prefs.getDouble('monthly_limit') ?? 20000.0;

@@ -231,113 +231,115 @@ class _SavingsScreenState extends State<SavingsScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
               contentPadding: EdgeInsets.zero,
               clipBehavior: Clip.antiAlias,
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.accentTeal, Color(0xFF004D40)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.accentTeal, Color(0xFF004D40)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 32 * context.fontSizeFactor),
+                            ),
+                            SizedBox(height: 20 * context.fontSizeFactor),
+                            Text(
+                              l10n.savingsBalanceLabel, 
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.8), 
+                                fontSize: 12 * context.fontSizeFactor, 
+                                fontWeight: FontWeight.w800, 
+                                letterSpacing: 1.2
+                              )
+                            ),
+                            SizedBox(height: 8 * context.fontSizeFactor),
+                            FittedBox(
+                              fit: BoxFit.scaleDown, 
+                              child: ListenableBuilder(
+                                listenable: state, 
+                                builder: (context, _) => Text(
+                                  NumberFormat.simpleCurrency(name: state.currencyCode).format(state.savingsBalance), 
+                                  style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: -1)
+                                )
+                              )
+                            ),
+                          ],
                         ),
                       ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.15),
-                              shape: BoxShape.circle,
+                      Padding(
+                        padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.targetWallet,
+                              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor, letterSpacing: -0.3)
                             ),
-                            child: Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 32 * context.fontSizeFactor),
-                          ),
-                          SizedBox(height: 20 * context.fontSizeFactor),
-                          Text(
-                            l10n.savingsBalanceLabel, 
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.8), 
-                              fontSize: 12 * context.fontSizeFactor, 
-                              fontWeight: FontWeight.w800, 
-                              letterSpacing: 1.2
-                            )
-                          ),
-                          SizedBox(height: 8 * context.fontSizeFactor),
-                          FittedBox(
-                            fit: BoxFit.scaleDown, 
-                            child: ListenableBuilder(
-                              listenable: state, 
-                              builder: (context, _) => Text(
-                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.savingsBalance), 
-                                style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: -1)
-                              )
-                            )
-                          ),
-                        ],
+                            SizedBox(height: 16 * context.fontSizeFactor),
+                            Container(
+                              padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                                border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10 * context.fontSizeFactor),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.accentTeal.withValues(alpha: 0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(Icons.person_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                                  ),
+                                  SizedBox(width: 12 * context.fontSizeFactor),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(l10n.mainWallet, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
+                                        Text("ID: ${state.walletId}", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.accentTeal.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(10 * context.fontSizeFactor),
+                                    ),
+                                    child: Text(
+                                      NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance),
+                                      style: TextStyle(color: AppColors.accentTeal, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 24 * context.fontSizeFactor),
+                            _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.targetWallet,
-                            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor, letterSpacing: -0.3)
-                          ),
-                          SizedBox(height: 16 * context.fontSizeFactor),
-                          Container(
-                            padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
-                              borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
-                              border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(10 * context.fontSizeFactor),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.accentTeal.withValues(alpha: 0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(Icons.person_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
-                                ),
-                                SizedBox(width: 12 * context.fontSizeFactor),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(l10n.mainWallet, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
-                                      Text("ID: ${state.walletId}", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.accentTeal.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(10 * context.fontSizeFactor),
-                                  ),
-                                  child: Text(
-                                    NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance),
-                                    style: TextStyle(color: AppColors.accentTeal, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 24 * context.fontSizeFactor),
-                          _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                ),
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+                TextButton(onPressed: () => Navigator.pop(context), child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)))),
                 Padding(
                   padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
                   child: ElevatedButton(
@@ -356,7 +358,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
-                    child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                    child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
                   ),
                 ),
               ],
@@ -400,7 +402,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)))),
           TextButton(
             onPressed: () {
               if (state.verifyPin(pinController.text)) {
@@ -411,7 +413,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 );
               }
             },
-            child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
+            child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor))),
           ),
         ],
       ),
@@ -494,103 +496,105 @@ class _SavingsScreenState extends State<SavingsScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
               contentPadding: EdgeInsets.zero,
               clipBehavior: Clip.antiAlias,
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.accentTeal, Color(0xFF004D40)], 
-                          begin: Alignment.topLeft, 
-                          end: Alignment.bottomRight
-                        )
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(16 * context.fontSizeFactor), 
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.15), 
-                              shape: BoxShape.circle
-                            ), 
-                            child: Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 32 * context.fontSizeFactor)
-                          ),
-                          SizedBox(height: 20 * context.fontSizeFactor),
-                          Text(
-                            l10n.availableBalance, 
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.8), 
-                              fontSize: 12 * context.fontSizeFactor, 
-                              fontWeight: FontWeight.w800, 
-                              letterSpacing: 1.2
-                            )
-                          ),
-                          SizedBox(height: 8 * context.fontSizeFactor),
-                          FittedBox(
-                            fit: BoxFit.scaleDown, 
-                            child: ListenableBuilder(
-                              listenable: state, 
-                              builder: (context, _) => Text(
-                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance), 
-                                style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: -1)
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.accentTeal, Color(0xFF004D40)], 
+                            begin: Alignment.topLeft, 
+                            end: Alignment.bottomRight
+                          )
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(16 * context.fontSizeFactor), 
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.15), 
+                                shape: BoxShape.circle
+                              ), 
+                              child: Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 32 * context.fontSizeFactor)
+                            ),
+                            SizedBox(height: 20 * context.fontSizeFactor),
+                            Text(
+                              l10n.availableBalance, 
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.8), 
+                                fontSize: 12 * context.fontSizeFactor, 
+                                fontWeight: FontWeight.w800, 
+                                letterSpacing: 1.2
                               )
-                            )
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.sourceWallet,
-                            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor, letterSpacing: -0.3)
-                          ),
-                          SizedBox(height: 16 * context.fontSizeFactor),
-                          Container(
-                            padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
-                              borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
-                              border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
                             ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(10 * context.fontSizeFactor),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.accentTeal.withValues(alpha: 0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(Icons.security_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
-                                ),
-                                SizedBox(width: 12 * context.fontSizeFactor),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(l10n.mainBalance, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
-                                      Text(l10n.verifiedAccount, style: TextStyle(color: AppColors.grey, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                                    ],
-                                  ),
-                                ),
-                                Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
-                              ],
+                            SizedBox(height: 8 * context.fontSizeFactor),
+                            FittedBox(
+                              fit: BoxFit.scaleDown, 
+                              child: ListenableBuilder(
+                                listenable: state, 
+                                builder: (context, _) => Text(
+                                  NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance), 
+                                  style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: -1)
+                                )
+                              )
                             ),
-                          ),
-                          SizedBox(height: 24 * context.fontSizeFactor),
-                          _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.sourceWallet,
+                              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor, letterSpacing: -0.3)
+                            ),
+                            SizedBox(height: 16 * context.fontSizeFactor),
+                            Container(
+                              padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                                border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10 * context.fontSizeFactor),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.accentTeal.withValues(alpha: 0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(Icons.security_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                                  ),
+                                  SizedBox(width: 12 * context.fontSizeFactor),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(l10n.mainBalance, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor)),
+                                        Text(l10n.verifiedAccount, style: TextStyle(color: AppColors.grey, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                  ),
+                                  Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 24 * context.fontSizeFactor),
+                            _dialogInputField(context, l10n.amount, Icons.attach_money_rounded, amountController, isNumber: true, onChanged: (_) => setDialogState(() {})),
+                          ],
+                        ),
+                      ),
+                    ],
+                ),
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+                TextButton(onPressed: () => Navigator.pop(context), child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)))),
                 Padding(
                   padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
                   child: ElevatedButton(
@@ -609,7 +613,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
-                    child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                    child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
                   ),
                 ),
               ],
@@ -775,7 +779,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         child: OutlinedButton(
                           onPressed: isPaused ? null : () => _showAddFundsDialog(context, l10n, index),
                           style: OutlinedButton.styleFrom(side: BorderSide(color: goal.color.withValues(alpha: 0.2)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14 * context.fontSizeFactor)), padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor)),
-                          child: Text(l10n.addFunds, style: TextStyle(color: goal.color, fontWeight: FontWeight.w700, fontSize: 14 * context.fontSizeFactor)),
+                          child: FittedBox(child: Text(l10n.addFunds, style: TextStyle(color: goal.color, fontWeight: FontWeight.w700, fontSize: 14 * context.fontSizeFactor))),
                         ),
                       ),
                     ],
@@ -867,7 +871,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 ],
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+                TextButton(onPressed: () => Navigator.pop(context), child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)))),
                 Padding(
                   padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
                   child: ElevatedButton(
@@ -899,7 +903,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       foregroundColor: Colors.white, 
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))
                     ),
-                    child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                    child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
                   ),
                 ),
               ],
@@ -915,17 +919,18 @@ class _SavingsScreenState extends State<SavingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        scrollable: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
           title: Text(l10n.deleteGoal, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           content: Text(l10n.deleteGoalConfirm, style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor))),
+            TextButton(onPressed: () => Navigator.pop(context), child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)))),
             TextButton(
               onPressed: () {
                 Provider.of<AppState>(context, listen: false).removeSavingsGoal(index);
                 Navigator.pop(context);
               },
-              child: Text(l10n.delete, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+              child: FittedBox(child: Text(l10n.delete, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
             ),
           ],
       ),
@@ -1073,7 +1078,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+            TextButton(onPressed: () => Navigator.pop(context), child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)))),
             ElevatedButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
@@ -1082,7 +1087,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
-              child: Text(l10n.create, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+              child: FittedBox(child: Text(l10n.create, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
             ),
           ],
         ),
@@ -1242,7 +1247,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     ],
                   ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
+                TextButton(onPressed: () => Navigator.pop(context), child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)))),
                 ElevatedButton(
                   onPressed: () {
                     if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
@@ -1260,7 +1265,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
-                  child: Text(l10n.save, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                  child: FittedBox(child: Text(l10n.save, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
                 ),
               ],
             ),

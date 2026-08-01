@@ -112,6 +112,22 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
 
     final phone = _idController.text.replaceAll(' ', '');
     if (phone.length < 7) return l10n.phoneLengthError;
+
+    // Validation for Somali Mobile Money Prefixes
+    if (_selectedCountryCode == "+252" && phone.length >= 2) {
+      if (widget.method == "EVC Plus" && !(phone.startsWith('61') || phone.startsWith('77'))) {
+        return "EVC Plus waa inuu ku bilaawdaa 61 ama 77";
+      }
+      if (widget.method == "ZAAD Service" && !phone.startsWith('63')) {
+        return "ZAAD waa inuu ku bilaawdaa 63";
+      }
+      if (widget.method == "e-Dahab" && !phone.startsWith('65')) {
+        return "e-Dahab waa inuu ku bilaawdaa 65";
+      }
+      if (widget.method == "Sahal" && !phone.startsWith('90')) {
+        return "Sahal waa inuu ku bilaawdaa 90";
+      }
+    }
     return null;
   }
 
@@ -430,7 +446,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                               _verifyReceiver();
                             }
                             if (_selectedCountryCode == "+252" && rawVal.length >= 2) {
-                              if (rawVal.startsWith('61')) {
+                              if (rawVal.startsWith('61') || rawVal.startsWith('77')) {
                                 _detectedProvider = l10n.evcPlus;
                               } else if (rawVal.startsWith('65')) {
                                 _detectedProvider = l10n.edahab;

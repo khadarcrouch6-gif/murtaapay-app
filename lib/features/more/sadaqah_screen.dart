@@ -132,10 +132,10 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                     ),
                   ),
                 ),
-                Positioned(
+                PositionedDirectional(
                   bottom: 24 * context.fontSizeFactor,
-                  left: 24 * context.fontSizeFactor,
-                  right: 24 * context.fontSizeFactor,
+                  start: 24 * context.fontSizeFactor,
+                  end: 24 * context.fontSizeFactor,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -987,9 +987,9 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
 
   Widget _buildVerifiedBadge(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
-    return Positioned(
+    return PositionedDirectional(
       top: 16 * context.fontSizeFactor,
-      left: 16 * context.fontSizeFactor,
+      start: 16 * context.fontSizeFactor,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 14 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
         decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20 * context.fontSizeFactor), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10 * context.fontSizeFactor)]),
@@ -1025,7 +1025,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
             ),
             if (campaign.isUrgent)
               Container(
-                margin: EdgeInsets.only(left: 8 * context.fontSizeFactor),
+                margin: EdgeInsetsDirectional.only(start: 8 * context.fontSizeFactor),
                 padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
                 decoration: BoxDecoration(
                   color: Colors.red.withValues(alpha: 0.1),
@@ -1144,7 +1144,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
   Widget _buildBottomAction(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     return Container(
-      padding: EdgeInsets.fromLTRB(24 * context.fontSizeFactor, 16 * context.fontSizeFactor, 24 * context.fontSizeFactor, context.responsiveValue(mobile: 120, tablet: 24, desktop: 24)),
+      padding: EdgeInsetsDirectional.fromSTEB(24 * context.fontSizeFactor, 16 * context.fontSizeFactor, 24 * context.fontSizeFactor, context.responsiveValue(mobile: 120, tablet: 24, desktop: 24)),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(30 * context.fontSizeFactor)),

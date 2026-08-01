@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:local_auth/local_auth.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -13,9 +14,40 @@ class SecurityCenterScreen extends StatefulWidget {
 }
 
 class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
-  bool _faceIdEnabled = true;
+  final LocalAuthentication _auth = LocalAuthentication();
+  bool _biometricsAvailable = false;
   bool _twoFactorEnabled = false;
   bool _loginAlertsEnabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometrics();
+  }
+
+  Future<void> _checkBiometrics() async {
+    final isAvailable = await _auth.canCheckBiometrics || await _auth.isDeviceSupported();
+    if (mounted) {
+      setState(() => _biometricsAvailable = isAvailable);
+    }
+  }
+
+  Future<void> _toggleBiometrics(bool value) async {
+    final state = AppState();
+    if (value) {
+      final authenticated = await _auth.authenticate(
+        localizedReason: 'Please authenticate to enable biometric access',
+        biometricOnly: true,
+      );
+      if (authenticated) {
+        await state.setBiometricEnabled(true);
+        setState(() {});
+      }
+    } else {
+      await state.setBiometricEnabled(false);
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +71,14 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
             const SizedBox(height: 32),
             _buildSectionTitle(theme, state.translate("Biometrics & Access", "Aqoonsiga & Helitaanka", ar: "المقاييس الحيوية والوصول", de: "Biometrie & Zugriff", et: "Biomeetria ja juurdepääs")),
             const SizedBox(height: 16),
-            _buildSecurityToggle(
-              context,
-              state.translate("Enable Face ID / Touch ID", "Daar Face ID / Touch ID", ar: "تفعيل Face ID / Touch ID", de: "Face ID / Touch ID aktivieren", et: "Luba Face ID / Touch ID"),
-              Icons.face_retouching_natural_rounded,
-              _faceIdEnabled,
-              (val) => setState(() => _faceIdEnabled = val),
-            ),
+            if (_biometricsAvailable)
+              _buildSecurityToggle(
+                context,
+                state.translate("Enable Biometric Access", "Daar Aqoonsiga Biometric-ka", ar: "تفعيل الوصول بالمقاييس الحيوية", de: "Biometrischen Zugriff aktivieren", et: "Luba biomeetriline juurdepääs"),
+                Icons.fingerprint_rounded,
+                state.biometricEnabled,
+                _toggleBiometrics,
+              ),
             _buildSecurityTile(
               context,
               state.translate("Change Transaction PIN", "Beddel PIN-ka", ar: "تغيير رقم PIN للمعاملة", de: "Transaktions-PIN ändern", et: "Muuda tehingu PIN-koodi"),
@@ -129,7 +162,7 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
 
   Widget _buildSectionTitle(ThemeData theme, String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8),
+      padding: const EdgeInsetsDirectional.only(start: 8),
       child: Text(
         title,
         style: theme.textTheme.titleSmall?.copyWith(color: Colors.grey, fontWeight: FontWeight.bold, letterSpacing: 1),
@@ -186,7 +219,12 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
             ),
             const SizedBox(width: 16),
             Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.w600))),
-            const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+            Icon(
+              Directionality.of(context) == TextDirection.rtl 
+                  ? Icons.chevron_left_rounded 
+                  : Icons.chevron_right_rounded, 
+              color: Colors.grey
+            ),
           ],
         ),
       ),

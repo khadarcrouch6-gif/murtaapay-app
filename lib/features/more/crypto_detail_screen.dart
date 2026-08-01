@@ -73,6 +73,15 @@ class _CryptoDetailScreenState extends State<CryptoDetailScreen> {
         title: Text(widget.asset.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Directionality.of(context) == TextDirection.rtl 
+                ? Icons.arrow_forward_rounded 
+                : Icons.arrow_back_rounded, 
+            size: 24 * context.fontSizeFactor
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.notifications_none_rounded, size: 24 * context.fontSizeFactor),

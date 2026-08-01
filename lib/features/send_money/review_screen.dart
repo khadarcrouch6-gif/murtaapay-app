@@ -12,6 +12,8 @@ import '../../core/widgets/success_screen.dart';
 import '../../core/models/transaction.dart' as model;
 import '../../core/models/quick_profile.dart' as model_quick;
 
+import '../../core/widgets/pin_entry_dialog.dart';
+
 class ReviewScreen extends StatefulWidget {
   final String amount;
   final String receiverName;
@@ -51,31 +53,75 @@ class ReviewScreen extends StatefulWidget {
 
 class _ReviewScreenState extends State<ReviewScreen> {
   bool _isProcessing = false;
+  bool _isStkWaiting = false;
   bool _showPinField = false;
   final TextEditingController _pinController = TextEditingController();
 
   void _handlePayPress() {
     HapticFeedback.mediumImpact();
-    setState(() => _showPinField = true);
+    // If it's mobile money, we trigger STK Push simulation instead of local PIN
+    if (widget.paymentMethod.startsWith("Mobile Money")) {
+      _triggerStkPush();
+    } else {
+      _showPinEntry();
+    }
   }
 
-  Future<void> _processTransaction() async {
+  void _showPinEntry() {
     final state = Provider.of<AppState>(context, listen: false);
     final l10n = AppLocalizations.of(context)!;
     
-    // Determine which PIN to verify (Wallet PIN or Card PIN)
-    bool isPinValid = false;
-    if (widget.cardId != null) {
-      isPinValid = state.verifyCardPin(_pinController.text, cardId: widget.cardId);
-    } else {
-      isPinValid = state.verifyPin(_pinController.text);
-    }
+    showDialog(
+      context: context,
+      builder: (context) => PinEntryDialog(
+        title: l10n.enterSecurityPin,
+        description: l10n.enterTransactionPin,
+        isCardPin: widget.cardId != null,
+        cardId: widget.cardId,
+        onConfirm: (pin) {
+          _processTransaction(pin: pin);
+        },
+      ),
+    );
+  }
 
-    if (!isPinValid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.translate("Invalid PIN", "PIN-ku waa khalad")), backgroundColor: Colors.red),
-      );
-      return;
+  Future<void> _triggerStkPush() async {
+    setState(() {
+      _isProcessing = true;
+      _isStkWaiting = true;
+    });
+
+    // Simulate STK Push delay (waiting for user to enter PIN on their handset)
+    await Future.delayed(const Duration(seconds: 5));
+
+    if (mounted) {
+      setState(() {
+        _isStkWaiting = false;
+      });
+      _processTransaction(isStk: true);
+    }
+  }
+
+  Future<void> _processTransaction({bool isStk = false, String? pin}) async {
+    final state = Provider.of<AppState>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (!isStk) {
+      if (pin == null) return;
+      // Determine which PIN to verify (Wallet PIN or Card PIN)
+      bool isPinValid = false;
+      if (widget.cardId != null) {
+        isPinValid = state.verifyCardPin(pin, cardId: widget.cardId);
+      } else {
+        isPinValid = state.verifyPin(pin);
+      }
+
+      if (!isPinValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.translate("Invalid PIN", "PIN-ku waa khalad")), backgroundColor: Colors.red),
+        );
+        return;
+      }
     }
 
     setState(() {
@@ -83,7 +129,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
       _showPinField = false;
     });
 
-    // Simulate API delay
+    // Final "Processing" delay
     await Future.delayed(const Duration(seconds: 2));
 
     double amountVal = double.tryParse(widget.amount.replaceAll(',', '')) ?? 0;
@@ -231,10 +277,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     child: _buildDetailsCard(context, theme, l10n, appState, amountVal, fee, total),
                   ),
                   const SizedBox(height: 24),
-                  if (_showPinField) 
-                    FadeInUp(child: _buildPinSection(theme, l10n))
-                  else 
-                    FadeInUp(child: _buildActionButtons(theme, l10n, total)),
+                  FadeInUp(child: _buildActionButtons(theme, l10n, total)),
                 ],
               ),
             ),
@@ -245,23 +288,68 @@ class _ReviewScreenState extends State<ReviewScreen> {
   }
 
   Widget _buildProcessingScreen(ThemeData theme, AppLocalizations l10n) {
+    String providerName = "";
+    if (widget.paymentMethod.contains("(")) {
+      providerName = widget.paymentMethod.split("(").last.split(" -").first;
+    }
+
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ZoomIn(
-              child: Container(
-                width: 100, height: 100,
-                decoration: BoxDecoration(color: theme.colorScheme.secondary.withValues(alpha: 0.1), shape: BoxShape.circle),
-                child: Center(child: CircularProgressIndicator(color: theme.colorScheme.secondary, strokeWidth: 5)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ZoomIn(
+                child: Container(
+                  width: 120, height: 120,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.secondary.withValues(alpha: 0.1), 
+                    shape: BoxShape.circle,
+                    border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.05), width: 8),
+                  ),
+                  child: Center(
+                    child: _isStkWaiting 
+                      ? Icon(Icons.phonelink_ring_rounded, size: 50, color: theme.colorScheme.secondary)
+                      : CircularProgressIndicator(color: theme.colorScheme.secondary, strokeWidth: 5)
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
-            FadeInUp(child: Text(l10n.processingTransaction, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900))),
-            const SizedBox(height: 8),
-            Text(l10n.moneyOnWay, style: const TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
-          ],
+              const SizedBox(height: 32),
+              FadeInUp(
+                child: Text(
+                  _isStkWaiting ? l10n.stkPushSent : l10n.processingTransaction, 
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 16),
+              FadeInUp(
+                delay: const Duration(milliseconds: 200),
+                child: Text(
+                  _isStkWaiting 
+                    ? l10n.stkPushInstructions(providerName)
+                    : l10n.moneyOnWay, 
+                  style: const TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              if (_isStkWaiting) ...[
+                const SizedBox(height: 48),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 400),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                      const SizedBox(width: 12),
+                      Text(l10n.waitingForProvider, style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -298,9 +386,13 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       size: 16
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      "${widget.paymentMethod}: ${widget.currencyCode} ${widget.amount}",
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                    Flexible(
+                      child: Text(
+                        "${widget.paymentMethod}: ${widget.currencyCode} ${widget.amount}",
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     ),
                   ],
                 ),
@@ -387,39 +479,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
     );
   }
 
-  Widget _buildPinSection(ThemeData theme, AppLocalizations l10n) {
-    return Column(
-      children: [
-        Text(l10n.enterTransactionPin, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-        const SizedBox(height: 16),
-        Container(
-          width: 200,
-          child: TextField(
-            controller: _pinController,
-            obscureText: true,
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            maxLength: 4,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 10),
-            onChanged: (v) {
-              if (v.isNotEmpty) HapticFeedback.selectionClick();
-              if (v.length == 4) _processTransaction();
-            },
-            decoration: InputDecoration(
-              counterText: "",
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2)),
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        TextButton(onPressed: () {
-          HapticFeedback.lightImpact();
-          setState(() => _showPinField = false);
-        }, child: Text(l10n.cancel, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold))),
-      ],
-    );
-  }
-
   Widget _buildActionButtons(ThemeData theme, AppLocalizations l10n, double total) {
     return Column(
       children: [
@@ -438,10 +497,20 @@ class _ReviewScreenState extends State<ReviewScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.lock_outline_rounded, size: 20),
-                const SizedBox(width: 12),
-                Text("${l10n.confirmAndPay} (${NumberFormat.simpleCurrency(name: widget.currencyCode).format(total)})", 
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+                Icon(Icons.lock_outline_rounded, size: 20 * context.fontSizeFactor),
+                SizedBox(width: 12 * context.fontSizeFactor),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      "${l10n.confirmAndPay} (${NumberFormat.simpleCurrency(name: widget.currencyCode).format(total)})",
+                      style: TextStyle(
+                        fontSize: 18 * context.fontSizeFactor,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -470,16 +539,32 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
     return Row(
       children: [
-        Icon(icon, size: 20, color: labelColor),
-        const SizedBox(width: 12),
+        Icon(icon, size: 20 * context.fontSizeFactor, color: labelColor),
+        SizedBox(width: 12 * context.fontSizeFactor),
         Expanded(
-          child: Text(label, style: TextStyle(color: labelColor, fontWeight: FontWeight.bold, fontSize: 14)),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: labelColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14 * context.fontSizeFactor,
+            ),
+          ),
         ),
-        Text(value, style: TextStyle(
-          fontSize: isTotal ? 22 : (isBold ? 18 : 15),
-          fontWeight: FontWeight.w900,
-          color: valueTextColor,
-        )),
+        const SizedBox(width: 8),
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: (isTotal ? 22 : (isBold ? 18 : 15)) * context.fontSizeFactor,
+                fontWeight: FontWeight.w900,
+                color: valueTextColor,
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -503,7 +588,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
         ),
         const SizedBox(height: 4),
         SizedBox(
-          width: 60,
+          width: 50,
           child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor), maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
       ],

@@ -24,6 +24,7 @@ import 'models/card_model.dart';
 import 'widgets/elite_virtual_card.dart';
 import 'card_statement_screen.dart';
 import '../navigation/main_navigation.dart';
+import '../../core/widgets/pin_entry_dialog.dart';
 
 class CardsScreen extends StatefulWidget {
   const CardsScreen({super.key});
@@ -117,7 +118,7 @@ class _CardsScreenState extends State<CardsScreen> {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(context.horizontalPadding, 16, context.horizontalPadding, 8),
+              padding: EdgeInsetsDirectional.fromSTEB(context.horizontalPadding, 16, context.horizontalPadding, 8),
               child: Row(
                 children: [
                   Expanded(
@@ -187,7 +188,7 @@ class _CardsScreenState extends State<CardsScreen> {
                   height: 380 * context.fontSizeFactor,
                   borderRadius: 32,
                   blur: 20,
-                  alignment: Alignment.center,
+                  alignment: AlignmentDirectional.center,
                   border: 2,
                   linearGradient: LinearGradient(
                     colors: isDark 
@@ -241,7 +242,7 @@ class _CardsScreenState extends State<CardsScreen> {
                           ),
                           onChanged: (value) {
                             if (value.length == 4) {
-                              if (targetCard.pin == value) {
+                              if (state.verifyCardPin(value, cardId: targetCard.id)) {
                                 Navigator.pop(context);
                                 HapticFeedback.mediumImpact();
                                 setState(() {
@@ -645,7 +646,7 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label, bool sel, ValueChanged<bool> onSelected) => Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: onSelected, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), selectedColor: AppColors.accentTeal.withValues(alpha: 0.2), checkmarkColor: AppColors.accentTeal));
+  Widget _buildFilterChip(String label, bool sel, ValueChanged<bool> onSelected) => Padding(padding: const EdgeInsetsDirectional.only(end: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: onSelected, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), selectedColor: AppColors.accentTeal.withValues(alpha: 0.2), checkmarkColor: AppColors.accentTeal));
 
   void _showCardSettings(BuildContext context, AppState state) {
     if (state.cards.isEmpty) return;
@@ -666,7 +667,7 @@ class _CardsScreenState extends State<CardsScreen> {
           return GlassmorphicContainer(
             width: double.infinity,
             height: MediaQuery.of(context).size.height * 0.82,
-            borderRadius: 24,
+            borderRadius: 24 * context.fontSizeFactor,
             blur: 30,
             alignment: Alignment.topCenter,
             border: 2,
@@ -839,65 +840,30 @@ class _CardsScreenState extends State<CardsScreen> {
   }
 
   void _showPinVerification(BuildContext context, AppState state, AppLocalizations l10n, Function(bool) onResult) {
-    final TextEditingController pinController = TextEditingController();
-    final theme = Theme.of(context);
     final currentCard = state.cards[state.selectedCardIndex];
     
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(state.translate("Gali PIN-ka Kaadhka", "Card PIN"), style: const TextStyle(fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              state.translate(
-                "Fadlan gali PIN-ka u gaarka ah kaadhka ku dhamaanaya ${currentCard.cardNumber.substring(currentCard.cardNumber.length - 4)} si aad u sii wadato.",
-                "Please enter the unique PIN for card ending in ${currentCard.cardNumber.substring(currentCard.cardNumber.length - 4)} to continue."
-              ),
-              style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: pinController,
-              obscureText: true,
-              maxLength: 4,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 10),
-              decoration: InputDecoration(
-                counterText: "",
-                filled: true,
-                fillColor: theme.colorScheme.surface,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-              ),
-              onChanged: (value) {
-                if (value.length == 4) {
-                  if (state.verifyCardPin(value)) {
-                    Navigator.pop(context);
-                    onResult(true);
-                  } else {
-                    pinController.clear();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.translate("PIN-kaagu waa khalad.", "Incorrect card PIN.")), backgroundColor: Colors.red),
-                    );
-                  }
-                }
-              },
-            ),
-          ],
+      barrierDismissible: true,
+      builder: (context) => PinEntryDialog(
+        title: state.translate("Card PIN", "Gali PIN-ka Kaadhka", ar: "رمز PIN للبطاقة"),
+        description: state.translate(
+          "Please enter the unique PIN for card ending in ${currentCard.cardNumber.substring(currentCard.cardNumber.length - 4)} to continue.",
+          "Fadlan gali PIN-ka u gaarka ah kaadhka ku dhamaanaya ${currentCard.cardNumber.substring(currentCard.cardNumber.length - 4)} si aad u sii wadato.",
+          ar: "يرجى إدخال رمز PIN الفريد للبطاقة التي تنتهي بـ ${currentCard.cardNumber.substring(currentCard.cardNumber.length - 4)} للمتابعة."
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              onResult(false);
-            },
-            child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey)),
-          ),
-        ],
+        isCardPin: true,
+        cardId: currentCard.id,
+        onConfirm: (pin) {
+          if (state.verifyCardPin(pin)) {
+            onResult(true);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.translate("Incorrect card PIN.", "PIN-kaagu waa khalad.")), backgroundColor: Colors.red),
+            );
+            onResult(false);
+          }
+        },
       ),
     );
   }
@@ -921,7 +887,7 @@ class _CardsScreenState extends State<CardsScreen> {
       builder: (sheetCtx) => GlassmorphicContainer(
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.75,
-        borderRadius: 24,
+        borderRadius: 24 * context.fontSizeFactor,
         blur: 30,
         alignment: Alignment.topCenter,
         border: 2,
@@ -940,9 +906,9 @@ class _CardsScreenState extends State<CardsScreen> {
         ),
         child: Column(
           children: [
-            const SizedBox(height: 12),
-            Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
-            const SizedBox(height: 24),
+            SizedBox(height: 12 * context.fontSizeFactor),
+            Container(width: 40 * context.fontSizeFactor, height: 4 * context.fontSizeFactor, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10 * context.fontSizeFactor))),
+            SizedBox(height: 24 * context.fontSizeFactor),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
@@ -1194,12 +1160,13 @@ class _CardsScreenState extends State<CardsScreen> {
         filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: AlertDialog(
           backgroundColor: isDark ? AppColors.primaryDark.withValues(alpha: 0.9) : Colors.white.withValues(alpha: 0.9),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
           title: Text(
             state.translate("Xaqiijinta Tirtiridda", "Confirm Termination"),
             style: TextStyle(
               color: isDark ? Colors.white : AppColors.textPrimary,
               fontWeight: FontWeight.bold,
+              fontSize: 18 * context.fontSizeFactor,
             ),
           ),
           content: Text(
@@ -1207,12 +1174,12 @@ class _CardsScreenState extends State<CardsScreen> {
               "Ma hubtaa inaad rabto inaad si joogto ah u tirtirto kaadhkan? Haraaga ku jira waxaa lagu celin doonaa Wallet-kaaga. Tallaabadan dib looguma noqon karo.",
               "Are you sure you want to permanently terminate this card? Any remaining balance will be refunded to your wallet. This action cannot be undone."
             ),
-            style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary),
+            style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 14 * context.fontSizeFactor),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: Text(l10n.cancel, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+              child: Text(l10n.cancel, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -1221,7 +1188,12 @@ class _CardsScreenState extends State<CardsScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
+                padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
+              ),
+              child: Text(state.translate("Haa, Tirtir", "Yes, Terminate"), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+            ),
+          ],
               ),
               child: Text(
                 state.translate("Haa, Tirtir", "Yes, Terminate"),
@@ -1252,7 +1224,7 @@ class _CardsScreenState extends State<CardsScreen> {
         child: GlassmorphicContainer(
           width: double.infinity,
           height: 400 * fontSizeFactor,
-          borderRadius: 24,
+          borderRadius: 24 * fontSizeFactor,
           blur: 30,
           alignment: Alignment.topCenter,
           border: 2,
@@ -1266,22 +1238,22 @@ class _CardsScreenState extends State<CardsScreen> {
           ),
           child: Column(
             children: [
-              const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 24),
+              SizedBox(height: 12 * fontSizeFactor),
+              Container(width: 40 * fontSizeFactor, height: 4 * fontSizeFactor, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10 * fontSizeFactor))),
+              SizedBox(height: 24 * fontSizeFactor),
               Icon(
                 isChangePin ? Icons.security_rounded : (isTerminate ? Icons.delete_sweep_rounded : Icons.lock_outline_rounded), 
                 color: isChangePin ? Colors.blueAccent : (isTerminate ? Colors.redAccent : Colors.orange), 
                 size: 48 * fontSizeFactor
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16 * fontSizeFactor),
               Text(
                 isChangePin 
                   ? state.translate("Gali PIN-ka Hadda", "Enter Current PIN")
                   : state.translate("Gali PIN-ka Kaadhka", "Enter Card PIN"),
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8 * fontSizeFactor),
               Text(
                 isChangePin 
                   ? state.translate("Fadlan geli PIN-kaaga hadda si aad u beddesho.", "Please enter your current PIN to change it.")
@@ -1289,7 +1261,7 @@ class _CardsScreenState extends State<CardsScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * fontSizeFactor),
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32 * fontSizeFactor),
               SizedBox(
                 width: 220 * fontSizeFactor,
                 child: TextField(
@@ -1305,7 +1277,7 @@ class _CardsScreenState extends State<CardsScreen> {
                     hintStyle: TextStyle(letterSpacing: 20 * fontSizeFactor, fontSize: 28 * fontSizeFactor, color: isDark ? Colors.white24 : Colors.black12),
                     filled: true,
                     fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * fontSizeFactor), borderSide: BorderSide.none),
                   ),
                   onChanged: (value) {
                     if (value.length == 4) {
@@ -1423,7 +1395,7 @@ class _CardsScreenState extends State<CardsScreen> {
                     if (value.length == 4) {
                       if (isChange) {
                         final currentCard = state.cards[state.selectedCardIndex];
-                        if (currentCard.pin == value) {
+                        if (state.verifyCardPin(value, cardId: currentCard.id)) {
                           HapticFeedback.vibrate();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -1786,7 +1758,7 @@ class _CardsScreenState extends State<CardsScreen> {
 
   Widget _buildSectionTitle(BuildContext context, String title, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(left: 12, bottom: 12),
+      padding: const EdgeInsetsDirectional.only(start: 12, bottom: 12),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.4) : Colors.black45, fontSize: 10 * context.fontSizeFactor, letterSpacing: 1.5, fontWeight: FontWeight.bold),
@@ -1919,7 +1891,7 @@ class _CardsScreenState extends State<CardsScreen> {
         height: 320,
         borderRadius: 24,
         blur: 30,
-        alignment: Alignment.topCenter,
+        alignment: AlignmentDirectional.topCenter,
         border: 2,
         linearGradient: LinearGradient(colors: [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]),
         borderGradient: LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)]),

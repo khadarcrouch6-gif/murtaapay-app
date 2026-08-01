@@ -1970,6 +1970,24 @@ abstract class AppLocalizations {
   /// **'Processing Transaction...'**
   String get processingTransaction;
 
+  /// No description provided for @stkPushSent.
+  ///
+  /// In en, this message translates to:
+  /// **'STK Push Sent'**
+  String get stkPushSent;
+
+  /// No description provided for @stkPushInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your phone for the {provider} PIN prompt to authorize the payment.'**
+  String stkPushInstructions(String provider);
+
+  /// No description provided for @waitingForProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for provider confirmation...'**
+  String get waitingForProvider;
+
   /// No description provided for @copiedToClipboard.
   ///
   /// In en, this message translates to:

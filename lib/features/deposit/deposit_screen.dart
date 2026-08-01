@@ -402,12 +402,14 @@ class _DepositScreenState extends State<DepositScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryDark,
                     disabledBackgroundColor: theme.dividerColor.withValues(alpha: 0.1),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
                     elevation: 0,
                   ),
-                  child: Text(
-                    l10n.continueLabel, 
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
+                  child: FittedBox(
+                    child: Text(
+                      l10n.continueLabel, 
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
+                    ),
                   ),
                 ),
               ),
@@ -514,12 +516,14 @@ class _DepositScreenState extends State<DepositScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: bank?["color"] as Color? ?? AppColors.primaryDark,
                       disabledBackgroundColor: theme.dividerColor.withValues(alpha: 0.1),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
                       elevation: 0,
                     ),
-                    child: Text(
-                      l10n.continueLabel, 
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
+                    child: FittedBox(
+                      child: Text(
+                        l10n.continueLabel, 
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
+                      ),
                     ),
                   ),
                 ),
@@ -733,7 +737,21 @@ class _DepositScreenState extends State<DepositScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) {
-          bool isValid = _field1Controller.text.length == 9;
+          final val = _field1Controller.text;
+          String? prefixError;
+          if (val.isNotEmpty) {
+            if (currentProvider == l10n.evcPlus && !(val.startsWith('61') || val.startsWith('77'))) {
+              prefixError = "EVC Plus prefix must be 61 or 77";
+            } else if (currentProvider == l10n.edahab && !val.startsWith('65')) {
+              prefixError = "e-Dahab prefix must be 65";
+            } else if (currentProvider == l10n.zaad && !val.startsWith('63')) {
+              prefixError = "ZAAD prefix must be 63";
+            } else if (currentProvider == l10n.sahal && !val.startsWith('90')) {
+              prefixError = "Sahal prefix must be 90";
+            }
+          }
+
+          bool isValid = val.length == 9 && prefixError == null;
           return AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             title: Row(
@@ -747,7 +765,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 Text(currentProvider ?? provider, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor)),
               ],
             ),
-            content: Column(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -761,30 +779,35 @@ class _DepositScreenState extends State<DepositScreen> {
                   prefix: "+252 ",
                   maxLength: 9,
                   onChanged: (val) {
-                    if (val.startsWith('61')) {
-                      currentProvider = l10n.evcPlus;
-                    } else if (val.startsWith('65')) {
-                      currentProvider = l10n.edahab;
-                    } else if (val.startsWith('63')) {
-                      currentProvider = l10n.zaad;
-                    } else if (val.startsWith('90')) {
-                      currentProvider = l10n.sahal;
-                    } else {
-                      currentProvider = provider;
+                    if (val.length >= 2) {
+                      if (val.startsWith('61') || val.startsWith('77')) {
+                        currentProvider = l10n.evcPlus;
+                      } else if (val.startsWith('65')) {
+                        currentProvider = l10n.edahab;
+                      } else if (val.startsWith('63')) {
+                        currentProvider = l10n.zaad;
+                      } else if (val.startsWith('90')) {
+                        currentProvider = l10n.sahal;
+                      }
                     }
                     _selectedProvider = currentProvider;
                     setDialogState((){});
                   }
                 ),
-                if (_field1Controller.text.isNotEmpty && _field1Controller.text.length < 9)
+                if (prefixError != null)
                    Padding(
                      padding: const EdgeInsets.only(top: 8, left: 4),
-                     child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
+                     child: Text(prefixError, style: TextStyle(color: Colors.red.shade700, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                   )
+                else if (_field1Controller.text.isNotEmpty && _field1Controller.text.length < 9)
+                   Padding(
+                     padding: const EdgeInsets.only(top: 8, left: 4),
+                     child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                    ),
               ],
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor))),
+              TextButton(onPressed: () => Navigator.pop(context), child: FittedBox(child: Text(l10n.cancel, style: TextStyle(fontSize: 14 * context.fontSizeFactor)))),
               ElevatedButton(
                 onPressed: !isValid ? null : () {
                   Navigator.pop(context);
@@ -793,10 +816,10 @@ class _DepositScreenState extends State<DepositScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: color, 
                   disabledBackgroundColor: Colors.grey.withValues(alpha: 0.3),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                   padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 10 * context.fontSizeFactor),
                 ),
-                child: Text(l10n.continueLabel, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                child: FittedBox(child: Text(l10n.continueLabel, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
               ),
             ],
           );
@@ -926,12 +949,14 @@ class _DepositScreenState extends State<DepositScreen> {
                         },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryDark,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18 * context.fontSizeFactor)),
                         elevation: 0,
                       ),
-                      child: Text(
-                        l10n.confirmAndDeposit, 
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: Colors.white)
+                      child: FittedBox(
+                        child: Text(
+                          l10n.confirmAndDeposit, 
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: Colors.white)
+                        ),
                       ),
                     ),
                   ),

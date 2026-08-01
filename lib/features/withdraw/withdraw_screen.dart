@@ -97,8 +97,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                         padding: EdgeInsets.all(24 * context.fontSizeFactor),
                         decoration: BoxDecoration(
                           gradient: AppColors.primaryGradient,
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [BoxShadow(color: AppColors.primaryDark.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))],
+                          borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+                          boxShadow: [BoxShadow(color: AppColors.primaryDark.withValues(alpha: 0.3), blurRadius: 20 * context.fontSizeFactor, offset: Offset(0, 10 * context.fontSizeFactor))],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +112,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                           letterSpacing: 1.2,
                         ),
                       ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8 * context.fontSizeFactor),
                       ListenableBuilder(
                         listenable: state,
                         builder: (context, _) {
@@ -123,18 +123,18 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                           );
                         },
                       ),
-                            const SizedBox(height: 20),
+                            SizedBox(height: 20 * context.fontSizeFactor),
                             // Amount Input
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                              padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(14 * context.fontSizeFactor),
                               ),
                               child: Row(
                                 children: [
                                   Text(r"$", style: TextStyle(color: Colors.white, fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: 8 * context.fontSizeFactor),
                                   Expanded(
                                     child: TextField(
                                       controller: _amountController,
@@ -152,9 +152,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8 * context.fontSizeFactor),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding: EdgeInsets.symmetric(horizontal: 4 * context.fontSizeFactor),
                               child: Text(
                                 "Limit: \$10.00 - \$2,500.00",
                                 style: TextStyle(
@@ -164,7 +164,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12 * context.fontSizeFactor),
                             // Quick amounts
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
@@ -172,11 +172,11 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                 children: [50, 100, 200, 500].map((amt) => GestureDetector(
                                   onTap: () => setState(() => _amountController.text = amt.toString()),
                                   child: Container(
-                                    margin: const EdgeInsets.only(right: 8),
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    margin: EdgeInsets.only(right: 8 * context.fontSizeFactor),
+                                    padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
                                     decoration: BoxDecoration(
                                       color: _amountController.text == amt.toString() ? AppColors.primaryDark : Colors.white.withValues(alpha: 0.2),
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
                                     ),
                                     child: Text("\$$amt", style: TextStyle(color: Colors.white, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w600)),
                                   ),
@@ -189,11 +189,11 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32 * context.fontSizeFactor),
                 FadeInUp(
                   child: Text(l10n.withdrawalMethod, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16 * context.fontSizeFactor),
                 ...List.generate(_methods.length, (index) {
                   final method = _methods[index];
                   final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
@@ -210,16 +210,16 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                         } : null,
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 250),
-                          margin: const EdgeInsets.only(bottom: 14),
+                          margin: EdgeInsets.only(bottom: 14 * context.fontSizeFactor),
                           padding: EdgeInsets.all(18 * context.fontSizeFactor),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.surface,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.03),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
+                                blurRadius: 12 * context.fontSizeFactor,
+                                offset: Offset(0, 4 * context.fontSizeFactor),
                               ),
                             ],
                           ),
@@ -233,7 +233,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
-                                  borderRadius: BorderRadius.circular(14),
+                                  borderRadius: BorderRadius.circular(14 * context.fontSizeFactor),
                                 ),
                                 child: Center(
                                   child: AdaptiveIcon(
@@ -243,7 +243,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 16),
+                              SizedBox(width: 16 * context.fontSizeFactor),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,10 +262,11 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                   );
                 }),
     
-                const SizedBox(height: 120),
+                SizedBox(height: 120 * context.fontSizeFactor),
               ],
             ),
           ),
+
         ),
       ),
     );
@@ -280,111 +281,110 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       barrierDismissible: true,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          scrollable: true,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
           contentPadding: EdgeInsets.zero,
           clipBehavior: Clip.antiAlias,
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Premium Header
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppColors.accentTeal, Color(0xFF00695C)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Premium Header
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppColors.accentTeal, Color(0xFF00695C)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(12 * context.fontSizeFactor),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.credit_card_rounded, color: Colors.white, size: 32 * context.fontSizeFactor),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(12 * context.fontSizeFactor),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.credit_card_rounded, color: Colors.white, size: 32 * context.fontSizeFactor),
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    Text(
+                      l10n.virtualCardBalance.toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        fontSize: 11 * context.fontSizeFactor,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.5,
                       ),
-                      SizedBox(height: 16 * context.fontSizeFactor),
-                      Text(
-                        l10n.virtualCardBalance.toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 11 * context.fontSizeFactor,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                      SizedBox(height: 4 * context.fontSizeFactor),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: ListenableBuilder(
-                          listenable: state,
-                          builder: (context, _) {
-                            final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
-                            return Text(
-                              NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 32 * context.fontSizeFactor,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                Padding(
-                  padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                  child: Column(
-                    children: [
-                      // Amount Summary
-                      Container(
-                        padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                l10n.amount,
-                                style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
-                              ),
+                    ),
+                    SizedBox(height: 4 * context.fontSizeFactor),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: ListenableBuilder(
+                        listenable: state,
+                        builder: (context, _) {
+                          final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
+                          return Text(
+                            NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 32 * context.fontSizeFactor,
+                              fontWeight: FontWeight.w900,
                             ),
-                            Text(
-                              NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
-                              style: TextStyle(
-                                color: AppColors.accentTeal,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 18 * context.fontSizeFactor,
-                              ),
-                            ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              
+              Padding(
+                padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                child: Column(
+                  children: [
+                    // Amount Summary
+                    Container(
+                      padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              l10n.amount,
+                              style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
+                            ),
+                          ),
+                          Text(
+                            NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
+                            style: TextStyle(
+                              color: AppColors.accentTeal,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 18 * context.fontSizeFactor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+              child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 8, bottom: 8),
+              padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -395,16 +395,17 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor, vertical: 12 * context.fontSizeFactor),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                   disabledBackgroundColor: AppColors.grey.withValues(alpha: 0.2),
                 ),
-                child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold)),
+                child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
               ),
             ),
           ],
         ),
       ),
     );
+
   }
 
   void _showPinDialog(BuildContext context, AppLocalizations l10n, AppState state, {required String type}) {
@@ -416,11 +417,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       barrierDismissible: false,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          scrollable: true,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
           title: Column(
             children: [
-              Icon(Icons.lock_outline_rounded, color: type == "wallet" ? AppColors.accentTeal : Colors.blue, size: 40),
-              SizedBox(height: 16),
+              Icon(Icons.lock_outline_rounded, color: type == "wallet" ? AppColors.accentTeal : Colors.blue, size: 40 * context.fontSizeFactor),
+              SizedBox(height: 16 * context.fontSizeFactor),
               Text(l10n.enterVirtualCardPin, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
             ],
           ),
@@ -432,7 +434,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
               ),
-              SizedBox(height: 24),
+              SizedBox(height: 24 * context.fontSizeFactor),
               SizedBox(
                 width: 200 * context.fontSizeFactor,
                 child: TextField(
@@ -445,17 +447,17 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                   style: TextStyle(
                     fontSize: 32 * context.fontSizeFactor,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 20,
+                    letterSpacing: 20 * context.fontSizeFactor,
                     color: theme.textTheme.bodyLarge?.color,
                   ),
                   onChanged: (_) => setDialogState(() {}),
                   decoration: InputDecoration(
                     counterText: "",
                     enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: (type == "wallet" ? AppColors.accentTeal : Colors.blue).withValues(alpha: 0.2), width: 2),
+                      borderSide: BorderSide(color: (type == "wallet" ? AppColors.accentTeal : Colors.blue).withValues(alpha: 0.2), width: 2 * context.fontSizeFactor),
                     ),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: type == "wallet" ? AppColors.accentTeal : Colors.blue, width: 3),
+                      borderSide: BorderSide(color: type == "wallet" ? AppColors.accentTeal : Colors.blue, width: 3 * context.fontSizeFactor),
                     ),
                   ),
                 ),
@@ -465,10 +467,10 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+              child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 8, bottom: 8),
+              padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
               child: ElevatedButton(
                 onPressed: pinController.text.length < 4
                     ? null
@@ -492,15 +494,16 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: type == "wallet" ? AppColors.accentTeal : Colors.blue,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                 ),
-                child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold)),
+                child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
               ),
             ),
           ],
         ),
       ),
     );
+
   }
 
   void _showBankWithdrawDialog(BuildContext context, AppLocalizations l10n) {
@@ -518,142 +521,141 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          scrollable: true,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
           contentPadding: EdgeInsets.zero,
           clipBehavior: Clip.antiAlias,
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.blue, Color(0xFF1565C0)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(12 * context.fontSizeFactor),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.account_balance_rounded, color: Colors.white, size: 32 * context.fontSizeFactor),
-                      ),
-                      SizedBox(height: 16 * context.fontSizeFactor),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          l10n.virtualCardBalance.toUpperCase(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontSize: 11 * context.fontSizeFactor,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 4 * context.fontSizeFactor),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: ListenableBuilder(
-                          listenable: state,
-                          builder: (context, _) {
-                            final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
-                            return Text(
-                              NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 32 * context.fontSizeFactor,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue, Color(0xFF1565C0)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                  child: Column(
-                    children: [
-                      // Amount Summary
-                      Container(
-                        padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                l10n.amount,
-                                style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
-                              ),
-                            ),
-                            Text(
-                              NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 18 * context.fontSizeFactor,
-                              ),
-                            ),
-                          ],
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(12 * context.fontSizeFactor),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.account_balance_rounded, color: Colors.white, size: 32 * context.fontSizeFactor),
+                    ),
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        l10n.virtualCardBalance.toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 11 * context.fontSizeFactor,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.5,
                         ),
                       ),
-                      SizedBox(height: 24 * context.fontSizeFactor),
-                      DropdownButtonFormField<String>(
-                        dropdownColor: theme.colorScheme.surface,
-                        decoration: InputDecoration(
-                          labelText: l10n.selectBank,
-                          labelStyle: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w600),
-                          filled: true,
-                          fillColor: theme.colorScheme.surface,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
-                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
-                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.blue, width: 2)),
-                        ),
-                        items: banks.map((bank) => DropdownMenuItem(value: bank, child: Text(bank, style: TextStyle(fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.w600, color: theme.textTheme.bodyLarge?.color)))).toList(),
-                        onChanged: (val) {
-                          setDialogState(() {
-                            _selectedBank = val;
-                            _isCustomBank = val == "Other (Custom)";
-                          });
+                    ),
+                    SizedBox(height: 4 * context.fontSizeFactor),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: ListenableBuilder(
+                        listenable: state,
+                        builder: (context, _) {
+                          final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
+                          return Text(
+                            NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 32 * context.fontSizeFactor,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          );
                         },
                       ),
-                      if (_isCustomBank) ...[
-                        SizedBox(height: 16 * context.fontSizeFactor),
-                        _withdrawInputField(context, "Bank Name", Icons.business_rounded, _customBankController, onChanged: (_) => setDialogState(() {})),
-                      ],
-                      SizedBox(height: 16 * context.fontSizeFactor),
-                      _withdrawInputField(context, l10n.accountNumber, Icons.numbers, _field1Controller, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                      SizedBox(height: 16 * context.fontSizeFactor),
-                      _withdrawInputField(context, l10n.accountName, Icons.person, _field2Controller, onChanged: (_) => setDialogState(() {})),
-                      SizedBox(height: 16 * context.fontSizeFactor),
-                      _buildPurposeDropdown(theme, l10n, setDialogState),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                child: Column(
+                  children: [
+                    // Amount Summary
+                    Container(
+                      padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              l10n.amount,
+                              style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
+                            ),
+                          ),
+                          Text(
+                            NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 18 * context.fontSizeFactor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 24 * context.fontSizeFactor),
+                    DropdownButtonFormField<String>(
+                      dropdownColor: theme.colorScheme.surface,
+                      decoration: InputDecoration(
+                        labelText: l10n.selectBank,
+                        labelStyle: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w600),
+                        filled: true,
+                        fillColor: theme.colorScheme.surface,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: const BorderSide(color: Colors.blue, width: 2)),
+                      ),
+                      items: banks.map((bank) => DropdownMenuItem(value: bank, child: Text(bank, style: TextStyle(fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.w600, color: theme.textTheme.bodyLarge?.color)))).toList(),
+                      onChanged: (val) {
+                        setDialogState(() {
+                          _selectedBank = val;
+                          _isCustomBank = val == "Other (Custom)";
+                        });
+                      },
+                    ),
+                    if (_isCustomBank) ...[
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      _withdrawInputField(context, "Bank Name", Icons.business_rounded, _customBankController, onChanged: (_) => setDialogState(() {})),
+                    ],
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    _withdrawInputField(context, l10n.accountNumber, Icons.numbers, _field1Controller, isNumber: true, onChanged: (_) => setDialogState(() {})),
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    _withdrawInputField(context, l10n.accountName, Icons.person, _field2Controller, onChanged: (_) => setDialogState(() {})),
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    _buildPurposeDropdown(theme, l10n, setDialogState),
+                  ],
+                ),
+              ),
+            ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+              child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 8, bottom: 8),
+              padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
               child: ElevatedButton(
                 onPressed: (_selectedBank == null || (_isCustomBank && _customBankController.text.isEmpty) || _field1Controller.text.isEmpty || _field2Controller.text.isEmpty)
                     ? null
@@ -666,16 +668,17 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor, vertical: 12 * context.fontSizeFactor),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                   disabledBackgroundColor: AppColors.grey.withValues(alpha: 0.2),
                 ),
-                child: Text(l10n.submit, style: const TextStyle(fontWeight: FontWeight.bold)),
+                child: FittedBox(child: Text(l10n.submit, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
               ),
             ),
           ],
         ),
       ),
     );
+
   }
 
   void _processTransaction(BuildContext context, AppLocalizations l10n, AppState state, {required String type}) async {
@@ -883,9 +886,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         prefixIcon: Icon(icon, color: AppColors.grey, size: 20 * context.fontSizeFactor),
         filled: true,
         fillColor: theme.colorScheme.surface,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.brightness == Brightness.dark ? Colors.white24 : Colors.black12, width: 2)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.brightness == Brightness.dark ? Colors.white24 : Colors.black12, width: 2)),
       ),
     );
   }
@@ -895,19 +898,19 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
         border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
       ),
       child: DropdownButtonFormField<String>(
         initialValue: _selectedPurpose ?? purposes.first,
         dropdownColor: theme.colorScheme.surface,
-        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w600, fontSize: 15),
+        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w600, fontSize: 15 * context.fontSizeFactor),
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.info_outline_rounded, color: AppColors.grey, size: 20),
+          prefixIcon: Icon(Icons.info_outline_rounded, color: AppColors.grey, size: 20 * context.fontSizeFactor),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          contentPadding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor, horizontal: 16 * context.fontSizeFactor),
         ),
-        icon: Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey),
+        icon: Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey, size: 24 * context.fontSizeFactor),
         items: purposes.map((p) => DropdownMenuItem(
           value: p,
           child: Text(p),

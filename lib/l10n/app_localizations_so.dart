@@ -982,6 +982,17 @@ class AppLocalizationsSo extends AppLocalizations {
   String get processingTransaction => 'Lacagta ayaa la socodsiinayaa...';
 
   @override
+  String get stkPushSent => 'STK Push Sent';
+
+  @override
+  String stkPushInstructions(String provider) {
+    return 'Please check your phone for the $provider PIN prompt to authorize the payment.';
+  }
+
+  @override
+  String get waitingForProvider => 'Waiting for provider confirmation...';
+
+  @override
   String get copiedToClipboard => 'Copied to clipboard';
 
   @override

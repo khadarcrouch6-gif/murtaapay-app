@@ -137,7 +137,13 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                             fontSize: 14 * context.fontSizeFactor,
                           ),
                         ),
-                        trailing: Icon(Icons.chevron_right, color: AppColors.grey, size: 24 * context.fontSizeFactor),
+                        trailing: Icon(
+                          Directionality.of(context) == TextDirection.rtl 
+                              ? Icons.chevron_left 
+                              : Icons.chevron_right, 
+                          color: AppColors.grey, 
+                          size: 24 * context.fontSizeFactor
+                        ),
                         onTap: () {
                           Navigator.pop(context);
                           showModalBottomSheet(
@@ -269,7 +275,12 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
               }),
             )
           : IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+              icon: Icon(
+                Directionality.of(context) == TextDirection.rtl 
+                    ? Icons.arrow_forward_rounded 
+                    : Icons.arrow_back_rounded, 
+                color: AppColors.textPrimary
+              ),
               onPressed: () => Navigator.pop(context),
             ),
         actions: [
