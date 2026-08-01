@@ -6,6 +6,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 import '../app_colors.dart';
+import '../responsive_utils.dart';
 import '../../l10n/app_localizations.dart';
 
 class ReceiptView extends StatelessWidget {
@@ -195,21 +196,24 @@ class ReceiptView extends StatelessWidget {
       duration: const Duration(milliseconds: 400),
       child: Center(
         child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 340),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.horizontalPadding,
+            vertical: 40 * context.fontSizeFactor,
+          ),
+          child: MaxWidthBox(
+            maxWidth: 340,
             child: Container(
               margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + 40,
-                top: 40,
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                borderRadius: BorderRadius.circular(32),
+                borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 30,
-                    offset: const Offset(0, 15),
+                    blurRadius: 30 * context.fontSizeFactor,
+                    offset: Offset(0, 15 * context.fontSizeFactor),
                   )
                 ],
               ),
@@ -217,11 +221,11 @@ class ReceiptView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildHeader(context, theme, l10n),
-                  _buildDashedDivider(theme),
+                  _buildDashedDivider(theme, context),
                   _buildDetails(context, theme, l10n),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32 * context.fontSizeFactor),
                   _buildActions(context, l10n),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                 ],
               ),
             ),
@@ -249,20 +253,28 @@ class ReceiptView extends StatelessWidget {
     return Stack(
       children: [
         PositionedDirectional(
-          end: 16,
-          top: 16,
+          end: 16 * context.fontSizeFactor,
+          top: 16 * context.fontSizeFactor,
           child: IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.close_rounded,
-                color: Colors.grey.withValues(alpha: 0.5)),
+            icon: Icon(
+              Icons.close_rounded,
+              color: Colors.grey.withValues(alpha: 0.5),
+              size: 24 * context.fontSizeFactor,
+            ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
+          padding: EdgeInsets.fromLTRB(
+            24 * context.fontSizeFactor,
+            40 * context.fontSizeFactor,
+            24 * context.fontSizeFactor,
+            24 * context.fontSizeFactor,
+          ),
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16 * context.fontSizeFactor),
                 decoration: BoxDecoration(
                   color: (isSuccess ? AppColors.accentTeal : Colors.orange)
                       .withValues(alpha: 0.1),
@@ -271,23 +283,27 @@ class ReceiptView extends StatelessWidget {
                 child: Icon(
                   isSuccess ? Icons.check_circle_rounded : Icons.pending_rounded,
                   color: isSuccess ? AppColors.accentTeal : Colors.orange,
-                  size: 40,
+                  size: 40 * context.fontSizeFactor,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16 * context.fontSizeFactor),
               Text(
                 title,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18 * context.fontSizeFactor,
+                ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
-              Text(
-                transaction['amount']?.toString() ?? "0.00",
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    color: amountColor),
+              SizedBox(height: 8 * context.fontSizeFactor),
+              FittedBox(
+                child: Text(
+                  transaction['amount']?.toString() ?? "0.00",
+                  style: TextStyle(
+                      fontSize: 32 * context.fontSizeFactor,
+                      fontWeight: FontWeight.w900,
+                      color: amountColor),
+                ),
               ),
             ],
           ),
@@ -296,16 +312,16 @@ class ReceiptView extends StatelessWidget {
     );
   }
 
-  Widget _buildDashedDivider(ThemeData theme) {
+  Widget _buildDashedDivider(ThemeData theme, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor),
       child: Row(
         children: List.generate(
           15,
           (index) => Expanded(
             child: Container(
-              height: 1,
-              margin: const EdgeInsets.symmetric(horizontal: 2),
+              height: 1 * context.fontSizeFactor,
+              margin: EdgeInsets.symmetric(horizontal: 2 * context.fontSizeFactor),
               color: Colors.grey.withValues(alpha: 0.3),
             ),
           ),
@@ -316,40 +332,49 @@ class ReceiptView extends StatelessWidget {
 
   Widget _buildDetails(BuildContext context, ThemeData theme, AppLocalizations l10n) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: EdgeInsets.symmetric(
+        horizontal: 24 * context.fontSizeFactor,
+        vertical: 16 * context.fontSizeFactor,
+      ),
       child: Column(
         children: [
-          _buildDetailRow(theme, l10n.receiverSource, transaction['title'] ?? ""),
+          _buildDetailRow(context, theme, l10n.receiverSource, transaction['title'] ?? ""),
           if (transaction['purpose'] != null && transaction['purpose'].toString().isNotEmpty)
-            _buildDetailRow(theme, l10n.purpose, transaction['purpose'].toString()),
-          _buildDetailRow(theme, l10n.transactionId, transaction['transactionId'] ?? transaction['id'] ?? "#MTX-98234-AX"),
-          _buildDetailRow(theme, l10n.date, transaction['date'] ?? ""),
-          _buildDetailRow(theme, l10n.payoutVia, transaction['method'] ?? l10n.murtaaxWallet),
-          _buildDetailRow(theme, l10n.paidUsing, transaction['paymentMethod'] ?? l10n.walletBalance),
+            _buildDetailRow(context, theme, l10n.purpose, transaction['purpose'].toString()),
+          _buildDetailRow(context, theme, l10n.transactionId, transaction['transactionId'] ?? transaction['id'] ?? "#MTX-98234-AX"),
+          _buildDetailRow(context, theme, l10n.date, transaction['date'] ?? ""),
+          _buildDetailRow(context, theme, l10n.payoutVia, transaction['method'] ?? l10n.murtaaxWallet),
+          _buildDetailRow(context, theme, l10n.paidUsing, transaction['paymentMethod'] ?? l10n.walletBalance),
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(ThemeData theme, String label, String value) {
+  Widget _buildDetailRow(BuildContext context, ThemeData theme, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8 * context.fontSizeFactor),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(color: Colors.grey, fontSize: 13),
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 13 * context.fontSizeFactor,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8 * context.fontSizeFactor),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13 * context.fontSizeFactor,
+              ),
               textAlign: TextAlign.end,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -362,7 +387,7 @@ class ReceiptView extends StatelessWidget {
 
   Widget _buildActions(BuildContext context, AppLocalizations l10n) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor),
       child: Column(
         children: [
           ElevatedButton.icon(
@@ -381,33 +406,38 @@ class ReceiptView extends StatelessWidget {
                 }
               }
             },
-            icon: const Icon(Icons.download_rounded, size: 18),
-            label: Text(l10n.downloadPdf),
+            icon: Icon(Icons.download_rounded, size: 18 * context.fontSizeFactor),
+            label: Text(
+              l10n.downloadPdf,
+              style: TextStyle(fontSize: 14 * context.fontSizeFactor),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryDark,
               foregroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 50),
+              minimumSize: Size(double.infinity, 50 * context.fontSizeFactor),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
+                  borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
               elevation: 0,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12 * context.fontSizeFactor),
           OutlinedButton(
             onPressed: () => Navigator.pop(context),
             style: OutlinedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50),
+              minimumSize: Size(double.infinity, 50 * context.fontSizeFactor),
               side: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
+                  borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
             ),
             child: Text(
               l10n.cancel,
-              style: const TextStyle(
-                  color: Colors.grey, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14 * context.fontSizeFactor),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12 * context.fontSizeFactor),
           TextButton(
             onPressed: () async {
               try {
@@ -432,8 +462,10 @@ class ReceiptView extends StatelessWidget {
             },
             child: Text(
               l10n.shareReceipt,
-              style: const TextStyle(
-                  color: AppColors.primaryDark, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: AppColors.primaryDark,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14 * context.fontSizeFactor),
             ),
           ),
         ],

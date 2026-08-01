@@ -56,10 +56,13 @@ class _SuccessScreenState extends State<SuccessScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
-        child: MaxWidthBox(
-          maxWidth: 500,
-          child: Padding(
-            padding: const EdgeInsets.all(32.0),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.horizontalPadding,
+            vertical: 32 * context.fontSizeFactor,
+          ),
+          child: MaxWidthBox(
+            maxWidth: 500,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -77,8 +80,8 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       boxShadow: [
                         BoxShadow(
                           color: const Color(0xFF11998E).withValues(alpha: 0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
+                          blurRadius: 20 * context.fontSizeFactor,
+                          offset: Offset(0, 10 * context.fontSizeFactor),
                         )
                       ],
                     ),
@@ -89,7 +92,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32 * context.fontSizeFactor),
                 Text(
                   widget.title,
                   textAlign: TextAlign.center,
@@ -99,7 +102,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     color: theme.textTheme.titleLarge?.color,
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12 * context.fontSizeFactor),
                 Text(
                   widget.message,
                   textAlign: TextAlign.center,
@@ -110,38 +113,47 @@ class _SuccessScreenState extends State<SuccessScreen> {
                   ),
                 ),
                 if (widget.subMessage != null) ...[
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16 * context.fontSizeFactor),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16 * context.fontSizeFactor,
+                      vertical: 8 * context.fontSizeFactor,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.accentTeal.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                     ),
                     child: Text(
                       widget.subMessage!,
-                      style: const TextStyle(
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
                         color: AppColors.accentTeal,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 14 * context.fontSizeFactor,
                       ),
                     ),
                   ),
                 ],
                 if (widget.transactionData != null) ...[
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   TextButton.icon(
                     onPressed: () => ReceiptView.show(context, widget.transactionData!),
-                    icon: const Icon(Icons.receipt_long_rounded, color: AppColors.accentTeal),
+                    icon: Icon(
+                      Icons.receipt_long_rounded,
+                      color: AppColors.accentTeal,
+                      size: 20 * context.fontSizeFactor,
+                    ),
                     label: Text(
                       AppLocalizations.of(context)?.viewReceipt ?? "View Receipt",
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.accentTeal,
                         fontWeight: FontWeight.bold,
+                        fontSize: 14 * context.fontSizeFactor,
                       ),
                     ),
                   ),
                 ],
-                const SizedBox(height: 48),
+                SizedBox(height: 48 * context.fontSizeFactor),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -152,15 +164,17 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         vertical: 16 * context.fontSizeFactor,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
                       ),
                     ),
-                    child: Text(
-                      widget.buttonText,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16 * context.fontSizeFactor,
-                        color: Colors.white,
+                    child: FittedBox(
+                      child: Text(
+                        widget.buttonText,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16 * context.fontSizeFactor,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),

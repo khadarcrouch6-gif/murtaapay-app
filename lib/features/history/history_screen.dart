@@ -71,36 +71,43 @@ class _HistoryScreenState extends State<HistoryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
+                SizedBox(height: 16 * context.fontSizeFactor),
                 Padding(
                   padding: EdgeInsetsDirectional.symmetric(horizontal: context.horizontalPadding),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        state.translate("Transaction History", "Taariikhda Lacagaha", ar: "سجل المعاملات", de: "Transaktionsverlauf", et: "Tehingute ajalugu"),
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24 * context.fontSizeFactor,
+                      Expanded(
+                        child: Text(
+                          state.translate("Transaction History", "Taariikhda Lacagaha", ar: "سجل المعاملات", de: "Transaktionsverlauf", et: "Tehingute ajalugu"),
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24 * context.fontSizeFactor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                       IconButton(
                         onPressed: () => _showExportOptions(context, state, filteredTransactions),
-                        icon: const Icon(Icons.download_rounded, color: AppColors.secondary),
+                        icon: Icon(Icons.download_rounded, color: AppColors.secondary, size: 24 * context.fontSizeFactor),
                         tooltip: state.translate("Export", "Soo deji", ar: "تصدير", de: "Exportieren", et: "Eksport"),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8 * context.fontSizeFactor),
                 _buildSearchAndFilter(context, state, theme),
                 Expanded(
                   child: filteredTransactions.isEmpty
                         ? _buildEmptyState(context, state)
                         : ListView.builder(
-                            padding: EdgeInsets.fromLTRB(context.horizontalPadding, 8, context.horizontalPadding, 120),
+                            padding: EdgeInsets.fromLTRB(
+                              context.horizontalPadding,
+                              8 * context.fontSizeFactor,
+                              context.horizontalPadding,
+                              120 * context.fontSizeFactor
+                            ),
                             itemCount: filteredTransactions.length,
                             itemBuilder: (context, index) {
                               final tx = filteredTransactions[index];
@@ -132,16 +139,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
           TextField(
             controller: _searchController,
             onChanged: (value) => _runFilter(),
+            style: TextStyle(fontSize: 16 * context.fontSizeFactor),
             decoration: InputDecoration(
               hintText: state.translate("Search transactions...", "Baadh dhaqdhaqaaqyada...", ar: "البحث عن المعاملات...", de: "Transaktionen suchen...", et: "Otsi tehinguid..."),
-              prefixIcon: const Icon(Icons.search, color: AppColors.grey),
+              prefixIcon: Icon(Icons.search, color: AppColors.grey, size: 24 * context.fontSizeFactor),
               filled: true,
               fillColor: theme.colorScheme.surface,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * context.fontSizeFactor),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -165,13 +176,26 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return GestureDetector(
       onTap: () { setState(() => _selectedFilter = value); _runFilter(); },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(
+          horizontal: 20 * context.fontSizeFactor,
+          vertical: 10 * context.fontSizeFactor,
+        ),
         decoration: BoxDecoration(
           color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? theme.colorScheme.primary : AppColors.grey.withValues(alpha: 0.2)),
+          borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+          border: Border.all(
+            color: isSelected ? theme.colorScheme.primary : AppColors.grey.withValues(alpha: 0.2),
+            width: 1 * context.fontSizeFactor,
+          ),
         ),
-        child: Text(label, style: TextStyle(color: isSelected ? Colors.white : theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 12)),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : theme.textTheme.bodyLarge?.color,
+            fontWeight: FontWeight.bold,
+            fontSize: 12 * context.fontSizeFactor,
+          ),
+        ),
       ),
     );
   }
@@ -193,34 +217,62 @@ class _HistoryScreenState extends State<HistoryScreen> {
   void _showExportOptions(BuildContext context, AppState state, List<model.Transaction> transactions) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        padding: EdgeInsets.only(
+          top: 24 * context.fontSizeFactor,
+          left: 16 * context.fontSizeFactor,
+          right: 16 * context.fontSizeFactor,
+          bottom: (24 + MediaQuery.of(context).padding.bottom) * context.fontSizeFactor,
+        ),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20 * context.fontSizeFactor)),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Container(
+              width: 40 * context.fontSizeFactor,
+              height: 4 * context.fontSizeFactor,
+              margin: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: AppColors.grey.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2 * context.fontSizeFactor),
+              ),
+            ),
             Text(
               state.translate("Export History", "Soo deji Taariikhda", ar: "تصدير السجل", de: "Verlauf exportieren", et: "Ekspordi ajalugu"),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18 * context.fontSizeFactor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20 * context.fontSizeFactor),
             ListTile(
-              leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
-              title: const Text("PDF Document"),
+              leading: Icon(Icons.picture_as_pdf, color: Colors.red, size: 24 * context.fontSizeFactor),
+              title: Text(
+                "PDF Document",
+                style: TextStyle(fontSize: 16 * context.fontSizeFactor),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 ExportHelper.exportToPdf(transactions);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.table_chart, color: Colors.green),
-              title: const Text("CSV Spreadsheet"),
+              leading: Icon(Icons.table_chart, color: Colors.green, size: 24 * context.fontSizeFactor),
+              title: Text(
+                "CSV Spreadsheet",
+                style: TextStyle(fontSize: 16 * context.fontSizeFactor),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 ExportHelper.exportToCsv(transactions);
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16 * context.fontSizeFactor),
           ],
         ),
       ),
@@ -228,6 +280,28 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context, AppState state) {
-    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.search_off_rounded, size: 80, color: AppColors.grey.withValues(alpha: 0.5)), const SizedBox(height: 16), Text(state.translate("No transactions found", "Dhaqdhaqaaq lama hayo", ar: "لم يتم العثور على معاملات", de: "Keine Transaktionen gefunden", et: "Tehinguid ei leitud"), style: const TextStyle(color: AppColors.grey))]));
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.search_off_rounded,
+              size: 80 * context.fontSizeFactor,
+              color: AppColors.grey.withValues(alpha: 0.5),
+            ),
+            SizedBox(height: 16 * context.fontSizeFactor),
+            Text(
+              state.translate("No transactions found", "Dhaqdhaqaaq lama hayo", ar: "لم يتم العثور على معاملات", de: "Keine Transaktionen gefunden", et: "Tehinguid ei leitud"),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.grey,
+                fontSize: 16 * context.fontSizeFactor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

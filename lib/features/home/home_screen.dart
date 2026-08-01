@@ -280,14 +280,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           ],
                         ),
                         child: CircleAvatar(
-                          radius: 20,
+                          radius: 20 * context.fontSizeFactor,
                           backgroundColor: AppColors.primaryDark,
                           backgroundImage: const AssetImage('assets/images/app_logo.png'),
                           foregroundImage: NetworkImage('https://ui-avatars.com/api/?name=${state.userName.replaceAll(' ', '+')}&background=0D47A1&color=fff'),
                           onForegroundImageError: (exception, stackTrace) => {},
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12 * context.fontSizeFactor),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start, 
@@ -345,19 +345,19 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     },
                     icon: Stack(
                       children: [
-                        const Icon(Icons.support_agent_rounded, color: Colors.white),
+                        Icon(Icons.support_agent_rounded, color: Colors.white, size: 24 * context.fontSizeFactor),
                         Positioned(
                           right: 0,
                           top: 0,
                           child: Pulse(
                             infinite: true,
                             child: Container(
-                              width: 10,
-                              height: 10,
+                              width: 10 * context.fontSizeFactor,
+                              height: 10 * context.fontSizeFactor,
                               decoration: BoxDecoration(
                                 color: const Color(0xFF10B981),
                                 shape: BoxShape.circle,
-                                border: Border.all(color: AppColors.primaryDark, width: 2),
+                                border: Border.all(color: AppColors.primaryDark, width: 2 * context.fontSizeFactor),
                               ),
                             ),
                           ),
@@ -366,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8 * context.fontSizeFactor),
                 FadeInRight(
                   delay: const Duration(milliseconds: 500),
                   child: IconButton(
@@ -380,7 +380,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     },
                     icon: Stack(
                       children: [
-                        const Icon(Icons.notifications_none_rounded, color: Colors.white),
+                        Icon(Icons.notifications_none_rounded, color: Colors.white, size: 24 * context.fontSizeFactor),
                         Positioned(
                           right: 0,
                           top: 0,
@@ -388,8 +388,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             infinite: true,
                             duration: const Duration(seconds: 2),
                             child: Container(
-                              width: 8,
-                              height: 8,
+                              width: 8 * context.fontSizeFactor,
+                              height: 8 * context.fontSizeFactor,
                               decoration: const BoxDecoration(
                                 color: Colors.redAccent,
                                 shape: BoxShape.circle,
@@ -432,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               NotchedWalletCard(
                 size: Size(double.infinity, (isWide ? 160 : 180) * context.fontSizeFactor),
                 action: Padding(
-                  padding: const EdgeInsetsDirectional.only(end: 4, bottom: 4),
+                  padding: EdgeInsetsDirectional.only(end: 4 * context.fontSizeFactor, bottom: 4 * context.fontSizeFactor),
                   child: GestureDetector(
                     onTap: () {
                       HapticFeedback.mediumImpact();
@@ -443,12 +443,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       height: 52 * context.fontSizeFactor,
                       decoration: BoxDecoration(
                         gradient: AppColors.accentGradient,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                            blurRadius: 10 * context.fontSizeFactor,
+                            offset: Offset(0, 4 * context.fontSizeFactor),
                           )
                         ],
                       ),
@@ -456,7 +456,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 20 * context.fontSizeFactor),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8 * context.fontSizeFactor),
                           Text(
                             "Scan & Pay", 
                             style: TextStyle(
@@ -471,7 +471,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(isWide ? 20 : 24),
+                  padding: EdgeInsets.all((isWide ? 20 : 24) * context.fontSizeFactor),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center, 
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -487,7 +487,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               maxLines: 1,
                             )
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8 * context.fontSizeFactor),
                           IconButton(
                             onPressed: () => setState(() => _isBalanceVisible = !_isBalanceVisible), 
                             icon: Icon(_isBalanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.white70, size: 20 * context.fontSizeFactor),
@@ -496,7 +496,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           ),
                         ]
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8 * context.fontSizeFactor),
                       Expanded(
                         child: Align(
                           alignment: AlignmentDirectional.centerStart,
@@ -518,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: 4 * context.fontSizeFactor),
                               Text(
                                 "${l10n.walletId}: 102234",
                                 style: TextStyle(
@@ -536,26 +536,26 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32 * context.fontSizeFactor),
               Wrap(
-                spacing: 16,
-                runSpacing: 16,
+                spacing: 16 * context.fontSizeFactor,
+                runSpacing: 16 * context.fontSizeFactor,
                 alignment: WrapAlignment.center,
                 children: [
                   ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : double.infinity),
+                    constraints: BoxConstraints(minWidth: 140 * context.fontSizeFactor, maxWidth: isWide ? 400 * context.fontSizeFactor : double.infinity),
                     child: _buildActionButton(context, l10n.send, FontAwesomeIcons.circleArrowRight, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(settings: const RouteSettings(name: 'SendAmountScreen'), builder: (context) => const SendAmountScreen()))),
                   ),
                   ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
+                    constraints: BoxConstraints(minWidth: 140 * context.fontSizeFactor, maxWidth: isWide ? 400 * context.fontSizeFactor : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16 * context.fontSizeFactor) / 2),
                     child: _buildActionButton(context, l10n.add, FontAwesomeIcons.circlePlus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
                   ),
                   ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
+                    constraints: BoxConstraints(minWidth: 140 * context.fontSizeFactor, maxWidth: isWide ? 400 * context.fontSizeFactor : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16 * context.fontSizeFactor) / 2),
                     child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.circleArrowUp, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletWithdrawScreen()))),
                   ),
                   ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 140, maxWidth: isWide ? 400 : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16) / 2),
+                    constraints: BoxConstraints(minWidth: 140 * context.fontSizeFactor, maxWidth: isWide ? 400 * context.fontSizeFactor : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16 * context.fontSizeFactor) / 2),
                     child: _buildActionButton(context, l10n.requestMoney, FontAwesomeIcons.handHoldingDollar, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestMoneyScreen()))),
                   ),
                 ],
@@ -579,11 +579,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: GestureDetector(
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AnalyticsScreen())),
         child: Container(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(24 * context.fontSizeFactor),
           decoration: BoxDecoration(
             color: theme.colorScheme.surface, 
-            borderRadius: BorderRadius.circular(24), 
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 8))]
+            borderRadius: BorderRadius.circular(24 * context.fontSizeFactor), 
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15 * context.fontSizeFactor, offset: Offset(0, 8 * context.fontSizeFactor))]
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -670,8 +670,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 crossAxisCount: crossAxisCount, 
                 shrinkWrap: true, 
                 physics: const NeverScrollableScrollPhysics(), 
-                mainAxisSpacing: 4, 
-                crossAxisSpacing: 8,
+                mainAxisSpacing: 4 * context.fontSizeFactor, 
+                crossAxisSpacing: 8 * context.fontSizeFactor,
                 childAspectRatio: crossAxisCount == 3 ? 1.0 : 0.8,
                 children: [
                   _buildFeatureItem(context, l10n.bills, Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
@@ -697,10 +697,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: GestureDetector(
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CardsScreen())),
           child: Container(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20 * context.fontSizeFactor),
             decoration: BoxDecoration(
               gradient: const LinearGradient(colors: [Color(0xFF1E293B), Color(0xFF0F172A)]),
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
             ),
             child: Row(
               children: [
@@ -709,18 +709,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
+                        padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
+                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
                         child: Text("PREMIUM", style: TextStyle(color: Colors.white70, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 1)),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12 * context.fontSizeFactor),
                       Text(l10n.virtualCard, style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4 * context.fontSizeFactor),
                       Text(l10n.virtualCardDesc, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12 * context.fontSizeFactor)),
                     ],
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white30, size: 16),
+                Icon(Icons.arrow_forward_ios_rounded, color: Colors.white30, size: 16 * context.fontSizeFactor),
               ],
             ),
           ),
@@ -803,10 +803,20 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       },
       child: Container(
         height: 56 * context.fontSizeFactor,
-        decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))]),
+        decoration: BoxDecoration(
+          gradient: gradient, 
+          borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), 
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1), 
+              blurRadius: 10 * context.fontSizeFactor, 
+              offset: Offset(0, 4 * context.fontSizeFactor)
+            )
+          ]
+        ),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           AdaptiveIcon(icon, color: Colors.white, size: 18 * context.fontSizeFactor),
-          const SizedBox(width: 8),
+          SizedBox(width: 8 * context.fontSizeFactor),
           Flexible(child: Text(label, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor), overflow: TextOverflow.ellipsis)),
         ]),
       ),
@@ -823,14 +833,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             child: Center(
               child: FittedBox(
                 child: Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(12 * context.fontSizeFactor),
                   decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
                   child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4 * context.fontSizeFactor),
           Text(
             label, 
             style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w500), 
@@ -1015,11 +1025,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 100,
+          height: 100 * context.fontSizeFactor,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding - 8),
+            padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding - 8 * context.fontSizeFactor),
             itemCount: state.quickProfiles.length + 1,
             itemBuilder: (context, index) {
               if (index == 0) {
@@ -1027,7 +1037,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 return FadeInRight(
                   duration: const Duration(milliseconds: 500),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor),
                     child: GestureDetector(
                       onTap: () {
                         HapticFeedback.lightImpact();
@@ -1036,16 +1046,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       child: Column(
                         children: [
                           Container(
-                            width: 60,
-                            height: 60,
+                            width: 60 * context.fontSizeFactor,
+                            height: 60 * context.fontSizeFactor,
                             decoration: BoxDecoration(
                               color: AppColors.accentTeal.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
+                              border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2 * context.fontSizeFactor),
                             ),
-                            child: const Icon(Icons.add_rounded, color: AppColors.accentTeal, size: 30),
+                            child: Icon(Icons.add_rounded, color: AppColors.accentTeal, size: 30 * context.fontSizeFactor),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8 * context.fontSizeFactor),
                           Text(
                             state.translate("New", "Cusub"),
                             style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w500),
@@ -1062,7 +1072,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 duration: const Duration(milliseconds: 500),
                 delay: Duration(milliseconds: 100 * index),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor),
                   child: GestureDetector(
                     onTap: () => _handleQuickSend(profile, state, l10n),
                     child: Column(
@@ -1072,10 +1082,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             Container(
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2),
+                                border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2), width: 2 * context.fontSizeFactor),
                               ),
                               child: CircleAvatar(
-                                radius: 30,
+                                radius: 30 * context.fontSizeFactor,
                                 backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                                 child: ClipOval(
                                   child: Image(
@@ -1083,13 +1093,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                       ? NetworkImage(profile.avatarUrl!) 
                                       : AssetImage(profile.avatarUrl ?? 'assets/avatars/avatar1.png') as ImageProvider,
                                     fit: BoxFit.cover,
-                                    width: 60,
-                                    height: 60,
+                                    width: 60 * context.fontSizeFactor,
+                                    height: 60 * context.fontSizeFactor,
                                     errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(
+                                      return Icon(
                                         Icons.person_rounded,
                                         color: AppColors.accentTeal,
-                                        size: 30,
+                                        size: 30 * context.fontSizeFactor,
                                       );
                                     },
                                   ),
@@ -1098,7 +1108,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8 * context.fontSizeFactor),
                         Text(
                           profile.name,
                           style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w500),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
+import '../../core/responsive_utils.dart';
 import '../../core/models/hagbad_model.dart';
 import '../../core/widgets/transaction_item.dart';
 import '../../core/utils/export_helper.dart';
@@ -21,28 +22,40 @@ class HagbadHistoryScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("History: ${group.name}"),
+        title: Text(
+          "History: ${group.name}",
+          style: TextStyle(fontSize: 20 * context.fontSizeFactor),
+        ),
         actions: [
           if (transactions.isNotEmpty)
             IconButton(
               onPressed: () => _showExportOptions(context, state, transactions),
-              icon: const Icon(Icons.download_rounded),
+              icon: Icon(Icons.download_rounded, size: 24 * context.fontSizeFactor),
             ),
         ],
       ),
       body: transactions.isEmpty
           ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.history, size: 64, color: AppColors.grey.withValues(alpha: 0.5)),
-                  const SizedBox(height: 16),
-                  const Text("No payout history yet"),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.history,
+                      size: 64 * context.fontSizeFactor,
+                      color: AppColors.grey.withValues(alpha: 0.5),
+                    ),
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    Text(
+                      "No payout history yet",
+                      style: TextStyle(fontSize: 16 * context.fontSizeFactor),
+                    ),
+                  ],
+                ),
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16 * context.fontSizeFactor),
               itemCount: transactions.length,
               itemBuilder: (context, index) {
                 final tx = transactions[index];
@@ -65,34 +78,62 @@ class HagbadHistoryScreen extends StatelessWidget {
   void _showExportOptions(BuildContext context, AppState state, List<model.Transaction> transactions) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        padding: EdgeInsets.only(
+          top: 24 * context.fontSizeFactor,
+          left: 16 * context.fontSizeFactor,
+          right: 16 * context.fontSizeFactor,
+          bottom: (24 + MediaQuery.of(context).padding.bottom) * context.fontSizeFactor,
+        ),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20 * context.fontSizeFactor)),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Container(
+              width: 40 * context.fontSizeFactor,
+              height: 4 * context.fontSizeFactor,
+              margin: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: AppColors.grey.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2 * context.fontSizeFactor),
+              ),
+            ),
             Text(
               state.translate("Export History", "Soo deji Taariikhda", ar: "تصدير السجل", de: "Verlauf exportieren", et: "Ekspordi ajalugu"),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18 * context.fontSizeFactor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20 * context.fontSizeFactor),
             ListTile(
-              leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
-              title: const Text("PDF Document"),
+              leading: Icon(Icons.picture_as_pdf, color: Colors.red, size: 24 * context.fontSizeFactor),
+              title: Text(
+                "PDF Document",
+                style: TextStyle(fontSize: 16 * context.fontSizeFactor),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 ExportHelper.exportToPdf(transactions);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.table_chart, color: Colors.green),
-              title: const Text("CSV Spreadsheet"),
+              leading: Icon(Icons.table_chart, color: Colors.green, size: 24 * context.fontSizeFactor),
+              title: Text(
+                "CSV Spreadsheet",
+                style: TextStyle(fontSize: 16 * context.fontSizeFactor),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 ExportHelper.exportToCsv(transactions);
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16 * context.fontSizeFactor),
           ],
         ),
       ),

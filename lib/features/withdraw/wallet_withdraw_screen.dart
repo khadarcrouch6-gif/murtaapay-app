@@ -150,7 +150,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                     letterSpacing: 1.2,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: 8 * context.fontSizeFactor),
                                 FittedBox(
                                   fit: BoxFit.scaleDown,
                                   child: Text(
@@ -158,18 +158,18 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                     style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.bold)
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                SizedBox(height: 20 * context.fontSizeFactor),
                                 // Amount Input
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                  padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
                                   decoration: BoxDecoration(
                                     color: Colors.white.withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(14),
+                                    borderRadius: BorderRadius.circular(14 * context.fontSizeFactor),
                                   ),
                                   child: Row(
                                     children: [
                                       Text(r"$", style: TextStyle(color: Colors.white, fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                                      const SizedBox(width: 8),
+                                      SizedBox(width: 8 * context.fontSizeFactor),
                                       Expanded(
                                         child: TextField(
                                           controller: _amountController,
@@ -190,7 +190,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                                 _amountController.text = maxAmount.toStringAsFixed(2);
                                                 setState(() {});
                                               },
-                                              child: Text("MAX", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
+                                              child: Text("MAX", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
                                             ),
                                           ),
                                           onChanged: (val) {
@@ -201,20 +201,20 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                SizedBox(height: 16 * context.fontSizeFactor),
                                 Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
+                                  spacing: 8 * context.fontSizeFactor,
+                                  runSpacing: 8 * context.fontSizeFactor,
                                   children: [50, 200, 500, 1000, 2000].map((amt) => GestureDetector(
                                     onTap: () {
                                       _amountController.text = amt.toString();
                                       setState(() {});
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                      padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
                                       decoration: BoxDecoration(
                                         color: Colors.white.withValues(alpha: 0.2),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8 * context.fontSizeFactor),
                                         border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
                                       ),
                                       child: Text(
@@ -225,7 +225,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                   )).toList(),
                                 ),
                                 if (_amount > 0) ...[
-                                  const SizedBox(height: 12),
+                                  SizedBox(height: 12 * context.fontSizeFactor),
                                   DetailRow(
                                     label: l10n.feeLabel,
                                     value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_fee),
@@ -243,14 +243,15 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                 ],
                               ],
                             ),
+
                           ),
                           const SizedBox(height: 16),
                           // Limits Info Box
                           Container(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16 * context.fontSizeFactor),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.surface,
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
                               border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                             ),
                             child: Column(
@@ -261,14 +262,16 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                   state.dailyLimit,
                                   state.currencyCode,
                                   theme,
+                                  context,
                                 ),
-                                const SizedBox(height: 12),
+                                SizedBox(height: 12 * context.fontSizeFactor),
                                 _buildLimitHeadroom(
                                   l10n.monthlyLimit, 
                                   state.getMonthlyRemaining(), 
                                   state.monthlyLimit,
                                   state.currencyCode,
                                   theme,
+                                  context,
                                 ),
                               ],
                             ),
@@ -278,11 +281,11 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32 * context.fontSizeFactor),
                 FadeInUp(
                   child: Text(l10n.withdrawalMethod, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16 * context.fontSizeFactor),
                 
                 ...List.generate(_methods.length, (index) {
                   final method = _methods[index];
@@ -305,20 +308,20 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                         } : null,
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 250),
-                          margin: const EdgeInsets.only(bottom: 14),
+                          margin: EdgeInsets.only(bottom: 14 * context.fontSizeFactor),
                           padding: EdgeInsets.all(18 * context.fontSizeFactor),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.surface,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
                             border: Border.all(
                               color: isSelected ? AppColors.accentTeal : Colors.transparent,
-                              width: 2,
+                              width: 2 * context.fontSizeFactor,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.03),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
+                                blurRadius: 12 * context.fontSizeFactor,
+                                offset: Offset(0, 4 * context.fontSizeFactor),
                               ),
                             ],
                           ),
@@ -332,7 +335,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
-                                  borderRadius: BorderRadius.circular(14),
+                                  borderRadius: BorderRadius.circular(14 * context.fontSizeFactor),
                                 ),
                                 child: Center(
                                   child: AdaptiveIcon(
@@ -342,7 +345,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 16),
+                              SizedBox(width: 16 * context.fontSizeFactor),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -359,7 +362,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                 ),
                               ),
                               if (isSelected)
-                                const Icon(Icons.check_circle_rounded, color: AppColors.accentTeal)
+                                Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor)
                               else
                                 Icon(
                                   Directionality.of(context) == TextDirection.rtl ? Icons.arrow_back_ios_rounded : Icons.arrow_forward_ios_rounded, 
@@ -375,14 +378,15 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                 }),
 
                 if (_selectedMethodId != null) ...[
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   FadeInUp(child: _buildDetailsForm(context, l10n, state)),
                 ],
     
-                const SizedBox(height: 120),
+                SizedBox(height: 120 * context.fontSizeFactor),
               ],
             ),
           ),
+
         ),
       ),
     );
@@ -409,24 +413,24 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.selectProvider, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          const SizedBox(height: 12),
+          Text(l10n.selectProvider, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+          SizedBox(height: 12 * context.fontSizeFactor),
           Wrap(
-            spacing: 12,
+            spacing: 12 * context.fontSizeFactor,
             children: [l10n.evcPlus, l10n.edahab, l10n.zaad, l10n.sahal].map((p) => ChoiceChip(
               label: Text(p),
               selected: _selectedProvider == p,
               onSelected: (val) => setState(() => _selectedProvider = val ? p : null),
               selectedColor: AppColors.accentTeal.withValues(alpha: 0.2),
-              labelStyle: TextStyle(color: _selectedProvider == p ? AppColors.accentTeal : null, fontWeight: FontWeight.bold),
+              labelStyle: TextStyle(color: _selectedProvider == p ? AppColors.accentTeal : null, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
             )).toList(),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * context.fontSizeFactor),
           if (combinedRecents.isNotEmpty) ...[
-             Text(l10n.recent, style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
-             const SizedBox(height: 8),
+             Text(l10n.recent, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+             SizedBox(height: 8 * context.fontSizeFactor),
              SizedBox(
-               height: 52,
+               height: 52 * context.fontSizeFactor,
                child: ListView.builder(
                  scrollDirection: Axis.horizontal,
                  itemCount: combinedRecents.length,
@@ -445,21 +449,21 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                         _handlePhoneInput(r["detail"]!, l10n, state);
                      },
                      child: Container(
-                       margin: const EdgeInsets.only(right: 8),
-                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                       margin: EdgeInsets.only(right: 8 * context.fontSizeFactor),
+                       padding: EdgeInsets.symmetric(horizontal: 14 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
                        decoration: BoxDecoration(
                          color: theme.colorScheme.surface, 
-                         borderRadius: BorderRadius.circular(14), 
+                         borderRadius: BorderRadius.circular(14 * context.fontSizeFactor), 
                          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
-                         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2))],
+                         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4 * context.fontSizeFactor, offset: Offset(0, 2 * context.fontSizeFactor))],
                        ),
                        child: Column(
                          mainAxisAlignment: MainAxisAlignment.center,
                          crossAxisAlignment: CrossAxisAlignment.start,
                          mainAxisSize: MainAxisSize.min,
                          children: [
-                           Text(r["name"]!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
-                           Text(r["detail"]!, style: TextStyle(fontSize: 10, color: AppColors.grey), maxLines: 1, overflow: TextOverflow.ellipsis),
+                           Text(r["name"]!, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                           Text(r["detail"]!, style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: AppColors.grey), maxLines: 1, overflow: TextOverflow.ellipsis),
                          ],
                        ),
                      ),
@@ -467,7 +471,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                  },
                ),
              ),
-             const SizedBox(height: 16),
+             SizedBox(height: 16 * context.fontSizeFactor),
           ],
           _withdrawInputField(
             context, 
@@ -482,20 +486,20 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
           ),
           if (_getWithdrawPrefixError(l10n) != null)
             Padding(
-              padding: const EdgeInsets.only(top: 8, left: 4),
-              child: Text(_getWithdrawPrefixError(l10n)!, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
+              padding: EdgeInsets.only(top: 8 * context.fontSizeFactor, left: 4 * context.fontSizeFactor),
+              child: Text(_getWithdrawPrefixError(l10n)!, style: TextStyle(color: Colors.red.shade700, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
             )
           else if (_detectedName != null && _field1Controller.text.length >= 6)
             Padding(
-              padding: const EdgeInsets.only(top: 8, left: 12),
+              padding: EdgeInsets.only(top: 8 * context.fontSizeFactor, left: 12 * context.fontSizeFactor),
               child: FadeIn(
                 child: Row(
                   children: [
-                    const Icon(Icons.person_outline_rounded, size: 16, color: AppColors.accentTeal),
-                    const SizedBox(width: 6),
+                    Icon(Icons.person_outline_rounded, size: 16 * context.fontSizeFactor, color: AppColors.accentTeal),
+                    SizedBox(width: 6 * context.fontSizeFactor),
                     Text(
                       _detectedName!,
-                      style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14),
+                      style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
                     ),
                   ],
                 ),
@@ -503,12 +507,12 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
             ),
           if (_field1Controller.text.isNotEmpty && _field1Controller.text.length < 9 && _detectedName == null && _getWithdrawPrefixError(l10n) == null)
             Padding(
-              padding: const EdgeInsets.only(top: 8, left: 4),
-              child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12)),
+              padding: EdgeInsets.only(top: 8 * context.fontSizeFactor, left: 4 * context.fontSizeFactor),
+              child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12 * context.fontSizeFactor)),
             ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * context.fontSizeFactor),
           _buildPurposeDropdown(theme, l10n),
-          const SizedBox(height: 24),
+          SizedBox(height: 24 * context.fontSizeFactor),
           _buildWithdrawButton(context, l10n, state),
         ],
       );
@@ -517,10 +521,10 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (recents.isNotEmpty) ...[
-             Text(l10n.recent, style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
-             const SizedBox(height: 8),
+             Text(l10n.recent, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+             SizedBox(height: 8 * context.fontSizeFactor),
              SizedBox(
-               height: 40,
+               height: 40 * context.fontSizeFactor,
                child: ListView.builder(
                  scrollDirection: Axis.horizontal,
                  itemCount: recents.length,
@@ -533,70 +537,72 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                        _selectedProvider = r["provider"];
                      }),
                      child: Container(
-                       margin: const EdgeInsets.only(right: 8),
-                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                       decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1))),
-                       child: Text("${r["name"]} - ${r["provider"]}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                       margin: EdgeInsets.only(right: 8 * context.fontSizeFactor),
+                       padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
+                       decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(12 * context.fontSizeFactor), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1))),
+                       child: Text("${r["name"]} - ${r["provider"]}", style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w600)),
                      ),
                    );
                  },
                ),
              ),
-             const SizedBox(height: 16),
+             SizedBox(height: 16 * context.fontSizeFactor),
           ],
-          Text(l10n.selectBank, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          const SizedBox(height: 12),
+          Text(l10n.selectBank, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+          SizedBox(height: 12 * context.fontSizeFactor),
           GestureDetector(
             onTap: () => _showBankPicker(context, l10n),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 16 * context.fontSizeFactor),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
                 border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: EdgeInsets.all(8 * context.fontSizeFactor),
                     decoration: BoxDecoration(
                       color: AppColors.accentTeal.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.account_balance_rounded, color: AppColors.accentTeal, size: 20),
+                    child: Icon(Icons.account_balance_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12 * context.fontSizeFactor),
                   Expanded(
                     child: Text(
                       _selectedProvider == l10n.otherBank ? l10n.otherBank : (_selectedProvider ?? l10n.selectBank),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        fontSize: 14 * context.fontSizeFactor,
                         color: _selectedProvider == null ? AppColors.grey : theme.textTheme.bodyLarge?.color,
                       ),
                     ),
                   ),
-                  const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey),
+                  Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey, size: 24 * context.fontSizeFactor),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * context.fontSizeFactor),
           if (_selectedProvider == l10n.otherBank) ...[
             _withdrawInputField(context, l10n.bankName, Icons.account_balance_outlined, _field3Controller, hint: "Enter bank name"),
-            const SizedBox(height: 16),
+            SizedBox(height: 16 * context.fontSizeFactor),
           ],
           _withdrawInputField(context, l10n.accountNumber, Icons.numbers, _field1Controller, isNumber: true, hint: "123456789"),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * context.fontSizeFactor),
           _withdrawInputField(context, l10n.accountName, Icons.person, _field2Controller, hint: l10n.fullName),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * context.fontSizeFactor),
           _buildPurposeDropdown(theme, l10n),
-          const SizedBox(height: 24),
+          SizedBox(height: 24 * context.fontSizeFactor),
           _buildWithdrawButton(context, l10n, state),
         ],
       );
     }
     return const SizedBox.shrink();
   }
+
 
   void _showBankPicker(BuildContext context, AppLocalizations l10n) {
     final List<Map<String, dynamic>> banks = [
@@ -615,16 +621,16 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
         return Container(
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24 * context.fontSizeFactor)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 16),
-              Text(l10n.selectBank, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
+              SizedBox(height: 12 * context.fontSizeFactor),
+              Container(width: 40 * context.fontSizeFactor, height: 4 * context.fontSizeFactor, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10 * context.fontSizeFactor))),
+              SizedBox(height: 16 * context.fontSizeFactor),
+              Text(l10n.selectBank, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+              SizedBox(height: 16 * context.fontSizeFactor),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -633,11 +639,11 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                     if (index == banks.length) {
                       return ListTile(
                         leading: Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(8 * context.fontSizeFactor),
                           decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle),
-                          child: const Icon(Icons.add_rounded, color: AppColors.accentTeal, size: 20),
+                          child: Icon(Icons.add_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
                         ),
-                        title: Text(l10n.otherBank, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        title: Text(l10n.otherBank, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                         onTap: () {
                           setState(() {
                             _selectedProvider = l10n.otherBank;
@@ -651,11 +657,11 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                     final bank = banks[index];
                     return ListTile(
                       leading: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: EdgeInsets.all(8 * context.fontSizeFactor),
                         decoration: BoxDecoration(color: (bank["color"] as Color).withValues(alpha: 0.1), shape: BoxShape.circle),
-                        child: Icon(Icons.account_balance_rounded, color: bank["color"], size: 20),
+                        child: Icon(Icons.account_balance_rounded, color: bank["color"], size: 20 * context.fontSizeFactor),
                       ),
-                      title: Text(bank["name"], style: const TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text(bank["name"], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                       onTap: () {
                         setState(() {
                           _selectedProvider = bank["name"];
@@ -666,7 +672,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24 * context.fontSizeFactor),
             ],
           ),
         );
@@ -701,8 +707,8 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
       children: [
         if (error != null && _amount > 0)
           Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(error, style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold)),
+            padding: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
+            child: Text(error, style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
           ),
         SizedBox(
           width: double.infinity,
@@ -712,15 +718,16 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryDark,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
               elevation: 0,
             ),
-            child: Text(l10n.confirmAndWithdraw, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            child: FittedBox(child: Text(l10n.confirmAndWithdraw, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor))),
           ),
         ),
       ],
     );
   }
+
 
   void _showReviewSheet(BuildContext context, AppLocalizations l10n, AppState state) {
     showModalBottomSheet(
@@ -730,75 +737,78 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
       builder: (context) => BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
-          padding: const EdgeInsets.all(32),
+          padding: EdgeInsets.all(32 * context.fontSizeFactor),
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32 * context.fontSizeFactor)),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 24),
-              Text(l10n.reviewWithdrawal, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.accentTeal.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.1)),
-                ),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    DetailRow(label: l10n.amount, value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_amount)),
-                    DetailRow(
-                      label: l10n.method, 
-                      value: _selectedMethodId == "mobile" 
-                        ? (_selectedProvider ?? _getMethodTitle(_selectedMethodId!, l10n)) 
-                        : (_selectedProvider == l10n.otherBank ? _field3Controller.text : (_selectedProvider ?? _getMethodTitle(_selectedMethodId!, l10n)))
-                    ),
-                    if (_selectedMethodId == "bank") ...[
-                      DetailRow(label: l10n.accountNumber, value: _field1Controller.text),
-                      DetailRow(label: l10n.accountName, value: _field2Controller.text),
-                    ],
-                    if (_selectedMethodId == "mobile") ...[
-                      DetailRow(label: l10n.phoneNumber, value: "+252 ${_field1Controller.text}"),
-                    ],
-                    DetailRow(label: l10n.feeLabel, value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_fee)),
-                    DetailRow(
-                      label: l10n.totalDeduct, 
-                      value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_totalDeduct),
-                      valueColor: AppColors.accentTeal,
-                    ),
-                    DetailRow(label: l10n.purpose, value: _selectedPurpose ?? l10n.familySupport),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _showPinDialog(this.context, l10n, state);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryDark,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(width: 40 * context.fontSizeFactor, height: 4 * context.fontSizeFactor, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10 * context.fontSizeFactor))),
+                SizedBox(height: 24 * context.fontSizeFactor),
+                Text(l10n.reviewWithdrawal, style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                SizedBox(height: 24 * context.fontSizeFactor),
+                Container(
+                  padding: EdgeInsets.all(20 * context.fontSizeFactor),
+                  decoration: BoxDecoration(
+                    color: AppColors.accentTeal.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                    border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.1)),
                   ),
-                  child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      DetailRow(label: l10n.amount, value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_amount)),
+                      DetailRow(
+                        label: l10n.method, 
+                        value: _selectedMethodId == "mobile" 
+                          ? (_selectedProvider ?? _getMethodTitle(_selectedMethodId!, l10n)) 
+                          : (_selectedProvider == l10n.otherBank ? _field3Controller.text : (_selectedProvider ?? _getMethodTitle(_selectedMethodId!, l10n)))
+                      ),
+                      if (_selectedMethodId == "bank") ...[
+                        DetailRow(label: l10n.accountNumber, value: _field1Controller.text),
+                        DetailRow(label: l10n.accountName, value: _field2Controller.text),
+                      ],
+                      if (_selectedMethodId == "mobile") ...[
+                        DetailRow(label: l10n.phoneNumber, value: "+252 ${_field1Controller.text}"),
+                      ],
+                      DetailRow(label: l10n.feeLabel, value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_fee)),
+                      DetailRow(
+                        label: l10n.totalDeduct, 
+                        value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_totalDeduct),
+                        valueColor: AppColors.accentTeal,
+                      ),
+                      DetailRow(label: l10n.purpose, value: _selectedPurpose ?? l10n.familySupport),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-            ],
+                SizedBox(height: 32 * context.fontSizeFactor),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56 * context.fontSizeFactor,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _showPinDialog(this.context, l10n, state);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryDark,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                    ),
+                    child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16 * context.fontSizeFactor))),
+                  ),
+                ),
+                SizedBox(height: 16 * context.fontSizeFactor),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
 
   void _showPinDialog(BuildContext context, AppLocalizations l10n, AppState state) {
     showDialog(
@@ -957,7 +967,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
     }
   }
 
-  Widget _buildLimitHeadroom(String label, double remaining, double limit, String currency, ThemeData theme) {
+  Widget _buildLimitHeadroom(String label, double remaining, double limit, String currency, ThemeData theme, BuildContext context) {
     final double percent = (remaining / limit).clamp(0.0, 1.0);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -965,23 +975,23 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.grey)),
+            Text(label, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w600, color: AppColors.grey)),
             Text(
               "${NumberFormat.simpleCurrency(name: currency).format(remaining)} left",
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: percent < 0.2 ? Colors.orange : AppColors.accentTeal),
+              style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: percent < 0.2 ? Colors.orange : AppColors.accentTeal),
             ),
           ],
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6 * context.fontSizeFactor),
         ClipRRect(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
           child: LinearProgressIndicator(
             value: percent,
             backgroundColor: AppColors.grey.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(
               percent < 0.2 ? Colors.orange : AppColors.accentTeal,
             ),
-            minHeight: 4,
+            minHeight: 4 * context.fontSizeFactor,
           ),
         ),
       ],
@@ -993,24 +1003,24 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.purposeOfRemittance, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        const SizedBox(height: 12),
+        Text(l10n.purposeOfRemittance, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+        SizedBox(height: 12 * context.fontSizeFactor),
         Container(
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
             border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
           ),
           child: DropdownButtonFormField<String>(
             initialValue: _selectedPurpose ?? purposes.first,
             dropdownColor: theme.colorScheme.surface,
-            style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w600, fontSize: 15),
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.info_outline_rounded, color: AppColors.grey, size: 20),
+            style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w600, fontSize: 15 * context.fontSizeFactor),
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.info_outline_rounded, color: AppColors.grey, size: 20 * context.fontSizeFactor),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              contentPadding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor, horizontal: 16 * context.fontSizeFactor),
             ),
-            icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey),
+            icon: Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey, size: 24 * context.fontSizeFactor),
             items: purposes.map((p) => DropdownMenuItem(
               value: p,
               child: Text(p),
@@ -1034,19 +1044,20 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
       controller: controller,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       maxLength: maxLength,
-      style: const TextStyle(fontWeight: FontWeight.bold),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         counterText: "",
         prefixIcon: prefix != null 
           ? Padding(
-              padding: const EdgeInsets.only(left: 12, top: 14), 
-              child: Text(prefix, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              padding: EdgeInsets.only(left: 12 * context.fontSizeFactor, top: 14 * context.fontSizeFactor), 
+              child: Text(prefix, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
             )
-          : Icon(icon, color: AppColors.grey),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+          : Icon(icon, color: AppColors.grey, size: 20 * context.fontSizeFactor),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 16 * context.fontSizeFactor),
       ),
       onChanged: (val) {
         if (onChanged != null) {
@@ -1072,4 +1083,5 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
       },
     );
   }
+
 }
