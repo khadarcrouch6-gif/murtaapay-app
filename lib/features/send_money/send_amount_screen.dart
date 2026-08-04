@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/step_indicator.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'receiver_screen.dart';
 import 'wallet_receiver_screen.dart';
@@ -53,42 +54,41 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
 
   final List<Map<String, String>> _currencies = [
     {"code": "USD", "name": "US Dollar", "flag": "us"},
-    {"code": "EUR", "name": "Euro", "flag": "eu"},
-    {"code": "GBP", "name": "British Pound", "flag": "gb"},
+    {"code": "AUD", "name": "Australian Dollar", "flag": "au"},
     {"code": "CAD", "name": "Canadian Dollar", "flag": "ca"},
-    {"code": "KES", "name": "Kenyan Shilling", "flag": "ke"},
-    {"code": "SOS", "name": "Somali Shilling", "flag": "so"},
-    {"code": "AED", "name": "UAE Dirham", "flag": "ae"},
+    {"code": "GBP", "name": "British Pound", "flag": "gb"},
+    {"code": "EUR", "name": "Euro", "flag": "eu"},
     {"code": "SAR", "name": "Saudi Riyal", "flag": "sa"},
-    {"code": "TRY", "name": "Turkish Lira", "flag": "tr"},
-    {"code": "ETB", "name": "Ethiopian Birr", "flag": "et"},
-    {"code": "DJF", "name": "Djiboutian Franc", "flag": "dj"},
-    {"code": "UGX", "name": "Ugandan Shilling", "flag": "ug"},
-    {"code": "TZS", "name": "Tanzanian Shilling", "flag": "tz"},
-    {"code": "RWF", "name": "Rwandan Franc", "flag": "rw"},
-    {"code": "SDG", "name": "Sudanese Pound", "flag": "sd"},
-    {"code": "EGP", "name": "Egyptian Pound", "flag": "eg"},
-    {"code": "INR", "name": "Indian Rupee", "flag": "in"},
+    {"code": "AED", "name": "UAE Dirham", "flag": "ae"},
+    {"code": "QAR", "name": "Qatari Rial", "flag": "qa"},
+    {"code": "CHF", "name": "Swiss Franc", "flag": "ch"},
     {"code": "CNY", "name": "Chinese Yuan", "flag": "cn"},
     {"code": "JPY", "name": "Japanese Yen", "flag": "jp"},
-    {"code": "AUD", "name": "Australian Dollar", "flag": "au"},
-    {"code": "CHF", "name": "Swiss Franc", "flag": "ch"},
-    {"code": "ZAR", "name": "South African Rand", "flag": "za"},
   ];
 
   final Map<String, double> rates = {
-    "USD": 1.0, "EUR": 0.93, "GBP": 0.79, "CAD": 1.35, "KES": 128.50, "SOS": 570.00,
-    "AED": 3.67, "SAR": 3.75, "TRY": 32.20, "ETB": 57.50, "DJF": 177.72, "UGX": 3750.00,
-    "TZS": 2600.00, "RWF": 1300.00, "SDG": 600.00, "EGP": 47.50, "INR": 83.30, "CNY": 7.24,
-    "JPY": 156.00, "AUD": 1.51, "CHF": 0.91, "ZAR": 18.50,
+    "USD": 1.0, "AUD": 1.51, "CAD": 1.35, "GBP": 0.79, "EUR": 0.93,
+    "SAR": 3.75, "AED": 3.67, "QAR": 3.64, "CHF": 0.91, "CNY": 7.24, "JPY": 156.00,
   };
 
-  int get _sendCurrencyDecimals => ["SOS", "JPY", "UGX", "RWF", "TZS", "KRW"].contains(_sendCurrency) ? 0 : 2;
-  int get _receiveCurrencyDecimals => ["SOS", "JPY", "UGX", "RWF", "TZS", "KRW"].contains(_receiveCurrency) ? 0 : 2;
+  int get _sendCurrencyDecimals => _sendCurrency == "JPY" ? 0 : 2;
+  int get _receiveCurrencyDecimals => _receiveCurrency == "JPY" ? 0 : 2;
 
   String _formatCurrency(double amount, int decimals) {
     final format = NumberFormat.currency(symbol: "", decimalDigits: decimals);
     return format.format(amount).trim();
+  }
+
+  String _getCanonicalMethod(String method) {
+    if (method.contains("Bank")) return "Bank Transfer";
+    if (method.contains("Wallet")) return "Main Wallet";
+    if (method.contains("Savings")) return "Savings Account";
+    if (method.contains("Card") || method.contains("Visa")) return "Debit Card";
+    if (method.contains("Mobile") || method.contains("Money") || 
+        ["EVC Plus", "ZAAD Service", "e-Dahab", "Sahal"].any((m) => method.contains(m))) {
+      return "Mobile Money";
+    }
+    return method;
   }
 
   double get _fee {
@@ -96,7 +96,11 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     if (amount <= 0) return 0.00;
     
     // Get fee in USD from AppState
-    double feeInUsd = state.calculateFeeForSource(amount / (rates[_sendCurrency] ?? 1.0), _selectedMethod);
+    double feeInUsd = state.calculateFeeForSource(
+      amount / (rates[_sendCurrency] ?? 1.0), 
+      "Main Wallet", // Alignment: Assume Main Wallet as source for live preview
+      payoutMethod: _getCanonicalMethod(_selectedMethod),
+    );
     
     // Convert fee to current send currency
     double feeInCurrentCurrency = feeInUsd * (rates[_sendCurrency] ?? 1.0);
@@ -123,7 +127,10 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
 
   bool get _isAmountValid {
     double amt = double.tryParse(_sendController.text.replaceAll(',', '')) ?? 0;
-    return amt >= _minLimitInCurrentCurrency && amt <= _maxLimitInCurrentCurrency;
+    if (amt < _minLimitInCurrentCurrency) return false;
+    
+    double amountInUsd = _totalToPay / (rates[_sendCurrency] ?? 1.0);
+    return amountInUsd <= state.getDailyRemaining() && amountInUsd <= state.getMonthlyRemaining();
   }
 
   @override
@@ -222,7 +229,11 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         setState(() {
           double inUsd = amount / toRate;
           if (_isFeeIncluded) {
-            double feeInUsd = state.calculateFeeForSource(inUsd, _selectedMethod);
+            double feeInUsd = state.calculateFeeForSource(
+              inUsd, 
+              "Main Wallet", 
+              payoutMethod: _getCanonicalMethod(_selectedMethod)
+            );
             inUsd = inUsd + feeInUsd; 
           }
           _sendController.text = _formatCurrency(inUsd * fromRate, _sendCurrencyDecimals);
@@ -236,7 +247,11 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     HapticFeedback.mediumImpact();
     double balanceInUsd = state.balance > 2500 ? 2500 : state.balance;
     double fromRate = rates[_sendCurrency] ?? 1.0;
-    double feeInUsd = state.calculateFeeForSource(balanceInUsd, _selectedMethod);
+    double feeInUsd = state.calculateFeeForSource(
+      balanceInUsd, 
+      "Main Wallet", 
+      payoutMethod: _getCanonicalMethod(_selectedMethod)
+    );
     
     double maxSend = _isFeeIncluded ? (balanceInUsd * fromRate) : ((balanceInUsd - feeInUsd) * fromRate);
     if (maxSend < 0) maxSend = 0;
@@ -298,8 +313,8 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
           appBar: AppBar(
             backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
             elevation: 0,
-            leading: widget.showBackButton ? IconButton(icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24), onPressed: () => Navigator.pop(context)) : null,
-            title: Text(l10n.sendMoney, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white, letterSpacing: -0.5)),
+            leading: widget.showBackButton ? IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24 * context.fontSizeFactor), onPressed: () => Navigator.pop(context)) : null,
+            title: Text(l10n.sendMoney, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 22 * context.fontSizeFactor, color: Colors.white, letterSpacing: -0.5)),
             centerTitle: true,
             systemOverlayStyle: SystemUiOverlayStyle.light,
           ),
@@ -319,20 +334,20 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
-                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30 * context.fontSizeFactor), bottomRight: Radius.circular(30 * context.fontSizeFactor)),
                           ),
-                          padding: const EdgeInsets.only(bottom: 10), // Booska hoose waa la yareeyay
+                          padding: EdgeInsets.only(bottom: 10 * context.fontSizeFactor), // Booska hoose waa la yareeyay
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor),
                             child: Row(
                               children: [
-                                _buildStepIndicator(context, 1, l10n.stepAmount, true, false, isHeader: true),
-                                _buildStepLine(context, false, isHeader: true),
-                                _buildStepIndicator(context, 2, l10n.stepReceiver, false, false, isHeader: true),
-                                _buildStepLine(context, false, isHeader: true),
-                                _buildStepIndicator(context, 3, l10n.stepPayment, false, false, isHeader: true),
-                                _buildStepLine(context, false, isHeader: true),
-                                _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                                StepIndicator(step: 1, label: l10n.stepAmount, isActive: true, isCompleted: false, isHeader: true),
+                                StepLine(isCompleted: false, isHeader: true),
+                                StepIndicator(step: 2, label: l10n.stepReceiver, isActive: false, isCompleted: false, isHeader: true),
+                                StepLine(isCompleted: false, isHeader: true),
+                                StepIndicator(step: 3, label: l10n.stepPayment, isActive: false, isCompleted: false, isHeader: true),
+                                StepLine(isCompleted: false, isHeader: true),
+                                StepIndicator(step: 4, label: l10n.stepReview, isActive: false, isCompleted: false, isHeader: true),
                               ],
                             ),
                           ),
@@ -346,16 +361,16 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Expanded(child: Text(l10n.enterAmount, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: theme.textTheme.titleMedium?.color), overflow: TextOverflow.ellipsis)),
-                                  const SizedBox(width: 8),
+                                  Expanded(child: Text(l10n.enterAmount, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.titleMedium?.color), overflow: TextOverflow.ellipsis)),
+                                  SizedBox(width: 8 * context.fontSizeFactor),
                                   GestureDetector(
                                     onTap: () => _showFeeInfo(l10n),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Flexible(child: Text(l10n.feeRate, style: TextStyle(fontSize: 13, color: theme.colorScheme.secondary, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis)),
-                                        const SizedBox(width: 4),
-                                        Icon(Icons.info_outline_rounded, size: 15, color: theme.colorScheme.secondary),
+                                        Flexible(child: Text(l10n.feeInfoTitle, style: TextStyle(fontSize: 13 * context.fontSizeFactor, color: theme.colorScheme.secondary, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis)),
+                                        SizedBox(width: 4 * context.fontSizeFactor),
+                                        Icon(Icons.info_outline_rounded, size: 15 * context.fontSizeFactor, color: theme.colorScheme.secondary),
                                       ],
                                     ),
                                   ),
@@ -379,19 +394,19 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
 
                               // Quick Actions
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4), // Waxaa laga dhigay 4 (hore 8)
+                                padding: EdgeInsets.symmetric(vertical: 4 * context.fontSizeFactor), // Waxaa laga dhigay 4 (hore 8)
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     children: [10, 50, 100, 500].map((amt) => Padding(
-                                      padding: const EdgeInsets.only(right: 8),
+                                      padding: EdgeInsets.only(right: 8 * context.fontSizeFactor),
                                       child: ActionChip(
-                                        label: Text("+ ${_getCurrencySymbol(_sendCurrency)} $amt", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
+                                        label: Text("+ ${_getCurrencySymbol(_sendCurrency)} $amt", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13 * context.fontSizeFactor)),
                                         onPressed: () => _addQuickAmount(amt),
                                         backgroundColor: theme.colorScheme.surface,
                                         side: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1), width: 1),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
+                                        padding: EdgeInsets.symmetric(horizontal: 6 * context.fontSizeFactor, vertical: 2 * context.fontSizeFactor),
                                       ),
                                     )).toList(),
                                   ),
@@ -410,20 +425,20 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                           _updateReceiveAmount(_sendController.text);
                                         });
                                       },
-                                      child: Container(padding: const EdgeInsets.all(4), decoration: BoxDecoration(color: theme.colorScheme.primary, shape: BoxShape.circle, boxShadow: [BoxShadow(color: theme.colorScheme.primary.withValues(alpha: 0.2), blurRadius: 8)]), child: const Icon(Icons.swap_vert_rounded, color: Colors.white, size: 20)),
+                                      child: Container(padding: EdgeInsets.all(4 * context.fontSizeFactor), decoration: BoxDecoration(color: theme.colorScheme.primary, shape: BoxShape.circle, boxShadow: [BoxShadow(color: theme.colorScheme.primary.withValues(alpha: 0.2), blurRadius: 8 * context.fontSizeFactor)]), child: Icon(Icons.swap_vert_rounded, color: Colors.white, size: 20 * context.fontSizeFactor)),
                                     ),
-                                    const SizedBox(height: 2),
+                                    SizedBox(height: 2 * context.fontSizeFactor),
                                     Text(
                                       "1 $_sendCurrency = ${((1 / (rates[_sendCurrency] ?? 1.0)) * (rates[_receiveCurrency] ?? 1.0)).toStringAsFixed(4)} $_receiveCurrency", 
-                                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: theme.textTheme.bodyMedium?.color, letterSpacing: -0.5)
+                                      style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w900, color: theme.textTheme.bodyMedium?.color, letterSpacing: -0.5)
                                     ),
                                     if (_lastRateUpdate != null)
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text("${l10n.refreshed}: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 10, color: AppColors.grey.withValues(alpha: 0.7), fontWeight: FontWeight.bold)),
-                                          const SizedBox(width: 4),
-                                          _isRefreshing ? const SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1.5)) : Icon(Icons.auto_awesome, size: 10, color: theme.colorScheme.secondary),
+                                          Text("${l10n.refreshed}: ${DateFormat('HH:mm:ss').format(_lastRateUpdate!)}", style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.7), fontWeight: FontWeight.bold)),
+                                          SizedBox(width: 4 * context.fontSizeFactor),
+                                          _isRefreshing ? SizedBox(width: 8 * context.fontSizeFactor, height: 8 * context.fontSizeFactor, child: const CircularProgressIndicator(strokeWidth: 1.5)) : Icon(Icons.auto_awesome, size: 10 * context.fontSizeFactor, color: theme.colorScheme.secondary),
                                         ],
                                       ),
                                   ],
@@ -449,23 +464,23 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                               
                               // Fee Toggle
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), // Padding-ka waa la yareeyay
-                                decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5)),
+                                padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor), // Padding-ka waa la yareeyay
+                                decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5)),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.receipt_long_rounded, color: theme.colorScheme.secondary, size: 20),
-                                    const SizedBox(width: 8),
+                                    Icon(Icons.receipt_long_rounded, color: theme.colorScheme.secondary, size: 20 * context.fontSizeFactor),
+                                    SizedBox(width: 8 * context.fontSizeFactor),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text(l10n.deductFeeFromAmount, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
-                                          Text(_isFeeIncluded ? l10n.receiverWillReceiveLess : l10n.payFeeSeparately, style: TextStyle(fontSize: 10, color: AppColors.grey, fontWeight: FontWeight.bold)),
+                                          Text(l10n.deductFeeFromAmount, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13 * context.fontSizeFactor)),
+                                          Text(_isFeeIncluded ? l10n.receiverWillReceiveLess : l10n.payFeeSeparately, style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: AppColors.grey, fontWeight: FontWeight.bold)),
                                         ],
                                       ),
                                     ),
                                     Transform.scale(
-                                      scale: 0.8,
+                                      scale: 0.8 * context.fontSizeFactor,
                                       child: Switch.adaptive(
                                         value: _isFeeIncluded,
                                         activeTrackColor: theme.colorScheme.secondary,
@@ -481,76 +496,76 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                 ),
                               ),
                               
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8 * context.fontSizeFactor),
                               
-                              const SizedBox(height: 16),
-                              Text(l10n.payoutMethod, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: theme.textTheme.titleMedium?.color)),
-                              const SizedBox(height: 4),
+                              SizedBox(height: 16 * context.fontSizeFactor),
+                              Text(l10n.payoutMethod, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.titleMedium?.color)),
+                              SizedBox(height: 4 * context.fontSizeFactor),
                               _buildPayoutMethodsGrid(theme, l10n),
                               
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8 * context.fontSizeFactor),
                               
                               // Financial Safety Indicators
                               if (!isInputEmpty) ...[
                                 Row(
                                   children: [
-                                    Icon(Icons.security_rounded, size: 18, color: theme.colorScheme.secondary),
-                                    const SizedBox(width: 8),
+                                    Icon(Icons.security_rounded, size: 18 * context.fontSizeFactor, color: theme.colorScheme.secondary),
+                                    SizedBox(width: 8 * context.fontSizeFactor),
                                     Text(
-                                      state.translate("Transaction Limits", "Xadka Macaamilka"),
-                                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: theme.textTheme.titleMedium?.color),
+                                      l10n.transactionLimits,
+                                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.titleMedium?.color),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10 * context.fontSizeFactor),
                                 _buildLimitIndicators(state, l10n, theme),
-                                const SizedBox(height: 16),
+                                SizedBox(height: 16 * context.fontSizeFactor),
                               ],
 
                               // Summary Card
                               Container(
-                                padding: const EdgeInsets.all(12), // Padding-ka waa la yareeyay (hore 16)
+                                padding: EdgeInsets.all(12 * context.fontSizeFactor), // Padding-ka waa la yareeyay (hore 16)
                                 decoration: BoxDecoration(
                                   color: theme.colorScheme.surface,
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
                                   border: Border.all(color: !hasSufficient ? Colors.red.withValues(alpha: 0.8) : theme.dividerColor.withValues(alpha: 0.1), width: 2),
-                                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 4))],
+                                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10 * context.fontSizeFactor, offset: Offset(0, 4 * context.fontSizeFactor))],
                                 ),
                                 child: Column(
                                   children: [
                                     _buildSummaryRow(l10n.transactionFee, isInputEmpty ? "-" : "${_getCurrencySymbol(_sendCurrency)} ${_formatCurrency(_fee, _sendCurrencyDecimals)}"),
-                                    const Divider(height: 12, thickness: 1),
+                                    Divider(height: 12 * context.fontSizeFactor, thickness: 1),
                                     _buildSummaryRow(l10n.totalToPay, isInputEmpty ? "-" : "${_getCurrencySymbol(_sendCurrency)} ${_formatCurrency(_totalToPay, _sendCurrencyDecimals)}", isTotal: true, isError: !hasSufficient),
                                     if (_selectedMethod == "Bank Transfer" && !isInputEmpty)
                                       Padding(
-                                        padding: const EdgeInsets.only(top: 8),
+                                        padding: EdgeInsets.only(top: 8 * context.fontSizeFactor),
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            const Icon(Icons.access_time_filled_rounded, size: 14, color: Colors.orange),
-                                            const SizedBox(width: 6),
+                                            Icon(Icons.access_time_filled_rounded, size: 14 * context.fontSizeFactor, color: Colors.orange),
+                                            SizedBox(width: 6 * context.fontSizeFactor),
                                             Text(
-                                              "Lacagtu waxay gaaraysaa muddo 24 saac gudahood ah (After 1 day)",
-                                              style: TextStyle(fontSize: 11, color: Colors.orange.shade700, fontWeight: FontWeight.w900),
+                                              l10n.arrivesIn24h,
+                                              style: TextStyle(fontSize: 11 * context.fontSizeFactor, color: Colors.orange.shade700, fontWeight: FontWeight.w900),
                                             ),
                                           ],
                                         ),
                                       ),
                                     if (!hasSufficient)
-                                      Padding(padding: const EdgeInsets.only(top: 4), child: Text(l10n.insufficientBalance, style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w900), textAlign: TextAlign.center)),
+                                      Padding(padding: EdgeInsets.only(top: 4 * context.fontSizeFactor), child: Text(l10n.insufficientBalance, style: TextStyle(color: Colors.red, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w900), textAlign: TextAlign.center)),
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 16), // Booska badhanka kor ayuu u soo kacay (hore 30)
+                              SizedBox(height: 16 * context.fontSizeFactor), // Booska badhanka kor ayuu u soo kacay (hore 30)
                               SizedBox(
                                 width: double.infinity,
-                                height: 52, // Wax yar ayaa laga dhimay dhererka
+                                height: 52 * context.fontSizeFactor, // Wax yar ayaa laga dhimay dhererka
                                 child: ElevatedButton(
                                   onPressed: canProceed ? () => _handleContinue(l10n) : null,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: theme.colorScheme.secondary,
                                     foregroundColor: theme.colorScheme.onSecondary,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
                                     elevation: 4,
                                     shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
                                     disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
@@ -560,11 +575,11 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                                     _selectedMethod == "Bank Transfer" 
                                       ? l10n.continueToBank 
                                       : (_selectedMethod == "Murtaax Wallet" ? l10n.continueToWallet : l10n.continueToReceiver), 
-                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 0.5)
+                                    style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: 0.5)
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              SizedBox(height: 20 * context.fontSizeFactor),
                             ],
                           ),
                         ),
@@ -582,10 +597,21 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
 
   void _showFeeInfo(AppLocalizations l10n) {
     final theme = Theme.of(context);
+    String feeInfo = "";
+    if (_selectedMethod == "Bank Transfer") {
+      feeInfo = l10n.bankFeeInfo;
+    } else if (_selectedMethod == "Murtaax Wallet") {
+      feeInfo = l10n.walletFeeInfo;
+    } else if (_selectedMethod == "Visa / MasterCard") {
+      feeInfo = l10n.cardFeeInfo;
+    } else {
+      feeInfo = l10n.mobileMoneyFeeInfo;
+    }
+
     showDialog(context: context, builder: (context) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(l10n.feeInfoTitle, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
-      content: Text(l10n.feeInfoContent, style: const TextStyle(fontSize: 16, height: 1.6, fontWeight: FontWeight.w600)),
+      content: Text(feeInfo, style: const TextStyle(fontSize: 16, height: 1.6, fontWeight: FontWeight.w600)),
       actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.ok, style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.w900, fontSize: 18)))]
     ));
   }
@@ -640,40 +666,6 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     }
   }
 
-  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
-    final theme = Theme.of(context);
-    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : theme.dividerColor.withValues(alpha: 0.1);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : theme.textTheme.bodySmall?.color ?? Colors.grey);
-
-    return Column(
-      children: [
-        Container(
-          width: 32, height: 32,
-          decoration: BoxDecoration(
-            color: isActive || isCompleted ? activeColor : inactiveColor, 
-            shape: BoxShape.circle, 
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
-          ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          width: 60,
-          child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor), maxLines: 1, overflow: TextOverflow.ellipsis),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
-    final theme = Theme.of(context);
-    Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
-      : (isCompleted ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1));
-    return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
-  }
-
   Widget _buildAmountInput({
     required String label, required TextEditingController controller, required FocusNode focusNode, required String currency,
     String? balance, required Function(String) onChanged, required VoidCallback onCurrencyTap,
@@ -686,12 +678,12 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         bool isFocused = focusNode.hasFocus;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: 14 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
           decoration: BoxDecoration(
             color: isError ? Colors.red.withValues(alpha: 0.05) : Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isError ? Colors.red : (isFocused ? Theme.of(context).colorScheme.secondary : Theme.of(context).dividerColor.withValues(alpha: 0.1)), width: isFocused ? 2 : 1.5),
-            boxShadow: isFocused ? [BoxShadow(color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10, spreadRadius: 1)] : null,
+            borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+            border: Border.all(color: isError ? Colors.red : (isFocused ? Theme.of(context).colorScheme.secondary : Theme.of(context).dividerColor.withValues(alpha: 0.1)), width: isFocused ? 2 * context.fontSizeFactor : 1.5 * context.fontSizeFactor),
+            boxShadow: isFocused ? [BoxShadow(color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10 * context.fontSizeFactor, spreadRadius: 1 * context.fontSizeFactor)] : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -705,7 +697,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                       style: TextStyle(
                         color: isError ? Colors.red : AppColors.grey,
                         fontWeight: FontWeight.w900,
-                        fontSize: 13,
+                        fontSize: 13 * context.fontSizeFactor,
                         letterSpacing: 0.5,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -722,31 +714,31 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.secondary,
                                 fontWeight: FontWeight.w900,
-                                fontSize: 12,
+                                fontSize: 12 * context.fontSizeFactor,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: 6 * context.fontSizeFactor),
                           GestureDetector(
                             onTap: onMaxTap,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 3 * context.fontSizeFactor),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.secondary,
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(8 * context.fontSizeFactor),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
-                                    blurRadius: 4,
+                                    blurRadius: 4 * context.fontSizeFactor,
                                   ),
                                 ],
                               ),
                               child: Text(
                                 l10n.maxLabel,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 10,
+                                  fontSize: 10 * context.fontSizeFactor,
                                   fontWeight: FontWeight.w900,
                                 ),
                               ),
@@ -757,7 +749,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                     ),
                 ],
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: 2 * context.fontSizeFactor),
               Row(
                 children: [
                   Expanded(
@@ -765,23 +757,23 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                       controller: controller, focusNode: focusNode, onChanged: onChanged,
                       keyboardType: TextInputType.numberWithOptions(decimal: decimals > 0),
                       inputFormatters: [ThousandsFormatter(decimals: decimals)],
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: isError ? Colors.red : Theme.of(context).textTheme.bodyLarge?.color, letterSpacing: -1),
+                      style: TextStyle(fontSize: 28 * context.fontSizeFactor, fontWeight: FontWeight.w900, color: isError ? Colors.red : Theme.of(context).textTheme.bodyLarge?.color, letterSpacing: -1),
                       decoration: InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.zero, hintText: "0.00", hintStyle: TextStyle(color: Colors.grey[300])),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8 * context.fontSizeFactor),
                   InkWell(
                     onTap: onCurrencyTap,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(color: Theme.of(context).dividerColor.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(12), border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.08))),
+                      padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
+                      decoration: BoxDecoration(color: Theme.of(context).dividerColor.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(12 * context.fontSizeFactor), border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.08))),
                       child: Row(
                         children: [
-                          ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.network("https://flagcdn.com/w40/${_getFlagCode(currency)}.png", width: 22, height: 15, fit: BoxFit.cover, errorBuilder: (c, e, s) => const Icon(Icons.flag, size: 16))),
-                          const SizedBox(width: 6),
-                          Text(currency, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-                          const Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: AppColors.grey),
+                          ClipRRect(borderRadius: BorderRadius.circular(4 * context.fontSizeFactor), child: Image.network("https://flagcdn.com/w40/${_getFlagCode(currency)}.png", width: 22 * context.fontSizeFactor, height: 15 * context.fontSizeFactor, fit: BoxFit.cover, errorBuilder: (c, e, s) => Icon(Icons.flag, size: 16 * context.fontSizeFactor))),
+                          SizedBox(width: 6 * context.fontSizeFactor),
+                          Text(currency, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16 * context.fontSizeFactor)),
+                          Icon(Icons.keyboard_arrow_down_rounded, size: 18 * context.fontSizeFactor, color: AppColors.grey),
                         ],
                       ),
                     ),
@@ -816,7 +808,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
       children: [
         // Categories
         SizedBox(
-          height: 36,
+          height: 36 * context.fontSizeFactor,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: categories.length,
@@ -824,18 +816,18 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
               final cat = categories[index];
               bool isCatSelected = _selectedCategory == cat;
               return Padding(
-                padding: const EdgeInsets.only(right: 8),
+                padding: EdgeInsets.only(right: 8 * context.fontSizeFactor),
                 child: ChoiceChip(
-                  label: Text(cat, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: isCatSelected ? Colors.white : theme.textTheme.bodyMedium?.color)),
+                  label: Text(cat, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w900, color: isCatSelected ? Colors.white : theme.textTheme.bodyMedium?.color)),
                   selected: isCatSelected,
                   onSelected: (selected) {
                     if (selected) setState(() => _selectedCategory = cat);
                   },
                   selectedColor: theme.colorScheme.secondary,
                   backgroundColor: theme.colorScheme.surface,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                   side: BorderSide(color: isCatSelected ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1)),
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  padding: EdgeInsets.symmetric(horizontal: 4 * context.fontSizeFactor),
                   visualDensity: VisualDensity.compact,
                   showCheckmark: false,
                 ),
@@ -843,54 +835,54 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
             },
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12 * context.fontSizeFactor),
         // Methods
         SizedBox(
-          height: 70,
+          height: 70 * context.fontSizeFactor,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: filteredMethods.length,
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            padding: EdgeInsets.symmetric(vertical: 2 * context.fontSizeFactor),
             itemBuilder: (context, index) {
               final method = filteredMethods[index];
               bool isSelected = _selectedMethod == method["name"];
               return Padding(
-                padding: const EdgeInsets.only(right: 12),
+                padding: EdgeInsets.only(right: 12 * context.fontSizeFactor),
                 child: InkWell(
                   onTap: () {
                     HapticFeedback.selectionClick();
                     setState(() => _selectedMethod = method["name"]!);
                   },
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor),
                     decoration: BoxDecoration(
                       color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.surface,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: isSelected ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.15), width: 2),
-                      boxShadow: isSelected ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 4))] : null,
+                      borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                      border: Border.all(color: isSelected ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.15), width: 2 * context.fontSizeFactor),
+                      boxShadow: isSelected ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.4), blurRadius: 10 * context.fontSizeFactor, offset: Offset(0, 4 * context.fontSizeFactor))] : null,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(6),
+                          padding: EdgeInsets.all(6 * context.fontSizeFactor),
                           decoration: BoxDecoration(color: isSelected ? Colors.white.withValues(alpha: 0.2) : theme.dividerColor.withValues(alpha: 0.05), shape: BoxShape.circle),
-                          child: Image.asset(method["image"]!, width: 22, height: 22, errorBuilder: (c, e, s) => Icon(Icons.payment, size: 20, color: isSelected ? Colors.white : AppColors.grey)),
+                          child: Image.asset(method["image"]!, width: 22 * context.fontSizeFactor, height: 22 * context.fontSizeFactor, errorBuilder: (c, e, s) => Icon(Icons.payment, size: 20 * context.fontSizeFactor, color: isSelected ? Colors.white : AppColors.grey)),
                         ),
-                        const SizedBox(width: 10),
+                        SizedBox(width: 10 * context.fontSizeFactor),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               method["name"]!, 
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: isSelected ? Colors.white : theme.textTheme.bodyLarge?.color),
+                              style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w900, color: isSelected ? Colors.white : theme.textTheme.bodyLarge?.color),
                             ),
                             Text(
                               method["sublabel"]!,
-                              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isSelected ? Colors.white70 : AppColors.grey),
+                              style: TextStyle(fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: isSelected ? Colors.white70 : AppColors.grey),
                             ),
                           ],
                         ),
@@ -911,12 +903,12 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(child: Text(label, style: TextStyle(color: isError ? Colors.red : AppColors.grey, fontSize: 13, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis)),
-        const SizedBox(width: 8),
+        Expanded(child: Text(label, style: TextStyle(color: isError ? Colors.red : AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis)),
+        SizedBox(width: 8 * context.fontSizeFactor),
         Flexible(
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(value, style: TextStyle(color: isError ? Colors.red : (isTotal ? (theme.brightness == Brightness.dark ? Colors.white : AppColors.primaryDark) : AppColors.grey), fontSize: isTotal ? 20 : 15, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+            child: Text(value, style: TextStyle(color: isError ? Colors.red : (isTotal ? (theme.brightness == Brightness.dark ? Colors.white : AppColors.primaryDark) : AppColors.grey), fontSize: isTotal ? 20 * context.fontSizeFactor : 15 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
           ),
         ),
       ],
@@ -931,10 +923,10 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     double amountInUsd = _totalToPay / (rates[_sendCurrency] ?? 1.0);
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
         border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
       ),
       child: Column(
@@ -945,29 +937,28 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
             limit: state.dailyLimit,
             projected: amountInUsd,
             theme: theme,
+            l10n: l10n,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12 * context.fontSizeFactor),
           _buildLimitBar(
             label: l10n.monthlyLimit,
             remaining: monthlyRemaining,
             limit: state.monthlyLimit,
             projected: amountInUsd,
             theme: theme,
+            l10n: l10n,
           ),
           if (amountInUsd > dailyRemaining || amountInUsd > monthlyRemaining)
             Padding(
-              padding: const EdgeInsets.only(top: 12),
+              padding: EdgeInsets.only(top: 12 * context.fontSizeFactor),
               child: Row(
                 children: [
-                  const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 16),
-                  const SizedBox(width: 8),
+                  Icon(Icons.warning_amber_rounded, color: Colors.red, size: 16 * context.fontSizeFactor),
+                  SizedBox(width: 8 * context.fontSizeFactor),
                   Expanded(
                     child: Text(
-                      state.translate(
-                        "This transaction exceeds your remaining limit.",
-                        "Lacagtan waxay ka badan tahay xadka kuu hadhay."
-                      ),
-                      style: const TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold),
+                      l10n.exceedsLimitWarning,
+                      style: TextStyle(color: Colors.red, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -975,18 +966,15 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
             )
           else if (amountInUsd > dailyRemaining * 0.8)
              Padding(
-              padding: const EdgeInsets.only(top: 12),
+              padding: EdgeInsets.only(top: 12 * context.fontSizeFactor),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, color: Colors.orange, size: 16),
-                  const SizedBox(width: 8),
+                  Icon(Icons.info_outline, color: Colors.orange, size: 16 * context.fontSizeFactor),
+                  SizedBox(width: 8 * context.fontSizeFactor),
                   Expanded(
                     child: Text(
-                      state.translate(
-                        "You are approaching your daily limit.",
-                        "Waxaad ku dhowdahay xadkaaga maalinlaha ah."
-                      ),
-                      style: const TextStyle(color: Colors.orange, fontSize: 11, fontWeight: FontWeight.bold),
+                      l10n.approachingLimitWarning,
+                      style: TextStyle(color: Colors.orange, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -1003,6 +991,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     required double limit,
     required double projected,
     required ThemeData theme,
+    required AppLocalizations l10n,
   }) {
     double currentPercent = (remaining / limit).clamp(0.0, 1.0);
     double afterPercent = ((remaining - projected) / limit).clamp(0.0, 1.0);
@@ -1014,29 +1003,29 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.grey)),
+            Text(label, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.grey)),
             Text(
               exceeds 
-                ? state.translate("Limit Exceeded", "Xadkii waa la dhaafay") 
-                : "${_formatCurrency(remaining - projected, 2)} USD ${state.translate("remaining", "haray")}",
+                ? l10n.limitExceeded 
+                : "${_formatCurrency(remaining - projected, 2)} USD ${l10n.remaining}",
               style: TextStyle(
-                fontSize: 11, 
+                fontSize: 11 * context.fontSizeFactor, 
                 fontWeight: FontWeight.w900, 
                 color: exceeds ? Colors.red : (afterPercent < 0.2 ? Colors.orange : theme.colorScheme.secondary)
               ),
             ),
           ],
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6 * context.fontSizeFactor),
         Stack(
           children: [
             // Background
             Container(
-              height: 6,
+              height: 6 * context.fontSizeFactor,
               width: double.infinity,
               decoration: BoxDecoration(
                 color: theme.dividerColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(3),
+                borderRadius: BorderRadius.circular(3 * context.fontSizeFactor),
               ),
             ),
             // Projected Progress (What will be left after this transaction)
@@ -1044,27 +1033,20 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
               FractionallySizedBox(
                 widthFactor: afterPercent,
                 child: Container(
-                  height: 6,
+                  height: 6 * context.fontSizeFactor,
                   decoration: BoxDecoration(
                     color: afterPercent < 0.2 ? Colors.orange : theme.colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(3),
+                    borderRadius: BorderRadius.circular(3 * context.fontSizeFactor),
                   ),
                 ),
               ),
-            // Deduction visual (The part being spent)
-            if (!exceeds && projected > 0)
-              Positioned(
-                left: null,
-                right: (1 - currentPercent) * MediaQuery.of(context).size.width * 0.8, // Approximation
-                child: Container() // This is getting complex for a simple bar, let's stick to the color change
-              ),
             if (exceeds)
               Container(
-                height: 6,
+                height: 6 * context.fontSizeFactor,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.red.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(3),
+                  borderRadius: BorderRadius.circular(3 * context.fontSizeFactor),
                 ),
               ),
           ],

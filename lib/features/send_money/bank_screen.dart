@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
+import '../../core/responsive_utils.dart';
 import '../../core/models/bank_account.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/widgets/step_indicator.dart';
 import 'payment_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -130,8 +132,10 @@ class _BankScreenState extends State<BankScreen> {
 
   double _calculateFee() {
     double amountVal = double.tryParse(widget.amount.replaceAll(',', '')) ?? 0;
-    double fee = amountVal * 0.015;
-    return fee < 1.0 ? 1.0 : fee;
+    final state = Provider.of<AppState>(context, listen: false);
+    // Use the centralized logic with payoutMethod context
+    double fee = state.calculateFeeForSource(amountVal, _selectedSource, payoutMethod: "Bank Transfer");
+    return fee;
   }
 
   @override
@@ -226,7 +230,7 @@ class _BankScreenState extends State<BankScreen> {
           amount: widget.amount,
           receiverName: receiverName,
           receiverPhone: _accountController.text,
-          payoutMethod: bankInfo,
+          payoutMethod: "Bank Transfer",
           paymentMethod: _selectedSource,
           currencyCode: widget.currencyCode,
           purpose: _selectedPurpose,
@@ -277,7 +281,7 @@ class _BankScreenState extends State<BankScreen> {
           l10n.bankTransfer,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w900,
-            fontSize: 22,
+            fontSize: 22 * context.fontSizeFactor,
             color: Colors.white,
             letterSpacing: -0.5,
           ),
@@ -294,42 +298,59 @@ class _BankScreenState extends State<BankScreen> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
-                  borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30 * context.fontSizeFactor), bottomRight: Radius.circular(30 * context.fontSizeFactor)),
                 ),
-                padding: const EdgeInsets.only(bottom: 25, left: 20, right: 20),
+                padding: EdgeInsets.only(
+                  bottom: 25 * context.fontSizeFactor, 
+                  left: 20 * context.fontSizeFactor, 
+                  right: 20 * context.fontSizeFactor
+                ),
                 child: Center(
                   child: MaxWidthBox(
                     maxWidth: 500,
                     child: Column(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16 * context.fontSizeFactor, 
+                            vertical: 8 * context.fontSizeFactor
+                          ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.white.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(widget.senderSource == "Main Wallet" ? Icons.account_balance_wallet_outlined : Icons.credit_card_outlined, color: Colors.white70, size: 16),
-                              const SizedBox(width: 8),
+                              Icon(
+                                widget.senderSource == "Main Wallet" 
+                                  ? Icons.account_balance_wallet_outlined 
+                                  : Icons.credit_card_outlined, 
+                                color: Colors.white70, 
+                                size: 16 * context.fontSizeFactor
+                              ),
+                              SizedBox(width: 8 * context.fontSizeFactor),
                               Text(
                                 "${widget.senderSource}: ${widget.currencyCode} ${widget.amount}",
-                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                                style: TextStyle(
+                                  color: Colors.white, 
+                                  fontWeight: FontWeight.w900, 
+                                  fontSize: 14 * context.fontSizeFactor
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20 * context.fontSizeFactor),
                         Row(
                           children: [
-                            _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                            _buildStepLine(context, true, isHeader: true),
-                            _buildStepIndicator(context, 2, l10n.stepReceiver, true, false, isHeader: true),
-                            _buildStepLine(context, false, isHeader: true),
-                            _buildStepIndicator(context, 3, l10n.stepPayment, false, false, isHeader: true),
-                            _buildStepLine(context, false, isHeader: true),
-                            _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                            StepIndicator(step: 1, label: l10n.stepAmount, isActive: false, isCompleted: true, isHeader: true),
+                            StepLine(isCompleted: true, isHeader: true),
+                            StepIndicator(step: 2, label: l10n.stepReceiver, isActive: true, isCompleted: false, isHeader: true),
+                            StepLine(isCompleted: false, isHeader: true),
+                            StepIndicator(step: 3, label: l10n.stepPayment, isActive: false, isCompleted: false, isHeader: true),
+                            StepLine(isCompleted: false, isHeader: true),
+                            StepIndicator(step: 4, label: l10n.stepReview, isActive: false, isCompleted: false, isHeader: true),
                           ],
                         ),
                       ],
@@ -342,15 +363,22 @@ class _BankScreenState extends State<BankScreen> {
                 child: MaxWidthBox(
                   maxWidth: 500,
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: EdgeInsets.all(20.0 * context.fontSizeFactor),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // --- RECENT RECIPIENTS ---
-                        Text(l10n.recentTransfers, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: Colors.grey)),
-                        const SizedBox(height: 12),
+                        Text(
+                          l10n.recentTransfers, 
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900, 
+                            fontSize: 16 * context.fontSizeFactor, 
+                            color: Colors.grey
+                          )
+                        ),
+                        SizedBox(height: 12 * context.fontSizeFactor),
                         SizedBox(
-                          height: 100,
+                          height: 100 * context.fontSizeFactor,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: savedBeneficiaries.length,
@@ -365,17 +393,31 @@ class _BankScreenState extends State<BankScreen> {
                                   });
                                 },
                                 child: Container(
-                                  width: 80,
-                                  margin: const EdgeInsets.only(right: 16),
+                                  width: 80 * context.fontSizeFactor,
+                                  margin: EdgeInsets.only(right: 16 * context.fontSizeFactor),
                                   child: Column(
                                     children: [
                                       CircleAvatar(
-                                        radius: 28,
-                                        backgroundColor: theme.colorScheme.secondary.withOpacity(0.1),
-                                        child: Text(person.accountHolder?[0] ?? '?', style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.bold, fontSize: 20)),
+                                        radius: 28 * context.fontSizeFactor,
+                                        backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                                        child: Text(
+                                          person.accountHolder?[0] ?? '?', 
+                                          style: TextStyle(
+                                            color: theme.colorScheme.secondary, 
+                                            fontWeight: FontWeight.bold, 
+                                            fontSize: 20 * context.fontSizeFactor
+                                          )
+                                        ),
                                       ),
-                                      const SizedBox(height: 8),
-                                      Text(person.accountHolder?.split(' ')[0] ?? '', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                                      SizedBox(height: 8 * context.fontSizeFactor),
+                                      Text(
+                                        person.accountHolder?.split(' ')[0] ?? '', 
+                                        style: TextStyle(
+                                          fontSize: 12 * context.fontSizeFactor, 
+                                          fontWeight: FontWeight.bold
+                                        ), 
+                                        overflow: TextOverflow.ellipsis
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -384,13 +426,19 @@ class _BankScreenState extends State<BankScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24 * context.fontSizeFactor),
                         
                         // --- INTERNATIONAL TOGGLE ---
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(l10n.internationalTransfer, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+                            Text(
+                              l10n.internationalTransfer, 
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900, 
+                                fontSize: 16 * context.fontSizeFactor
+                              )
+                            ),
                             Switch.adaptive(
                               value: _isInternational,
                               activeColor: theme.colorScheme.secondary,
@@ -404,33 +452,48 @@ class _BankScreenState extends State<BankScreen> {
                           ],
                         ),
                         
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16 * context.fontSizeFactor),
 
                         // --- BANK SELECTOR ---
-                        Text(l10n.selectBank, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: Colors.grey)),
-                        const SizedBox(height: 8),
+                        Text(
+                          l10n.selectBank, 
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900, 
+                            fontSize: 14 * context.fontSizeFactor, 
+                            color: Colors.grey
+                          )
+                        ),
+                        SizedBox(height: 8 * context.fontSizeFactor),
                         GestureDetector(
                           onTap: () => _showBankPicker(l10n, theme),
                           child: Container(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16 * context.fontSizeFactor),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.surface,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: theme.dividerColor.withOpacity(0.1), width: 2),
+                              borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 2),
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.account_balance_rounded, color: theme.colorScheme.secondary),
-                                const SizedBox(width: 12),
-                                Expanded(child: Text(_selectedBank, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16))),
-                                Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.secondary),
+                                Icon(Icons.account_balance_rounded, color: theme.colorScheme.secondary, size: 24 * context.fontSizeFactor),
+                                SizedBox(width: 12 * context.fontSizeFactor),
+                                Expanded(
+                                  child: Text(
+                                    _selectedBank, 
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w900, 
+                                      fontSize: 16 * context.fontSizeFactor
+                                    )
+                                  )
+                                ),
+                                Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.secondary, size: 24 * context.fontSizeFactor),
                               ],
                             ),
                           ),
                         ),
 
                         if (_selectedBank == "Add Bank") ...[
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16 * context.fontSizeFactor),
                           _buildTextField(
                             controller: _bankNameController,
                             focusNode: _bankNameFocus,
@@ -440,7 +503,7 @@ class _BankScreenState extends State<BankScreen> {
                           ),
                         ],
 
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16 * context.fontSizeFactor),
 
                         // --- ACCOUNT NUMBER ---
                         _buildTextField(
@@ -456,7 +519,7 @@ class _BankScreenState extends State<BankScreen> {
                           ],
                         ),
 
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16 * context.fontSizeFactor),
 
                         // --- RECEIVER NAME ---
                         _buildTextField(
@@ -465,27 +528,37 @@ class _BankScreenState extends State<BankScreen> {
                           hint: l10n.receiver,
                           icon: Icons.person_rounded,
                           theme: theme,
-                          suffix: _isVerifyingName ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : null,
+                          suffix: _isVerifyingName 
+                            ? SizedBox(
+                                width: 20 * context.fontSizeFactor, 
+                                height: 20 * context.fontSizeFactor, 
+                                child: const CircularProgressIndicator(strokeWidth: 2)
+                              ) 
+                            : null,
                         ),
 
                         if (_verifiedName != null && _nameController.text.isNotEmpty && _verifiedName != _nameController.text)
                           Padding(
-                            padding: const EdgeInsets.only(top: 8),
+                            padding: EdgeInsets.only(top: 8 * context.fontSizeFactor),
                             child: Container(
-                              padding: const EdgeInsets.all(12),
+                              padding: EdgeInsets.all(12 * context.fontSizeFactor),
                               decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.orange.withOpacity(0.5)),
+                                color: Colors.orange.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
+                                border: Border.all(color: Colors.orange.withValues(alpha: 0.5)),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 20),
-                                  const SizedBox(width: 12),
+                                  Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 20 * context.fontSizeFactor),
+                                  SizedBox(width: 12 * context.fontSizeFactor),
                                   Expanded(
                                     child: Text(
                                       "Verification Warning: The name you entered differs from the account holder name returned by the bank: '$_verifiedName'",
-                                      style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 12),
+                                      style: TextStyle(
+                                        color: Colors.orange, 
+                                        fontWeight: FontWeight.bold, 
+                                        fontSize: 12 * context.fontSizeFactor
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -494,7 +567,7 @@ class _BankScreenState extends State<BankScreen> {
                           ),
 
                         if (_isInternational) ...[
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16 * context.fontSizeFactor),
                           _buildTextField(
                             controller: _swiftController,
                             focusNode: _swiftFocus,
@@ -502,7 +575,7 @@ class _BankScreenState extends State<BankScreen> {
                             icon: Icons.public_rounded,
                             theme: theme,
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16 * context.fontSizeFactor),
                           _buildTextField(
                             controller: _addressController,
                             focusNode: _addressFocus,
@@ -510,7 +583,7 @@ class _BankScreenState extends State<BankScreen> {
                             icon: Icons.home_rounded,
                             theme: theme,
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16 * context.fontSizeFactor),
                           Row(
                             children: [
                               Expanded(
@@ -522,7 +595,7 @@ class _BankScreenState extends State<BankScreen> {
                                   theme: theme,
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12 * context.fontSizeFactor),
                               Expanded(
                                 child: _buildTextField(
                                   controller: _countryController,
@@ -536,9 +609,16 @@ class _BankScreenState extends State<BankScreen> {
                           ),
                         ],
 
-                        const SizedBox(height: 24),
-                        Text(l10n.selectPaymentMethod, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: Colors.grey)),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 24 * context.fontSizeFactor),
+                        Text(
+                          l10n.selectPaymentMethod, 
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900, 
+                            fontSize: 14 * context.fontSizeFactor, 
+                            color: Colors.grey
+                          )
+                        ),
+                        SizedBox(height: 8 * context.fontSizeFactor),
                         _buildDropdown(
                           value: _selectedSource,
                           items: ["Main Wallet", "Card", "Savings"],
@@ -547,9 +627,16 @@ class _BankScreenState extends State<BankScreen> {
                           theme: theme,
                         ),
 
-                        const SizedBox(height: 16),
-                        Text(l10n.purposeOfRemittance, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: Colors.grey)),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 16 * context.fontSizeFactor),
+                        Text(
+                          l10n.purposeOfRemittance, 
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900, 
+                            fontSize: 14 * context.fontSizeFactor, 
+                            color: Colors.grey
+                          )
+                        ),
+                        SizedBox(height: 8 * context.fontSizeFactor),
                         _buildDropdown(
                           value: _selectedPurpose,
                           items: _purposes,
@@ -558,9 +645,16 @@ class _BankScreenState extends State<BankScreen> {
                           theme: theme,
                         ),
 
-                        const SizedBox(height: 16),
-                        Text("Source of Funds", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: Colors.grey)),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 16 * context.fontSizeFactor),
+                        Text(
+                          "Source of Funds", 
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900, 
+                            fontSize: 14 * context.fontSizeFactor, 
+                            color: Colors.grey
+                          )
+                        ),
+                        SizedBox(height: 8 * context.fontSizeFactor),
                         _buildDropdown(
                           value: _selectedFundSource,
                           items: _fundSources,
@@ -569,50 +663,103 @@ class _BankScreenState extends State<BankScreen> {
                           theme: theme,
                         ),
 
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24 * context.fontSizeFactor),
 
                         // --- TRANSFER SUMMARY (FEE/FX) ---
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16 * context.fontSizeFactor),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.secondary.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: theme.colorScheme.secondary.withOpacity(0.1)),
+                            color: theme.colorScheme.secondary.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                            border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.1)),
                           ),
                           child: Column(
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text("Transfer Fee (1.5%)", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-                                  Text("\$${_calculateFee().toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.w900)),
+                                  Builder(
+                                    builder: (context) {
+                                      final feePer100 = state.calculateFeeForSource(100.0, _selectedSource, payoutMethod: "Bank Transfer");
+                                      final feePercent = ((feePer100 / 100.0) * 100).toStringAsFixed(1);
+                                      return Expanded(
+                                        child: Text(
+                                          l10n.feeRateDynamic(feePercent, feePer100.toStringAsFixed(2)),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold, 
+                                            fontSize: 14 * context.fontSizeFactor,
+                                            color: Colors.grey
+                                          )
+                                        ),
+                                      );
+                                    }
+                                  ),
+                                  Text(
+                                    "\$${_calculateFee().toStringAsFixed(2)}", 
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 14 * context.fontSizeFactor
+                                    )
+                                  ),
                                 ],
                               ),
                               if (_isInternational) ...[
-                                const Divider(height: 24),
+                                Divider(height: 24 * context.fontSizeFactor),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Text("FX Rate", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                                    Text(
+                                      "FX Rate", 
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold, 
+                                        fontSize: 14 * context.fontSizeFactor,
+                                        color: Colors.grey
+                                      )
+                                    ),
                                     _isLoadingFx 
-                                      ? const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2))
-                                      : Text(_fxRate != null ? "1 USD = ${_fxRate!.toStringAsFixed(4)} ${widget.currencyCode}" : "Fetching...", style: const TextStyle(fontWeight: FontWeight.w900)),
+                                      ? SizedBox(
+                                          width: 12 * context.fontSizeFactor, 
+                                          height: 12 * context.fontSizeFactor, 
+                                          child: const CircularProgressIndicator(strokeWidth: 2)
+                                        )
+                                      : Text(
+                                          _fxRate != null 
+                                            ? "1 USD = ${_fxRate!.toStringAsFixed(4)} ${widget.currencyCode}" 
+                                            : "Fetching...", 
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 14 * context.fontSizeFactor
+                                          )
+                                        ),
                                   ],
                                 ),
                               ],
-                              const Divider(height: 24),
+                              Divider(height: 24 * context.fontSizeFactor),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text("Total to Pay", style: TextStyle(fontWeight: FontWeight.w900)),
-                                  Text("\$${((double.tryParse(widget.amount.replaceAll(',', '')) ?? 0) + _calculateFee()).toStringAsFixed(2)}", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: theme.colorScheme.secondary)),
+                                  Text(
+                                    "Total to Pay", 
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 16 * context.fontSizeFactor
+                                    )
+                                  ),
+                                  Text(
+                                    "\$${state.calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, _selectedSource, payoutMethod: "Bank Transfer").toStringAsFixed(2)}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w900, 
+                                      fontSize: 18 * context.fontSizeFactor, 
+                                      color: theme.colorScheme.secondary
+                                    )
+                                  ),
                                 ],
                               ),
                             ],
                           ),
                         ),
 
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20 * context.fontSizeFactor),
 
                         // --- SAVE BENEFICIARY ---
                         Row(
@@ -620,36 +767,46 @@ class _BankScreenState extends State<BankScreen> {
                             Checkbox(
                               value: _saveBeneficiary,
                               activeColor: theme.colorScheme.secondary,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4 * context.fontSizeFactor)),
                               onChanged: (v) => setState(() => _saveBeneficiary = v!),
                             ),
-                            Text(l10n.saveBeneficiary, style: const TextStyle(fontWeight: FontWeight.bold)),
+                            Text(
+                              l10n.saveBeneficiary, 
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14 * context.fontSizeFactor
+                              )
+                            ),
                           ],
                         ),
 
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32 * context.fontSizeFactor),
                         
                         // --- CONTINUE BUTTON ---
                         SizedBox(
                           width: double.infinity,
-                          height: 56,
+                          height: 56 * context.fontSizeFactor,
                           child: ElevatedButton(
                             onPressed: (_accountController.text.length >= 8 && _nameController.text.isNotEmpty) 
                                 ? () => _handleContinue(l10n) : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.secondary,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
                               elevation: 4,
-                              shadowColor: theme.colorScheme.secondary.withOpacity(0.3),
+                              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
                             ),
                             child: Text(
                               l10n.continueToReview,
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                              style: TextStyle(
+                                fontSize: 18 * context.fontSizeFactor, 
+                                fontWeight: FontWeight.w900, 
+                                letterSpacing: 0.5
+                              ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 30),
+                        SizedBox(height: 30 * context.fontSizeFactor),
                       ],
                     ),
                   ),
@@ -682,12 +839,12 @@ class _BankScreenState extends State<BankScreen> {
             Container(
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
                 border: Border.all(
-                  color: hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withOpacity(0.1),
+                  color: hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1),
                   width: 2,
                 ),
-                boxShadow: hasFocus ? [BoxShadow(color: theme.colorScheme.secondary.withOpacity(0.08), blurRadius: 10)] : null,
+                boxShadow: hasFocus ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10 * context.fontSizeFactor)] : null,
               ),
               child: TextField(
                 controller: controller,
@@ -695,13 +852,25 @@ class _BankScreenState extends State<BankScreen> {
                 keyboardType: type,
                 inputFormatters: formatters,
                 onChanged: (v) => setState(() {}),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                style: TextStyle(
+                  fontSize: 18 * context.fontSizeFactor, 
+                  fontWeight: FontWeight.w900
+                ),
                 decoration: InputDecoration(
                   hintText: hint,
-                  prefixIcon: Icon(icon, color: theme.colorScheme.secondary, size: 24),
-                  suffixIcon: suffix != null ? Padding(padding: const EdgeInsets.all(12), child: suffix) : null,
+                  prefixIcon: Icon(
+                    icon, 
+                    color: theme.colorScheme.secondary, 
+                    size: 24 * context.fontSizeFactor
+                  ),
+                  suffixIcon: suffix != null 
+                    ? Padding(
+                        padding: EdgeInsets.all(12 * context.fontSizeFactor), 
+                        child: suffix
+                      ) 
+                    : null,
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  contentPadding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor),
                 ),
               ),
             ),
@@ -709,37 +878,6 @@ class _BankScreenState extends State<BankScreen> {
         );
       },
     );
-  }
-
-  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
-    final theme = Theme.of(context);
-    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withOpacity(0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withOpacity(0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
-
-    return Column(
-      children: [
-        Container(
-          width: 32, height: 32,
-          decoration: BoxDecoration(
-            color: isActive || isCompleted ? activeColor : inactiveColor, 
-            shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withOpacity(0.2), width: 4) : null
-          ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
-      ],
-    );
-  }
-
-  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
-    final theme = Theme.of(context);
-    Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withOpacity(0.3))
-      : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
-    return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)))); 
   }
 
   Widget _buildDropdown({
@@ -750,25 +888,39 @@ class _BankScreenState extends State<BankScreen> {
     required ThemeData theme,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.dividerColor.withOpacity(0.1), width: 2),
+        borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 2),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: value,
           isExpanded: true,
-          icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.secondary),
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded, 
+            color: theme.colorScheme.secondary,
+            size: 24 * context.fontSizeFactor,
+          ),
           items: items.map((String item) {
             return DropdownMenuItem<String>(
               value: item,
               child: Row(
                 children: [
-                  Icon(icon, color: theme.colorScheme.secondary, size: 20),
-                  const SizedBox(width: 12),
-                  Text(item, style: const TextStyle(fontWeight: FontWeight.w900)),
+                  Icon(
+                    icon, 
+                    color: theme.colorScheme.secondary, 
+                    size: 20 * context.fontSizeFactor
+                  ),
+                  SizedBox(width: 12 * context.fontSizeFactor),
+                  Text(
+                    item, 
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 16 * context.fontSizeFactor
+                    )
+                  ),
                 ],
               ),
             );
@@ -809,15 +961,22 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
       height: MediaQuery.of(context).size.height * 0.75,
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30 * context.fontSizeFactor)),
       ),
       child: Column(
         children: [
-          const SizedBox(height: 12),
-          Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[400], borderRadius: BorderRadius.circular(10))),
-          const SizedBox(height: 20),
+          SizedBox(height: 12 * context.fontSizeFactor),
+          Container(
+            width: 40 * context.fontSizeFactor, 
+            height: 4 * context.fontSizeFactor, 
+            decoration: BoxDecoration(
+              color: Colors.grey[400], 
+              borderRadius: BorderRadius.circular(10 * context.fontSizeFactor)
+            )
+          ),
+          SizedBox(height: 20 * context.fontSizeFactor),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor),
             child: TextField(
               onChanged: (v) {
                 setState(() {
@@ -825,24 +984,38 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
                   filteredBanks = widget.banks.where((b) => b['name']!.toLowerCase().contains(v.toLowerCase())).toList();
                 });
               },
+              style: TextStyle(fontSize: 16 * context.fontSizeFactor),
               decoration: InputDecoration(
                 hintText: l10n.selectBank,
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: Icon(Icons.search, size: 24 * context.fontSizeFactor),
                 filled: true,
                 fillColor: theme.brightness == Brightness.dark ? Colors.grey[900] : Colors.grey[100],
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15 * context.fontSizeFactor), 
+                  borderSide: BorderSide.none
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10 * context.fontSizeFactor),
           Expanded(
             child: ListView.builder(
               itemCount: filteredBanks.length + 1,
               itemBuilder: (context, index) {
                 if (index == filteredBanks.length) {
                   return ListTile(
-                    leading: CircleAvatar(backgroundColor: theme.colorScheme.secondary.withOpacity(0.1), child: Icon(Icons.add, color: theme.colorScheme.secondary)),
-                    title: Text(l10n.addBank, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    leading: CircleAvatar(
+                      backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                      child: Icon(Icons.add, color: theme.colorScheme.secondary, size: 24 * context.fontSizeFactor)
+                    ),
+                    title: Text(
+                      l10n.addBank, 
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16 * context.fontSizeFactor
+                      )
+                    ),
                     onTap: () {
                       widget.onSelect("Add Bank");
                       Navigator.pop(context);
@@ -852,12 +1025,25 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
                 final bank = filteredBanks[index];
                 return ListTile(
                   leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(10)),
-                    child: Image.asset(bank['image']!, width: 24, height: 24),
+                    padding: EdgeInsets.all(8 * context.fontSizeFactor),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100], 
+                      borderRadius: BorderRadius.circular(10 * context.fontSizeFactor)
+                    ),
+                    child: Image.asset(
+                      bank['image']!, 
+                      width: 24 * context.fontSizeFactor, 
+                      height: 24 * context.fontSizeFactor
+                    ),
                   ),
-                  title: Text(bank['name']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  trailing: const Icon(Icons.chevron_right),
+                  title: Text(
+                    bank['name']!, 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16 * context.fontSizeFactor
+                    )
+                  ),
+                  trailing: Icon(Icons.chevron_right, size: 24 * context.fontSizeFactor),
                   onTap: () {
                     widget.onSelect(bank['name']!);
                     Navigator.pop(context);

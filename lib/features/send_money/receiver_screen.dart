@@ -5,7 +5,9 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/app_colors.dart';
+import '../../core/responsive_utils.dart';
 import '../../core/widgets/contact_sync_list.dart';
+import '../../core/widgets/step_indicator.dart';
 import '../../l10n/app_localizations.dart';
 import 'payment_screen.dart';
 
@@ -115,17 +117,19 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
 
     // Validation for Somali Mobile Money Prefixes
     if (_selectedCountryCode == "+252" && phone.length >= 2) {
+      bool isInvalid = false;
       if (widget.method == "EVC Plus" && !(phone.startsWith('61') || phone.startsWith('77'))) {
-        return "EVC Plus waa inuu ku bilaawdaa 61 ama 77";
+        isInvalid = true;
+      } else if (widget.method == "ZAAD Service" && !phone.startsWith('63')) {
+        isInvalid = true;
+      } else if (widget.method == "e-Dahab" && !phone.startsWith('65')) {
+        isInvalid = true;
+      } else if (widget.method == "Sahal" && !phone.startsWith('90')) {
+        isInvalid = true;
       }
-      if (widget.method == "ZAAD Service" && !phone.startsWith('63')) {
-        return "ZAAD waa inuu ku bilaawdaa 63";
-      }
-      if (widget.method == "e-Dahab" && !phone.startsWith('65')) {
-        return "e-Dahab waa inuu ku bilaawdaa 65";
-      }
-      if (widget.method == "Sahal" && !phone.startsWith('90')) {
-        return "Sahal waa inuu ku bilaawdaa 90";
+      
+      if (isInvalid) {
+        return "Shirkaddani ma laha lambarkan";
       }
     }
     return null;
@@ -318,14 +322,14 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
         backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24 * context.fontSizeFactor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           l10n.receiverDetails,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w900,
-            fontSize: 22,
+            fontSize: 22 * context.fontSizeFactor,
             color: Colors.white,
             letterSpacing: -0.5,
           ),
@@ -344,9 +348,9 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
-                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30 * context.fontSizeFactor), bottomRight: Radius.circular(30 * context.fontSizeFactor)),
                   ),
-                  padding: const EdgeInsets.only(bottom: 25, left: 20, right: 20),
+                  padding: EdgeInsets.only(bottom: 25 * context.fontSizeFactor, left: 20 * context.fontSizeFactor, right: 20 * context.fontSizeFactor),
                   child: Center(
                     child: MaxWidthBox(
                       maxWidth: 500,
@@ -354,33 +358,33 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                         children: [
                           // Amount Display in Header
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(widget.senderSource == "Main Wallet" ? Icons.account_balance_wallet_outlined : Icons.credit_card_outlined, color: Colors.white70, size: 16),
-                                const SizedBox(width: 8),
+                                Icon(widget.senderSource == "Main Wallet" ? Icons.account_balance_wallet_outlined : Icons.credit_card_outlined, color: Colors.white70, size: 16 * context.fontSizeFactor),
+                                SizedBox(width: 8 * context.fontSizeFactor),
                                 Text(
                                   "${widget.senderSource}: ${widget.currencyCode} ${widget.amount}",
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14 * context.fontSizeFactor),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: 20 * context.fontSizeFactor),
                           Row(
                             children: [
-                              _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                              _buildStepLine(context, true, isHeader: true),
-                              _buildStepIndicator(context, 2, l10n.stepReceiver, true, false, isHeader: true),
-                              _buildStepLine(context, false, isHeader: true),
-                              _buildStepIndicator(context, 3, l10n.stepPayment, false, false, isHeader: true),
-                              _buildStepLine(context, false, isHeader: true),
-                              _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                              StepIndicator(step: 1, label: l10n.stepAmount, isActive: false, isCompleted: true, isHeader: true),
+                              StepLine(isCompleted: true, isHeader: true),
+                              StepIndicator(step: 2, label: l10n.stepReceiver, isActive: true, isCompleted: false, isHeader: true),
+                              StepLine(isCompleted: false, isHeader: true),
+                              StepIndicator(step: 3, label: l10n.stepPayment, isActive: false, isCompleted: false, isHeader: true),
+                              StepLine(isCompleted: false, isHeader: true),
+                              StepIndicator(step: 4, label: l10n.stepReview, isActive: false, isCompleted: false, isHeader: true),
                             ],
                           ),
                         ],
@@ -393,17 +397,17 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                 child: MaxWidthBox(
                   maxWidth: 500,
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: EdgeInsets.all(20.0 * context.fontSizeFactor),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16 * context.fontSizeFactor),
                         
                         Text(
                           l10n.enterReceiverPhone,
-                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+                          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12 * context.fontSizeFactor),
                         
                         _buildTextField(
                           controller: _idController,
@@ -414,23 +418,23 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                           theme: theme,
                           errorText: _getValidationError(l10n),
                           suffixWidget: _isVerifying 
-                            ? const Padding(padding: EdgeInsets.all(12), child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.grey)))
+                            ? Padding(padding: EdgeInsets.all(12 * context.fontSizeFactor), child: SizedBox(width: 20 * context.fontSizeFactor, height: 20 * context.fontSizeFactor, child: const CircularProgressIndicator(strokeWidth: 2, color: Colors.grey)))
                             : IconButton(
-                                icon: Icon(Icons.contact_phone_rounded, color: theme.colorScheme.secondary),
+                                icon: Icon(Icons.contact_phone_rounded, color: theme.colorScheme.secondary, size: 24 * context.fontSizeFactor),
                                 onPressed: _pickContact,
                               ),
                           prefixWidget: InkWell(
                             onTap: _showCountryPicker,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(_selectedFlag, style: const TextStyle(fontSize: 20)),
-                                  const SizedBox(width: 4),
-                                  Text(_selectedCountryCode, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-                                  const Icon(Icons.arrow_drop_down, size: 20),
-                                  Container(width: 1, height: 24, color: theme.dividerColor.withValues(alpha: 0.2), margin: const EdgeInsets.symmetric(horizontal: 8)),
+                                  Text(_selectedFlag, style: TextStyle(fontSize: 20 * context.fontSizeFactor)),
+                                  SizedBox(width: 4 * context.fontSizeFactor),
+                                  Text(_selectedCountryCode, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16 * context.fontSizeFactor)),
+                                  Icon(Icons.arrow_drop_down, size: 20 * context.fontSizeFactor),
+                                  Container(width: 1 * context.fontSizeFactor, height: 24 * context.fontSizeFactor, color: theme.dividerColor.withValues(alpha: 0.2), margin: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor)),
                                 ],
                               ),
                             ),
@@ -465,34 +469,34 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                         ),
                         if (_detectedProvider != null)
                           Padding(
-                            padding: const EdgeInsets.only(top: 8, left: 16),
+                            padding: EdgeInsets.only(top: 8 * context.fontSizeFactor, left: 16 * context.fontSizeFactor),
                             child: Row(
                               children: [
-                                Icon(Icons.verified_user_rounded, color: theme.colorScheme.secondary, size: 14),
-                                const SizedBox(width: 4),
+                                Icon(Icons.verified_user_rounded, color: theme.colorScheme.secondary, size: 14 * context.fontSizeFactor),
+                                SizedBox(width: 4 * context.fontSizeFactor),
                                 Text(
                                   _detectedProvider!,
-                                  style: TextStyle(color: theme.colorScheme.secondary, fontSize: 12, fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: theme.colorScheme.secondary, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
                           ),
 
                         if (_nameController.text.isNotEmpty || _isVerifying) ...[
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24 * context.fontSizeFactor),
                           FadeInDown(
                             duration: const Duration(milliseconds: 400),
                             child: Container(
-                              padding: const EdgeInsets.all(16),
+                              padding: EdgeInsets.all(16 * context.fontSizeFactor),
                               decoration: BoxDecoration(
                                 color: _isVerifying ? Colors.grey[100] : theme.colorScheme.secondary.withValues(alpha: 0.05),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
                                 border: Border.all(color: _isVerifying ? Colors.grey[300]! : theme.colorScheme.secondary.withValues(alpha: 0.2)),
                               ),
                               child: Row(
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.all(10),
+                                    padding: EdgeInsets.all(10 * context.fontSizeFactor),
                                     decoration: BoxDecoration(
                                       color: _isVerifying ? Colors.grey[300] : theme.colorScheme.secondary.withValues(alpha: 0.1),
                                       shape: BoxShape.circle,
@@ -500,10 +504,10 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                                     child: Icon(
                                       _isVerifying ? Icons.sync : Icons.verified_user_rounded,
                                       color: _isVerifying ? Colors.grey[600] : theme.colorScheme.secondary,
-                                      size: 20,
+                                      size: 20 * context.fontSizeFactor,
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  SizedBox(width: 16 * context.fontSizeFactor),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -513,14 +517,14 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                                           style: TextStyle(
                                             color: _isVerifying ? Colors.grey[600] : theme.colorScheme.secondary,
                                             fontWeight: FontWeight.w900,
-                                            fontSize: 12,
+                                            fontSize: 12 * context.fontSizeFactor,
                                             letterSpacing: 1,
                                           ),
                                         ),
-                                        const SizedBox(height: 2),
+                                        SizedBox(height: 2 * context.fontSizeFactor),
                                         Text(
                                           _isVerifying ? l10n.checkingName : _nameController.text,
-                                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+                                          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor),
                                         ),
                                       ],
                                     ),
@@ -531,20 +535,20 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                           ),
                         ],
 
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20 * context.fontSizeFactor),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(l10n.fullName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                            Text(l10n.fullName, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor)),
                             if (_nameController.text.isNotEmpty)
                               IconButton(
                                 icon: Icon(_isFavorite ? Icons.star_rounded : Icons.star_outline_rounded, 
-                                  color: _isFavorite ? Colors.amber : Colors.grey),
+                                  color: _isFavorite ? Colors.amber : Colors.grey, size: 24 * context.fontSizeFactor),
                                 onPressed: () => setState(() => _isFavorite = !_isFavorite),
                               ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12 * context.fontSizeFactor),
                         _buildTextField(
                           controller: _nameController,
                           focusNode: _nameFocus,
@@ -554,42 +558,42 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                           theme: theme,
                         ),
 
-                        const SizedBox(height: 20),
-                        Text(l10n.purposeOfRemittance, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 20 * context.fontSizeFactor),
+                        Text(l10n.purposeOfRemittance, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor)),
+                        SizedBox(height: 12 * context.fontSizeFactor),
                         _buildPurposeDropdown(theme, l10n),
 
                         if (_recentItems.isNotEmpty) ...[
-                          const SizedBox(height: 24),
-                          Text(l10n.recent, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17)),
-                          const SizedBox(height: 10),
+                          SizedBox(height: 24 * context.fontSizeFactor),
+                          Text(l10n.recent, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 17 * context.fontSizeFactor)),
+                          SizedBox(height: 10 * context.fontSizeFactor),
                           ..._recentItems.map((item) => _buildRecentItem(theme, item["name"]!, item["detail"]!)),
                         ],
                         
-                        const SizedBox(height: 30),
+                        SizedBox(height: 30 * context.fontSizeFactor),
                         
                         // Action Button
                         SizedBox(
                           width: double.infinity,
-                          height: 56,
+                          height: 56 * context.fontSizeFactor,
                           child: ElevatedButton(
                             onPressed: (_idController.text.isNotEmpty && _nameController.text.isNotEmpty && _idController.text.length >= 7)
                                 ? () => _handleContinue(l10n) : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.secondary,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
                               elevation: 4,
                               shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
                               disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
                             ),
                             child: Text(
                               l10n.continueToReview,
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                              style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 30),
+                        SizedBox(height: 30 * context.fontSizeFactor),
                       ],
                     ),
                   ),
@@ -599,6 +603,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
           ),
         ),
       ),
+
     );
   }
 
@@ -607,22 +612,22 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
         border: Border.all(
           color: theme.dividerColor.withValues(alpha: 0.1),
-          width: 2,
+          width: 2 * context.fontSizeFactor,
         ),
       ),
       child: DropdownButtonFormField<String>(
         initialValue: _selectedPurpose ?? purposes.first,
         dropdownColor: theme.colorScheme.surface,
-        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w900, fontSize: 16),
+        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w900, fontSize: 16 * context.fontSizeFactor),
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.info_outline_rounded, color: theme.colorScheme.secondary),
+          prefixIcon: Icon(Icons.info_outline_rounded, color: theme.colorScheme.secondary, size: 24 * context.fontSizeFactor),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          contentPadding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor, horizontal: 16 * context.fontSizeFactor),
         ),
-        icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.secondary),
+        icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.secondary, size: 24 * context.fontSizeFactor),
         items: purposes.map((p) => DropdownMenuItem(
           value: p,
           child: Text(p),
@@ -634,59 +639,6 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
         },
       ),
     );
-  }
-
-  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
-    final theme = Theme.of(context);
-    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
-
-    return Column(
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          width: isActive ? 36 : 32, 
-          height: isActive ? 36 : 32,
-          decoration: BoxDecoration(
-            color: isActive || isCompleted ? activeColor : inactiveColor, 
-            shape: BoxShape.circle,
-            boxShadow: isActive ? [BoxShadow(color: activeColor.withValues(alpha: 0.3), blurRadius: 8, spreadRadius: 2)] : null,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.4), width: 4) : null
-          ),
-          child: Center(
-            child: isCompleted && !isActive 
-              ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) 
-              : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          width: 60,
-          child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor), maxLines: 1, overflow: TextOverflow.ellipsis),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
-    final theme = Theme.of(context);
-    Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
-      : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
-    
-    return Expanded(
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 500),
-        height: 3, 
-        margin: const EdgeInsets.symmetric(horizontal: 6), 
-        decoration: BoxDecoration(
-          color: color, 
-          borderRadius: BorderRadius.circular(10)
-        ),
-      ),
-    ); 
   }
 
   Widget _buildTextField({
@@ -718,13 +670,13 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
               duration: const Duration(milliseconds: 200),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
                 border: Border.all(
                   color: borderColor,
-                  width: 2,
+                  width: 2 * context.fontSizeFactor,
                 ),
                 boxShadow: hasFocus && errorText == null 
-                  ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10)] 
+                  ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10 * context.fontSizeFactor)] 
                   : null,
               ),
               child: TextField(
@@ -736,26 +688,26 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                   if (onChanged != null) onChanged(v);
                   setState(() {});
                 },
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.w900),
                 decoration: InputDecoration(
                   hintText: hint,
                   counterText: "",
                   prefixIcon: prefixWidget ?? (prefix != null
                     ? Padding(
-                        padding: const EdgeInsets.only(left: 16, top: 15),
-                        child: Text(prefix, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                        padding: EdgeInsets.only(left: 16 * context.fontSizeFactor, top: 15 * context.fontSizeFactor),
+                        child: Text(prefix, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor)),
                       )
-                    : Icon(icon, color: theme.colorScheme.secondary, size: 24)),
+                    : Icon(icon, color: theme.colorScheme.secondary, size: 24 * context.fontSizeFactor)),
                   suffixIcon: suffixWidget,
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  contentPadding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor),
                 ),
               ),
             ),
             if (errorText != null)
               Padding(
-                padding: const EdgeInsets.only(top: 8, left: 16),
-                child: Text(errorText, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
+                padding: EdgeInsets.only(top: 8 * context.fontSizeFactor, left: 16 * context.fontSizeFactor),
+                child: Text(errorText, style: TextStyle(color: Colors.red.shade700, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
               ),
           ],
         );
@@ -765,17 +717,17 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
 
   Widget _buildRecentItem(ThemeData theme, String name, String detail) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5)),
+      margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
+      decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20 * context.fontSizeFactor), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5 * context.fontSizeFactor)),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
         leading: CircleAvatar(
           backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
-          child: Text(name[0], style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.w900)),
+          child: Text(name[0], style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.w900, fontSize: 16 * context.fontSizeFactor)),
         ),
-        title: Text(name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-        subtitle: Text(detail, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[600])),
-        trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey),
+        title: Text(name, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16 * context.fontSizeFactor)),
+        subtitle: Text(detail, style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.grey[600])),
+        trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16 * context.fontSizeFactor, color: Colors.grey),
         onTap: () {
           setState(() {
             _idController.text = detail;

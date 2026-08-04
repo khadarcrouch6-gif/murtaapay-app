@@ -8,7 +8,10 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
+import '../../core/widgets/step_indicator.dart';
 import '../../core/widgets/success_screen.dart';
+import 'package:provider/provider.dart';
+import '../../core/app_state.dart';
 import '../../l10n/app_localizations.dart';
 import 'credit_card_screen.dart';
 
@@ -184,13 +187,13 @@ class _StripeScreenState extends State<StripeScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 20 * scale),
                   child: Row(
                     children: [
-                      _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                      _buildStepLine(context, true, isHeader: true),
-                      _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
-                      _buildStepLine(context, true, isHeader: true),
-                      _buildStepIndicator(context, 3, l10n.stepPayment, true, false, isHeader: true),
-                      _buildStepLine(context, false, isHeader: true),
-                      _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                      StepIndicator(step: 1, label: l10n.stepAmount, isActive: false, isCompleted: true, isHeader: true),
+                      StepLine(isCompleted: true, isHeader: true),
+                      StepIndicator(step: 2, label: l10n.stepReceiver, isActive: false, isCompleted: true, isHeader: true),
+                      StepLine(isCompleted: true, isHeader: true),
+                      StepIndicator(step: 3, label: l10n.stepPayment, isActive: true, isCompleted: false, isHeader: true),
+                      StepLine(isCompleted: false, isHeader: true),
+                      StepIndicator(step: 4, label: l10n.stepReview, isActive: false, isCompleted: false, isHeader: true),
                     ],
                   ),
                 ),
@@ -214,7 +217,7 @@ class _StripeScreenState extends State<StripeScreen> {
                               Text("Total Due", style: TextStyle(color: AppColors.grey, fontSize: 14 * scale)),
                               SizedBox(height: 8 * scale),
                               Text(
-                                NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0),
+                                NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Stripe")),
                                 style: TextStyle(fontSize: 32 * scale, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
                               ),
                               SizedBox(height: 4 * scale),
@@ -347,7 +350,7 @@ class _StripeScreenState extends State<StripeScreen> {
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                "Pay ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)}",
+                                "Pay ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Stripe"))}",
                                 style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                               ),
                             ),
@@ -374,38 +377,6 @@ class _StripeScreenState extends State<StripeScreen> {
         ],
       ),
     );
-  }
-
-  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
-    final theme = Theme.of(context);
-    final scale = context.fontSizeFactor;
-    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
-
-    return Column(
-      children: [
-        Container(
-          width: 32 * scale, height: 32 * scale,
-          decoration: BoxDecoration(
-            color: isActive || isCompleted ? activeColor : inactiveColor, 
-            shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4 * scale) : null
-          ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18 * scale) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14 * scale, fontWeight: FontWeight.w900))),
-        ),
-        SizedBox(height: 4 * scale),
-        Text(label, style: TextStyle(fontSize: 12 * scale, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor)),
-      ],
-    );
-  }
-
-  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
-    final theme = Theme.of(context);
-    Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3))
-      : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
-    return Expanded(child: Container(height: 3, margin: EdgeInsets.symmetric(horizontal: 6 * context.fontSizeFactor), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
   }
 
   @override

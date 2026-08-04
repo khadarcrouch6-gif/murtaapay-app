@@ -4,9 +4,12 @@ import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
+import '../../core/responsive_utils.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/widgets/step_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../../core/models/quick_profile.dart';
 import 'review_screen.dart';
 
 class MobileMoneyScreen extends StatefulWidget {
@@ -66,6 +69,18 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
     if (_selectedProvider == null || identifier.isEmpty) return;
     
     HapticFeedback.mediumImpact();
+
+    // Save to quick profiles if verified
+    if (_resolvedAccountName != null && !_isMerchantMode) {
+      final appState = Provider.of<AppState>(context, listen: false);
+      appState.saveQuickProfile(QuickProfile(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        name: _resolvedAccountName!,
+        walletId: identifier,
+        lastReceiverMethod: 'Mobile',
+      ));
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -83,19 +98,25 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
   }
 
   String? _getPrefixError(AppLocalizations l10n) {
-    if (_phoneController.text.isEmpty) return null;
+    if (_phoneController.text.isEmpty || _selectedProvider == null) return null;
     final val = _phoneController.text;
+    if (val.length < 2) return null;
+
+    bool isInvalid = false;
     if (_selectedProvider == l10n.evcPlus && !(val.startsWith('61') || val.startsWith('77'))) {
-      return "${l10n.evcPlus} waa inay ku bilaabataa 61 ama 77";
+      isInvalid = true;
+    } else if (_selectedProvider == l10n.waafi && !(val.startsWith('61') || val.startsWith('62'))) {
+      isInvalid = true;
+    } else if (_selectedProvider == l10n.edahab && !val.startsWith('65')) {
+      isInvalid = true;
+    } else if (_selectedProvider == l10n.zaad && !val.startsWith('63')) {
+      isInvalid = true;
+    } else if (_selectedProvider == l10n.sahal && !val.startsWith('90')) {
+      isInvalid = true;
     }
-    if (_selectedProvider == l10n.edahab && !val.startsWith('65')) {
-      return "${l10n.edahab} waa inay ku bilaabataa 65";
-    }
-    if (_selectedProvider == l10n.zaad && !val.startsWith('63')) {
-      return "${l10n.zaad} waa inay ku bilaabataa 63";
-    }
-    if (_selectedProvider == l10n.sahal && !val.startsWith('90')) {
-      return "${l10n.sahal} waa inay ku bilaabataa 90";
+
+    if (isInvalid) {
+      return "Shirkaddani ma laha lambarkan";
     }
     return null;
   }
@@ -104,10 +125,12 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final scale = context.fontSizeFactor;
     final prefixError = _getPrefixError(l10n);
 
     final providerList = [
       {"id": l10n.evcPlus, "name": l10n.evcPlus, "desc": "Hormuud Telecom", "color": const Color(0xFF1B5E20), "icon": Icons.phone_android_rounded},
+      {"id": l10n.waafi, "name": l10n.waafi, "desc": "Salaam Somali Bank", "color": const Color(0xFF009688), "icon": Icons.account_balance_rounded},
       {"id": l10n.edahab, "name": l10n.edahab, "desc": "Dahabshiil", "color": const Color(0xFFFBC02D), "icon": Icons.account_balance_wallet_rounded},
       {"id": l10n.sahal, "name": l10n.sahal, "desc": "Golis Telecom", "color": const Color(0xFF0D47A1), "icon": Icons.phonelink_ring_rounded},
       {"id": l10n.zaad, "name": l10n.zaad, "desc": "Telesom", "color": const Color(0xFFB71C1C), "icon": Icons.flash_on_rounded},
@@ -119,12 +142,12 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
         backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24 * scale),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           l10n.mobileMoney,
-          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20 * scale, color: Colors.white),
         ),
         centerTitle: true,
       ),
@@ -136,9 +159,9 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
               width: double.infinity,
               decoration: BoxDecoration(
                 color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
-                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30 * scale), bottomRight: Radius.circular(30 * scale)),
               ),
-              padding: const EdgeInsets.only(bottom: 25, left: 20, right: 20),
+              padding: EdgeInsets.only(bottom: 25 * scale, left: 20 * scale, right: 20 * scale),
               child: Center(
                 child: MaxWidthBox(
                   maxWidth: 500,
@@ -146,33 +169,33 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                     children: [
                       // Amount & Source Display in Header
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 8 * scale),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12 * scale),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.phone_android_outlined, color: Colors.white70, size: 16),
-                            const SizedBox(width: 8),
+                            Icon(Icons.phone_android_outlined, color: Colors.white70, size: 16 * scale),
+                            SizedBox(width: 8 * scale),
                             Text(
                               "${l10n.mobileMoney}: ${widget.currencyCode} ${widget.amount}",
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14 * scale),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20 * scale),
                       Row(
                         children: [
-                          _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                          _buildStepLine(context, true, isHeader: true),
-                          _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
-                          _buildStepLine(context, true, isHeader: true),
-                          _buildStepIndicator(context, 3, l10n.stepPayment, true, false, isHeader: true),
-                          _buildStepLine(context, false, isHeader: true),
-                          _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                          StepIndicator(step: 1, label: l10n.stepAmount, isActive: false, isCompleted: true, isHeader: true),
+                          StepLine(isCompleted: true, isHeader: true),
+                          StepIndicator(step: 2, label: l10n.stepReceiver, isActive: false, isCompleted: true, isHeader: true),
+                          StepLine(isCompleted: true, isHeader: true),
+                          StepIndicator(step: 3, label: l10n.stepPayment, isActive: true, isCompleted: false, isHeader: true),
+                          StepLine(isCompleted: false, isHeader: true),
+                          StepIndicator(step: 4, label: l10n.stepReview, isActive: false, isCompleted: false, isHeader: true),
                         ],
                       ),
                     ],
@@ -182,23 +205,23 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20 * scale),
                 child: Center(
                   child: MaxWidthBox(
                     maxWidth: 500,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.selectProvider, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                        const SizedBox(height: 16),
+                        Text(l10n.selectProvider, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * scale)),
+                        SizedBox(height: 16 * scale),
                         
                         GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12 * scale,
+                            mainAxisSpacing: 12 * scale,
                             childAspectRatio: 1.4,
                           ),
                           itemCount: providerList.length,
@@ -216,7 +239,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                                   duration: const Duration(milliseconds: 200),
                                   decoration: BoxDecoration(
                                     color: theme.colorScheme.surface,
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(20 * scale),
                                     border: Border.all(
                                       color: isSelected ? provider["color"] as Color : theme.dividerColor.withValues(alpha: 0.1),
                                       width: 2.5,
@@ -228,10 +251,10 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(provider["icon"] as IconData, color: isSelected ? provider["color"] as Color : AppColors.grey, size: 30),
-                                      const SizedBox(height: 8),
-                                      Text(provider["name"] as String, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-                                      Text(provider["desc"] as String, style: const TextStyle(color: AppColors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+                                      Icon(provider["icon"] as IconData, color: isSelected ? provider["color"] as Color : AppColors.grey, size: 30 * scale),
+                                      SizedBox(height: 8 * scale),
+                                      Text(provider["name"] as String, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16 * scale)),
+                                      Text(provider["desc"] as String, style: TextStyle(color: AppColors.grey, fontSize: 10 * scale, fontWeight: FontWeight.bold)),
                                     ],
                                   ),
                                 ),
@@ -240,14 +263,16 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                           },
                         ),
 
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32 * scale),
+                        _buildRecentBeneficiaries(theme, l10n, scale),
+                        SizedBox(height: 32 * scale),
                         
                         // Payment Mode Toggle
                         Container(
-                          padding: const EdgeInsets.all(4),
+                          padding: EdgeInsets.all(4 * scale),
                           decoration: BoxDecoration(
                             color: theme.brightness == Brightness.dark ? Colors.grey[900] : Colors.grey[100],
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(16 * scale),
                           ),
                           child: Row(
                             children: [
@@ -258,10 +283,10 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                                     _resolvedAccountName = null;
                                   }),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    padding: EdgeInsets.symmetric(vertical: 12 * scale),
                                     decoration: BoxDecoration(
                                       color: !_isMerchantMode ? theme.colorScheme.secondary : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(12 * scale),
                                     ),
                                     child: Center(
                                       child: Text(
@@ -269,7 +294,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                                         style: TextStyle(
                                           color: !_isMerchantMode ? Colors.white : AppColors.grey,
                                           fontWeight: FontWeight.w900,
-                                          fontSize: 14,
+                                          fontSize: 14 * scale,
                                         ),
                                       ),
                                     ),
@@ -283,10 +308,10 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                                     _resolvedAccountName = null;
                                   }),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    padding: EdgeInsets.symmetric(vertical: 12 * scale),
                                     decoration: BoxDecoration(
                                       color: _isMerchantMode ? theme.colorScheme.secondary : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(12 * scale),
                                     ),
                                     child: Center(
                                       child: Text(
@@ -294,7 +319,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                                         style: TextStyle(
                                           color: _isMerchantMode ? Colors.white : AppColors.grey,
                                           fontWeight: FontWeight.w900,
-                                          fontSize: 14,
+                                          fontSize: 14 * scale,
                                         ),
                                       ),
                                     ),
@@ -305,12 +330,12 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32 * scale),
                         Text(
                           _isMerchantMode ? l10n.tillNumber : l10n.phoneNumber,
-                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)
+                          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * scale)
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12 * scale),
                         
                         if (!_isMerchantMode)
                           _buildTextField(
@@ -322,19 +347,8 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                             prefix: "+252 ",
                             maxLength: 9,
                             errorText: prefixError,
+                            scale: scale,
                             onChanged: (val) async {
-                              if (val.length >= 2) {
-                                if (val.startsWith('61') || val.startsWith('77')) {
-                                  _selectedProvider = l10n.evcPlus;
-                                } else if (val.startsWith('65')) {
-                                  _selectedProvider = l10n.edahab;
-                                } else if (val.startsWith('63')) {
-                                  _selectedProvider = l10n.zaad;
-                                } else if (val.startsWith('90')) {
-                                  _selectedProvider = l10n.sahal;
-                                }
-                              }
-                              
                               if (val.length == 9 && _getPrefixError(l10n) == null) {
                                  setState(() {
                                    _isVerifying = true;
@@ -365,6 +379,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                             icon: Icons.store_rounded,
                             theme: theme,
                             maxLength: 7,
+                            scale: scale,
                             onChanged: (val) async {
                               if (val.length >= 5) {
                                  setState(() {
@@ -390,27 +405,27 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                           ),
                         if (_isVerifying)
                           Padding(
-                            padding: const EdgeInsets.only(top: 8, left: 16),
+                            padding: EdgeInsets.only(top: 8 * scale, left: 16 * scale),
                             child: Row(
                               children: [
-                                const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
-                                const SizedBox(width: 8),
-                                Text(l10n.verifyingAccount, style: TextStyle(fontSize: 12, color: theme.colorScheme.secondary, fontWeight: FontWeight.bold)),
+                                SizedBox(width: 12 * scale, height: 12 * scale, child: CircularProgressIndicator(strokeWidth: 2 * scale)),
+                                SizedBox(width: 8 * scale),
+                                Text(l10n.verifyingAccount, style: TextStyle(fontSize: 12 * scale, color: theme.colorScheme.secondary, fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ),
 
                         if (_resolvedAccountName != null)
                           Padding(
-                            padding: const EdgeInsets.only(top: 8, left: 16),
+                            padding: EdgeInsets.only(top: 8 * scale, left: 16 * scale),
                             child: FadeIn(
                               child: Row(
                                 children: [
-                                  Icon(Icons.check_circle, color: Colors.green, size: 14),
-                                  const SizedBox(width: 4),
+                                  Icon(Icons.check_circle, color: Colors.green, size: 14 * scale),
+                                  SizedBox(width: 4 * scale),
                                   Text(
                                     _isMerchantMode ? "${l10n.merchantResolved}: $_resolvedAccountName" : _resolvedAccountName!,
-                                    style: const TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.bold)
+                                    style: TextStyle(fontSize: 12 * scale, color: Colors.green, fontWeight: FontWeight.bold)
                                   ),
                                 ],
                               ),
@@ -418,15 +433,15 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                           ),
                         if (!_isMerchantMode && _phoneController.text.isNotEmpty && _phoneController.text.length < 9)
                           Padding(
-                            padding: const EdgeInsets.only(top: 8, left: 16),
-                            child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
+                            padding: EdgeInsets.only(top: 8 * scale, left: 16 * scale),
+                            child: Text(l10n.phoneLengthError, style: TextStyle(color: Colors.red.shade700, fontSize: 12 * scale, fontWeight: FontWeight.bold)),
                           ),
 
-                        const SizedBox(height: 40),
+                        SizedBox(height: 40 * scale),
                         
                         SizedBox(
                           width: double.infinity,
-                          height: 56,
+                          height: 56 * scale,
                           child: ElevatedButton(
                             onPressed: (_selectedProvider != null && 
                               ((!_isMerchantMode && _phoneController.text.length == 9 && prefixError == null) ||
@@ -435,7 +450,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.secondary,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * scale)),
                               elevation: 4,
                               disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
                             ),
@@ -443,7 +458,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                               fit: BoxFit.scaleDown,
                               child: Text(
                                 l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Mobile Money"))),
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                                style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900),
                               ),
                             ),
                           ),
@@ -460,12 +475,100 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
     );
   }
 
+  Widget _buildRecentBeneficiaries(ThemeData theme, AppLocalizations l10n, double scale) {
+    final state = Provider.of<AppState>(context);
+    if (state.quickProfiles.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.recentTransfers,
+          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16 * scale, color: AppColors.grey),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 100 * scale,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: state.quickProfiles.length,
+            itemBuilder: (context, index) {
+              final profile = state.quickProfiles[index];
+              return FadeInRight(
+                delay: Duration(milliseconds: index * 100),
+                child: GestureDetector(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    String phone = profile.walletId;
+                    if (phone.startsWith('+252')) phone = phone.substring(4);
+                    if (phone.startsWith('252')) phone = phone.substring(3);
+                    
+                    setState(() {
+                      _isMerchantMode = false;
+                      _phoneController.text = phone;
+                      _resolvedAccountName = profile.name;
+                      
+                      // Auto-select provider based on prefix
+                      if (phone.startsWith('61') || phone.startsWith('77')) {
+                        // Default to EVC, user can switch to Waafi if needed
+                        _selectedProvider = l10n.evcPlus;
+                      } else if (phone.startsWith('62')) {
+                        _selectedProvider = l10n.waafi;
+                      } else if (phone.startsWith('65')) {
+                        _selectedProvider = l10n.edahab;
+                      } else if (phone.startsWith('63')) {
+                        _selectedProvider = l10n.zaad;
+                      } else if (phone.startsWith('90')) {
+                        _selectedProvider = l10n.sahal;
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: 80 * scale,
+                    margin: const EdgeInsets.only(right: 16),
+                    child: Column(
+                      children: [
+                        if (profile.avatarUrl != null)
+                          CircleAvatar(
+                            radius: 28 * scale,
+                            backgroundImage: NetworkImage(profile.avatarUrl!),
+                          )
+                        else
+                          CircleAvatar(
+                            radius: 28 * scale,
+                            backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                            child: Text(
+                              profile.name.substring(0, 1).toUpperCase(),
+                              style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.secondary, fontSize: 18 * scale),
+                            ),
+                          ),
+                        const SizedBox(height: 8),
+                        Text(
+                          profile.name,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 12 * scale, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildTextField({
     required TextEditingController controller, 
     required FocusNode focusNode, 
     required String hint, 
     required IconData icon, 
     required ThemeData theme,
+    required double scale,
     bool isPin = false,
     String? prefix,
     int? maxLength,
@@ -482,14 +585,14 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
             Container(
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(24 * scale),
                 border: Border.all(
                   color: errorText != null 
                     ? Colors.red 
                     : (hasFocus ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1)), 
                   width: 1.5
                 ),
-                boxShadow: hasFocus && errorText == null ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10)] : null,
+                boxShadow: hasFocus && errorText == null ? [BoxShadow(color: theme.colorScheme.secondary.withValues(alpha: 0.08), blurRadius: 10 * scale)] : null,
               ),
               child: TextField(
                 controller: controller,
@@ -502,25 +605,25 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                   if (onChanged != null) onChanged(v);
                   setState(() {});
                 },
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900),
                 decoration: InputDecoration(
                   hintText: hint,
                   counterText: "",
                   prefixIcon: prefix != null
                     ? Padding(
-                        padding: const EdgeInsets.only(left: 16, top: 15),
-                        child: Text(prefix, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                        padding: EdgeInsets.only(left: 16 * scale, top: 15 * scale),
+                        child: Text(prefix, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * scale)),
                       )
-                    : Icon(icon, color: theme.colorScheme.secondary, size: 24),
+                    : Icon(icon, color: theme.colorScheme.secondary, size: 24 * scale),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  contentPadding: EdgeInsets.symmetric(vertical: 16 * scale),
                 ),
               ),
             ),
             if (errorText != null)
               Padding(
-                padding: const EdgeInsets.only(top: 8, left: 16),
-                child: Text(errorText, style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold)),
+                padding: EdgeInsets.only(top: 8 * scale, left: 16 * scale),
+                child: Text(errorText, style: TextStyle(color: Colors.red.shade700, fontSize: 12 * scale, fontWeight: FontWeight.bold)),
               ),
           ],
         );
@@ -528,37 +631,4 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
     );
   }
 
-  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
-    final theme = Theme.of(context);
-    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
-
-    return Column(
-      children: [
-        Container(
-          width: 32, height: 32,
-          decoration: BoxDecoration(
-            color: isActive || isCompleted ? activeColor : inactiveColor, 
-            shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
-          ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          width: 65,
-          child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor), maxLines: 1, overflow: TextOverflow.ellipsis),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
-    final theme = Theme.of(context);
-    Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3))
-      : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
-    return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
-  }
 }

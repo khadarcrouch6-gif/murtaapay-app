@@ -53,133 +53,144 @@ class _SuccessScreenState extends State<SuccessScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.horizontalPadding,
-            vertical: 32 * context.fontSizeFactor,
-          ),
-          child: MaxWidthBox(
-            maxWidth: 500,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FadeInDown(
-                  child: Container(
-                    height: 110 * context.fontSizeFactor,
-                    width: 110 * context.fontSizeFactor,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF11998E), Color(0xFF38EF7D)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (widget.onPressed != null) {
+          widget.onPressed!();
+        } else {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.horizontalPadding,
+              vertical: 32 * context.fontSizeFactor,
+            ),
+            child: MaxWidthBox(
+              maxWidth: 500,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FadeInDown(
+                    child: Container(
+                      height: 110 * context.fontSizeFactor,
+                      width: 110 * context.fontSizeFactor,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF11998E), Color(0xFF38EF7D)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF11998E).withValues(alpha: 0.4),
+                            blurRadius: 20 * context.fontSizeFactor,
+                            offset: Offset(0, 10 * context.fontSizeFactor),
+                          )
+                        ],
                       ),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF11998E).withValues(alpha: 0.4),
-                          blurRadius: 20 * context.fontSizeFactor,
-                          offset: Offset(0, 10 * context.fontSizeFactor),
-                        )
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.check_rounded,
-                      color: Colors.white,
-                      size: 65 * context.fontSizeFactor,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 32 * context.fontSizeFactor),
-                Text(
-                  widget.title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24 * context.fontSizeFactor,
-                    fontWeight: FontWeight.bold,
-                    color: theme.textTheme.titleLarge?.color,
-                  ),
-                ),
-                SizedBox(height: 12 * context.fontSizeFactor),
-                Text(
-                  widget.message,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.grey,
-                    fontSize: 16 * context.fontSizeFactor,
-                    height: 1.5,
-                  ),
-                ),
-                if (widget.subMessage != null) ...[
-                  SizedBox(height: 16 * context.fontSizeFactor),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16 * context.fontSizeFactor,
-                      vertical: 8 * context.fontSizeFactor,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentTeal.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
-                    ),
-                    child: Text(
-                      widget.subMessage!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppColors.accentTeal,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14 * context.fontSizeFactor,
+                      child: Icon(
+                        Icons.check_rounded,
+                        color: Colors.white,
+                        size: 65 * context.fontSizeFactor,
                       ),
                     ),
                   ),
-                ],
-                if (widget.transactionData != null) ...[
-                  SizedBox(height: 24 * context.fontSizeFactor),
-                  TextButton.icon(
-                    onPressed: () => ReceiptView.show(context, widget.transactionData!),
-                    icon: Icon(
-                      Icons.receipt_long_rounded,
-                      color: AppColors.accentTeal,
-                      size: 20 * context.fontSizeFactor,
-                    ),
-                    label: Text(
-                      AppLocalizations.of(context)?.viewReceipt ?? "View Receipt",
-                      style: TextStyle(
-                        color: AppColors.accentTeal,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14 * context.fontSizeFactor,
-                      ),
+                  SizedBox(height: 32 * context.fontSizeFactor),
+                  Text(
+                    widget.title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24 * context.fontSizeFactor,
+                      fontWeight: FontWeight.bold,
+                      color: theme.textTheme.titleLarge?.color,
                     ),
                   ),
-                ],
-                SizedBox(height: 48 * context.fontSizeFactor),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: widget.onPressed ?? () => Navigator.of(context).popUntil((route) => route.isFirst),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentTeal,
+                  SizedBox(height: 12 * context.fontSizeFactor),
+                  Text(
+                    widget.message,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppColors.grey,
+                      fontSize: 16 * context.fontSizeFactor,
+                      height: 1.5,
+                    ),
+                  ),
+                  if (widget.subMessage != null) ...[
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    Container(
                       padding: EdgeInsets.symmetric(
-                        vertical: 16 * context.fontSizeFactor,
+                        horizontal: 16 * context.fontSizeFactor,
+                        vertical: 8 * context.fontSizeFactor,
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                      decoration: BoxDecoration(
+                        color: AppColors.accentTeal.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
+                      ),
+                      child: Text(
+                        widget.subMessage!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.accentTeal,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14 * context.fontSizeFactor,
+                        ),
                       ),
                     ),
-                    child: FittedBox(
-                      child: Text(
-                        widget.buttonText,
+                  ],
+                  if (widget.transactionData != null) ...[
+                    SizedBox(height: 24 * context.fontSizeFactor),
+                    TextButton.icon(
+                      onPressed: () => ReceiptView.show(context, widget.transactionData!),
+                      icon: Icon(
+                        Icons.receipt_long_rounded,
+                        color: AppColors.accentTeal,
+                        size: 20 * context.fontSizeFactor,
+                      ),
+                      label: Text(
+                        AppLocalizations.of(context)?.viewReceipt ?? "View Receipt",
                         style: TextStyle(
+                          color: AppColors.accentTeal,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16 * context.fontSizeFactor,
-                          color: Colors.white,
+                          fontSize: 14 * context.fontSizeFactor,
+                        ),
+                      ),
+                    ),
+                  ],
+                  SizedBox(height: 48 * context.fontSizeFactor),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: widget.onPressed ?? () => Navigator.of(context).popUntil((route) => route.isFirst),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accentTeal,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 16 * context.fontSizeFactor,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                        ),
+                      ),
+                      child: FittedBox(
+                        child: Text(
+                          widget.buttonText,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16 * context.fontSizeFactor,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

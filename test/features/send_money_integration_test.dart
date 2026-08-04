@@ -3,6 +3,7 @@ import 'package:murtaaxpay_app/core/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('P2P Payment Integration Tests', () {
     late AppState appState;
 
@@ -97,6 +98,50 @@ void main() {
       await appState.deductCardBalance(cardId, amount);
 
       expect(appState.cards.first.balance, initialCardBalance - amount);
+    });
+    test('Bank Transfer fee should be 2.5%', () async {
+      const receiverId = '204456';
+      const amount = 200.0;
+      const paymentMethod = 'Bank Transfer';
+      
+      final expectedFee = amount * 0.025; // 2.5%
+      final initialBalance = appState.balance;
+
+      await appState.processP2PTransfer(
+        receiverId: receiverId,
+        amount: amount,
+        currencyCode: 'USD',
+        purpose: 'Bank payment',
+        paymentMethod: paymentMethod,
+      );
+
+      // Note: In AppState.processP2PTransfer, if it's NOT a card/savings/wallet source, 
+      // it doesn't deduct from internal balance (as it's an external source).
+      // However, it should still record the correct fee in the transaction.
+      
+      expect(appState.transactions.first.fee, expectedFee);
+      expect(appState.transactions.first.numericAmount, amount);
+      expect(appState.transactions.first.paymentMethod, paymentMethod);
+      // For bank transfer, balance shouldn't change in this mock logic
+      expect(appState.balance, initialBalance);
+    });
+
+    test('Mobile Money fee should be 0.99 flat', () async {
+      const receiverId = '204456';
+      const amount = 100.0;
+      const paymentMethod = 'EVC Plus';
+      
+      const expectedFee = 0.99;
+
+      await appState.processP2PTransfer(
+        receiverId: receiverId,
+        amount: amount,
+        currencyCode: 'USD',
+        purpose: 'Mobile payment',
+        paymentMethod: paymentMethod,
+      );
+
+      expect(appState.transactions.first.fee, expectedFee);
     });
   });
 }

@@ -359,8 +359,14 @@ abstract class AppLocalizations {
   /// No description provided for @feeRate.
   ///
   /// In en, this message translates to:
-  /// **'Fee: \$0.99 per \$100'**
+  /// **'Fixed Fees Applied'**
   String get feeRate;
+
+  /// No description provided for @feeRateDynamic.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee: {amount}'**
+  String feeRateDynamic(String percentage, String amount);
 
   /// No description provided for @youSend.
   ///
@@ -893,8 +899,38 @@ abstract class AppLocalizations {
   /// No description provided for @feeInfoContent.
   ///
   /// In en, this message translates to:
-  /// **'The fee is 0.99%. For example: sending \$100 will cost only \$0.99 in fees.'**
+  /// **'Transaction fees depend on the payout method.'**
   String get feeInfoContent;
+
+  /// No description provided for @bankFeeInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'The fee for bank transfers is a flat \$2.50.'**
+  String get bankFeeInfo;
+
+  /// No description provided for @cardFeeInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'The fee for card transfers is a flat \$1.50.'**
+  String get cardFeeInfo;
+
+  /// No description provided for @walletFeeInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'The fee for wallet transfers is a flat \$0.50.'**
+  String get walletFeeInfo;
+
+  /// No description provided for @mobileMoneyFeeInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'The fee for mobile money transfers is a flat \$1.50.'**
+  String get mobileMoneyFeeInfo;
+
+  /// No description provided for @savingsFeeInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'The fee for savings transfers is a flat \$0.50.'**
+  String get savingsFeeInfo;
 
   /// No description provided for @maxLabel.
   ///
@@ -4250,6 +4286,12 @@ abstract class AppLocalizations {
   /// **'Apr 2026'**
   String get apr2026;
 
+  /// No description provided for @transactionLimits.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Limits'**
+  String get transactionLimits;
+
   /// No description provided for @scanQR.
   ///
   /// In en, this message translates to:
@@ -4298,6 +4340,12 @@ abstract class AppLocalizations {
   /// **'EVC Plus'**
   String get evcPlus;
 
+  /// No description provided for @waafi.
+  ///
+  /// In en, this message translates to:
+  /// **'Waafi'**
+  String get waafi;
+
   /// No description provided for @edahab.
   ///
   /// In en, this message translates to:
@@ -4315,6 +4363,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sahal'**
   String get sahal;
+
+  /// No description provided for @payViaSalaam.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay via Salaam Waafi'**
+  String get payViaSalaam;
 
   /// No description provided for @purposeOfRemittance.
   ///
@@ -5383,6 +5437,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Merchant Verified'**
   String get merchantResolved;
+
+  /// No description provided for @sourceOfFunds.
+  ///
+  /// In en, this message translates to:
+  /// **'Source of Funds'**
+  String get sourceOfFunds;
+
+  /// No description provided for @securedBySSL.
+  ///
+  /// In en, this message translates to:
+  /// **'Secured by Murtaax SSL Encryption'**
+  String get securedBySSL;
+
+  /// No description provided for @dailyLimitExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily limit exceeded. You can withdraw up to {amount} per day.'**
+  String dailyLimitExceeded(String amount);
+
+  /// No description provided for @monthlyLimitExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly limit exceeded. You can withdraw up to {amount} per month.'**
+  String monthlyLimitExceeded(String amount);
+
+  /// No description provided for @withdrawalLimitRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit: {min} - {max}'**
+  String withdrawalLimitRange(String min, String max);
+
+  /// No description provided for @exceedsLimitWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This transaction exceeds your remaining limit.'**
+  String get exceedsLimitWarning;
+
+  /// No description provided for @limitExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit Exceeded'**
+  String get limitExceeded;
+
+  /// No description provided for @approachingLimitWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'You are approaching your daily limit.'**
+  String get approachingLimitWarning;
 }
 
 class _AppLocalizationsDelegate

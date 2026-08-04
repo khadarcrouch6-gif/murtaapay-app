@@ -140,16 +140,21 @@ class AppLocalizationsSo extends AppLocalizations {
   String get transferLimit => 'Limit: \$50,000.00';
 
   @override
-  String get feeRate => 'Fee: \$0.99 per \$100';
+  String get feeRate => 'Khidmadda: \$0.99 halkii \$100';
 
   @override
-  String get youSend => 'You Send';
+  String feeRateDynamic(String percentage, String amount) {
+    return 'Fee: $amount';
+  }
 
   @override
-  String get searchCurrency => 'Search currency';
+  String get youSend => 'Adiga ayaa diraya';
 
   @override
-  String get receiverGets => 'Receiver Gets';
+  String get searchCurrency => 'Raadi lacagta';
+
+  @override
+  String get receiverGets => 'Qaataha ayaa helaya';
 
   @override
   String get selectPaymentMethod => 'Select Payment Method';
@@ -164,13 +169,13 @@ class AppLocalizationsSo extends AppLocalizations {
   String get mobileMoney => 'Mobile Money';
 
   @override
-  String get transactionFee => 'Transaction Fee';
+  String get transactionFee => 'Khidmadda Dhaqdhaqaaqa';
 
   @override
-  String get totalToPay => 'Total to Pay';
+  String get totalToPay => 'Wadarta la bixinayo';
 
   @override
-  String get insufficientBalance => 'Haraagaagu kuguma filna';
+  String get insufficientBalance => 'Insufficient Balance';
 
   @override
   String get receiverDetails => 'Receiver Details';
@@ -179,7 +184,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get enterReceiverPhone => 'Enter Receiver Phone Number';
 
   @override
-  String get phoneNumber => 'Lambarka Taleefanka';
+  String get phoneNumber => 'Phone Number';
 
   @override
   String get receiver => 'Receiver';
@@ -402,17 +407,34 @@ class AppLocalizationsSo extends AppLocalizations {
   String get stepReview => 'Review';
 
   @override
-  String get refreshed => 'Refreshed';
+  String get refreshed => 'La cusboonaysiiyay';
 
   @override
-  String get ok => 'OK';
+  String get ok => 'WAAYE';
 
   @override
-  String get feeInfoTitle => 'Exchange Fee Info';
+  String get feeInfoTitle => 'Macluumaadka Khidmadda Sarrifka';
 
   @override
   String get feeInfoContent =>
-      'The fee is 0.99%. For example: sending \$100 will cost only \$0.99 in fees.';
+      'Khidmaddu waa 0.99%. Tusaale ahaan: dirista \$100 waxay kugu kacaysaa oo keliya \$0.99 khidmad ah.';
+
+  @override
+  String get bankFeeInfo => 'The fee for bank transfers is a flat \$2.50.';
+
+  @override
+  String get cardFeeInfo => 'The fee for card transfers is a flat \$1.50.';
+
+  @override
+  String get walletFeeInfo => 'The fee for wallet transfers is a flat \$0.50.';
+
+  @override
+  String get mobileMoneyFeeInfo =>
+      'The fee for mobile money transfers is a flat \$1.50.';
+
+  @override
+  String get savingsFeeInfo =>
+      'The fee for savings transfers is a flat \$0.50.';
 
   @override
   String get maxLabel => 'MAX';
@@ -468,13 +490,13 @@ class AppLocalizationsSo extends AppLocalizations {
   String get availableBalance => 'AVAILABLE BALANCE';
 
   @override
-  String get deductFeeFromAmount => 'Deduct fee from amount';
+  String get deductFeeFromAmount => 'Khidmadda ka jar lacagta la dirayo';
 
   @override
-  String get receiverWillReceiveLess => 'Receiver will receive less';
+  String get receiverWillReceiveLess => 'Qaataha ayaa heli doona wax yar';
 
   @override
-  String get payFeeSeparately => 'Pay fee separately';
+  String get payFeeSeparately => 'Khidmadda si gaar ah u bixi';
 
   @override
   String get myCards => 'My Cards';
@@ -2229,6 +2251,9 @@ class AppLocalizationsSo extends AppLocalizations {
   String get apr2026 => 'Abriil 2026';
 
   @override
+  String get transactionLimits => 'Xadka Macaamilka';
+
+  @override
   String get scanQR => 'Sawirka QR-ka';
 
   @override
@@ -2254,6 +2279,9 @@ class AppLocalizationsSo extends AppLocalizations {
   String get evcPlus => 'EVC Plus';
 
   @override
+  String get waafi => 'Waafi';
+
+  @override
   String get edahab => 'e-Dahab';
 
   @override
@@ -2261,6 +2289,9 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get sahal => 'Sahal';
+
+  @override
+  String get payViaSalaam => 'Pay via Salaam Waafi';
 
   @override
   String get purposeOfRemittance => 'Sababta Lacag Dirista';
@@ -2836,4 +2867,36 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get merchantResolved => 'Ganacsiga waa la hubiyay';
+
+  @override
+  String get sourceOfFunds => 'Isha Lacagta';
+
+  @override
+  String get securedBySSL => 'Waxaa lagu sugay Murtaax SSL Encryption';
+
+  @override
+  String dailyLimitExceeded(String amount) {
+    return 'Waxaad dhaaftay xadkii maalinlaha ahaa. Waxaad maalinkii la bixi kartaa ilaa $amount.';
+  }
+
+  @override
+  String monthlyLimitExceeded(String amount) {
+    return 'Waxaad dhaaftay xadkii bishii ahaa. Waxaad bishii la bixi kartaa ilaa $amount.';
+  }
+
+  @override
+  String withdrawalLimitRange(String min, String max) {
+    return 'Xadka: $min - $max';
+  }
+
+  @override
+  String get exceedsLimitWarning =>
+      'Lacagtan waxay ka badan tahay xadka kuu hadhay.';
+
+  @override
+  String get limitExceeded => 'Xadkii waa la dhaafay';
+
+  @override
+  String get approachingLimitWarning =>
+      'Waxaad ku dhowdahay xadkaaga maalinlaha ah.';
 }

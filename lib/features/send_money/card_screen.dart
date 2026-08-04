@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
+import '../../core/responsive_utils.dart';
 import 'payment_screen.dart';
+import '../../core/widgets/step_indicator.dart';
 import '../../l10n/app_localizations.dart';
 
 
@@ -78,7 +80,11 @@ class _CardScreenState extends State<CardScreen> {
         ),
         title: Text(
           widget.method,
-          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.white),
+          style: TextStyle(
+            fontWeight: FontWeight.w900, 
+            fontSize: 20 * context.fontSizeFactor, 
+            color: Colors.white
+          ),
         ),
         centerTitle: true,
       ),
@@ -92,45 +98,58 @@ class _CardScreenState extends State<CardScreen> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
-                  borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30 * context.fontSizeFactor), bottomRight: Radius.circular(30 * context.fontSizeFactor)),
                 ),
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
                 child: Center(
                   child: MaxWidthBox(
                     maxWidth: 500,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor),
                       child: Column(
                         children: [
                           // Source Display in Header
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16 * context.fontSizeFactor, 
+                              vertical: 8 * context.fontSizeFactor
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(widget.senderSource == "Main Wallet" ? Icons.account_balance_wallet_outlined : Icons.credit_card_outlined, color: Colors.white70, size: 16),
-                                const SizedBox(width: 8),
+                                Icon(
+                                  widget.senderSource == "Main Wallet" 
+                                    ? Icons.account_balance_wallet_outlined 
+                                    : Icons.credit_card_outlined, 
+                                  color: Colors.white70, 
+                                  size: 16 * context.fontSizeFactor
+                                ),
+                                SizedBox(width: 8 * context.fontSizeFactor),
                                 Text(
                                   "${widget.senderSource}: ${widget.currencyCode} ${widget.amount}",
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                                  style: TextStyle(
+                                    color: Colors.white, 
+                                    fontWeight: FontWeight.w900, 
+                                    fontSize: 14 * context.fontSizeFactor
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: 20 * context.fontSizeFactor),
                           Row(
                             children: [
-                              _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                              _buildStepLine(context, true, isHeader: true),
-                              _buildStepIndicator(context, 2, l10n.stepReceiver, true, false, isHeader: true),
-                              _buildStepLine(context, false, isHeader: true),
-                              _buildStepIndicator(context, 3, l10n.stepPayment, false, false, isHeader: true),
-                              _buildStepLine(context, false, isHeader: true),
-                              _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                              StepIndicator(step: 1, label: l10n.stepAmount, isActive: false, isCompleted: true, isHeader: true),
+                              StepLine(isCompleted: true, isHeader: true),
+                              StepIndicator(step: 2, label: l10n.stepReceiver, isActive: true, isCompleted: false, isHeader: true),
+                              StepLine(isCompleted: false, isHeader: true),
+                              StepIndicator(step: 3, label: l10n.stepPayment, isActive: false, isCompleted: false, isHeader: true),
+                              StepLine(isCompleted: false, isHeader: true),
+                              StepIndicator(step: 4, label: l10n.stepReview, isActive: false, isCompleted: false, isHeader: true),
                             ],
                           ),
                         ],
@@ -145,7 +164,7 @@ class _CardScreenState extends State<CardScreen> {
                     child: MaxWidthBox(
                       maxWidth: 500,
                       child: Padding(
-                        padding: const EdgeInsets.all(20.0),
+                        padding: EdgeInsets.all(20.0 * context.fontSizeFactor),
                         child: Form(
                           key: _formKey,
                           child: Column(
@@ -155,7 +174,7 @@ class _CardScreenState extends State<CardScreen> {
 
                               FadeInDown(
                                 child: Container(
-                                  height: 220,
+                                  height: 220 * context.fontSizeFactor,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
@@ -165,16 +184,16 @@ class _CardScreenState extends State<CardScreen> {
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
                                     ),
-                                    borderRadius: BorderRadius.circular(24),
+                                    borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
                                     boxShadow: [
                                       BoxShadow(
                                         color: (theme.brightness == Brightness.dark ? Colors.black : AppColors.primaryDark).withValues(alpha: 0.2),
-                                        blurRadius: 15,
-                                        offset: const Offset(0, 10),
+                                        blurRadius: 15 * context.fontSizeFactor,
+                                        offset: Offset(0, 10 * context.fontSizeFactor),
                                       ),
                                     ],
                                   ),
-                                  padding: const EdgeInsets.all(24),
+                                  padding: EdgeInsets.all(24 * context.fontSizeFactor),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -182,16 +201,30 @@ class _CardScreenState extends State<CardScreen> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          const Icon(Icons.credit_card_rounded, color: Colors.white, size: 40),
+                                          Icon(
+                                            Icons.credit_card_rounded, 
+                                            color: Colors.white, 
+                                            size: 40 * context.fontSizeFactor
+                                          ),
                                           Text(
                                             widget.method.contains("Visa") ? "VISA" : "MasterCard",
-                                            style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic),
+                                            style: TextStyle(
+                                              color: Colors.white, 
+                                              fontSize: 24 * context.fontSizeFactor, 
+                                              fontWeight: FontWeight.w900, 
+                                              fontStyle: FontStyle.italic
+                                            ),
                                           ),
                                         ],
                                       ),
                                       Text(
                                         _cardNumberController.text.isEmpty ? "XXXX XXXX XXXX XXXX" : _cardNumberController.text,
-                                        style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 2),
+                                        style: TextStyle(
+                                          color: Colors.white, 
+                                          fontSize: 22 * context.fontSizeFactor, 
+                                          fontWeight: FontWeight.bold, 
+                                          letterSpacing: 2
+                                        ),
                                       ),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -200,24 +233,46 @@ class _CardScreenState extends State<CardScreen> {
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text(l10n.cardHolder, style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold)),
+                                                Text(
+                                                  l10n.cardHolder, 
+                                                  style: TextStyle(
+                                                    color: Colors.white70, 
+                                                    fontSize: 10 * context.fontSizeFactor, 
+                                                    fontWeight: FontWeight.bold
+                                                  )
+                                                ),
                                                 Text(
                                                   _nameController.text.isEmpty ? l10n.yourName : _nameController.text.toUpperCase(),
-                                                  style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                                                  style: TextStyle(
+                                                    color: Colors.white, 
+                                                    fontSize: 14 * context.fontSizeFactor, 
+                                                    fontWeight: FontWeight.bold
+                                                  ),
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
                                               ],
                                             ),
                                           ),
-                                          const SizedBox(width: 16),
+                                          SizedBox(width: 16 * context.fontSizeFactor),
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(l10n.expires, style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold)),
+                                              Text(
+                                                l10n.expires, 
+                                                style: TextStyle(
+                                                  color: Colors.white70, 
+                                                  fontSize: 10 * context.fontSizeFactor, 
+                                                  fontWeight: FontWeight.bold
+                                                )
+                                              ),
                                               Text(
                                                 _expiryController.text.isEmpty ? "MM/YY" : _expiryController.text,
-                                                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                                                style: TextStyle(
+                                                  color: Colors.white, 
+                                                  fontSize: 14 * context.fontSizeFactor, 
+                                                  fontWeight: FontWeight.bold
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -228,7 +283,7 @@ class _CardScreenState extends State<CardScreen> {
                                 ),
                               ),
                               
-                              const SizedBox(height: 30),
+                              SizedBox(height: 30 * context.fontSizeFactor),
                               
                               // --- FORM FIELDS ---
                               _buildTextField(
@@ -242,7 +297,7 @@ class _CardScreenState extends State<CardScreen> {
                                   LengthLimitingTextInputFormatter(25),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16 * context.fontSizeFactor),
                               _buildTextField(
                                 context: context,
                                 label: l10n.cardNumber,
@@ -257,7 +312,7 @@ class _CardScreenState extends State<CardScreen> {
                                 ],
                                 onChanged: (v) => setState(() {}),
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16 * context.fontSizeFactor),
                               Row(
                                 children: [
                                   Expanded(
@@ -277,7 +332,7 @@ class _CardScreenState extends State<CardScreen> {
                                       onChanged: (v) => setState(() {}),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  SizedBox(width: 16 * context.fontSizeFactor),
                                   Expanded(
                                     flex: 1,
                                     child: _buildTextField(
@@ -296,26 +351,29 @@ class _CardScreenState extends State<CardScreen> {
                                 ],
                               ),
                               
-                              const SizedBox(height: 40),
+                              SizedBox(height: 40 * context.fontSizeFactor),
                               
                               SizedBox(
                                 width: double.infinity,
-                                height: 56,
+                                height: 56 * context.fontSizeFactor,
                                 child: ElevatedButton(
                                   onPressed: _handleContinue,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: theme.colorScheme.secondary,
                                     foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
                                     elevation: 4,
                                   ),
                                   child: Text(
                                     l10n.continueLabel,
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                                    style: TextStyle(
+                                      fontSize: 18 * context.fontSizeFactor, 
+                                      fontWeight: FontWeight.w900
+                                    ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              SizedBox(height: 20 * context.fontSizeFactor),
                             ],
                           ),
                         ),
@@ -330,41 +388,6 @@ class _CardScreenState extends State<CardScreen> {
       ),
     );
   }
-
-  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
-    final theme = Theme.of(context);
-    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
-
-    return Column(
-      children: [
-        Container(
-          width: 32, height: 32,
-          decoration: BoxDecoration(
-            color: isActive || isCompleted ? activeColor : inactiveColor, 
-            shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4) : null
-          ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 18) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 14, fontWeight: FontWeight.w900))),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          width: 60,
-          child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor), maxLines: 1, overflow: TextOverflow.ellipsis),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
-    final theme = Theme.of(context);
-    Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3)) 
-      : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
-    return Expanded(child: Container(height: 3, margin: const EdgeInsets.symmetric(horizontal: 6), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
-  }
-
 
   Widget _buildTextField({
     required BuildContext context,
@@ -387,11 +410,11 @@ class _CardScreenState extends State<CardScreen> {
           label,
           style: TextStyle(
             fontWeight: FontWeight.bold, 
-            fontSize: 14, 
+            fontSize: 14 * context.fontSizeFactor, 
             color: isDark ? Colors.white70 : AppColors.textSecondary,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8 * context.fontSizeFactor),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
@@ -399,25 +422,37 @@ class _CardScreenState extends State<CardScreen> {
           onChanged: onChanged,
           style: TextStyle(
             fontWeight: FontWeight.bold,
+            fontSize: 16 * context.fontSizeFactor,
             color: isDark ? Colors.white : AppColors.textPrimary,
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: isDark ? Colors.white38 : Colors.grey[400]),
-            prefixIcon: Icon(icon, color: theme.colorScheme.secondary),
+            hintStyle: TextStyle(
+              color: isDark ? Colors.white38 : Colors.grey[400],
+              fontSize: 16 * context.fontSizeFactor,
+            ),
+            prefixIcon: Icon(
+              icon, 
+              color: theme.colorScheme.secondary,
+              size: 24 * context.fontSizeFactor,
+            ),
             filled: true,
             fillColor: theme.colorScheme.surface,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
               borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.withValues(alpha: 0.1)),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
               borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.withValues(alpha: 0.1)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
               borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 16 * context.fontSizeFactor,
+              horizontal: 16 * context.fontSizeFactor,
             ),
           ),
           validator: (value) => value!.isEmpty ? l10n.requiredField : null,

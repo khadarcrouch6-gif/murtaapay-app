@@ -42,7 +42,14 @@
   "virtualCardDesc": "Get your secure virtual card and shop globally.",
   "enterAmount": "Enter Amount",
   "transferLimit": "Limit: $50,000.00",
-  "feeRate": "Fee: $0.99 per $100",
+  "feeRate": "Fixed Fees Applied",
+  "feeRateDynamic": "Fee: {amount}",
+  "@feeRateDynamic": {
+    "placeholders": {
+      "percentage": { "type": "String" },
+      "amount": { "type": "String" }
+    }
+  },
   "youSend": "You Send",
   "searchCurrency": "Search currency",
   "receiverGets": "Receiver Gets",
@@ -151,7 +158,12 @@
   "refreshed": "Refreshed",
   "ok": "OK",
   "feeInfoTitle": "Exchange Fee Info",
-  "feeInfoContent": "The fee is 0.99%. For example: sending $100 will cost only $0.99 in fees.",
+  "feeInfoContent": "Transaction fees depend on the payout method.",
+  "bankFeeInfo": "The fee for bank transfers is a flat $2.50.",
+  "cardFeeInfo": "The fee for card transfers is a flat $1.50.",
+  "walletFeeInfo": "The fee for wallet transfers is a flat $0.50.",
+  "mobileMoneyFeeInfo": "The fee for mobile money transfers is a flat $1.50.",
+  "savingsFeeInfo": "The fee for savings transfers is a flat $0.50.",
   "maxLabel": "MAX",
   "continueLabel": "Continue",
   "murtaaxTransfer": "Murtaax Transfer",
@@ -1010,9 +1022,11 @@
   "invalidWalletId": "Invalid Wallet ID",
   "cannotSendToSelf": "You cannot send money to yourself",
   "evcPlus": "EVC Plus",
+  "waafi": "Waafi",
   "edahab": "e-Dahab",
   "zaad": "ZAAD",
   "sahal": "Sahal",
+  "payViaSalaam": "Pay via Salaam Waafi",
   "purposeOfRemittance": "Purpose of Remittance",
   "purpose": "Purpose",
   "familySupport": "Family Support",
@@ -1278,5 +1292,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "exceedsLimitWarning": "This transaction exceeds your remaining limit.",
+  "limitExceeded": "Limit Exceeded",
+  "approachingLimitWarning": "You are approaching your daily limit."
 }

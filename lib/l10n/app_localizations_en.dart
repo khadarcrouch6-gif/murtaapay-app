@@ -139,7 +139,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transferLimit => 'Limit: \$50,000.00';
 
   @override
-  String get feeRate => 'Fee: \$0.99 per \$100';
+  String get feeRate => 'Fixed Fees Applied';
+
+  @override
+  String feeRateDynamic(String percentage, String amount) {
+    return 'Fee: $amount';
+  }
 
   @override
   String get youSend => 'You Send';
@@ -410,8 +415,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feeInfoTitle => 'Exchange Fee Info';
 
   @override
-  String get feeInfoContent =>
-      'The fee is 0.99%. For example: sending \$100 will cost only \$0.99 in fees.';
+  String get feeInfoContent => 'Transaction fees depend on the payout method.';
+
+  @override
+  String get bankFeeInfo => 'The fee for bank transfers is a flat \$2.50.';
+
+  @override
+  String get cardFeeInfo => 'The fee for card transfers is a flat \$1.50.';
+
+  @override
+  String get walletFeeInfo => 'The fee for wallet transfers is a flat \$0.50.';
+
+  @override
+  String get mobileMoneyFeeInfo =>
+      'The fee for mobile money transfers is a flat \$1.50.';
+
+  @override
+  String get savingsFeeInfo =>
+      'The fee for savings transfers is a flat \$0.50.';
 
   @override
   String get maxLabel => 'MAX';
@@ -2220,6 +2241,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apr2026 => 'Apr 2026';
 
   @override
+  String get transactionLimits => 'Transaction Limits';
+
+  @override
   String get scanQR => 'Scan QR Code';
 
   @override
@@ -2244,6 +2268,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get evcPlus => 'EVC Plus';
 
   @override
+  String get waafi => 'Waafi';
+
+  @override
   String get edahab => 'e-Dahab';
 
   @override
@@ -2251,6 +2278,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sahal => 'Sahal';
+
+  @override
+  String get payViaSalaam => 'Pay via Salaam Waafi';
 
   @override
   String get purposeOfRemittance => 'Purpose of Remittance';
@@ -2825,4 +2855,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get merchantResolved => 'Merchant Verified';
+
+  @override
+  String get sourceOfFunds => 'Source of Funds';
+
+  @override
+  String get securedBySSL => 'Secured by Murtaax SSL Encryption';
+
+  @override
+  String dailyLimitExceeded(String amount) {
+    return 'Daily limit exceeded. You can withdraw up to $amount per day.';
+  }
+
+  @override
+  String monthlyLimitExceeded(String amount) {
+    return 'Monthly limit exceeded. You can withdraw up to $amount per month.';
+  }
+
+  @override
+  String withdrawalLimitRange(String min, String max) {
+    return 'Limit: $min - $max';
+  }
+
+  @override
+  String get exceedsLimitWarning =>
+      'This transaction exceeds your remaining limit.';
+
+  @override
+  String get limitExceeded => 'Limit Exceeded';
+
+  @override
+  String get approachingLimitWarning => 'You are approaching your daily limit.';
 }

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
+import '../../core/widgets/step_indicator.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'review_screen.dart';
@@ -71,7 +72,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
     }
 
     final amountVal = double.tryParse(widget.amount.replaceAll(',', '')) ?? 0;
-    final total = appState.calculateTotal(amountVal);
+    final total = appState.calculateTotal(amountVal, payoutMethod: widget.payoutMethod);
     
     if (appState.balance < total) {
       final needed = total - appState.balance;
@@ -247,7 +248,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
               width: double.infinity,
               decoration: BoxDecoration(
                 color: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
-                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30 * scale), bottomRight: Radius.circular(30 * scale)),
               ),
               padding: EdgeInsets.only(bottom: 20 * scale),
               child: Center(
@@ -257,13 +258,13 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 20 * scale),
                     child: Row(
                       children: [
-                        _buildStepIndicator(context, 1, l10n.stepAmount, false, true, isHeader: true),
-                        _buildStepLine(context, true, isHeader: true),
-                        _buildStepIndicator(context, 2, l10n.stepReceiver, false, true, isHeader: true),
-                        _buildStepLine(context, true, isHeader: true),
-                        _buildStepIndicator(context, 3, l10n.stepPayment, true, false, isHeader: true),
-                        _buildStepLine(context, false, isHeader: true),
-                        _buildStepIndicator(context, 4, l10n.stepReview, false, false, isHeader: true),
+                        StepIndicator(step: 1, label: l10n.stepAmount, isActive: false, isCompleted: true, isHeader: true),
+                        StepLine(isCompleted: true, isHeader: true),
+                        StepIndicator(step: 2, label: l10n.stepReceiver, isActive: false, isCompleted: true, isHeader: true),
+                        StepLine(isCompleted: true, isHeader: true),
+                        StepIndicator(step: 3, label: l10n.stepPayment, isActive: true, isCompleted: false, isHeader: true),
+                        StepLine(isCompleted: false, isHeader: true),
+                        StepIndicator(step: 4, label: l10n.stepReview, isActive: false, isCompleted: false, isHeader: true),
                       ],
                     ),
                   ),
@@ -286,7 +287,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                             color: theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(16 * scale),
                             border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
-                            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10)],
+                            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10 * scale)],
                           ),
                           child: Row(
                             children: [
@@ -338,17 +339,17 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 10),
+                              SizedBox(height: 10 * scale),
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(10 * scale),
                                 child: LinearProgressIndicator(
                                   value: (appState.getDailySpent() / appState.dailyLimit).clamp(0.0, 1.0),
                                   backgroundColor: theme.dividerColor.withValues(alpha: 0.05),
                                   valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
-                                  minHeight: 8,
+                                  minHeight: 8 * scale,
                                 ),
                               ),
-                              const SizedBox(height: 6),
+                              SizedBox(height: 6 * scale),
                               Text(
                                 "${appState.translate("Remaining", "Hambada")}: ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.getDailyRemaining())}",
                                 style: TextStyle(fontSize: 10 * scale, fontWeight: FontWeight.bold, color: AppColors.grey),
@@ -449,15 +450,15 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.verified_user_rounded, color: theme.colorScheme.secondary.withValues(alpha: 0.5), size: 16),
-                                const SizedBox(width: 8),
+                                Icon(Icons.verified_user_rounded, color: theme.colorScheme.secondary.withValues(alpha: 0.5), size: 16 * scale),
+                                SizedBox(width: 8 * scale),
                                 Text(
                                   "SECURE DIGITAL SIGNATURE ACTIVE",
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 10 * scale,
                                     fontWeight: FontWeight.w900,
                                     color: theme.colorScheme.secondary.withValues(alpha: 0.5),
-                                    letterSpacing: 1.2
+                                    letterSpacing: 1.2 * scale
                                   ),
                                 ),
                               ],
@@ -485,7 +486,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.calculateTotal(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0))),
+                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.calculateTotal(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, payoutMethod: widget.payoutMethod))),
                                 style: TextStyle(fontSize: 16 * scale, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                             ),
@@ -509,41 +510,6 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildStepIndicator(BuildContext context, int step, String label, bool isActive, bool isCompleted, {bool isHeader = false}) {
-    final theme = Theme.of(context);
-    final scale = context.fontSizeFactor;
-    Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
-    Color inactiveColor = isHeader ? Colors.white.withValues(alpha: 0.3) : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!);
-    Color textColor = isHeader ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) : (isActive ? theme.colorScheme.secondary : Colors.grey);
-
-    return Column(
-      children: [
-        Container(
-          width: 28 * scale, height: 28 * scale,
-          decoration: BoxDecoration(
-            color: isActive || isCompleted ? activeColor : inactiveColor, 
-            shape: BoxShape.circle,
-            border: isActive ? Border.all(color: activeColor.withValues(alpha: 0.2), width: 4 * scale) : null
-          ),
-          child: Center(child: isCompleted && !isActive ? Icon(Icons.check, color: isHeader ? theme.colorScheme.secondary : Colors.white, size: 16 * scale) : Text("$step", style: TextStyle(color: isHeader ? (isActive || isCompleted ? theme.colorScheme.secondary : Colors.white) : Colors.white, fontSize: 12 * scale, fontWeight: FontWeight.w900))),
-        ),
-        SizedBox(height: 4 * scale),
-        SizedBox(
-          width: 50 * scale,
-          child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 9 * scale, fontWeight: isActive ? FontWeight.w900 : FontWeight.bold, color: textColor), maxLines: 1, overflow: TextOverflow.ellipsis),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStepLine(BuildContext context, bool isCompleted, {bool isHeader = false}) { 
-    final theme = Theme.of(context);
-    Color color = isHeader 
-      ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3))
-      : (isCompleted ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800]! : Colors.grey[200]!));
-    return Expanded(child: Container(height: 3, margin: EdgeInsets.symmetric(horizontal: 6 * context.fontSizeFactor), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10))));
   }
 
   @override

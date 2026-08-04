@@ -61,7 +61,10 @@
   "login": "Soo gal",
   "signUp": "Isku diwaangeli",
   "createAccount": "Abuur Akoon",
-  "phoneNumber": "Lambarka Taleefanka",
+  "feeRate": "Khidmadda: $0.99 halkii $100",
+  "youSend": "Adiga ayaa diraya",
+  "searchCurrency": "Raadi lacagta",
+  "receiverGets": "Qaataha ayaa helaya",
   "password": "Sirta",
   "forgotPassword": "Ma ilaaway sirtii?",
   "donthaveAccount": "Ma haysatid akoon?",
@@ -84,7 +87,16 @@
   "yourPaymentOf": "Bixintaada {amount} ee {recipient} waa la xaqiijiyay.",
   "backToHome": "Ku laabo Hoyga",
   "error": "Khalad",
-  "insufficientBalance": "Haraagaagu kuguma filna",
+  "transactionFee": "Khidmadda Dhaqdhaqaaqa",
+  "totalToPay": "Wadarta la bixinayo",
+  "deductFeeFromAmount": "Khidmadda ka jar lacagta la dirayo",
+  "receiverWillReceiveLess": "Qaataha ayaa heli doona wax yar",
+  "payFeeSeparately": "Khidmadda si gaar ah u bixi",
+  "maxLabel": "MAX",
+  "refreshed": "La cusboonaysiiyay",
+  "feeInfoTitle": "Macluumaadka Khidmadda Sarrifka",
+  "feeInfoContent": "Khidmaddu waa 0.99%. Tusaale ahaan: dirista $100 waxay kugu kacaysaa oo keliya $0.99 khidmad ah.",
+  "ok": "WAAYE",
   "myWallet": "Boorsadayda",
   "totalSpent": "Wadarta la kharajiyay",
   "monthlyBudget": "Miisaaniyadda Bisha",
@@ -1060,5 +1072,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "exceedsLimitWarning": "Lacagtan waxay ka badan tahay xadka kuu hadhay.",
+  "approachingLimitWarning": "Waxaad ku dhowdahay xadkaaga maalinlaha ah."
 }

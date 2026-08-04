@@ -971,24 +971,32 @@ class AppState extends ChangeNotifier {
     _loadCampaigns();
 
     // Load secure data
-    final savedPin = await _secureStorage.read(key: 'user_pin');
-    if (savedPin != null) {
-      _pin = savedPin;
-    } else {
-      await _secureStorage.write(key: 'user_pin', value: _pin);
+    try {
+      final savedPin = await _secureStorage.read(key: 'user_pin');
+      if (savedPin != null) {
+        _pin = savedPin;
+      } else {
+        await _secureStorage.write(key: 'user_pin', value: _pin);
+      }
+    } catch (e) {
+      debugPrint("Secure storage not available: $e");
     }
     
     _biometricEnabled = _prefs.getBool('biometric_enabled') ?? true;
 
     // Load card pins
     for (var card in _cards) {
-      final cardPin = await _secureStorage.read(key: 'card_pin_${card.id}');
-      if (cardPin != null) {
-        _cardPins[card.id] = cardPin;
-      } else {
-        // Default pin if not found, and save it
+      try {
+        final cardPin = await _secureStorage.read(key: 'card_pin_${card.id}');
+        if (cardPin != null) {
+          _cardPins[card.id] = cardPin;
+        } else {
+          // Default pin if not found, and save it
+          _cardPins[card.id] = "1122";
+          await _secureStorage.write(key: 'card_pin_${card.id}', value: "1122");
+        }
+      } catch (e) {
         _cardPins[card.id] = "1122";
-        await _secureStorage.write(key: 'card_pin_${card.id}', value: "1122");
       }
     }
     
@@ -1397,33 +1405,54 @@ class AppState extends ChangeNotifier {
     return double.parse((amount * rate).toStringAsFixed(decimals));
   }
 
-  final double walletFeeRate = 0.005; // 0.5% for Wallet
-  final double cardFeeRate = 0.015;   // 1.5% for Cards
-  final double savingsFeeRate = 0.0099; // 0.99% for Savings
-  final double bankFeeRate = 0.02;    // 2.0% for External Bank
-  final double mobileMoneyFeeRate = 0.012; // 1.2% for Mobile Money
+  final double walletFlatFee = 0.5;
+  final double bankFlatFee = 2.5;
+  final double mobileMoneyFlatFee = 1.5;
+  final double cardFlatFee = 1.5;
+  final double savingsFlatFee = 0.5;
 
-  double calculateFeeForSource(double amount, String source) {
-    if (source.contains("Bank")) return 2.00;
-    if (source.contains("Wallet") || source == "Main Wallet" || source == "Murtaax Wallet") return 0.50;
-    if (source.contains("Savings")) return 0.50; // Assuming same as wallet or customize if needed
+  double calculateFeeForSource(double amount, String source, {String? payoutMethod}) {
+    if (amount <= 0) return 0.0;
+    
+    // If payout method is specified, use fixed fees based on it
+    if (payoutMethod != null) {
+      if (payoutMethod.contains("Bank") || payoutMethod == "Bank Transfer") {
+        return bankFlatFee;
+      }
+      if (payoutMethod.contains("Murtaax Wallet") || payoutMethod.contains("Wallet")) {
+        return walletFlatFee;
+      }
+      if (payoutMethod.contains("Mobile") || payoutMethod.contains("Money") || 
+          payoutMethod == "EVC Plus" || payoutMethod == "ZAAD Service" || 
+          payoutMethod == "e-Dahab" || payoutMethod == "Sahal" || payoutMethod == "Waafi") {
+        return mobileMoneyFlatFee;
+      }
+      if (payoutMethod.contains("Card") || payoutMethod.contains("Visa")) {
+        return cardFlatFee;
+      }
+    }
+
+    // Fallback or Source-based fees
+    if (source.contains("Bank")) return bankFlatFee;
+    if (source.contains("Wallet") || source == "Main Wallet" || source == "Murtaax Wallet") return walletFlatFee;
+    if (source.contains("Savings")) return savingsFlatFee;
     if (source.contains("Mobile") || source.contains("Money") || 
         source.toUpperCase().contains("EVC") || 
         source.toUpperCase().contains("ZAAD") || 
         source.toUpperCase().contains("SAHAL") || 
-        source.toUpperCase().contains("DAHAB")) return 0.99;
-    if (source.contains("Card") || source.contains("Debit")) return 3.00;
+        source.toUpperCase().contains("DAHAB")) return mobileMoneyFlatFee;
+    if (source.contains("Card") || source.contains("Debit")) return cardFlatFee;
 
-    return 0.50; // Default
+    return walletFlatFee; // Default
   }
 
-  double calculateTotalForSource(double amount, String source) {
-    return amount + calculateFeeForSource(amount, source);
+  double calculateTotalForSource(double amount, String source, {String? payoutMethod}) {
+    return amount + calculateFeeForSource(amount, source, payoutMethod: payoutMethod);
   }
 
   // Validation: Check if balance is sufficient
-  bool hasSufficientBalanceForSource(double amount, String source, {String? cardId}) {
-    double total = calculateTotalForSource(amount, source);
+  bool hasSufficientBalanceForSource(double amount, String source, {String? cardId, String? payoutMethod}) {
+    double total = calculateTotalForSource(amount, source, payoutMethod: payoutMethod);
     if (source == "Main Wallet" || source == "Murtaax Wallet") {
       return _balance >= total;
     } else if (source == "Savings Account") {
@@ -1538,11 +1567,14 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  double calculateFee(double amount) => amount * 0.005; // Default legacy wallet fee
-  double calculateTotal(double amount) => amount + calculateFee(amount);
+  double calculateFee(double amount, {String? payoutMethod}) {
+    return calculateFeeForSource(amount, "Main Wallet", payoutMethod: payoutMethod);
+  }
+  
+  double calculateTotal(double amount, {String? payoutMethod}) => amount + calculateFee(amount, payoutMethod: payoutMethod);
 
-  bool hasSufficientBalance(double amount) {
-    return _balance >= calculateTotal(amount);
+  bool hasSufficientBalance(double amount, {String? payoutMethod}) {
+    return _balance >= calculateTotal(amount, payoutMethod: payoutMethod);
   }
 
   Future<void> deductCardBalance(String cardId, double amount) async {
@@ -1811,14 +1843,10 @@ class AppState extends ChangeNotifier {
     String? cardId,
   }) async {
     // 1. Validation
-    String sourceKey = paymentMethod;
-    if (paymentMethod.contains("Virtual Card")) sourceKey = "Debit Card";
-    if (paymentMethod == "Savings") sourceKey = "Savings Account";
-
-    final fee = calculateFeeForSource(amount, sourceKey);
+    final fee = calculateFeeForSource(amount, paymentMethod);
     final total = amount + fee;
     
-    if (!hasSufficientBalanceForSource(amount, sourceKey, cardId: cardId)) {
+    if (!hasSufficientBalanceForSource(amount, paymentMethod, cardId: cardId)) {
       throw Exception('insufficient_funds');
     }
 
@@ -1843,9 +1871,11 @@ class AppState extends ChangeNotifier {
           );
           await _saveCards();
         }
-      } else {
+      } else if (paymentMethod == "Main Wallet" || paymentMethod == "Murtaax Wallet") {
         _balance = double.parse((_balance - total).toStringAsFixed(2));
       }
+      // For external sources like Bank Transfer or Mobile Money, we don't deduct from internal wallet balance
+      // in this mock simulation.
       
       // Record Transaction
       final tx = Transaction(

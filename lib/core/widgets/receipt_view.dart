@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../app_colors.dart';
 import '../responsive_utils.dart';
@@ -137,6 +138,13 @@ class ReceiptView extends StatelessWidget {
               _pdfRow(l10n.payoutVia, transaction['method'] ?? l10n.murtaaxWallet),
               pw.Divider(thickness: 0.5, color: PdfColors.grey200),
               _pdfRow(l10n.paidUsing, transaction['paymentMethod'] ?? l10n.walletBalance),
+              if (transaction['fee'] != null && transaction['fee'] != 0) ...[
+                pw.Divider(thickness: 0.5, color: PdfColors.grey200),
+                _pdfRow(
+                  l10n.transactionFee, 
+                  NumberFormat.simpleCurrency(name: transaction['currencyCode'] ?? 'USD').format(transaction['fee'])
+                ),
+              ],
               pw.Divider(thickness: 0.5, color: PdfColors.grey200),
               _pdfRow(l10n.transactionId, transaction['transactionId'] ?? transaction['id'] ?? "#MTX-98234-AX"),
               
@@ -346,6 +354,13 @@ class ReceiptView extends StatelessWidget {
           _buildDetailRow(context, theme, l10n.date, transaction['date'] ?? ""),
           _buildDetailRow(context, theme, l10n.payoutVia, transaction['method'] ?? l10n.murtaaxWallet),
           _buildDetailRow(context, theme, l10n.paidUsing, transaction['paymentMethod'] ?? l10n.walletBalance),
+          if (transaction['fee'] != null && transaction['fee'] != 0)
+            _buildDetailRow(
+              context, 
+              theme, 
+              l10n.transactionFee, 
+              NumberFormat.simpleCurrency(name: transaction['currencyCode'] ?? 'USD').format(transaction['fee'])
+            ),
         ],
       ),
     );

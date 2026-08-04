@@ -142,6 +142,11 @@ class AppLocalizationsEt extends AppLocalizations {
   String get feeRate => '\$0.99 tasu iga \$100 kohta';
 
   @override
+  String feeRateDynamic(String percentage, String amount) {
+    return 'Fee: $amount';
+  }
+
+  @override
   String get youSend => 'Sina saadad';
 
   @override
@@ -412,6 +417,23 @@ class AppLocalizationsEt extends AppLocalizations {
   @override
   String get feeInfoContent =>
       'Tasu on 0,99%. Näiteks: 100 dollari saatmine maksab vaid 0,99 dollarit tasusid.';
+
+  @override
+  String get bankFeeInfo => 'The fee for bank transfers is a flat \$2.50.';
+
+  @override
+  String get cardFeeInfo => 'The fee for card transfers is a flat \$1.50.';
+
+  @override
+  String get walletFeeInfo => 'The fee for wallet transfers is a flat \$0.50.';
+
+  @override
+  String get mobileMoneyFeeInfo =>
+      'The fee for mobile money transfers is a flat \$1.50.';
+
+  @override
+  String get savingsFeeInfo =>
+      'The fee for savings transfers is a flat \$0.50.';
 
   @override
   String get maxLabel => 'MAX';
@@ -2225,6 +2247,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get apr2026 => 'Apr 2026';
 
   @override
+  String get transactionLimits => 'Transaction Limits';
+
+  @override
   String get scanQR => 'Scan QR Code';
 
   @override
@@ -2249,6 +2274,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get evcPlus => 'EVC Plus';
 
   @override
+  String get waafi => 'Waafi';
+
+  @override
   String get edahab => 'e-Dahab';
 
   @override
@@ -2256,6 +2284,9 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get sahal => 'Sahal';
+
+  @override
+  String get payViaSalaam => 'Pay via Salaam Waafi';
 
   @override
   String get purposeOfRemittance => 'Purpose of Remittance';
@@ -2828,4 +2859,35 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get merchantResolved => 'Merchant Verified';
+
+  @override
+  String get sourceOfFunds => 'Source of Funds';
+
+  @override
+  String get securedBySSL => 'Secured by Murtaax SSL Encryption';
+
+  @override
+  String dailyLimitExceeded(String amount) {
+    return 'Daily limit exceeded. You can withdraw up to $amount per day.';
+  }
+
+  @override
+  String monthlyLimitExceeded(String amount) {
+    return 'Monthly limit exceeded. You can withdraw up to $amount per month.';
+  }
+
+  @override
+  String withdrawalLimitRange(String min, String max) {
+    return 'Limit: $min - $max';
+  }
+
+  @override
+  String get exceedsLimitWarning =>
+      'This transaction exceeds your remaining limit.';
+
+  @override
+  String get limitExceeded => 'Limit Exceeded';
+
+  @override
+  String get approachingLimitWarning => 'You are approaching your daily limit.';
 }
