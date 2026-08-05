@@ -940,6 +940,34 @@ class AppState extends ChangeNotifier {
     '221100': 'Hormuud Coffee Shop',
   };
 
+  final Map<String, Map<String, String>> _mockBankAccounts = {
+    'IBS Bank': {
+      '11223344': 'Mohamed Ali',
+      '22334455': 'Fatima Yusuf',
+      '33445566': 'Ahmed Salad',
+    },
+    'Salaam Bank': {
+      '1002003004': 'Ayaan Geedi',
+      '2003004005': 'Omar Warsame',
+      '3004005006': 'Zahra Farah',
+    },
+    'Premier Bank': {
+      '111222333444': 'Mustafe Hassan',
+      '222333444555': 'Deqa Omar',
+      '333444555666': 'Guled Isse',
+    },
+    'Dahabshil Bank': {
+      '123456789': 'Hassan Ali',
+      '987654321': 'Fardowsa Ahmed',
+      '456789123': 'Jamac Said',
+    },
+    'Amal Bank': {
+      '5566778899': 'Khadar Abdi',
+      '9988776655': 'Muna Ibrahim',
+      '1122998877': 'Bile Salad',
+    },
+  };
+
   Map<String, String> get mockUsers => _mockUsers;
 
   Future<void> init() async {
@@ -1405,45 +1433,42 @@ class AppState extends ChangeNotifier {
     return double.parse((amount * rate).toStringAsFixed(decimals));
   }
 
-  final double walletFlatFee = 0.5;
-  final double bankFlatFee = 2.5;
-  final double mobileMoneyFlatFee = 1.5;
+  final double walletFlatFee = 1.0; // $1.0 per $100
+  final double bankFlatFee = 1.5;   // $1.5 per $100
+  final double mobileMoneyFlatFee = 2.5; // $2.5 per $100
   final double cardFlatFee = 1.5;
   final double savingsFlatFee = 0.5;
 
   double calculateFeeForSource(double amount, String source, {String? payoutMethod}) {
     if (amount <= 0) return 0.0;
     
-    // If payout method is specified, use fixed fees based on it
-    if (payoutMethod != null) {
-      if (payoutMethod.contains("Bank") || payoutMethod == "Bank Transfer") {
-        return bankFlatFee;
-      }
-      if (payoutMethod.contains("Murtaax Wallet") || payoutMethod.contains("Wallet")) {
-        return walletFlatFee;
-      }
-      if (payoutMethod.contains("Mobile") || payoutMethod.contains("Money") || 
-          payoutMethod == "EVC Plus" || payoutMethod == "ZAAD Service" || 
-          payoutMethod == "e-Dahab" || payoutMethod == "Sahal" || payoutMethod == "Waafi") {
-        return mobileMoneyFlatFee;
-      }
-      if (payoutMethod.contains("Card") || payoutMethod.contains("Visa")) {
-        return cardFlatFee;
-      }
+    double feeRate = 0.0;
+
+    // Determine the fee rate based on payoutMethod or source
+    String effectiveMethod = payoutMethod ?? source;
+
+    if (effectiveMethod.contains("Bank") || effectiveMethod == "Bank Transfer") {
+      feeRate = bankFlatFee;
+    } else if (effectiveMethod.contains("Murtaax Wallet") || effectiveMethod.contains("Wallet") || effectiveMethod == "Main Wallet") {
+      feeRate = walletFlatFee;
+    } else if (effectiveMethod.contains("Mobile") || effectiveMethod.contains("Money") || 
+        effectiveMethod == "EVC Plus" || effectiveMethod == "ZAAD Service" || 
+        effectiveMethod == "e-Dahab" || effectiveMethod == "Sahal" || effectiveMethod == "Waafi" ||
+        effectiveMethod.toUpperCase().contains("EVC") || 
+        effectiveMethod.toUpperCase().contains("ZAAD") || 
+        effectiveMethod.toUpperCase().contains("SAHAL") || 
+        effectiveMethod.toUpperCase().contains("DAHAB")) {
+      feeRate = mobileMoneyFlatFee;
+    } else if (effectiveMethod.contains("Card") || effectiveMethod.contains("Visa") || effectiveMethod.contains("Debit")) {
+      feeRate = cardFlatFee;
+    } else if (effectiveMethod.contains("Savings")) {
+      feeRate = savingsFlatFee;
+    } else {
+      feeRate = walletFlatFee; // Default
     }
 
-    // Fallback or Source-based fees
-    if (source.contains("Bank")) return bankFlatFee;
-    if (source.contains("Wallet") || source == "Main Wallet" || source == "Murtaax Wallet") return walletFlatFee;
-    if (source.contains("Savings")) return savingsFlatFee;
-    if (source.contains("Mobile") || source.contains("Money") || 
-        source.toUpperCase().contains("EVC") || 
-        source.toUpperCase().contains("ZAAD") || 
-        source.toUpperCase().contains("SAHAL") || 
-        source.toUpperCase().contains("DAHAB")) return mobileMoneyFlatFee;
-    if (source.contains("Card") || source.contains("Debit")) return cardFlatFee;
-
-    return walletFlatFee; // Default
+    // Calculate fee: $feeRate per $100 (e.g., $1.5 per $100 = 1.5% fee)
+    return (amount / 100) * feeRate;
   }
 
   double calculateTotalForSource(double amount, String source, {String? payoutMethod}) {
@@ -1799,13 +1824,20 @@ class AppState extends ChangeNotifier {
 
 
   // Wallet ID / Account Inquiry Logic
-  Future<String?> resolveAccountName(String id, {String? type}) async {
+  Future<String?> resolveAccountName(String id, {String? type, String? bankName}) async {
     // Simulate network delay for professional feel
     await Future.delayed(const Duration(milliseconds: 1200));
     
     // Check mock users (covers Wallet IDs and some phone numbers)
     if (_mockUsers.containsKey(id)) {
       return _mockUsers[id];
+    }
+
+    // New specific bank validation
+    if (type == 'bank' && bankName != null) {
+      if (_mockBankAccounts.containsKey(bankName)) {
+        return _mockBankAccounts[bankName]![id];
+      }
     }
 
     // Additional mock logic for Bank Accounts if needed

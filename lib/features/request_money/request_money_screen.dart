@@ -9,6 +9,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/widgets/success_screen.dart';
+import '../navigation/main_navigation.dart';
 import 'package:intl/intl.dart';
 
 class RequestMoneyScreen extends StatefulWidget {
@@ -832,7 +833,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
     final name = _selectedMurtaaxName ?? _selectedContact?.displayName ?? "Contact";
     final amount = _amountController.text;
 
-    Navigator.push(
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
@@ -855,10 +856,16 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
             'splitCount': _isSplitEnabled ? _splitPeopleCount.toString() : '1',
           },
           onPressed: () {
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            Provider.of<AppState>(context, listen: false).setNavIndex(0);
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainNavigation()),
+              (route) => false,
+            );
           },
         ),
       ),
+      (route) => false,
     );
   }
 

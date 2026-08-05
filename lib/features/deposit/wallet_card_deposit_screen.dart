@@ -10,6 +10,7 @@ import '../../core/widgets/detail_row.dart';
 import 'dart:ui' as ui;
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
+import '../navigation/main_navigation.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import 'package:intl/intl.dart';
@@ -277,7 +278,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
 
   void _showSuccess(BuildContext context, AppLocalizations l10n) {
     final state = Provider.of<AppState>(context, listen: false);
-    Navigator.pushReplacement(
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
@@ -285,8 +286,17 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
           message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
+          onPressed: () {
+            state.setNavIndex(0); // Reset to Home tab
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainNavigation()),
+              (route) => false,
+            );
+          },
         ),
       ),
+      (route) => false,
     );
   }
 

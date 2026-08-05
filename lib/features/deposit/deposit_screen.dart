@@ -10,6 +10,7 @@ import '../../core/responsive_utils.dart';
 import '../../core/app_state.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../core/widgets/success_screen.dart';
+import '../navigation/main_navigation.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
@@ -1089,7 +1090,7 @@ class _DepositScreenState extends State<DepositScreen> {
 
   void _showSuccess(BuildContext context, AppLocalizations l10n) {
     final state = Provider.of<AppState>(context, listen: false);
-    Navigator.pushReplacement(
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
@@ -1097,9 +1098,17 @@ class _DepositScreenState extends State<DepositScreen> {
           message: l10n.depositSuccessMessage("\$${_amountController.text}"),
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            state.setNavIndex(0); // Reset to Home tab
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainNavigation()),
+              (route) => false,
+            );
+          },
         ),
       ),
+      (route) => false,
     );
   }
 }

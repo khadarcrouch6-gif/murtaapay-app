@@ -417,20 +417,23 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get feeInfoContent =>
-      'Khidmaddu waa 0.99%. Tusaale ahaan: dirista \$100 waxay kugu kacaysaa oo keliya \$0.99 khidmad ah.';
+      'Khidmaddu waxay ku xidhan tahay habka lacag bixinta: Wallet (\$1.0/100), Bank (\$1.5/100), Mobile Money (\$2.5/100).';
 
   @override
-  String get bankFeeInfo => 'The fee for bank transfers is a flat \$2.50.';
+  String get bankFeeInfo =>
+      'Khidmadda wareejinta bangigu waa \$1.50 halkii \$100.';
 
   @override
-  String get cardFeeInfo => 'The fee for card transfers is a flat \$1.50.';
+  String get cardFeeInfo =>
+      'Khidmadda wareejinta kaarku waa \$1.50 halkii \$100.';
 
   @override
-  String get walletFeeInfo => 'The fee for wallet transfers is a flat \$0.50.';
+  String get walletFeeInfo =>
+      'Khidmadda wareejinta boorsada (Wallet) waa \$1.00 halkii \$100.';
 
   @override
   String get mobileMoneyFeeInfo =>
-      'The fee for mobile money transfers is a flat \$1.50.';
+      'Khidmadda wareejinta Mobile Money waa \$2.50 halkii \$100.';
 
   @override
   String get savingsFeeInfo =>

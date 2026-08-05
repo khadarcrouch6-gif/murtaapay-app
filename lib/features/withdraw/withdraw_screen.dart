@@ -10,6 +10,7 @@ import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../core/widgets/success_screen.dart';
+import '../navigation/main_navigation.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/models/transaction.dart' as model;
 
@@ -357,21 +358,63 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                         borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
                         border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                       ),
-                      child: Row(
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: Text(
-                              l10n.amount,
-                              style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
-                            ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  l10n.amount,
+                                  style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
+                                ),
+                              ),
+                              Text(
+                                NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
+                                style: TextStyle(
+                                  color: theme.textTheme.bodyLarge?.color,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16 * context.fontSizeFactor,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
-                            style: TextStyle(
-                              color: AppColors.accentTeal,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 18 * context.fontSizeFactor,
-                            ),
+                          const Divider(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  l10n.fee,
+                                  style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
+                                ),
+                              ),
+                              Text(
+                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateFeeForSource(double.tryParse(_amountController.text) ?? 0, "Virtual Card", payoutMethod: "Murtaax Wallet")),
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16 * context.fontSizeFactor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Divider(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  l10n.totalToPay,
+                                  style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
+                                ),
+                              ),
+                              Text(
+                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateTotalForSource(double.tryParse(_amountController.text) ?? 0, "Virtual Card", payoutMethod: "Murtaax Wallet")),
+                                style: TextStyle(
+                                  color: AppColors.accentTeal,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 18 * context.fontSizeFactor,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -598,21 +641,63 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                         borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
                         border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                       ),
-                      child: Row(
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: Text(
-                              l10n.amount,
-                              style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
-                            ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  l10n.amount,
+                                  style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
+                                ),
+                              ),
+                              Text(
+                                NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
+                                style: TextStyle(
+                                  color: theme.textTheme.bodyLarge?.color,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16 * context.fontSizeFactor,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 18 * context.fontSizeFactor,
-                            ),
+                          const Divider(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  l10n.fee,
+                                  style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
+                                ),
+                              ),
+                              Text(
+                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateFeeForSource(double.tryParse(_amountController.text) ?? 0, "Virtual Card", payoutMethod: "Bank Transfer")),
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16 * context.fontSizeFactor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Divider(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  l10n.totalToPay,
+                                  style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
+                                ),
+                              ),
+                              Text(
+                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateTotalForSource(double.tryParse(_amountController.text) ?? 0, "Virtual Card", payoutMethod: "Bank Transfer")),
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 18 * context.fontSizeFactor,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -647,6 +732,34 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                     _withdrawInputField(context, l10n.accountName, Icons.person, _field2Controller, onChanged: (_) => setDialogState(() {})),
                     SizedBox(height: 16 * context.fontSizeFactor),
                     _buildPurposeDropdown(theme, l10n, setDialogState),
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    Container(
+                      padding: EdgeInsets.all(12 * context.fontSizeFactor),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
+                        border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.access_time_rounded, color: Colors.orange, size: 18 * context.fontSizeFactor),
+                          SizedBox(width: 8 * context.fontSizeFactor),
+                          Expanded(
+                            child: Text(
+                              state.translate(
+                                "Bank withdrawals are processed within 24 hours.",
+                                "Lacag bixinta bangiga waxaa lagu farsameeyaa 24 saac gudahood."
+                              ),
+                              style: TextStyle(
+                                fontSize: 12 * context.fontSizeFactor,
+                                color: Colors.orange[900],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -689,8 +802,13 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     final amountVal = double.tryParse(_amountController.text) ?? 0;
     
     // We are withdrawing FROM the Virtual Card.
-    // In this simulation, the Card Balance is external.
-    
+    final double fee = state.calculateFeeForSource(
+      amountVal, 
+      "Virtual Card", 
+      payoutMethod: type == "bank" ? "Bank Transfer" : "Murtaax Wallet"
+    );
+    final double totalDeduction = amountVal + fee;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -770,20 +888,23 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
     if (type == "wallet") {
       // Card -> Wallet: Decrease Card Balance, Increase Wallet Balance
-      state.deductCardBalance(widget.cardId, amountVal);
+      state.deductCardBalance(widget.cardId, totalDeduction);
       state.addBalance(amountVal);
       
       final now = DateTime.now();
       final dateStr = DateFormat('MMM dd').format(now);
       final formattedAmount = NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal);
+      final formattedFee = NumberFormat.simpleCurrency(name: state.currencyCode).format(fee);
+      final formattedTotal = NumberFormat.simpleCurrency(name: state.currencyCode).format(totalDeduction);
 
       // 1. Negative entry for Card history (Red)
       state.addTransaction(model.Transaction(
         id: "${now.millisecondsSinceEpoch}-out",
         title: "Wallet Withdrawal",
         date: dateStr,
-        amount: "-$formattedAmount",
-        numericAmount: amountVal,
+        amount: "-$formattedTotal",
+        numericAmount: totalDeduction,
+        fee: fee,
         isNegative: true,
         category: "Withdraw",
         status: "Success",
@@ -810,15 +931,16 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       ));
     } else if (type == "bank") {
       // Card -> Bank: Decrease Card Balance, No change to Wallet Balance
-      state.deductCardBalance(widget.cardId, amountVal);
+      state.deductCardBalance(widget.cardId, totalDeduction);
       final String receiverName = _field2Controller.text.isNotEmpty ? _field2Controller.text : "Bank Transfer";
       
       state.addTransaction(model.Transaction(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: "$receiverName",
         date: DateFormat('MMM dd').format(DateTime.now()),
-        amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal)}",
-        numericAmount: amountVal,
+        amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(totalDeduction)}",
+        numericAmount: totalDeduction,
+        fee: fee,
         isNegative: true,
         category: "Withdraw",
         status: "Success",
@@ -834,7 +956,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
   void _showSuccess(BuildContext context, AppLocalizations l10n, AppState state) {
     final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
-    Navigator.pushReplacement(
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
@@ -843,11 +965,16 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance)),
           buttonText: l10n.backToHome,
           onPressed: () {
-            state.setNavIndex(3);
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            state.setNavIndex(0); // Return to Home
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainNavigation()),
+              (route) => false,
+            );
           },
         ),
       ),
+      (route) => false,
     );
   }
 

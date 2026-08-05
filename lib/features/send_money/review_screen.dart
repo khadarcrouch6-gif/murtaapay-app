@@ -237,8 +237,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
-          title: l10n.transferSuccessful,
-          message: l10n.moneyOnWay,
+          title: widget.method.contains("Bank") 
+              ? state.translate("Transfer Processing", "Xawaaladda waa la farsameeyay")
+              : l10n.transferSuccessful,
+          message: widget.method.contains("Bank")
+              ? state.translate(
+                  "Your bank transfer has been initiated and will be completed within 24 hours.",
+                  "Xawaaladdaada bangiga waa la bilaabay, waxaana lagu dhammaystiri doonaa 24 saac gudahood."
+                )
+              : l10n.moneyOnWay,
           subMessage: "Transaction ID: ${transactionData['id']}",
           buttonText: l10n.backToHome,
           transactionData: transactionData,
@@ -310,6 +317,38 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   FadeInDown(
                     child: _buildDetailsCard(context, theme, l10n, appState, amountVal, fee, total),
                   ),
+                  if (widget.method.contains("Bank")) ...[
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    FadeInUp(
+                      child: Container(
+                        padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                          border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time_rounded, color: Colors.orange, size: 20 * context.fontSizeFactor),
+                            SizedBox(width: 12 * context.fontSizeFactor),
+                            Expanded(
+                              child: Text(
+                                appState.translate(
+                                  "Note: Bank transfers take up to 24 hours to process.",
+                                  "Ogeysiis: Xawaaladaha bangigu waxay qaataan ilaa 24 saac."
+                                ),
+                                style: TextStyle(
+                                  fontSize: 13 * context.fontSizeFactor, 
+                                  color: Colors.orange[900], 
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                   SizedBox(height: 24 * context.fontSizeFactor),
                   FadeInUp(child: _buildActionButtons(theme, l10n, total)),
                 ],

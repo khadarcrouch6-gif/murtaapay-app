@@ -597,16 +597,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
 
   void _showFeeInfo(AppLocalizations l10n) {
     final theme = Theme.of(context);
-    String feeInfo = "";
-    if (_selectedMethod == "Bank Transfer") {
-      feeInfo = l10n.bankFeeInfo;
-    } else if (_selectedMethod == "Murtaax Wallet") {
-      feeInfo = l10n.walletFeeInfo;
-    } else if (_selectedMethod == "Visa / MasterCard") {
-      feeInfo = l10n.cardFeeInfo;
-    } else {
-      feeInfo = l10n.mobileMoneyFeeInfo;
-    }
+    String feeInfo = l10n.feeInfoContent;
 
     showDialog(context: context, builder: (context) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),

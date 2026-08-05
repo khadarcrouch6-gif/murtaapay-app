@@ -12,6 +12,7 @@ import '../../core/app_state.dart';
 import 'dart:ui' as ui;
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
+import '../navigation/main_navigation.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/models/transaction.dart' as model;
 import 'wallet_card_deposit_screen.dart';
@@ -108,7 +109,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
     final state = Provider.of<AppState>(context, listen: false);
     final amount = double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0;
     
-    Navigator.pushReplacement(
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
@@ -120,11 +121,16 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
           ),
           buttonText: l10n.backToHome,
           onPressed: () {
-            state.setNavIndex(3);
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            state.setNavIndex(0); // Reset to Home tab
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainNavigation()),
+              (route) => false,
+            );
           },
         ),
       ),
+      (route) => false,
     );
   }
 

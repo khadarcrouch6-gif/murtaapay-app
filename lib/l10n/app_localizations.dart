@@ -899,31 +899,31 @@ abstract class AppLocalizations {
   /// No description provided for @feeInfoContent.
   ///
   /// In en, this message translates to:
-  /// **'Transaction fees depend on the payout method.'**
+  /// **'Transaction fees depend on the payout method: Wallet (\$1.0/100), Bank (\$1.5/100), Mobile Money (\$2.5/100).'**
   String get feeInfoContent;
 
   /// No description provided for @bankFeeInfo.
   ///
   /// In en, this message translates to:
-  /// **'The fee for bank transfers is a flat \$2.50.'**
+  /// **'The fee for bank transfers is \$1.50 per \$100.'**
   String get bankFeeInfo;
 
   /// No description provided for @cardFeeInfo.
   ///
   /// In en, this message translates to:
-  /// **'The fee for card transfers is a flat \$1.50.'**
+  /// **'The fee for card transfers is \$1.50 per \$100.'**
   String get cardFeeInfo;
 
   /// No description provided for @walletFeeInfo.
   ///
   /// In en, this message translates to:
-  /// **'The fee for wallet transfers is a flat \$0.50.'**
+  /// **'The fee for wallet transfers is \$1.00 per \$100.'**
   String get walletFeeInfo;
 
   /// No description provided for @mobileMoneyFeeInfo.
   ///
   /// In en, this message translates to:
-  /// **'The fee for mobile money transfers is a flat \$1.50.'**
+  /// **'The fee for mobile money transfers is \$2.50 per \$100.'**
   String get mobileMoneyFeeInfo;
 
   /// No description provided for @savingsFeeInfo.

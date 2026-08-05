@@ -10,6 +10,7 @@ import '../../core/responsive_utils.dart';
 import '../../core/widgets/shimmer_loading.dart';
 import '../../core/widgets/detail_row.dart';
 import '../../core/widgets/success_screen.dart';
+import '../navigation/main_navigation.dart';
 import '../../core/models/transaction.dart';
 import 'package:provider/provider.dart';
 
@@ -164,7 +165,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
                       if (!context.mounted) return;
 
-                      Navigator.pushReplacement(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => SuccessScreen(
@@ -173,10 +174,16 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                             subMessage: l10nLocal.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
                             buttonText: l10nLocal.backToHome,
                             onPressed: () {
-                              Navigator.of(context).popUntil((route) => route.settings.name == 'SendAmountScreen' || route.isFirst);
+                              state.setNavIndex(0); // Reset to Home tab
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => const MainNavigation()),
+                                (route) => false,
+                              );
                             },
                           ),
                         ),
+                        (route) => false,
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -203,7 +210,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
                        if (!context.mounted) return;
 
-                       Navigator.pushReplacement(
+                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => SuccessScreen(
@@ -212,10 +219,16 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                             subMessage: l10nLocal.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
                             buttonText: l10nLocal.backToHome,
                             onPressed: () {
-                              Navigator.of(context).popUntil((route) => route.settings.name == 'SendAmountScreen' || route.isFirst);
+                              state.setNavIndex(0); // Reset to Home tab
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => const MainNavigation()),
+                                (route) => false,
+                              );
                             },
                           ),
                         ),
+                        (route) => false,
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(

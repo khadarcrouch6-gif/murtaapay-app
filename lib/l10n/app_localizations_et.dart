@@ -419,17 +419,18 @@ class AppLocalizationsEt extends AppLocalizations {
       'Tasu on 0,99%. Näiteks: 100 dollari saatmine maksab vaid 0,99 dollarit tasusid.';
 
   @override
-  String get bankFeeInfo => 'The fee for bank transfers is a flat \$2.50.';
+  String get bankFeeInfo => 'The fee for bank transfers is \$1.50 per \$100.';
 
   @override
-  String get cardFeeInfo => 'The fee for card transfers is a flat \$1.50.';
+  String get cardFeeInfo => 'The fee for card transfers is \$1.50 per \$100.';
 
   @override
-  String get walletFeeInfo => 'The fee for wallet transfers is a flat \$0.50.';
+  String get walletFeeInfo =>
+      'The fee for wallet transfers is \$1.00 per \$100.';
 
   @override
   String get mobileMoneyFeeInfo =>
-      'The fee for mobile money transfers is a flat \$1.50.';
+      'The fee for mobile money transfers is \$2.50 per \$100.';
 
   @override
   String get savingsFeeInfo =>

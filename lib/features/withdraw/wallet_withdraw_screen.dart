@@ -10,6 +10,7 @@ import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../core/widgets/success_screen.dart';
 import '../../core/widgets/failure_screen.dart';
+import '../navigation/main_navigation.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/widgets/detail_row.dart';
 import '../../core/models/transaction.dart' as model;
@@ -876,7 +877,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
       
       if (!context.mounted) return;
       
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => SuccessScreen(
@@ -885,11 +886,16 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
             subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
             buttonText: l10n.backToHome,
             onPressed: () {
-              state.setNavIndex(0); // Go to Home tab for Wallet Withdraw
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              state.setNavIndex(0); // Reset to Home tab
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const MainNavigation()),
+                (route) => false,
+              );
             },
           ),
         ),
+        (route) => false,
       );
     } catch (e) {
       if (!context.mounted) return;
@@ -903,7 +909,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
         errorMsg = l10n.insufficientBalance;
       }
 
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => FailureScreen(
