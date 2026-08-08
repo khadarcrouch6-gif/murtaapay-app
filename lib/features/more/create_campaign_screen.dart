@@ -6,6 +6,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../l10n/app_localizations.dart';
+import 'models/campaign.dart';
 
 class CreateCampaignScreen extends StatefulWidget {
   const CreateCampaignScreen({super.key});
@@ -15,6 +16,52 @@ class CreateCampaignScreen extends StatefulWidget {
 }
 
 class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
+  final _titleController = TextEditingController();
+  final _goalController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  String _selectedCategory = "General";
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _goalController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  void _submitCampaign(AppState state, AppLocalizations l10n) {
+    if (_titleController.text.isEmpty || _goalController.text.isEmpty || _descriptionController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill all required fields")),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    // Mock campaign creation
+    final newCampaign = Campaign(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: _titleController.text,
+      description: _descriptionController.text,
+      goalAmount: double.tryParse(_goalController.text) ?? 0.0,
+      raisedAmount: 0.0,
+      creator: state.userName,
+      icon: Icons.volunteer_activism_rounded,
+      imageUrl: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb8?q=80&w=2070",
+      category: _selectedCategory,
+      donorCount: 0,
+      lastDonationAgo: "Just now",
+      status: 'new',
+    );
+
+    state.addCampaign(newCampaign);
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.campaignSubmitted)));
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -111,6 +158,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                     Icons.title_rounded,
                     theme,
                     isDark,
+                    controller: _titleController,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -123,6 +171,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                     theme,
                     isDark,
                     isNumber: true,
+                    controller: _goalController,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -135,6 +184,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                     theme,
                     isDark,
                     maxLines: 5,
+                    controller: _descriptionController,
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -185,30 +235,44 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 48),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 700),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.campaignSubmitted)));
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isDark ? theme.colorScheme.primary : AppColors.primaryDark,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
-                      child: Text(
+                const SizedBox(height: 32),
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(context.horizontalPadding, 12, context.horizontalPadding, 12 + MediaQuery.of(context).padding.bottom),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -4))],
+        ),
+        child: Center(
+          child: MaxWidthBox(
+            maxWidth: 800,
+            child: FadeInUp(
+              delay: const Duration(milliseconds: 700),
+              child: SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _isSubmitting ? null : () => _submitCampaign(state, l10n),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accentTeal,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: _isSubmitting 
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : Text(
                         l10n.submitForReview,
                         style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
-                    ),
-                  ),
                 ),
-                const SizedBox(height: 24),
-              ],
+              ),
             ),
           ),
         ),
@@ -216,7 +280,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
     );
   }
 
-  Widget _buildTextField(String label, String hint, IconData icon, ThemeData theme, bool isDark, {bool isNumber = false, int maxLines = 1}) {
+  Widget _buildTextField(String label, String hint, IconData icon, ThemeData theme, bool isDark, {bool isNumber = false, int maxLines = 1, TextEditingController? controller}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -237,6 +301,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
             border: isDark ? Border.all(color: theme.dividerColor.withValues(alpha: 0.1)) : null,
           ),
           child: TextField(
+            controller: controller,
             keyboardType: isNumber ? TextInputType.number : TextInputType.text,
             maxLines: maxLines,
             style: TextStyle(color: theme.textTheme.bodyLarge?.color),

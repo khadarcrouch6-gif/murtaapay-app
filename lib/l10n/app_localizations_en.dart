@@ -12,7 +12,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get anonymous => 'Anonymous';
 
   @override
+  String get donationHistory => 'Donation History';
+
+  @override
+  String get noDonationsFound => 'No donations found';
+
+  @override
+  String get searchCampaigns => 'Search campaigns...';
+
+  @override
+  String get calculateZakatEasily =>
+      'Calculate your Zakat easily and fulfill your obligation.';
+
+  @override
+  String get calculateNow => 'Calculate Now';
+
+  @override
+  String get featuredCampaign => 'Featured Campaign';
+
+  @override
+  String get safeAndSecureDonations => 'Safe & Secure Donations';
+
+  @override
+  String get weEnsureFundsReach =>
+      'We ensure your funds reach those in need safely.';
+
+  @override
   String get donationSuccessful => 'Donation Successful!';
+
+  @override
+  String get beTheFirstToDonate => 'Be the first to donate';
 
   @override
   String get donationSuccessMessage =>
@@ -81,6 +110,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTransactionsFound => 'No transactions found';
 
   @override
+  String get noTransactions => 'No transactions';
+
+  @override
   String get recentTransactions => 'Recent Transactions';
 
   @override
@@ -115,6 +147,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get more => 'More';
+
+  @override
+  String get viewAll => 'View All';
 
   @override
   String get spendingAnalysis => 'Spending Analysis';
@@ -353,6 +388,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addMoney => 'Add Money';
 
   @override
+  String get amountToDeposit => 'Amount to Deposit';
+
+  @override
   String get enterAmountToDeposit => 'Enter Amount to Deposit';
 
   @override
@@ -415,14 +453,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feeInfoTitle => 'Exchange Fee Info';
 
   @override
+  String get feeInfoDescription =>
+      'Learn more about our transparent fee structure.';
+
+  @override
   String get feeInfoContent =>
-      'Transaction fees depend on the payout method: Wallet (\$1.0/100), Bank (\$1.5/100), Mobile Money (\$2.5/100).';
+      'Transaction fees depend on the payout method: Wallet (\$1.0/100), Bank (\$2.5/100), Mobile Money (\$2.5/100).';
 
   @override
-  String get bankFeeInfo => 'The fee for bank transfers is \$1.50 per \$100.';
+  String get bankFeeInfo => 'The fee for bank transfers is \$2.50 per \$100.';
 
   @override
-  String get cardFeeInfo => 'The fee for card transfers is \$1.50 per \$100.';
+  String get cardFeeInfo => 'The fee for card transfers is \$2.50 per \$100.';
 
   @override
   String get walletFeeInfo =>
@@ -731,6 +773,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardHolder => 'CARD HOLDER';
 
   @override
+  String get provider => 'Provider';
+
+  @override
   String get yourName => 'YOUR NAME';
 
   @override
@@ -798,6 +843,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get submit => 'Submit';
+
+  @override
+  String get iHaveSentTheMoney => 'I have sent the money';
 
   @override
   String get accountName => 'Account Name';
@@ -1058,6 +1106,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get withdrawalRequested => 'Withdrawal Requested!';
 
   @override
+  String get withdrawalPending => 'Withdrawal Pending';
+
+  @override
+  String get bankProcessingNotice =>
+      'Bank transfers usually take 24-48 hours to complete. You can track the status in your transaction history.';
+
+  @override
   String withdrawalSuccessMessage(String amount) {
     return 'Your withdrawal of $amount is being processed.';
   }
@@ -1066,7 +1121,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get withdrawal => 'Withdrawal';
 
   @override
-  String get feeLabel => 'Fee (0.99%):';
+  String get feeLabel => 'Fee (2.5%):';
 
   @override
   String get totalDeduct => 'Total Deduct:';
@@ -1086,6 +1141,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phoneLengthError => 'Number must be 9 digits';
+
+  @override
+  String get back => 'Back';
 
   @override
   String get payBills => 'Pay Bills';
@@ -1129,13 +1187,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentDate => 'Payment Date';
 
   @override
-  String get status => 'Status';
-
-  @override
   String get success => 'Success';
 
   @override
   String get pending => 'Pending';
+
+  @override
+  String get processing => 'Processing';
+
+  @override
+  String get failed => 'Failed';
+
+  @override
+  String get status => 'Status';
 
   @override
   String get completed => 'Completed';
@@ -1192,9 +1256,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get justAMoment => 'Just a moment';
 
   @override
-  String get processing => 'Processing...';
-
-  @override
   String get processingTransaction => 'Processing Transaction...';
 
   @override
@@ -1204,6 +1265,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String stkPushInstructions(String provider) {
     return 'Please check your phone for the $provider PIN prompt to authorize the payment.';
   }
+
+  @override
+  String get invalidPrefixError => 'Invalid prefix for selected provider';
+
+  @override
+  String get pushNotificationSent => 'Push Notification Sent';
+
+  @override
+  String pushNotificationInstructions(String amount) {
+    return 'Please check your phone and enter your PIN to authorize the transaction of $amount';
+  }
+
+  @override
+  String get depositToOurAccount => 'Deposit to our account:';
+
+  @override
+  String get bankReferenceNote =>
+      'Note: Please include the reference above in your bank transfer description for automatic processing.';
+
+  @override
+  String get confirmTransfer => 'Confirm Transfer';
+
+  @override
+  String confirmTransferRep(String amount) {
+    return 'By clicking confirm, you represent that you have already initiated the bank transfer of $amount to the selected account.';
+  }
+
+  @override
+  String get confirmAndSubmit => 'Confirm & Submit';
+
+  @override
+  String get transferNoted => 'Transfer Noted';
+
+  @override
+  String transferNotedMessage(String amount) {
+    return 'We have received your request for $amount. Your balance will be updated once the transfer is verified.';
+  }
+
+  @override
+  String get takes30to60Minutes => 'Usually takes 30-60 minutes.';
 
   @override
   String get waitingForProvider => 'Waiting for provider confirmation...';
@@ -1599,6 +1700,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get raised => 'Raised';
 
   @override
+  String get goalLabel => 'Goal';
+
+  @override
   String get goal => 'Goal';
 
   @override
@@ -1660,6 +1764,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get totalSavings => 'Total Savings';
+
+  @override
+  String get savingsBalance => 'Savings Balance';
 
   @override
   String get cardBalanceLabel => 'Card: ';
@@ -2467,7 +2574,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sadaqahZakatCalcDesc => 'Calculate and pay your zakat accurately';
 
   @override
-  String get sadaqahTrending => 'Trending';
+  String get sadaqahTrending => 'TRENDING';
+
+  @override
+  String get sadaqahNew => 'NEW';
+
+  @override
+  String get sadaqahEndingSoon => 'ENDING SOON';
+
+  @override
+  String get sadaqahCompleted => 'COMPLETED';
+
+  @override
+  String sadaqahDonorsCount(int count) {
+    return '+$count donors';
+  }
+
+  @override
+  String sadaqahSharingCampaign(String title) {
+    return 'Sharing $title...';
+  }
 
   @override
   String get sadaqahAgo => 'ago';
@@ -2888,4 +3014,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get approachingLimitWarning => 'You are approaching your daily limit.';
+
+  @override
+  String get nisabThreshold => 'Nisab Threshold';
+
+  @override
+  String belowNisabWarning(String threshold) {
+    return 'Your assets are below the Nisab threshold ($threshold). Zakat is only mandatory if your wealth exceeds this.';
+  }
+
+  @override
+  String get makeRecurringDonation => 'Make this a recurring donation';
+
+  @override
+  String get campaignUpdates => 'Campaign Updates';
+
+  @override
+  String get finalizingTransaction => 'Finalizing transaction...';
+
+  @override
+  String get pleaseWait => 'Please wait...';
 }

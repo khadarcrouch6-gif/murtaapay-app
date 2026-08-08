@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
 import 'package:animate_do/animate_do.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -54,6 +55,8 @@ class ReviewScreen extends StatefulWidget {
 class _ReviewScreenState extends State<ReviewScreen> {
   bool _isProcessing = false;
   bool _isStkWaiting = false;
+  int _timerSeconds = 60;
+  Timer? _timer;
 
   String get _sourceKey {
     String key = widget.paymentMethod;
@@ -104,21 +107,59 @@ class _ReviewScreenState extends State<ReviewScreen> {
     );
   }
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   Future<void> _triggerStkPush() async {
     setState(() {
       _isProcessing = true;
       _isStkWaiting = true;
+      _timerSeconds = 60;
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_timerSeconds > 0) {
+        if (mounted) {
+          setState(() {
+            _timerSeconds--;
+          });
+        }
+      } else {
+        timer.cancel();
+        if (mounted) {
+          _handleStkTimeout();
+        }
+      }
     });
 
     // Simulate STK Push delay (waiting for user to enter PIN on their handset)
-    await Future.delayed(const Duration(seconds: 5));
+    // We'll wait 5 seconds then "complete" it for the demo, 
+    // but the timer shows the user how long they have.
+    await Future.delayed(const Duration(seconds: 8));
 
-    if (mounted) {
+    if (mounted && _isStkWaiting) {
+      _timer?.cancel();
       setState(() {
         _isStkWaiting = false;
       });
       _processTransaction(isStk: true);
     }
+  }
+
+  void _handleStkTimeout() {
+    setState(() {
+      _isProcessing = false;
+      _isStkWaiting = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Payment timed out. Please try again."),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   Future<void> _processTransaction({bool isStk = false, String? pin}) async {
@@ -435,11 +476,16 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       SizedBox(
                         width: 16 * context.fontSizeFactor, 
                         height: 16 * context.fontSizeFactor, 
-                        child: const CircularProgressIndicator(strokeWidth: 2)
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          value: _timerSeconds / 60,
+                          backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.2),
+                          valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
+                        )
                       ),
                       SizedBox(width: 12 * context.fontSizeFactor),
                       Text(
-                        l10n.waitingForProvider, 
+                        "${l10n.waitingForProvider} (${_timerSeconds}s)",
                         style: TextStyle(
                           color: theme.colorScheme.secondary, 
                           fontWeight: FontWeight.bold,
@@ -595,7 +641,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 _sourceKey, 
                 payoutMethod: _getCanonicalMethod(widget.method)
               );
-              final feeRateText = l10n.fee;
+              final feeRateText = l10n.feeRateDynamic(
+                _sourceKey == "Savings Account" ? "0.5" : (_sourceKey.contains("Wallet") ? "1.0" : "2.5"),
+                NumberFormat.simpleCurrency(name: widget.currencyCode).format(fee)
+              );
               
               return _buildSummaryRow(
                 feeRateText,
@@ -660,7 +709,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
             Text(
               l10n.securedBySSL,
               style: TextStyle(
-                color: theme.brightness == Brightness.dark ? Colors.white54 : AppColors.grey.withValues(alpha: 0.6), 
+                color: theme.brightness == Brightness.dark ? Colors.white54 : AppColors.grey.withValues(alpha: 0.6),
                 fontSize: 12 * context.fontSizeFactor, 
                 fontWeight: FontWeight.bold
               ),

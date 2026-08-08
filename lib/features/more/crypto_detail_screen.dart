@@ -203,7 +203,7 @@ class _CryptoDetailScreenState extends State<CryptoDetailScreen> {
                     child: Center(
                       child: Column(
                         children: [
-                          Icon(Icons.history_rounded, size: 48 * context.fontSizeFactor, color: theme.hintColor.withValues(alpha: 0.3)),
+                          Icon(Icons.history_rounded, size: 48 * context.fontSizeFactor, color: theme.hintColor.withOpacity(0.3)),
                           SizedBox(height: 12 * context.fontSizeFactor),
                           Text(l10n.noTransactionsYet, style: TextStyle(color: theme.hintColor, fontSize: 14 * context.fontSizeFactor)),
                         ],
@@ -222,7 +222,7 @@ class _CryptoDetailScreenState extends State<CryptoDetailScreen> {
                       return ListTile(
                         leading: CircleAvatar(
                           radius: 20 * context.fontSizeFactor,
-                          backgroundColor: (isBuy ? AppColors.accentTeal : Colors.redAccent).withValues(alpha: 0.1),
+                          backgroundColor: (isBuy ? AppColors.accentTeal : Colors.redAccent).withOpacity(0.1),
                           child: Icon(
                             isBuy ? Icons.add_rounded : Icons.remove_rounded,
                             color: isBuy ? AppColors.accentTeal : Colors.redAccent,
@@ -264,7 +264,7 @@ class _CryptoDetailScreenState extends State<CryptoDetailScreen> {
                   child: Container(
                     padding: EdgeInsets.all(20 * context.fontSizeFactor),
                     decoration: BoxDecoration(
-                      color: isDark ? theme.colorScheme.surface : Colors.grey.withValues(alpha: 0.05),
+                      color: isDark ? theme.colorScheme.surface : Colors.grey.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
                     ),
                     child: Text(
@@ -290,7 +290,7 @@ class _CryptoDetailScreenState extends State<CryptoDetailScreen> {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+          border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,7 +317,7 @@ class _CryptoDetailScreenState extends State<CryptoDetailScreen> {
           ),
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
           ),
           child: Row(
             children: [
@@ -372,7 +372,7 @@ class _CryptoDetailScreenState extends State<CryptoDetailScreen> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.transparent,
+                color: isSelected ? AppColors.accentTeal.withOpacity(0.1) : Colors.transparent,
                 borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
               ),
               child: Text(
@@ -435,7 +435,7 @@ class LineChartPainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [color.withValues(alpha: 0.2), color.withValues(alpha: 0.0)],
+        colors: [color.withOpacity(0.2), color.withOpacity(0.0)],
       ).createShader(Rect.fromLTRB(0, 0, size.width, size.height));
 
     canvas.drawPath(fillPath, fillPaint);

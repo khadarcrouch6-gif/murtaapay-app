@@ -14,6 +14,7 @@ class CardScreen extends StatefulWidget {
   final String method;
   final String currencyCode;
   final String senderSource;
+  final String? cardId;
 
   const CardScreen({
     super.key,
@@ -21,6 +22,7 @@ class CardScreen extends StatefulWidget {
     required this.method,
     required this.currencyCode,
     required this.senderSource,
+    this.cardId,
   });
 
   @override
@@ -55,6 +57,7 @@ class _CardScreenState extends State<CardScreen> {
             receiverPhone: "**** **** **** ${_cardNumberController.text.substring(_cardNumberController.text.length - 4)}",
             payoutMethod: widget.method,
             paymentMethod: widget.senderSource,
+            cardId: widget.cardId,
             currencyCode: widget.currencyCode,
             purpose: AppLocalizations.of(context)!.familySupport, // Default purpose
           ),

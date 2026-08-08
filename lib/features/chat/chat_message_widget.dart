@@ -157,7 +157,7 @@ class ChatMessageWidget extends StatelessWidget {
           Container(
             height: 100 * context.fontSizeFactor,
             decoration: BoxDecoration(
-              color: isCurrentUser ? Colors.white.withValues(alpha: 0.2) : theme.colorScheme.surfaceContainerHighest,
+            color: isCurrentUser ? Colors.white.withValues(alpha: 0.2) : theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(

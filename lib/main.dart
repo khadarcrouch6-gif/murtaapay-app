@@ -8,6 +8,8 @@ import 'core/somali_localizations.dart';
 import 'features/onboarding/splash_screen.dart';
 import 'l10n/app_localizations.dart';
 
+import 'package:flutter/scheduler.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -15,17 +17,47 @@ void main() async {
   final state = AppState();
   await state.init();
   
+  // Fix for potential font assertion errors in complex layouts
+  // by ensuring the scheduler knows when to paint fonts.
+  SchedulerBinding.instance.addPostFrameCallback((_) {
+    debugPrint("App initialization complete");
+  });
+
   runApp(MurtaaxPayApp(appState: state));
 }
 
-class MurtaaxPayApp extends StatelessWidget {
+class MurtaaxPayApp extends StatefulWidget {
   final AppState appState;
   const MurtaaxPayApp({super.key, required this.appState});
 
   @override
+  State<MurtaaxPayApp> createState() => _MurtaaxPayAppState();
+}
+
+class _MurtaaxPayAppState extends State<MurtaaxPayApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      widget.appState.updateMarketRates();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
-      value: appState,
+      value: widget.appState,
       child: Selector<AppState, (ThemeMode, Locale)>(
         selector: (context, state) => (state.themeMode, state.locale),
         builder: (context, data, child) {

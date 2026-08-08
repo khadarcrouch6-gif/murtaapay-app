@@ -18,6 +18,7 @@ class WalletReceiverScreen extends StatefulWidget {
   final String method;
   final String currencyCode;
   final String senderSource;
+  final String? cardId;
   final String? prefilledName;
   final String? prefilledPhone;
 
@@ -27,6 +28,7 @@ class WalletReceiverScreen extends StatefulWidget {
     required this.method, 
     required this.currencyCode,
     required this.senderSource,
+    this.cardId,
     this.prefilledName,
     this.prefilledPhone,
   });
@@ -120,6 +122,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
           receiverPhone: _walletIdController.text,
           payoutMethod: widget.method,
           paymentMethod: widget.senderSource,
+          cardId: widget.cardId,
           currencyCode: widget.currencyCode,
           purpose: _selectedPurpose ?? _getPurposes(l10n).first,
         ),

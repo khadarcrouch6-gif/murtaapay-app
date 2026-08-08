@@ -59,7 +59,7 @@ export default function WalletPage() {
               <div className="border-2 border-transparent hover:border-gray-200 bg-slate-50 rounded-xl p-4 cursor-pointer transition-colors">
                 <Smartphone className="text-slate-600 mb-2" size={24} />
                 <p className="font-bold text-slate-700 text-sm">Mobile Money</p>
-                <p className="text-xs text-slate-500">1% Fee • Instant</p>
+                <p className="text-xs text-slate-500">2.5% Fee • Instant</p>
               </div>
             </div>
           </div>

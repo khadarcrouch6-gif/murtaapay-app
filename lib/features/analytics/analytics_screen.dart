@@ -139,7 +139,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           borderRadius: BorderRadius.circular(28 * context.fontSizeFactor),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryDark.withValues(alpha: 0.3),
+              color: AppColors.primaryDark.withOpacity(0.3),
               blurRadius: 20 * context.fontSizeFactor,
               offset: Offset(0, 10 * context.fontSizeFactor),
             )
@@ -150,7 +150,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           children: [
             Text(
               "${state.translate("Total Spent", "Wixii baxay")} $periodLabel",
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14 * context.fontSizeFactor),
+              style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14 * context.fontSizeFactor),
             ),
             SizedBox(height: 8 * context.fontSizeFactor),
             ShimmerLoading(
@@ -164,7 +164,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
               ),
               child: Row(
@@ -269,7 +269,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   List<PieChartSectionData> _buildDefaultSections(BuildContext context) {
     return List.generate(1, (i) {
-      return PieChartSectionData(color: Colors.grey.withValues(alpha: 0.1), value: 100, radius: 25 * context.fontSizeFactor, showTitle: false);
+      return PieChartSectionData(color: Colors.grey.withOpacity(0.1), value: 100, radius: 25 * context.fontSizeFactor, showTitle: false);
     });
   }
 
@@ -354,7 +354,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   List<BarChartGroupData> _buildDefaultBars(BuildContext context) {
     return List.generate(7, (i) {
-      return BarChartGroupData(x: i, barRods: [BarChartRodData(toY: 10, color: Colors.grey.withValues(alpha: 0.1), width: 12 * context.fontSizeFactor, borderRadius: BorderRadius.circular(4 * context.fontSizeFactor))]);
+      return BarChartGroupData(x: i, barRods: [BarChartRodData(toY: 10, color: Colors.grey.withOpacity(0.1), width: 12 * context.fontSizeFactor, borderRadius: BorderRadius.circular(4 * context.fontSizeFactor))]);
     });
   }
 
@@ -371,7 +371,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           barRods: [
             BarChartRodData(
               toY: monthlyTotals[i] > 0 ? monthlyTotals[i] : 2,
-              gradient: i == now.month - 1 ? AppColors.accentGradient : LinearGradient(colors: [Colors.grey.withValues(alpha: 0.2), Colors.grey.withValues(alpha: 0.3)]),
+              gradient: i == now.month - 1 ? AppColors.accentGradient : LinearGradient(colors: [Colors.grey.withOpacity(0.2), Colors.grey.withOpacity(0.3)]),
               width: 10 * context.fontSizeFactor,
               borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
             )
@@ -393,7 +393,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           barRods: [
             BarChartRodData(
               toY: dailyTotals[i] > 0 ? dailyTotals[i] : 2,
-              gradient: i == 6 ? AppColors.accentGradient : LinearGradient(colors: [Colors.grey.withValues(alpha: 0.2), Colors.grey.withValues(alpha: 0.3)]),
+              gradient: i == 6 ? AppColors.accentGradient : LinearGradient(colors: [Colors.grey.withOpacity(0.2), Colors.grey.withOpacity(0.3)]),
               width: 16 * context.fontSizeFactor,
               borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
             )
@@ -467,7 +467,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         children: [
           Container(
             padding: EdgeInsets.all(12 * context.fontSizeFactor),
-            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
             child: AdaptiveIcon(icon, color: color, size: 18 * context.fontSizeFactor),
           ),
           SizedBox(width: 16 * context.fontSizeFactor),
@@ -481,7 +481,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
                   child: LinearProgressIndicator(
                     value: percentage,
-                    backgroundColor: Colors.grey.withValues(alpha: 0.1),
+                    backgroundColor: Colors.grey.withOpacity(0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(color),
                     minHeight: 4 * context.fontSizeFactor,
                   ),

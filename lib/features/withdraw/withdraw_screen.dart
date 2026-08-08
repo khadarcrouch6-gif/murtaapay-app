@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
@@ -9,10 +9,9 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
-import '../../core/widgets/success_screen.dart';
-import '../navigation/main_navigation.dart';
 import '../../l10n/app_localizations.dart';
-import '../../core/models/transaction.dart' as model;
+import 'unified_bank_withdraw_screen.dart';
+import 'unified_mobile_withdraw_screen.dart';
 
 class WithdrawScreen extends StatefulWidget {
   final bool isTab;
@@ -25,31 +24,31 @@ class WithdrawScreen extends StatefulWidget {
 
 class _WithdrawScreenState extends State<WithdrawScreen> {
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _field1Controller = TextEditingController();
-  final TextEditingController _field2Controller = TextEditingController();
-  final TextEditingController _customBankController = TextEditingController();
-  String? _selectedBank;
-  bool _isCustomBank = false;
-  final double _cardBalance = 850.50; // Mock card balance
-  String? _selectedPurpose;
+  bool _isCalculating = false;
+  Timer? _calcTimer;
 
-  List<String> _getPurposes(AppLocalizations l10n) => [
-    l10n.familySupport,
-    l10n.educationTuition,
-    l10n.medicalExpenses,
-    l10n.businessTransaction,
-    l10n.propertyRent,
-    l10n.gift,
-    l10n.other,
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _amountController.addListener(_onAmountChanged);
+  }
+
+  void _onAmountChanged() {
+    if (_amountController.text.isEmpty) return;
+    setState(() => _isCalculating = true);
+    _calcTimer?.cancel();
+    _calcTimer = Timer(const Duration(milliseconds: 600), () {
+      if (mounted) setState(() => _isCalculating = false);
+    });
+  }
 
   final List<Map<String, dynamic>> _methods = [
     {
-      "id": "wallet",
-      "title": "withdrawToWallet",
-      "desc": "withdrawToWalletDesc",
+      "id": "mobile",
+      "title": "mobileMoney",
+      "desc": "withdrawToMobileDesc",
       "gradient": [AppColors.accentTeal, Color(0xFF00695C)],
-      "icon": Icons.account_balance_wallet_rounded,
+      "icon": Icons.phone_android_rounded,
     },
     {
       "id": "bank",
@@ -62,10 +61,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
   @override
   void dispose() {
+    _amountController.removeListener(_onAmountChanged);
     _amountController.dispose();
-    _field1Controller.dispose();
-    _field2Controller.dispose();
-    _customBankController.dispose();
+    _calcTimer?.cancel();
     super.dispose();
   }
 
@@ -104,26 +102,26 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                      Text(
-                        l10n.virtualCardBalance.toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 11 * context.fontSizeFactor,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
+                            Text(
+                              l10n.virtualCardBalance.toUpperCase(),
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.8),
+                                fontSize: 11 * context.fontSizeFactor,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
                             SizedBox(height: 8 * context.fontSizeFactor),
-                      ListenableBuilder(
-                        listenable: state,
-                        builder: (context, _) {
-                          final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
-                          return FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance), style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                          );
-                        },
-                      ),
+                            ListenableBuilder(
+                              listenable: state,
+                              builder: (context, _) {
+                                final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
+                                return FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance), style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                                );
+                              },
+                            ),
                             SizedBox(height: 20 * context.fontSizeFactor),
                             // Amount Input
                             Container(
@@ -209,8 +207,30 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       opacity: isAmountValid ? 1.0 : 0.6,
                       child: GestureDetector(
                         onTap: isAmountValid ? () {
-                          if (method["id"] == "wallet") _showWalletWithdrawDialog(context, l10n);
-                          if (method["id"] == "bank") _showBankWithdrawDialog(context, l10n);
+                          final double amount = double.tryParse(_amountController.text) ?? 0;
+                          if (method["id"] == "mobile") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UnifiedMobileWithdrawScreen(
+                                  source: "Virtual Card",
+                                  cardId: widget.cardId,
+                                  initialAmount: amount,
+                                ),
+                              ),
+                            );
+                          } else if (method["id"] == "bank") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UnifiedBankWithdrawScreen(
+                                  source: "Virtual Card",
+                                  cardId: widget.cardId,
+                                  initialAmount: amount,
+                                ),
+                              ),
+                            );
+                          }
                         } : null,
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 250),
@@ -270,718 +290,15 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
               ],
             ),
           ),
-
         ),
       ),
-    );
-  }
-
-  void _showWalletWithdrawDialog(BuildContext context, AppLocalizations l10n) {
-    final theme = Theme.of(context);
-    final state = Provider.of<AppState>(context, listen: false);
-
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          scrollable: true,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
-          contentPadding: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Premium Header
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppColors.accentTeal, Color(0xFF00695C)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(12 * context.fontSizeFactor),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.credit_card_rounded, color: Colors.white, size: 32 * context.fontSizeFactor),
-                    ),
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    Text(
-                      l10n.virtualCardBalance.toUpperCase(),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 11 * context.fontSizeFactor,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                    SizedBox(height: 4 * context.fontSizeFactor),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: ListenableBuilder(
-                        listenable: state,
-                        builder: (context, _) {
-                          final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
-                          return Text(
-                            NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 32 * context.fontSizeFactor,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              
-              Padding(
-                padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                child: Column(
-                  children: [
-                    // Amount Summary
-                    Container(
-                      padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-                        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  l10n.amount,
-                                  style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
-                                ),
-                              ),
-                              Text(
-                                NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
-                                style: TextStyle(
-                                  color: theme.textTheme.bodyLarge?.color,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16 * context.fontSizeFactor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Divider(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  l10n.fee,
-                                  style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
-                                ),
-                              ),
-                              Text(
-                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateFeeForSource(double.tryParse(_amountController.text) ?? 0, "Virtual Card", payoutMethod: "Murtaax Wallet")),
-                                style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16 * context.fontSizeFactor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Divider(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  l10n.totalToPay,
-                                  style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
-                                ),
-                              ),
-                              Text(
-                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateTotalForSource(double.tryParse(_amountController.text) ?? 0, "Virtual Card", payoutMethod: "Murtaax Wallet")),
-                                style: TextStyle(
-                                  color: AppColors.accentTeal,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 18 * context.fontSizeFactor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _showPinDialog(context, l10n, state, type: "wallet");
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accentTeal,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor, vertical: 12 * context.fontSizeFactor),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
-                  disabledBackgroundColor: AppColors.grey.withValues(alpha: 0.2),
-                ),
-                child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-  }
-
-  void _showPinDialog(BuildContext context, AppLocalizations l10n, AppState state, {required String type}) {
-    final TextEditingController pinController = TextEditingController();
-    final theme = Theme.of(context);
-    
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          scrollable: true,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
-          title: Column(
-            children: [
-              Icon(Icons.lock_outline_rounded, color: type == "wallet" ? AppColors.accentTeal : Colors.blue, size: 40 * context.fontSizeFactor),
-              SizedBox(height: 16 * context.fontSizeFactor),
-              Text(l10n.enterVirtualCardPin, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                l10n.enterSecurityPin,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
-              ),
-              SizedBox(height: 24 * context.fontSizeFactor),
-              SizedBox(
-                width: 200 * context.fontSizeFactor,
-                child: TextField(
-                  controller: pinController,
-                  keyboardType: TextInputType.number,
-                  obscureText: true,
-                  maxLength: 4,
-                  textAlign: TextAlign.center,
-                  autofocus: true,
-                  style: TextStyle(
-                    fontSize: 32 * context.fontSizeFactor,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 20 * context.fontSizeFactor,
-                    color: theme.textTheme.bodyLarge?.color,
-                  ),
-                  onChanged: (_) => setDialogState(() {}),
-                  decoration: InputDecoration(
-                    counterText: "",
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: (type == "wallet" ? AppColors.accentTeal : Colors.blue).withValues(alpha: 0.2), width: 2 * context.fontSizeFactor),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: type == "wallet" ? AppColors.accentTeal : Colors.blue, width: 3 * context.fontSizeFactor),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
-              child: ElevatedButton(
-                onPressed: pinController.text.length < 4
-                    ? null
-                    : () {
-                        if (state.verifyCardPin(pinController.text, cardId: widget.cardId)) {
-                          final localContext = this.context;
-                          Navigator.pop(context);
-                          _processTransaction(localContext, l10n, state, type: type);
-                        } else {
-                          HapticFeedback.vibrate();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(l10n.invalidPin),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          pinController.clear();
-                          setDialogState(() {});
-                        }
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: type == "wallet" ? AppColors.accentTeal : Colors.blue,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
-                ),
-                child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-  }
-
-  void _showBankWithdrawDialog(BuildContext context, AppLocalizations l10n) {
-    final theme = Theme.of(context);
-    final state = Provider.of<AppState>(context, listen: false);
-    _selectedBank = null;
-    _isCustomBank = false;
-    _customBankController.clear();
-    _field1Controller.clear(); // Account Number
-    _field2Controller.clear(); // Account Name
-
-    final List<String> banks = ["IBS Bank", "Premier Bank", "Salaam Bank", "Amal Bank", "Dahabshil Bank", "Other (Custom)"];
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          scrollable: true,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
-          contentPadding: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 32 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blue, Color(0xFF1565C0)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(12 * context.fontSizeFactor),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.account_balance_rounded, color: Colors.white, size: 32 * context.fontSizeFactor),
-                    ),
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        l10n.virtualCardBalance.toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 11 * context.fontSizeFactor,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 4 * context.fontSizeFactor),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: ListenableBuilder(
-                        listenable: state,
-                        builder: (context, _) {
-                          final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
-                          return Text(
-                            NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 32 * context.fontSizeFactor,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                child: Column(
-                  children: [
-                    // Amount Summary
-                    Container(
-                      padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-                        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  l10n.amount,
-                                  style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
-                                ),
-                              ),
-                              Text(
-                                NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0),
-                                style: TextStyle(
-                                  color: theme.textTheme.bodyLarge?.color,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16 * context.fontSizeFactor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Divider(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  l10n.fee,
-                                  style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
-                                ),
-                              ),
-                              Text(
-                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateFeeForSource(double.tryParse(_amountController.text) ?? 0, "Virtual Card", payoutMethod: "Bank Transfer")),
-                                style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16 * context.fontSizeFactor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Divider(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  l10n.totalToPay,
-                                  style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
-                                ),
-                              ),
-                              Text(
-                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateTotalForSource(double.tryParse(_amountController.text) ?? 0, "Virtual Card", payoutMethod: "Bank Transfer")),
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 18 * context.fontSizeFactor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 24 * context.fontSizeFactor),
-                    DropdownButtonFormField<String>(
-                      dropdownColor: theme.colorScheme.surface,
-                      decoration: InputDecoration(
-                        labelText: l10n.selectBank,
-                        labelStyle: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w600),
-                        filled: true,
-                        fillColor: theme.colorScheme.surface,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
-                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
-                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: const BorderSide(color: Colors.blue, width: 2)),
-                      ),
-                      items: banks.map((bank) => DropdownMenuItem(value: bank, child: Text(bank, style: TextStyle(fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.w600, color: theme.textTheme.bodyLarge?.color)))).toList(),
-                      onChanged: (val) {
-                        setDialogState(() {
-                          _selectedBank = val;
-                          _isCustomBank = val == "Other (Custom)";
-                        });
-                      },
-                    ),
-                    if (_isCustomBank) ...[
-                      SizedBox(height: 16 * context.fontSizeFactor),
-                      _withdrawInputField(context, "Bank Name", Icons.business_rounded, _customBankController, onChanged: (_) => setDialogState(() {})),
-                    ],
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    _withdrawInputField(context, l10n.accountNumber, Icons.numbers, _field1Controller, isNumber: true, onChanged: (_) => setDialogState(() {})),
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    _withdrawInputField(context, l10n.accountName, Icons.person, _field2Controller, onChanged: (_) => setDialogState(() {})),
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    _buildPurposeDropdown(theme, l10n, setDialogState),
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    Container(
-                      padding: EdgeInsets.all(12 * context.fontSizeFactor),
-                      decoration: BoxDecoration(
-                        color: Colors.orange.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
-                        border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.access_time_rounded, color: Colors.orange, size: 18 * context.fontSizeFactor),
-                          SizedBox(width: 8 * context.fontSizeFactor),
-                          Expanded(
-                            child: Text(
-                              state.translate(
-                                "Bank withdrawals are processed within 24 hours.",
-                                "Lacag bixinta bangiga waxaa lagu farsameeyaa 24 saac gudahood."
-                              ),
-                              style: TextStyle(
-                                fontSize: 12 * context.fontSizeFactor,
-                                color: Colors.orange[900],
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
-              child: ElevatedButton(
-                onPressed: (_selectedBank == null || (_isCustomBank && _customBankController.text.isEmpty) || _field1Controller.text.isEmpty || _field2Controller.text.isEmpty)
-                    ? null
-                    : () {
-                        Navigator.pop(context);
-                        _showPinDialog(context, l10n, state, type: "bank");
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor, vertical: 12 * context.fontSizeFactor),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
-                  disabledBackgroundColor: AppColors.grey.withValues(alpha: 0.2),
-                ),
-                child: FittedBox(child: Text(l10n.submit, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-  }
-
-  void _processTransaction(BuildContext context, AppLocalizations l10n, AppState state, {required String type}) async {
-    final theme = Theme.of(context);
-    final amountVal = double.tryParse(_amountController.text) ?? 0;
-    
-    // We are withdrawing FROM the Virtual Card.
-    final double fee = state.calculateFeeForSource(
-      amountVal, 
-      "Virtual Card", 
-      payoutMethod: type == "bank" ? "Bank Transfer" : "Murtaax Wallet"
-    );
-    final double totalDeduction = amountVal + fee;
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      useRootNavigator: true,
-      builder: (ctx) => BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Center(
-          child: ZoomIn(
-            duration: const Duration(milliseconds: 300),
-            child: Container(
-              width: 220 * context.fontSizeFactor,
-              padding: EdgeInsets.all(32 * context.fontSizeFactor),
-              decoration: BoxDecoration(
-                color: theme.scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(32),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  )
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SizedBox(
-                        width: 65 * context.fontSizeFactor,
-                        height: 65 * context.fontSizeFactor,
-                        child: const CircularProgressIndicator(
-                          color: AppColors.accentTeal,
-                          strokeWidth: 3,
-                        ),
-                      ),
-                      Icon(
-                        Icons.bolt_rounded,
-                        color: AppColors.accentTeal,
-                        size: 32 * context.fontSizeFactor,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24 * context.fontSizeFactor),
-                  Text(
-                    l10n.processing, 
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18 * context.fontSizeFactor,
-                      color: theme.textTheme.bodyLarge?.color,
-                      decoration: TextDecoration.none,
-                    )
-                  ),
-                  SizedBox(height: 8 * context.fontSizeFactor),
-                  Text(
-                    l10n.justAMoment, 
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 13 * context.fontSizeFactor,
-                      color: AppColors.grey,
-                      decoration: TextDecoration.none,
-                    )
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (!context.mounted) return;
-    Navigator.of(context, rootNavigator: true).pop();
-
-    if (type == "wallet") {
-      // Card -> Wallet: Decrease Card Balance, Increase Wallet Balance
-      state.deductCardBalance(widget.cardId, totalDeduction);
-      state.addBalance(amountVal);
-      
-      final now = DateTime.now();
-      final dateStr = DateFormat('MMM dd').format(now);
-      final formattedAmount = NumberFormat.simpleCurrency(name: state.currencyCode).format(amountVal);
-      final formattedFee = NumberFormat.simpleCurrency(name: state.currencyCode).format(fee);
-      final formattedTotal = NumberFormat.simpleCurrency(name: state.currencyCode).format(totalDeduction);
-
-      // 1. Negative entry for Card history (Red)
-      state.addTransaction(model.Transaction(
-        id: "${now.millisecondsSinceEpoch}-out",
-        title: "Wallet Withdrawal",
-        date: dateStr,
-        amount: "-$formattedTotal",
-        numericAmount: totalDeduction,
-        fee: fee,
-        isNegative: true,
-        category: "Withdraw",
-        status: "Success",
-        type: "withdraw",
-        method: "Virtual Card",
-        purpose: "Transfer",
-        cardId: widget.cardId,
-      ));
-
-      // 2. Positive entry for Wallet history (Green)
-      state.addTransaction(model.Transaction(
-        id: "${now.millisecondsSinceEpoch}-in",
-        title: "Card Topup",
-        date: dateStr,
-        amount: "+$formattedAmount",
-        numericAmount: amountVal,
-        isNegative: false,
-        category: "Transfer",
-        status: "Success",
-        type: "deposit",
-        method: "Virtual Card",
-        purpose: "Transfer",
-        cardId: null, // Shown in main wallet history
-      ));
-    } else if (type == "bank") {
-      // Card -> Bank: Decrease Card Balance, No change to Wallet Balance
-      state.deductCardBalance(widget.cardId, totalDeduction);
-      final String receiverName = _field2Controller.text.isNotEmpty ? _field2Controller.text : "Bank Transfer";
-      
-      state.addTransaction(model.Transaction(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: "$receiverName",
-        date: DateFormat('MMM dd').format(DateTime.now()),
-        amount: "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(totalDeduction)}",
-        numericAmount: totalDeduction,
-        fee: fee,
-        isNegative: true,
-        category: "Withdraw",
-        status: "Success",
-        type: "withdraw",
-        method: "Virtual Card",
-        purpose: _selectedPurpose ?? "Bank Transfer",
-        cardId: widget.cardId,
-      ));
-    }
-
-    _showSuccess(context, l10n, state);
-  }
-
-  void _showSuccess(BuildContext context, AppLocalizations l10n, AppState state) {
-    final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SuccessScreen(
-          title: l10n.withdrawalRequested,
-          message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(double.tryParse(_amountController.text) ?? 0)),
-          subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(card.balance)),
-          buttonText: l10n.backToHome,
-          onPressed: () {
-            state.setNavIndex(0); // Return to Home
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const MainNavigation()),
-              (route) => false,
-            );
-          },
-        ),
-      ),
-      (route) => false,
     );
   }
 
   String _getMethodTitle(String id, AppLocalizations l10n) {
     switch (id) {
-      case "wallet":
-        return l10n.withdrawToWallet;
+      case "mobile":
+        return l10n.mobileMoney;
       case "bank":
         return l10n.bankTransfer;
       default:
@@ -991,68 +308,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
   String _getMethodDesc(String id, AppLocalizations l10n) {
     switch (id) {
-      case "wallet":
-        return l10n.withdrawToWalletDesc;
+      case "mobile":
+        return l10n.mobileMoneyDesc;
       case "bank":
         return l10n.withdrawToBankDesc;
       default:
         return "";
     }
-  }
-
-  Widget _withdrawInputField(BuildContext context, String label, IconData icon, TextEditingController controller, {bool isNumber = false, bool isObscure = false, int? maxLength, Function(String)? onChanged}) {
-    final theme = Theme.of(context);
-    return TextField(
-      controller: controller,
-      onChanged: onChanged,
-      obscureText: isObscure,
-      maxLength: maxLength,
-      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
-      decoration: InputDecoration(
-        labelText: label,
-        counterText: "",
-        labelStyle: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w600),
-        prefixIcon: Icon(icon, color: AppColors.grey, size: 20 * context.fontSizeFactor),
-        filled: true,
-        fillColor: theme.colorScheme.surface,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.brightness == Brightness.dark ? Colors.white24 : Colors.black12, width: 2)),
-      ),
-    );
-  }
-
-  Widget _buildPurposeDropdown(ThemeData theme, AppLocalizations l10n, StateSetter setDialogState) {
-    final purposes = _getPurposes(l10n);
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
-      ),
-      child: DropdownButtonFormField<String>(
-        initialValue: _selectedPurpose ?? purposes.first,
-        dropdownColor: theme.colorScheme.surface,
-        style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w600, fontSize: 15 * context.fontSizeFactor),
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.info_outline_rounded, color: AppColors.grey, size: 20 * context.fontSizeFactor),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor, horizontal: 16 * context.fontSizeFactor),
-        ),
-        icon: Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey, size: 24 * context.fontSizeFactor),
-        items: purposes.map((p) => DropdownMenuItem(
-          value: p,
-          child: Text(p),
-        )).toList(),
-        onChanged: (value) {
-          if (value != null) {
-            setDialogState(() {
-              _selectedPurpose = value;
-            });
-          }
-        },
-      ),
-    );
   }
 }

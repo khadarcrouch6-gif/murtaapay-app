@@ -38,11 +38,11 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
   }
 
   Future<void> _loadRates() async {
+    final state = Provider.of<AppState>(context, listen: false);
     setState(() => _isLoading = true);
-    final newRates = await ApiService.fetchAllRates();
+    await state.updateMarketRates();
     if (mounted) {
       setState(() {
-        _rates.addAll(newRates);
         _isLoading = false;
       });
     }
@@ -84,10 +84,9 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
     });
   }
 
-  double _calculateConversion() {
+  double _calculateConversion(AppState state) {
     double amount = double.tryParse(_amountController.text) ?? 0.0;
-    double inUsd = amount / _rates[_fromCurrency]!;
-    return inUsd * _rates[_toCurrency]!;
+    return state.convertAmount(amount, _fromCurrency, _toCurrency);
   }
 
   @override
@@ -95,77 +94,72 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
     final l10n = AppLocalizations.of(context)!;
     final state = Provider.of<AppState>(context);
     final theme = Theme.of(context);
-    return ListenableBuilder(
-      listenable: state,
-      builder: (context, child) {
-        return Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          appBar: AppBar(
-            title: Text(l10n.exchangeRates, 
-                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
-            centerTitle: true,
-            leading: IconButton(
-              icon: Icon(
-                Directionality.of(context) == TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
-                color: theme.colorScheme.primary,
-              ),
-              onPressed: () => Navigator.pop(context),
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(l10n.exchangeRates, 
+             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.colorScheme.primary)),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Directionality.of(context) == TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+            color: theme.colorScheme.primary,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Center(
+        child: MaxWidthBox(
+          maxWidth: 800,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              context.horizontalPadding,
+              context.horizontalPadding,
+              context.horizontalPadding,
+              120, // Padding to clear the floating navigation bar
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FadeInDown(child: _buildConverterCard(context, state, l10n)),
+                const SizedBox(height: 32),
+                FadeInUp(child: Text(l10n.liveMarketRates, 
+                    style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary))),
+                const SizedBox(height: 16),
+                
+                if (_isLoading)
+                  const Center(child: CircularProgressIndicator(color: AppColors.accentTeal))
+                else
+                  ...state.fxRates.entries.where((e) => e.key != "USD").take(12).map((e) => 
+                    _buildRateItem(context, e.key, e.key, e.value.toStringAsFixed(2), Icons.monetization_on_rounded, Colors.blue, true)
+                  ),
+                
+                const SizedBox(height: 24),
+                
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline_rounded, color: AppColors.grey, size: 20 * context.fontSizeFactor),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          l10n.ratesInfo,
+                          style: TextStyle(fontSize: 12 * context.fontSizeFactor, color: AppColors.grey),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          body: Center(
-            child: MaxWidthBox(
-              maxWidth: 800,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  context.horizontalPadding,
-                  context.horizontalPadding,
-                  context.horizontalPadding,
-                  120, // Padding to clear the floating navigation bar
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FadeInDown(child: _buildConverterCard(context, state, l10n)),
-                    const SizedBox(height: 32),
-                    FadeInUp(child: Text(l10n.liveMarketRates, 
-                        style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary))),
-                    const SizedBox(height: 16),
-                    
-                    if (_isLoading)
-                      const Center(child: CircularProgressIndicator(color: AppColors.accentTeal))
-                    else
-                      ..._rates.entries.where((e) => e.key != "USD").take(8).map((e) => 
-                        _buildRateItem(context, e.key, e.key, e.value.toStringAsFixed(2), Icons.monetization_on_rounded, Colors.blue, true)
-                      ),
-                    
-                    const SizedBox(height: 24),
-                    
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.info_outline_rounded, color: AppColors.grey, size: 20 * context.fontSizeFactor),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              l10n.ratesInfo,
-                              style: TextStyle(fontSize: 12 * context.fontSizeFactor, color: AppColors.grey),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -243,7 +237,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      "= ${_calculateConversion().toStringAsFixed(2)}",
+                      "= ${_calculateConversion(state).toStringAsFixed(2)}",
                       style: TextStyle(color: Colors.white, fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -321,7 +315,7 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
               SizedBox(height: 16 * context.fontSizeFactor),
               Expanded(
                 child: ListView(
-                  children: _rates.keys.map((curr) => ListTile(
+                  children: state.fxRates.keys.map((curr) => ListTile(
                     leading: _buildFlag(curr, width: 32 * context.fontSizeFactor, height: 24 * context.fontSizeFactor),
                     title: Text(
                       curr,

@@ -31,12 +31,13 @@ class ReceiptView extends StatelessWidget {
     // Load Logo
     pw.ImageProvider? logo;
     try {
-      final logoData = await rootBundle.load('assets/images/logo.png');
+      final logoData = await rootBundle.load('assets/images/app_logo.png');
       logo = pw.MemoryImage(logoData.buffer.asUint8List());
     } catch (e) {
       debugPrint("Could not load logo for PDF: $e");
     }
 
+    final status = transaction['status']?.toString();
     final isNegative = transaction['isNegative'] ??
         (transaction['type'] == 'withdraw' || transaction['type'] == 'payment');
     
@@ -109,11 +110,11 @@ class ReceiptView extends StatelessWidget {
                     pw.Container(
                       padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: pw.BoxDecoration(
-                        color: tealColor,
+                        color: _getPdfStatusColor(status),
                         borderRadius: const pw.BorderRadius.all(pw.Radius.circular(20)),
                       ),
                       child: pw.Text(
-                        'SUCCESSFUL',
+                        _getStatusLabel(status, l10n).toUpperCase(),
                         style: pw.TextStyle(color: PdfColors.white, fontSize: 10, fontWeight: pw.FontWeight.bold),
                       ),
                     ),
@@ -154,6 +155,9 @@ class ReceiptView extends StatelessWidget {
               pw.Container(
                 width: double.infinity,
                 padding: const pw.EdgeInsets.symmetric(vertical: 20),
+                decoration: const pw.BoxDecoration(
+                  border: pw.Border(top: pw.BorderSide(color: PdfColors.grey200, width: 0.5)),
+                ),
                 child: pw.Column(
                   children: [
                     pw.Text('MurtaaxPay - Trusted Somali Partner', 
@@ -165,9 +169,9 @@ class ReceiptView extends StatelessWidget {
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.center,
                       children: [
-                        pw.Text('www.murtaaxpay.com', style: const pw.TextStyle(fontSize: 8, color: PdfColors.blue)),
+                        pw.Text('www.murtaaxpay.com', style: pw.TextStyle(fontSize: 8, color: primaryColor, decoration: pw.TextDecoration.underline)),
                         pw.SizedBox(width: 20),
-                        pw.Text('support@murtaaxpay.com', style: const pw.TextStyle(fontSize: 8, color: PdfColors.blue)),
+                        pw.Text('support@murtaaxpay.com', style: pw.TextStyle(fontSize: 8, color: primaryColor, decoration: pw.TextDecoration.underline)),
                       ],
                     ),
                   ],
@@ -195,6 +199,38 @@ class ReceiptView extends StatelessWidget {
     );
   }
 
+  String _getStatusLabel(String? status, AppLocalizations l10n) {
+    switch (status) {
+      case 'Success':
+      case 'Completed':
+        return l10n.success;
+      case 'Pending':
+        return l10n.pending;
+      case 'Processing':
+        return l10n.processing;
+      case 'Failed':
+        return l10n.transactionFailed;
+      default:
+        return l10n.pending;
+    }
+  }
+
+  PdfColor _getPdfStatusColor(String? status) {
+    switch (status) {
+      case 'Success':
+      case 'Completed':
+        return PdfColor.fromInt(AppColors.statusSuccess.toARGB32());
+      case 'Pending':
+        return PdfColor.fromInt(AppColors.statusPending.toARGB32());
+      case 'Processing':
+        return PdfColor.fromInt(AppColors.statusProcessing.toARGB32());
+      case 'Failed':
+        return PdfColor.fromInt(AppColors.statusFailed.toARGB32());
+      default:
+        return PdfColor.fromInt(AppColors.statusPending.toARGB32());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -220,7 +256,7 @@ class ReceiptView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
+                    color: Colors.black.withOpacity(0.2),
                     blurRadius: 30 * context.fontSizeFactor,
                     offset: Offset(0, 15 * context.fontSizeFactor),
                   )
@@ -246,18 +282,39 @@ class ReceiptView extends StatelessWidget {
 
   Widget _buildHeader(
       BuildContext context, ThemeData theme, AppLocalizations l10n) {
-    final isSuccess = transaction['status'] == 'Success' ||
-        transaction['status'] == 'Completed';
+    final status = transaction['status'];
+    final isSuccess = status == 'Success' || status == 'Completed';
+    final isProcessing = status == 'Processing';
+    final isFailed = status == 'Failed';
     final isNegative = transaction['isNegative'] ??
         (transaction['type'] == 'withdraw' || transaction['type'] == 'payment');
-    final amountColor = isNegative ? Colors.red : AppColors.accentTeal;
+    
+    Color statusColor = AppColors.statusPending;
+    IconData statusIcon = Icons.pending_rounded;
+    String title = l10n.pending;
 
-    String title = l10n.transactionSuccessful;
-    if (transaction['type'] == 'deposit' || !isNegative) {
-      title = l10n.topUpSuccessful;
-    } else if (transaction['type'] == 'withdraw') {
-      title = l10n.withdrawalSuccessful;
+    if (isSuccess) {
+      statusColor = AppColors.statusSuccess;
+      statusIcon = Icons.check_circle_rounded;
+      title = l10n.transactionSuccessful;
+      if (transaction['type'] == 'deposit' || !isNegative) {
+        title = l10n.topUpSuccessful;
+      } else if (transaction['type'] == 'withdraw') {
+        title = l10n.withdrawalSuccessful;
+      }
+    } else if (isProcessing) {
+      statusColor = AppColors.statusProcessing;
+      statusIcon = Icons.sync_rounded;
+      title = l10n.processing;
+    } else if (isFailed) {
+      statusColor = AppColors.statusFailed;
+      statusIcon = Icons.cancel_rounded;
+      title = l10n.transactionFailed;
     }
+
+    final amountColor = isFailed 
+        ? AppColors.statusFailed 
+        : (isNegative ? Colors.red : AppColors.accentTeal);
 
     return Stack(
       children: [
@@ -268,7 +325,7 @@ class ReceiptView extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
             icon: Icon(
               Icons.close_rounded,
-              color: Colors.grey.withValues(alpha: 0.5),
+              color: Colors.grey.withOpacity(0.5),
               size: 24 * context.fontSizeFactor,
             ),
           ),
@@ -285,13 +342,12 @@ class ReceiptView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(16 * context.fontSizeFactor),
                 decoration: BoxDecoration(
-                  color: (isSuccess ? AppColors.accentTeal : Colors.orange)
-                      .withValues(alpha: 0.1),
+                  color: statusColor.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  isSuccess ? Icons.check_circle_rounded : Icons.pending_rounded,
-                  color: isSuccess ? AppColors.accentTeal : Colors.orange,
+                  statusIcon,
+                  color: statusColor,
                   size: 40 * context.fontSizeFactor,
                 ),
               ),
@@ -331,7 +387,7 @@ class ReceiptView extends StatelessWidget {
             child: Container(
               height: 1 * context.fontSizeFactor,
               margin: EdgeInsets.symmetric(horizontal: 2 * context.fontSizeFactor),
-              color: Colors.grey.withValues(alpha: 0.3),
+              color: Colors.grey.withOpacity(0.3),
             ),
           ),
         ),
@@ -402,10 +458,33 @@ class ReceiptView extends StatelessWidget {
   }
 
   Widget _buildActions(BuildContext context, AppLocalizations l10n) {
+    final showSupport = transaction['status'] == 'Failed' || transaction['status'] == 'Processing';
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor),
       child: Column(
         children: [
+          if (showSupport) ...[
+            ElevatedButton.icon(
+              onPressed: () {
+                // TODO: Implement support navigation or action
+              },
+              icon: Icon(Icons.support_agent_rounded, size: 18 * context.fontSizeFactor),
+              label: Text(
+                l10n.helpSupport,
+                style: TextStyle(fontSize: 14 * context.fontSizeFactor),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.statusPending,
+                foregroundColor: Colors.white,
+                minimumSize: Size(double.infinity, 50 * context.fontSizeFactor),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                elevation: 0,
+              ),
+            ),
+            SizedBox(height: 12 * context.fontSizeFactor),
+          ],
           ElevatedButton.icon(
             onPressed: () async {
               try {
@@ -441,7 +520,7 @@ class ReceiptView extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
             style: OutlinedButton.styleFrom(
               minimumSize: Size(double.infinity, 50 * context.fontSizeFactor),
-              side: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
+              side: BorderSide(color: Colors.grey.withOpacity(0.2)),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
             ),

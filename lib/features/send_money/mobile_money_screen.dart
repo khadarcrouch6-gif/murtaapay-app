@@ -171,7 +171,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 8 * scale),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
+                          color: Colors.white.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(12 * scale),
                         ),
                         child: Row(

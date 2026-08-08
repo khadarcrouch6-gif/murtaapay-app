@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:lottie/lottie.dart';
 import 'receipt_view.dart';
 import '../app_colors.dart';
 import '../responsive_utils.dart';
@@ -13,6 +14,7 @@ class SuccessScreen extends StatefulWidget {
   final String message;
   final String buttonText;
   final String? subMessage; 
+  final String? subtitle;
   final Map<String, dynamic>? transactionData;
   final VoidCallback? onPressed;
 
@@ -22,6 +24,7 @@ class SuccessScreen extends StatefulWidget {
     required this.message,
     required this.buttonText,
     this.subMessage,
+    this.subtitle,
     this.transactionData,
     this.onPressed,
   });
@@ -77,32 +80,52 @@ class _SuccessScreenState extends State<SuccessScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   FadeInDown(
-                    child: Container(
-                      height: 110 * context.fontSizeFactor,
-                      width: 110 * context.fontSizeFactor,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF11998E), Color(0xFF38EF7D)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF11998E).withValues(alpha: 0.4),
-                            blurRadius: 20 * context.fontSizeFactor,
-                            offset: Offset(0, 10 * context.fontSizeFactor),
-                          )
+                    child: SizedBox(
+                      height: 200 * context.fontSizeFactor,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Lottie.network(
+                            'https://assets10.lottiefiles.com/packages/lf20_cyn8dgca.json',
+                            repeat: false,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.check_circle_outline,
+                                color: AppColors.accentTeal.withOpacity(0.2),
+                                size: 150 * context.fontSizeFactor,
+                              );
+                            },
+                          ),
+                          Container(
+                            height: 100 * context.fontSizeFactor,
+                            width: 100 * context.fontSizeFactor,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF11998E), Color(0xFF38EF7D)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF11998E).withOpacity(0.4),
+                                  blurRadius: 20 * context.fontSizeFactor,
+                                  offset: Offset(0, 10 * context.fontSizeFactor),
+                                )
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.check_rounded,
+                              color: Colors.white,
+                              size: 60 * context.fontSizeFactor,
+                            ),
+                          ),
                         ],
-                      ),
-                      child: Icon(
-                        Icons.check_rounded,
-                        color: Colors.white,
-                        size: 65 * context.fontSizeFactor,
                       ),
                     ),
                   ),
-                  SizedBox(height: 32 * context.fontSizeFactor),
+                  SizedBox(height: 16 * context.fontSizeFactor),
                   Text(
                     widget.title,
                     textAlign: TextAlign.center,
@@ -112,16 +135,30 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       color: theme.textTheme.titleLarge?.color,
                     ),
                   ),
-                  SizedBox(height: 12 * context.fontSizeFactor),
-                  Text(
-                    widget.message,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.grey,
-                      fontSize: 16 * context.fontSizeFactor,
-                      height: 1.5,
+                  if (widget.message.isNotEmpty) ...[
+                    SizedBox(height: 12 * context.fontSizeFactor),
+                    Text(
+                      widget.message,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.grey,
+                        fontSize: 16 * context.fontSizeFactor,
+                        height: 1.5,
+                      ),
                     ),
-                  ),
+                  ],
+                  if (widget.subtitle != null) ...[
+                    SizedBox(height: 12 * context.fontSizeFactor),
+                    Text(
+                      widget.subtitle!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.grey,
+                        fontSize: 16 * context.fontSizeFactor,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
                   if (widget.subMessage != null) ...[
                     SizedBox(height: 16 * context.fontSizeFactor),
                     Container(
@@ -130,7 +167,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         vertical: 8 * context.fontSizeFactor,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.accentTeal.withValues(alpha: 0.1),
+                        color: AppColors.accentTeal.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                       ),
                       child: Text(

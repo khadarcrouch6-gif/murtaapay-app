@@ -124,7 +124,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
+            color: AppColors.primary.withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -138,7 +138,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
             children: [
               Text(
                 "Total Hagbad Balance",
-                style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14, fontWeight: FontWeight.w500),
+                style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14, fontWeight: FontWeight.w500),
               ),
               const Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 20),
             ],
@@ -152,7 +152,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
@@ -171,9 +171,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.primary.withValues(alpha: 0.2)),
+        side: BorderSide(color: AppColors.primary.withOpacity(0.2)),
       ),
-      color: AppColors.primary.withValues(alpha: 0.05),
+      color: AppColors.primary.withOpacity(0.05),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -260,9 +260,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
               Container(
                 padding: EdgeInsets.all(12 * context.fontSizeFactor),
                 decoration: BoxDecoration(
-                  color: Colors.amber.withValues(alpha: 0.1),
+                  color: Colors.amber.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
-                  border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                  border: Border.all(color: Colors.amber.withOpacity(0.3)),
                 ),
                 child: Text(
                   "\"${l10n.fullOathText}\"",
@@ -402,7 +402,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     labelStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
                     border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: theme.disabledColor.withValues(alpha: 0.05),
+                    fillColor: theme.disabledColor.withOpacity(0.05),
                     suffixIcon: Icon(Icons.lock_outline, size: 16 * context.fontSizeFactor),
                     helperText: invitedMembers.length > 1 
                         ? "Cycles match the ${invitedMembers.length} members"
@@ -519,7 +519,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 Container(
                   margin: EdgeInsets.only(top: 8 * context.fontSizeFactor),
                   decoration: BoxDecoration(
-                    color: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[50],
+                    color: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.grey[50],
                     borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                     border: Border.all(color: theme.dividerColor),
                   ),
@@ -534,7 +534,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                         dense: true,
                         leading: CircleAvatar(
                           radius: 12 * context.fontSizeFactor,
-                          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                          backgroundColor: AppColors.primary.withOpacity(0.1),
                           child: Text(name.isNotEmpty ? name[0] : "?", style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: AppColors.primary)),
                         ),
                         title: Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor)),
@@ -570,7 +570,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                   margin: EdgeInsets.only(top: 8 * context.fontSizeFactor),
                   constraints: BoxConstraints(maxHeight: 250 * context.fontSizeFactor),
                   decoration: BoxDecoration(
-                    color: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[50],
+                    color: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.grey[50],
                     borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                     border: Border.all(color: theme.dividerColor),
                   ),
@@ -651,9 +651,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.purple.withValues(alpha: 0.2)),
+        side: BorderSide(color: Colors.purple.withOpacity(0.2)),
       ),
-      color: Colors.purple.withValues(alpha: 0.05),
+      color: Colors.purple.withOpacity(0.05),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -761,7 +761,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppColors.accentTeal.withValues(alpha: 0.1),
+            color: AppColors.accentTeal.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: const AdaptiveIcon(FontAwesomeIcons.users, color: AppColors.accentTeal, size: 20),
@@ -881,7 +881,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[50],
+            color: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.grey[50],
             borderRadius: BorderRadius.circular(15),
           ),
           child: Row(
@@ -898,9 +898,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.12),
+              color: AppColors.primary.withOpacity(0.12),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+              border: Border.all(color: AppColors.primary.withOpacity(0.2)),
             ),
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -999,14 +999,14 @@ class _HagbadScreenState extends State<HagbadScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200]!),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         leading: CircleAvatar(
-          backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+          backgroundColor: AppColors.accentTeal.withOpacity(0.1),
           child: Text(member.avatar, style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
         ),
         title: Row(
@@ -1308,7 +1308,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                               child: CircleAvatar(
                                 key: ValueKey<String>(currentName ?? ""),
                                 radius: 50 * context.fontSizeFactor,
-                                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                                backgroundColor: AppColors.primary.withOpacity(0.1),
                                 child: Text(
                                   currentName?[0] ?? "?",
                                   style: TextStyle(fontSize: 40 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.primary),
@@ -1341,7 +1341,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                       Container(
                         padding: EdgeInsets.all(12 * context.fontSizeFactor),
                         decoration: BoxDecoration(
-                          color: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[100],
+                          color: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
                           borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                         ),
                         child: Text(
@@ -1574,9 +1574,9 @@ class _HagbadScreenState extends State<HagbadScreen> {
                 Container(
                   padding: EdgeInsets.all(12 * context.fontSizeFactor),
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
+                    color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
-                    border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                    border: Border.all(color: Colors.green.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
@@ -1936,7 +1936,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
                     dense: true,
                     leading: CircleAvatar(
                       radius: 18 * context.fontSizeFactor,
-                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                       child: Text(otherMember.avatar, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
                     ),
                     title: Text(otherMember.name, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor)),
@@ -1999,7 +1999,7 @@ class _HagbadScreenState extends State<HagbadScreen> {
               decoration: InputDecoration(
                 counterText: "",
                 filled: true,
-                fillColor: Colors.grey.withValues(alpha: 0.1),
+                fillColor: Colors.grey.withOpacity(0.1),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor), borderSide: BorderSide.none),
               ),
             ),

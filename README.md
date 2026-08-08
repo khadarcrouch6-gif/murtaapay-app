@@ -38,6 +38,6 @@ MurtaaxPay is a premium Fintech application designed for the Somali Diaspora, fo
 
 ## Business Logic Notes
 
-- **Withdrawal Fee**: 1% fee (minimum $0.10) applied to withdrawals between $1 and $2000.
+- **Withdrawal Fee**: 2.5% fee (minimum $0.10) applied to withdrawals between $1 and $2000.
 - **Regional Logic**: Specific features like "Uul" (Guarantor) are triggered based on user regional prefixes (+252 for Somalia, +256 for Uganda).
 - **Simulated Failures**: PIN '0000' or amount 666.0 triggers simulated transaction failures for testing purposes.

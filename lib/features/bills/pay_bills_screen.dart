@@ -2,7 +2,6 @@ import 'dart:ui' as ui;
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -11,6 +10,7 @@ import '../../core/widgets/success_screen.dart';
 import '../navigation/main_navigation.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import '../../core/models/transaction.dart';
 
 class PayBillsScreen extends StatefulWidget {
   const PayBillsScreen({super.key});
@@ -29,82 +29,96 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
     {"title": "Gov Services", "l10nKey": "govServices", "icon": Icons.account_balance_rounded, "color": Colors.teal},
   ];
 
+  final Map<String, List<String>> _providers = {
+    "electricity": ["Telesom Electric", "Eeneeyo", "Hormuud Electric", "Total Energy", "BECO"],
+    "water": ["Mogadishu Water", "Hargeisa Water Agency", "Garowe Water", "Puntland Water"],
+    "internet": ["Somtel Internet", "Hormuud Connect", "Telesom Golis", "Somnet Fiber", "Golis Internet"],
+    "tvCable": ["DSTV Somalia", "StarTimes", "Cable Somalia", "MyTV"],
+    "education": ["Somali National University", "Simad University", "Amoud University", "Mogadishu University"],
+    "govServices": ["Passport Fees", "Traffic Fines", "Local Council Tax", "Ministry of Commerce"],
+  };
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        elevation: 0,
-        title: Text(
-          l10n.payBills, 
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.textTheme.titleLarge?.color)
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20 * context.fontSizeFactor, color: theme.iconTheme.color),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Center(
-        child: MaxWidthBox(
-          maxWidth: 900,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(
-              context.horizontalPadding,
-              context.horizontalPadding,
-              context.horizontalPadding,
-              120,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FadeInDown(
-                  child: Text(
-                    l10n.selectCategory, 
-                    style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)
-                  ),
-                ),
-                const SizedBox(height: 24),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: context.responsiveValue(mobile: 2, tablet: 3, desktop: 4),
-                    mainAxisSpacing: 16 * context.fontSizeFactor,
-                    crossAxisSpacing: 16 * context.fontSizeFactor,
-                    childAspectRatio: 1.1,
-                  ),
-                  itemCount: _categories.length,
-                  itemBuilder: (context, index) {
-                    return FadeInUp(
-                      delay: Duration(milliseconds: index * 50),
-                      child: _buildBillCategory(
-                        context,
-                        _categories[index]["title"],
-                        _categories[index]["l10nKey"],
-                        _categories[index]["icon"],
-                        _categories[index]["color"],
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 32),
-                FadeInUp(
-                  child: Text(
-                    l10n.recentBills, 
-                    style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildRecentBill(context, "Somtel Internet", "Oct 20, 2023", "\$25.00", "Internet", "internet", "ACC-992831"),
-                _buildRecentBill(context, "BECO Electricity", "Oct 15, 2023", "\$42.50", "Electricity", "electricity", "ACC-110293"),
-              ],
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 120,
+            floating: false,
+            pinned: true,
+            elevation: 0,
+            backgroundColor: theme.scaffoldBackgroundColor,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(l10n.payBills, style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold)),
+              centerTitle: false,
+              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
             ),
           ),
-        ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.billsLabel, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.85,
+                    ),
+                    itemCount: _categories.length,
+                    itemBuilder: (context, index) {
+                      final cat = _categories[index];
+                      return _buildBillCategory(context, cat['title'], cat['l10nKey'], cat['icon'], cat['color']);
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                  Text(l10n.recentBills, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ),
+          Consumer<AppState>(
+            builder: (context, state, _) {
+              final billTransactions = state.transactions.where((t) => t.category == "Bills").toList();
+              if (billTransactions.isEmpty) {
+                return SliverList(
+                  delegate: SliverChildListDelegate([
+                    Center(child: Text(l10n.noTransactions, style: TextStyle(color: AppColors.grey))),
+                    const SizedBox(height: 100),
+                  ]),
+                );
+              }
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final tx = billTransactions[index];
+                    final l10nKey = _deriveL10nKey(tx.title, l10n);
+                    return _buildRecentBill(
+                      context, 
+                      tx.title, 
+                      DateFormat('MMM dd, yyyy').format(tx.timestamp), 
+                      NumberFormat.simpleCurrency(name: state.currencyCode).format(tx.numericAmount.abs()),
+                      l10nKey,
+                      tx.referenceId ?? tx.id
+                    );
+                  },
+                  childCount: billTransactions.length,
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -122,8 +136,8 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
           border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.02), 
-              blurRadius: 20, 
+              color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.1 : 0.02),
+              blurRadius: 15,
               offset: const Offset(0, 8)
             )
           ],
@@ -154,124 +168,323 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
   }
 
   void _showPayDialog(BuildContext context, String category, String l10nKey, IconData icon, Color color) {
-    TextEditingController idController = TextEditingController();
-    TextEditingController amountController = TextEditingController();
+    final TextEditingController idController = TextEditingController();
+    final TextEditingController amountController = TextEditingController();
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final state = Provider.of<AppState>(context, listen: false);
     final translatedCategory = _getTranslatedCategory(l10n, l10nKey);
+
+    double amount = 0.0;
+    String selectedMethod = "Main Wallet";
+    String? selectedCardId;
+    String? selectedProvider = _providers[l10nKey]?.first;
+    bool isPinStage = false;
+    final TextEditingController pinController = TextEditingController();
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Container(
-            padding: EdgeInsets.all(32 * context.fontSizeFactor),
-            decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Container(
+              padding: EdgeInsets.all(32 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: EdgeInsets.all(10 * context.fontSizeFactor),
-                      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-                      child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
+                    if (!isPinStage) ...[
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 5,
+                          decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10 * context.fontSizeFactor),
+                            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                            child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              translatedCategory, 
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color)
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                    
+                    // Provider Selector
+                    Text(
+                      l10n.selectProvider,
+                      style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.grey),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        translatedCategory, 
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color)
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: theme.dividerColor.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: selectedProvider,
+                          isExpanded: true,
+                          dropdownColor: theme.scaffoldBackgroundColor,
+                          icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                          items: _providers[l10nKey]?.map((String provider) {
+                            return DropdownMenuItem<String>(
+                              value: provider,
+                              child: Text(provider, style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color)),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setModalState(() => selectedProvider = newValue);
+                          },
+                        ),
                       ),
                     ),
+                    const SizedBox(height: 24),
+
+                    // Source Selector
+                    Text(
+                      l10n.selectPaymentMethod,
+                      style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.grey),
+                    ),
+                    const SizedBox(height: 12),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildSourceOption(context, "Main Wallet", l10n.walletBalance, state.balance, selectedMethod == "Main Wallet", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state),
+                          ...state.cards.map((card) => _buildSourceOption(context, "card_${card.id}", card.cardHolder, card.balance, selectedMethod == "card_${card.id}", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state, cardId: card.id, isCard: true)),
+                          _buildSourceOption(context, "EVC Plus", "EVC Plus", 0, selectedMethod == "EVC Plus", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state, icon: Icons.phone_android_rounded),
+                          _buildSourceOption(context, "Somnet", "Somnet", 0, selectedMethod == "Somnet", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state, icon: Icons.signal_cellular_alt_rounded),
+                          if (state.savingsBalance > 0)
+                            _buildSourceOption(context, "Savings Account", l10n.savingsBalance, state.savingsBalance, selectedMethod == "Savings Account", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    TextField(
+                      controller: idController,
+                      style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * context.fontSizeFactor),
+                      decoration: InputDecoration(
+                        labelText: "$translatedCategory ID / ${l10n.accountNumber}",
+                        labelStyle: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
+                        ),
+                        prefixIcon: Icon(Icons.tag, color: AppColors.grey, size: 20 * context.fontSizeFactor),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: amountController,
+                      style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * context.fontSizeFactor),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      onChanged: (val) => setModalState(() => amount = double.tryParse(val) ?? 0.0),
+                      decoration: InputDecoration(
+                        labelText: l10n.amountToPay,
+                        labelStyle: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
+                        ),
+                        prefixIcon: Icon(Icons.attach_money, color: AppColors.grey, size: 20 * context.fontSizeFactor),
+                      ),
+                    ),
+                    
+                    if (amount > 0) ...[
+                      const SizedBox(height: 24),
+                      Container(
+                        padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                        decoration: BoxDecoration(
+                          color: theme.dividerColor.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(l10n.amount, style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
+                                Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(amount), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                              ],
+                            ),
+                            SizedBox(height: 8 * context.fontSizeFactor),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(l10n.fee, style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
+                                Text(
+                                  "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateFeeForSource(amount, selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod))}",
+                                  style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
+                              child: Divider(height: 1, color: theme.dividerColor.withValues(alpha: 0.1)),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(l10n.total, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                                Text(
+                                  NumberFormat.simpleCurrency(name: state.currencyCode).format(amount + state.calculateFeeForSource(amount, selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod)),
+                                  style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 32),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56 * context.fontSizeFactor,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (idController.text.isNotEmpty && amount > 0) {
+                            setModalState(() => isPinStage = true);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accentTeal,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          l10n.confirmPayment, 
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ] else ...[
+                    // PIN Stage
+                    Text(l10n.enterSecurityPin, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    Text(l10n.enterTransactionPin, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+                    const SizedBox(height: 24),
+                    TextField(
+                      controller: pinController,
+                      keyboardType: TextInputType.number,
+                      obscureText: true,
+                      maxLength: 4,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 10),
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        fillColor: theme.dividerColor.withValues(alpha: 0.05),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () => setModalState(() => isPinStage = false),
+                            child: Text(l10n.back),
+                          ),
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              if (state.verifyPin(pinController.text)) {
+                                Navigator.pop(context);
+                                _processTransaction(
+                                  context, 
+                                  l10nKey, 
+                                  amount.toString(), 
+                                  idController.text,
+                                  provider: selectedProvider,
+                                  paymentMethod: selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod,
+                                  cardId: selectedCardId
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.invalidPin)));
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.accentTeal,
+                              padding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                            ),
+                            child: Text(l10n.confirm, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
-                ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: idController,
-                  style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * context.fontSizeFactor),
-                  decoration: InputDecoration(
-                    labelText: "$translatedCategory ID / ${l10n.accountNumber}",
-                    labelStyle: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
-                    ),
-                    prefixIcon: Icon(Icons.tag, color: AppColors.grey, size: 20 * context.fontSizeFactor),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: amountController,
-                  style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * context.fontSizeFactor),
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: InputDecoration(
-                    labelText: l10n.amountToPay,
-                    labelStyle: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
-                    ),
-                    prefixIcon: Icon(Icons.attach_money, color: AppColors.grey, size: 20 * context.fontSizeFactor),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56 * context.fontSizeFactor,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (idController.text.isNotEmpty && amountController.text.isNotEmpty) {
-                        final accountId = idController.text;
-                        final amount = amountController.text;
-                        
-                        final pinSuccess = await _showSecurityPinDialog(context);
-                        if (pinSuccess) {
-                          if (!context.mounted) return;
-                          Navigator.pop(context);
-                          _processTransaction(context, l10nKey, amount, accountId);
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentTeal,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      l10n.confirmPayment, 
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ],
+                  const SizedBox(height: 12),
+                ],
+              ),
             ),
           ),
+        ),
+      ),
+    ),
+  );
+}
+
+  Widget _buildSourceOption(BuildContext context, String id, String title, double balance, bool isSelected, Function(String, String?) onTap, AppState state, {String? cardId, bool isCard = false, IconData? icon}) {
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: () => onTap(id, cardId),
+      child: Container(
+        margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
+        padding: EdgeInsets.all(12 * context.fontSizeFactor),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : theme.cardColor,
+          borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+          border: Border.all(color: isSelected ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.1), width: 2),
+        ),
+        child: Row(
+          children: [
+            Icon(icon ?? (isCard ? Icons.credit_card_rounded : Icons.account_balance_wallet_rounded), color: isSelected ? AppColors.accentTeal : AppColors.grey, size: 20 * context.fontSizeFactor),
+            SizedBox(width: 8 * context.fontSizeFactor),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12 * context.fontSizeFactor)),
+                if (balance > 0 || (!isCard && id != "EVC Plus" && id != "Somnet"))
+                  Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(balance), style: TextStyle(color: AppColors.grey, fontSize: 11 * context.fontSizeFactor)),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
-  void _processTransaction(BuildContext context, String l10nKey, String amountStr, String accountId) async {
+  void _processTransaction(BuildContext context, String l10nKey, String amountStr, String accountId, {String? provider, String? paymentMethod, String? cardId}) async {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final state = Provider.of<AppState>(context, listen: false);
@@ -282,7 +495,7 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
       return;
     }
 
-    if (!state.hasSufficientBalance(amount)) {
+    if (!state.hasSufficientBalanceForSource(amount, paymentMethod ?? "Main Wallet", cardId: cardId)) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance)));
       return;
     }
@@ -361,17 +574,19 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
 
     try {
       // Use the atomic central state method
-      await state.processBillPayment(
-        category: _getTranslatedCategory(l10n, l10nKey),
+      final transaction = await state.processBillPayment(
+        category: provider ?? _getTranslatedCategory(l10n, l10nKey),
         accountId: accountId,
         amount: amount,
         l10nKey: l10nKey,
+        paymentMethod: paymentMethod,
+        cardId: cardId,
       );
 
       if (!context.mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
       
-      _showSuccess(context, l10nKey, amountStr, state, accountId);
+      _showSuccess(context, l10nKey, amountStr, state, accountId, provider: provider, paymentMethod: paymentMethod, transaction: transaction);
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context, rootNavigator: true).pop();
@@ -382,25 +597,24 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
     }
   }
 
-  void _showSuccess(BuildContext context, String l10nKey, String amountStr, AppState state, String accountId) {
+  void _showSuccess(BuildContext context, String l10nKey, String amountStr, AppState state, String accountId, {String? provider, String? paymentMethod, required Transaction transaction}) {
     final l10n = AppLocalizations.of(context)!;
     final translatedCategory = _getTranslatedCategory(l10n, l10nKey);
+    final displayTitle = provider ?? translatedCategory;
     
-    final double? amount = double.tryParse(amountStr.replaceAll(RegExp(r'[^0-9.]'), ''));
-    final fee = state.calculateFee(amount ?? 0);
-    final total = (amount ?? 0) + fee;
+    final method = paymentMethod ?? "Main Wallet";
 
     final transactionData = {
-      'title': translatedCategory,
-      'amount': "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(total)}",
-      'date': DateFormat('MMM dd, yyyy').format(DateTime.now()),
-      'status': 'Success',
-      'type': 'payment',
-      'category': 'Bills',
-      'reference': 'TX-BILL-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
-      'method': 'Murtaax Wallet',
+      'title': displayTitle,
+      'amount': transaction.amount,
+      'date': DateFormat('MMM dd, yyyy').format(transaction.timestamp),
+      'status': transaction.status,
+      'type': transaction.type,
+      'category': transaction.category,
+      'reference': transaction.id,
+      'method': method,
       'accountId': accountId,
-      'isNegative': true,
+      'isNegative': transaction.isNegative,
     };
 
     Navigator.pushAndRemoveUntil(
@@ -426,11 +640,18 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
     );
   }
 
-  Widget _buildRecentBill(BuildContext context, String title, String date, String amount, String category, String l10nKey, String id) {
+  Widget _buildRecentBill(BuildContext context, String title, String date, String amount, String l10nKey, String id) {
     final theme = Theme.of(context);
+    final categoryData = _categories.firstWhere(
+      (c) => c['l10nKey'] == l10nKey,
+      orElse: () => _categories.first,
+    );
+    final icon = categoryData['icon'] as IconData;
+    final color = categoryData['color'] as Color;
+
     return FadeInUp(
       child: GestureDetector(
-        onTap: () => _showBillDetail(context, title, date, amount, category, l10nKey, id),
+        onTap: () => _showBillDetail(context, title, date, amount, l10nKey, id),
         child: Container(
           margin: const EdgeInsets.only(bottom: 12),
           padding: EdgeInsets.all(16 * context.fontSizeFactor),
@@ -450,8 +671,8 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
             children: [
               Container(
                 padding: EdgeInsets.all(10 * context.fontSizeFactor),
-                decoration: BoxDecoration(color: theme.scaffoldBackgroundColor, shape: BoxShape.circle),
-                child: Icon(Icons.receipt_long_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
+                decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -471,7 +692,7 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
     );
   }
 
-  void _showBillDetail(BuildContext context, String title, String date, String amount, String category, String l10nKey, String id) {
+  void _showBillDetail(BuildContext context, String title, String date, String amount, String l10nKey, String id) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
@@ -547,6 +768,19 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
       case "govServices": return l10n.govServices;
       default: return l10nKey;
     }
+  }
+
+  String _deriveL10nKey(String title, AppLocalizations l10n) {
+    for (var entry in _providers.entries) {
+      if (entry.value.contains(title)) return entry.key;
+    }
+    if (title == l10n.electricity) return "electricity";
+    if (title == l10n.water) return "water";
+    if (title == l10n.internet) return "internet";
+    if (title == l10n.tvCable) return "tvCable";
+    if (title == l10n.education) return "education";
+    if (title == l10n.govServices) return "govServices";
+    return "electricity";
   }
 
   Future<bool> _showSecurityPinDialog(BuildContext context) async {

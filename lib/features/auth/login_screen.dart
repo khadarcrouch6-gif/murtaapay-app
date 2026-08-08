@@ -141,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           errorBuilder: (context, error, stackTrace) => Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryDark.withValues(alpha: 0.1),
+                              color: AppColors.primaryDark.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Icon(Icons.lock_person_rounded, color: AppColors.primaryDark, size: 40 * context.fontSizeFactor),

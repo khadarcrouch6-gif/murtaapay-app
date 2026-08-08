@@ -110,11 +110,65 @@ abstract class AppLocalizations {
   /// **'Anonymous'**
   String get anonymous;
 
+  /// No description provided for @donationHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation History'**
+  String get donationHistory;
+
+  /// No description provided for @noDonationsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No donations found'**
+  String get noDonationsFound;
+
+  /// No description provided for @searchCampaigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Search campaigns...'**
+  String get searchCampaigns;
+
+  /// No description provided for @calculateZakatEasily.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate your Zakat easily and fulfill your obligation.'**
+  String get calculateZakatEasily;
+
+  /// No description provided for @calculateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate Now'**
+  String get calculateNow;
+
+  /// No description provided for @featuredCampaign.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Campaign'**
+  String get featuredCampaign;
+
+  /// No description provided for @safeAndSecureDonations.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe & Secure Donations'**
+  String get safeAndSecureDonations;
+
+  /// No description provided for @weEnsureFundsReach.
+  ///
+  /// In en, this message translates to:
+  /// **'We ensure your funds reach those in need safely.'**
+  String get weEnsureFundsReach;
+
   /// No description provided for @donationSuccessful.
   ///
   /// In en, this message translates to:
   /// **'Donation Successful!'**
   String get donationSuccessful;
+
+  /// No description provided for @beTheFirstToDonate.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to donate'**
+  String get beTheFirstToDonate;
 
   /// No description provided for @donationSuccessMessage.
   ///
@@ -242,6 +296,12 @@ abstract class AppLocalizations {
   /// **'No transactions found'**
   String get noTransactionsFound;
 
+  /// No description provided for @noTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions'**
+  String get noTransactions;
+
   /// No description provided for @recentTransactions.
   ///
   /// In en, this message translates to:
@@ -313,6 +373,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'More'**
   String get more;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
 
   /// No description provided for @spendingAnalysis.
   ///
@@ -776,6 +842,12 @@ abstract class AppLocalizations {
   /// **'Add Money'**
   String get addMoney;
 
+  /// No description provided for @amountToDeposit.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to Deposit'**
+  String get amountToDeposit;
+
   /// No description provided for @enterAmountToDeposit.
   ///
   /// In en, this message translates to:
@@ -896,22 +968,28 @@ abstract class AppLocalizations {
   /// **'Exchange Fee Info'**
   String get feeInfoTitle;
 
+  /// No description provided for @feeInfoDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn more about our transparent fee structure.'**
+  String get feeInfoDescription;
+
   /// No description provided for @feeInfoContent.
   ///
   /// In en, this message translates to:
-  /// **'Transaction fees depend on the payout method: Wallet (\$1.0/100), Bank (\$1.5/100), Mobile Money (\$2.5/100).'**
+  /// **'Transaction fees depend on the payout method: Wallet (\$1.0/100), Bank (\$2.5/100), Mobile Money (\$2.5/100).'**
   String get feeInfoContent;
 
   /// No description provided for @bankFeeInfo.
   ///
   /// In en, this message translates to:
-  /// **'The fee for bank transfers is \$1.50 per \$100.'**
+  /// **'The fee for bank transfers is \$2.50 per \$100.'**
   String get bankFeeInfo;
 
   /// No description provided for @cardFeeInfo.
   ///
   /// In en, this message translates to:
-  /// **'The fee for card transfers is \$1.50 per \$100.'**
+  /// **'The fee for card transfers is \$2.50 per \$100.'**
   String get cardFeeInfo;
 
   /// No description provided for @walletFeeInfo.
@@ -1502,6 +1580,12 @@ abstract class AppLocalizations {
   /// **'CARD HOLDER'**
   String get cardHolder;
 
+  /// No description provided for @provider.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get provider;
+
   /// No description provided for @yourName.
   ///
   /// In en, this message translates to:
@@ -1627,6 +1711,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Submit'**
   String get submit;
+
+  /// No description provided for @iHaveSentTheMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'I have sent the money'**
+  String get iHaveSentTheMoney;
 
   /// No description provided for @accountName.
   ///
@@ -2090,6 +2180,18 @@ abstract class AppLocalizations {
   /// **'Withdrawal Requested!'**
   String get withdrawalRequested;
 
+  /// No description provided for @withdrawalPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal Pending'**
+  String get withdrawalPending;
+
+  /// No description provided for @bankProcessingNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank transfers usually take 24-48 hours to complete. You can track the status in your transaction history.'**
+  String get bankProcessingNotice;
+
   /// No description provided for @withdrawalSuccessMessage.
   ///
   /// In en, this message translates to:
@@ -2105,7 +2207,7 @@ abstract class AppLocalizations {
   /// No description provided for @feeLabel.
   ///
   /// In en, this message translates to:
-  /// **'Fee (0.99%):'**
+  /// **'Fee (2.5%):'**
   String get feeLabel;
 
   /// No description provided for @totalDeduct.
@@ -2137,6 +2239,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Number must be 9 digits'**
   String get phoneLengthError;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
 
   /// No description provided for @payBills.
   ///
@@ -2216,12 +2324,6 @@ abstract class AppLocalizations {
   /// **'Payment Date'**
   String get paymentDate;
 
-  /// No description provided for @status.
-  ///
-  /// In en, this message translates to:
-  /// **'Status'**
-  String get status;
-
   /// No description provided for @success.
   ///
   /// In en, this message translates to:
@@ -2233,6 +2335,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pending'**
   String get pending;
+
+  /// No description provided for @processing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing'**
+  String get processing;
+
+  /// No description provided for @failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get failed;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
 
   /// No description provided for @completed.
   ///
@@ -2342,12 +2462,6 @@ abstract class AppLocalizations {
   /// **'Just a moment'**
   String get justAMoment;
 
-  /// No description provided for @processing.
-  ///
-  /// In en, this message translates to:
-  /// **'Processing...'**
-  String get processing;
-
   /// No description provided for @processingTransaction.
   ///
   /// In en, this message translates to:
@@ -2365,6 +2479,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please check your phone for the {provider} PIN prompt to authorize the payment.'**
   String stkPushInstructions(String provider);
+
+  /// No description provided for @invalidPrefixError.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid prefix for selected provider'**
+  String get invalidPrefixError;
+
+  /// No description provided for @pushNotificationSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Push Notification Sent'**
+  String get pushNotificationSent;
+
+  /// No description provided for @pushNotificationInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your phone and enter your PIN to authorize the transaction of {amount}'**
+  String pushNotificationInstructions(String amount);
+
+  /// No description provided for @depositToOurAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit to our account:'**
+  String get depositToOurAccount;
+
+  /// No description provided for @bankReferenceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: Please include the reference above in your bank transfer description for automatic processing.'**
+  String get bankReferenceNote;
+
+  /// No description provided for @confirmTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Transfer'**
+  String get confirmTransfer;
+
+  /// No description provided for @confirmTransferRep.
+  ///
+  /// In en, this message translates to:
+  /// **'By clicking confirm, you represent that you have already initiated the bank transfer of {amount} to the selected account.'**
+  String confirmTransferRep(String amount);
+
+  /// No description provided for @confirmAndSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & Submit'**
+  String get confirmAndSubmit;
+
+  /// No description provided for @transferNoted.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer Noted'**
+  String get transferNoted;
+
+  /// No description provided for @transferNotedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We have received your request for {amount}. Your balance will be updated once the transfer is verified.'**
+  String transferNotedMessage(String amount);
+
+  /// No description provided for @takes30to60Minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Usually takes 30-60 minutes.'**
+  String get takes30to60Minutes;
 
   /// No description provided for @waitingForProvider.
   ///
@@ -3116,6 +3296,12 @@ abstract class AppLocalizations {
   /// **'Raised'**
   String get raised;
 
+  /// No description provided for @goalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get goalLabel;
+
   /// No description provided for @goal.
   ///
   /// In en, this message translates to:
@@ -3241,6 +3427,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total Savings'**
   String get totalSavings;
+
+  /// No description provided for @savingsBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings Balance'**
+  String get savingsBalance;
 
   /// No description provided for @cardBalanceLabel.
   ///
@@ -4715,8 +4907,38 @@ abstract class AppLocalizations {
   /// No description provided for @sadaqahTrending.
   ///
   /// In en, this message translates to:
-  /// **'Trending'**
+  /// **'TRENDING'**
   String get sadaqahTrending;
+
+  /// No description provided for @sadaqahNew.
+  ///
+  /// In en, this message translates to:
+  /// **'NEW'**
+  String get sadaqahNew;
+
+  /// No description provided for @sadaqahEndingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'ENDING SOON'**
+  String get sadaqahEndingSoon;
+
+  /// No description provided for @sadaqahCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'COMPLETED'**
+  String get sadaqahCompleted;
+
+  /// No description provided for @sadaqahDonorsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} donors'**
+  String sadaqahDonorsCount(int count);
+
+  /// No description provided for @sadaqahSharingCampaign.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing {title}...'**
+  String sadaqahSharingCampaign(String title);
 
   /// No description provided for @sadaqahAgo.
   ///
@@ -5485,6 +5707,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You are approaching your daily limit.'**
   String get approachingLimitWarning;
+
+  /// No description provided for @nisabThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab Threshold'**
+  String get nisabThreshold;
+
+  /// No description provided for @belowNisabWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your assets are below the Nisab threshold ({threshold}). Zakat is only mandatory if your wealth exceeds this.'**
+  String belowNisabWarning(String threshold);
+
+  /// No description provided for @makeRecurringDonation.
+  ///
+  /// In en, this message translates to:
+  /// **'Make this a recurring donation'**
+  String get makeRecurringDonation;
+
+  /// No description provided for @campaignUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Campaign Updates'**
+  String get campaignUpdates;
+
+  /// No description provided for @finalizingTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Finalizing transaction...'**
+  String get finalizingTransaction;
+
+  /// No description provided for @pleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait...'**
+  String get pleaseWait;
 }
 
 class _AppLocalizationsDelegate

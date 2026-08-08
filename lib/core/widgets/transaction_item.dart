@@ -59,9 +59,7 @@ class TransactionItem extends StatelessWidget {
               decoration: BoxDecoration(
                 color: (avatarUrl != null || icon != null)
                   ? Colors.grey.withValues(alpha: 0.1)
-                  : (isSent == null 
-                    ? theme.colorScheme.primary.withValues(alpha: 0.05)
-                    : (isSent! ? Colors.red : AppColors.accentTeal).withValues(alpha: 0.1)),
+                  : _getStatusColor(status).withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -74,7 +72,7 @@ class TransactionItem extends StatelessWidget {
                         errorBuilder: (context, error, stackTrace) => Text(
                           title.isNotEmpty ? title[0] : "?",
                           style: TextStyle(
-                            color: theme.colorScheme.primary,
+                            color: _getStatusColor(status),
                             fontWeight: FontWeight.bold,
                             fontSize: 18 * context.fontSizeFactor,
                           ),
@@ -84,14 +82,20 @@ class TransactionItem extends StatelessWidget {
                   : (icon != null 
                     ? AdaptiveIcon(icon, color: AppColors.primaryDark, size: 20 * context.fontSizeFactor)
                     : (isSent == null 
-                      ? Text(
-                          title.isNotEmpty ? title[0] : "?",
-                          style: TextStyle(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18 * context.fontSizeFactor,
-                          ),
-                        )
+                      ? (status == "Failed" || status == "Processing"
+                          ? AdaptiveIcon(
+                              status == "Failed" ? FontAwesomeIcons.circleExclamation : FontAwesomeIcons.clock,
+                              color: _getStatusColor(status),
+                              size: 20 * context.fontSizeFactor,
+                            )
+                          : Text(
+                              title.isNotEmpty ? title[0] : "?",
+                              style: TextStyle(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18 * context.fontSizeFactor,
+                              ),
+                            ))
                       : AdaptiveIcon(
                           isSent! ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown,
                           color: isSent! ? Colors.red : AppColors.accentTeal,
@@ -148,9 +152,9 @@ class TransactionItem extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    status == "Success" ? l10n.success : l10n.pending,
+                    _getStatusLabel(status, l10n),
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: status == "Success" ? AppColors.accentTeal : Colors.orange,
+                      color: _getStatusColor(status),
                       fontWeight: FontWeight.bold,
                       fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) * context.fontSizeFactor,
                     ),
@@ -164,6 +168,38 @@ class TransactionItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case "Success":
+      case "Completed":
+        return AppColors.statusSuccess;
+      case "Pending":
+        return AppColors.statusPending;
+      case "Processing":
+        return AppColors.statusProcessing;
+      case "Failed":
+        return AppColors.statusFailed;
+      default:
+        return AppColors.statusPending;
+    }
+  }
+
+  String _getStatusLabel(String status, AppLocalizations l10n) {
+    switch (status) {
+      case "Success":
+      case "Completed":
+        return l10n.success;
+      case "Pending":
+        return l10n.pending;
+      case "Processing":
+        return l10n.processing;
+      case "Failed":
+        return l10n.transactionFailed;
+      default:
+        return l10n.pending;
+    }
   }
 
   static Widget skeleton(BuildContext context) {

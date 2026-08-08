@@ -184,7 +184,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
           border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : AppColors.grey.withValues(alpha: 0.2),
+            color: isSelected ? theme.colorScheme.primary : AppColors.grey.withOpacity(0.2),
             width: 1 * context.fontSizeFactor,
           ),
         ),
@@ -238,7 +238,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               height: 4 * context.fontSizeFactor,
               margin: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
               decoration: BoxDecoration(
-                color: AppColors.grey.withValues(alpha: 0.3),
+                color: AppColors.grey.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(2 * context.fontSizeFactor),
               ),
             ),
@@ -288,7 +288,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Icon(
               Icons.search_off_rounded,
               size: 80 * context.fontSizeFactor,
-              color: AppColors.grey.withValues(alpha: 0.5),
+              color: AppColors.grey.withOpacity(0.5),
             ),
             SizedBox(height: 16 * context.fontSizeFactor),
             Text(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
@@ -33,8 +34,9 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
   bool _isSearching = false;
   bool _isSplitEnabled = false;
   bool _isKeypadVisible = true;
-  int _splitPeopleCount = 2;
+  int _splitPeopleCount = 1;
   List<double> _individualShares = [];
+  List<Map<String, String>> _splitParticipants = [];
 
   @override
   void initState() {
@@ -159,7 +161,195 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
       _selectedMurtaaxName = name;
       _selectedWalletId = walletId;
       _showAmountInput = true;
+      // Initialize split participants with the first selected person
+      _splitParticipants = [{'name': name, 'walletId': walletId}];
+      _splitPeopleCount = 1;
+      _updateSplitShares();
     });
+  }
+
+  void _showAddParticipantDialog() {
+    final TextEditingController idController = TextEditingController();
+    Timer? debounceTimer;
+    
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          bool isVerifying = false;
+          String? verifiedName;
+          String? error;
+          List<MapEntry<String, String>> suggestions = [];
+          final appState = Provider.of<AppState>(context, listen: false);
+          final theme = Theme.of(context);
+
+          void performLookup(String id) async {
+            if (id.isEmpty) {
+              setDialogState(() {
+                verifiedName = null;
+                error = null;
+                isVerifying = false;
+                suggestions = [];
+              });
+              return;
+            }
+
+            // Show suggestions immediately from local mock data if available
+            final matches = appState.mockUsers.entries
+                .where((e) => e.key.startsWith(id) || e.value.toLowerCase().contains(id.toLowerCase()))
+                .take(5)
+                .toList();
+            
+            setDialogState(() {
+              suggestions = matches;
+              error = null;
+              verifiedName = null;
+            });
+
+            // Debounce the heavy "network" lookup for exact match
+            debounceTimer?.cancel();
+            debounceTimer = Timer(const Duration(milliseconds: 600), () async {
+              if (id.length >= 5) {
+                setDialogState(() => isVerifying = true);
+                final name = await appState.resolveAccountName(id);
+                if (context.mounted) {
+                  setDialogState(() {
+                    isVerifying = false;
+                    if (name != null) {
+                      verifiedName = name;
+                      error = null;
+                    } else {
+                      verifiedName = null;
+                      error = "ID does not exist";
+                    }
+                  });
+                }
+              }
+            });
+          }
+          
+          return AlertDialog(
+            title: const Text("Add Person to Split", style: TextStyle(fontWeight: FontWeight.bold)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+            contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Enter Wallet ID or Phone", style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: idController,
+                  autofocus: true,
+                  onChanged: performLookup,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    hintText: "e.g. 102234",
+                    prefixIcon: const Icon(Icons.alternate_email_rounded, color: AppColors.accentTeal, size: 20),
+                    suffixIcon: isVerifying 
+                        ? const Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accentTeal))
+                        : (verifiedName != null ? const Icon(Icons.check_circle, color: Colors.green) : null),
+                    filled: true,
+                    fillColor: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: error != null ? Colors.red : AppColors.accentTeal, width: 1.5),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                if (error != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, left: 4),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error_outline, color: Colors.red, size: 14),
+                        const SizedBox(width: 4),
+                        Text(error!, style: const TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                if (verifiedName != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, left: 4),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.verified, color: Colors.green, size: 14),
+                        const SizedBox(width: 4),
+                        Text("Verified: $verifiedName", style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                
+                // Suggestions List
+                if (suggestions.isNotEmpty && verifiedName == null) ...[
+                  const SizedBox(height: 12),
+                  const Text("Suggestions", style: TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: Container(
+                      constraints: const BoxConstraints(maxHeight: 150),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: suggestions.length,
+                        itemBuilder: (context, index) {
+                          final match = suggestions[index];
+                          return ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            visualDensity: VisualDensity.compact,
+                            leading: CircleAvatar(
+                              radius: 12,
+                              backgroundColor: AppColors.accentTeal.withOpacity(0.1),
+                              child: Text(match.value[0], style: const TextStyle(fontSize: 10, color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
+                            ),
+                            title: Text(match.value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                            subtitle: Text(match.key, style: const TextStyle(fontSize: 11)),
+                            onTap: () {
+                              idController.text = match.key;
+                              performLookup(match.key);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  debounceTimer?.cancel();
+                  Navigator.pop(context);
+                },
+                child: const Text("Cancel", style: TextStyle(color: Colors.grey))
+              ),
+              ElevatedButton(
+                onPressed: verifiedName == null || _splitParticipants.any((p) => p['walletId'] == idController.text)
+                    ? null 
+                    : () {
+                        setState(() {
+                          _splitParticipants.add({'name': verifiedName!, 'walletId': idController.text});
+                          _splitPeopleCount = _splitParticipants.length;
+                          _updateSplitShares();
+                        });
+                        Navigator.pop(context);
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.accentTeal, 
+                  foregroundColor: Colors.white, 
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                ),
+                child: const Text("Add", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
+          );
+        }
+      ),
+    );
   }
 
   @override
@@ -266,7 +456,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppColors.accentTeal.withValues(alpha: 0.1),
+                    color: AppColors.accentTeal.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Icon(Icons.qr_code_scanner_rounded, color: AppColors.accentTeal),
@@ -285,7 +475,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                 ...globalMatches.map((e) => ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
                   leading: CircleAvatar(
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                    backgroundColor: AppColors.primary.withOpacity(0.1),
                     child: Text(e.value[0], style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
                   ),
                   title: Text(e.value, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
@@ -320,7 +510,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                                   children: [
                                     CircleAvatar(
                                       radius: 28 * context.fontSizeFactor,
-                                      backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+                                      backgroundColor: AppColors.accentTeal.withOpacity(0.1),
                                       child: Text(profile.name[0], style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 18 * context.fontSizeFactor)),
                                     ),
                                     Positioned(
@@ -399,7 +589,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                     children: [
                       CircleAvatar(
                         radius: 18 * context.fontSizeFactor,
-                        backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+                        backgroundColor: AppColors.accentTeal.withOpacity(0.1),
                         child: Text(name[0], style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
                       ),
                       const SizedBox(width: 10),
@@ -429,7 +619,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: _isKeypadVisible ? Colors.transparent : AppColors.accentTeal.withValues(alpha: 0.05),
+                        color: _isKeypadVisible ? Colors.transparent : AppColors.accentTeal.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
@@ -471,7 +661,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                           ),
                           padding: EdgeInsets.zero,
                           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          side: BorderSide(color: AppColors.accentTeal.withValues(alpha: 0.3)),
+                          side: BorderSide(color: AppColors.accentTeal.withOpacity(0.3)),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                       )).toList(),
@@ -502,9 +692,9 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[50],
+                        color: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.grey[50],
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                        border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
                       ),
                       child: Column(
                         children: [
@@ -531,7 +721,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(color: Colors.orange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+                                    decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
                                     child: const Icon(Icons.call_split_rounded, color: Colors.orange, size: 16),
                                   ),
                                   const SizedBox(width: 10),
@@ -564,70 +754,60 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                                         Row(
                                           children: [
                                             const SizedBox(width: 32),
-                                            const Text("Split: ", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                            Text("Participants (${_splitParticipants.length})", style: const TextStyle(fontSize: 12, color: Colors.grey)),
                                             const Spacer(),
-                                            IconButton(
-                                              icon: const Icon(Icons.remove_circle_outline, size: 18),
-                                              onPressed: _splitPeopleCount > 2 ? () {
-                                                setState(() => _splitPeopleCount--);
-                                                _updateSplitShares();
-                                              } : null,
-                                              padding: EdgeInsets.zero,
-                                              constraints: const BoxConstraints(),
+                                            TextButton.icon(
+                                              onPressed: _showAddParticipantDialog,
+                                              icon: const Icon(Icons.person_add_alt_1, size: 16, color: AppColors.accentTeal),
+                                              label: const Text("Add Person", style: TextStyle(fontSize: 12, color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
+                                              style: TextButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                minimumSize: Size.zero,
+                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                              ),
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                                              child: Text("$_splitPeopleCount", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.add_circle_outline, size: 18),
-                                              onPressed: () {
-                                                setState(() => _splitPeopleCount++);
-                                                _updateSplitShares();
-                                              },
-                                              padding: EdgeInsets.zero,
-                                              constraints: const BoxConstraints(),
-                                            ),
-                                            const Text(" people", style: TextStyle(fontSize: 12, color: Colors.grey)),
                                           ],
                                         ),
                                         const SizedBox(height: 8),
-                                        ...List.generate(_individualShares.length, (index) {
+                                        ...List.generate(_splitParticipants.length, (index) {
+                                          final p = _splitParticipants[index];
                                           return Padding(
                                             padding: const EdgeInsets.only(bottom: 6),
                                             child: Row(
                                               children: [
                                                 const SizedBox(width: 8),
                                                 CircleAvatar(
-                                                  radius: 9,
-                                                  backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
-                                                  child: Text("${index + 1}", style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
+                                                  radius: 12,
+                                                  backgroundColor: AppColors.accentTeal.withOpacity(0.1),
+                                                  child: Text(p['name']![0], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
                                                 ),
                                                 const SizedBox(width: 10),
                                                 Expanded(
-                                                  child: Text(
-                                                    index == 0 ? "You" : "Person ${index + 1}",
-                                                    style: const TextStyle(fontSize: 11),
-                                                    overflow: TextOverflow.ellipsis,
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(p['name']!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+                                                      Text("ID: ${p['walletId']}", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                                    ],
                                                   ),
                                                 ),
                                                 Container(
-                                                  width: 65,
-                                                  height: 26,
-                                                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                                                  width: 75,
+                                                  height: 30,
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8),
                                                   decoration: BoxDecoration(
                                                     color: theme.brightness == Brightness.dark ? Colors.black : Colors.white,
-                                                    borderRadius: BorderRadius.circular(6),
-                                                    border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                                                    borderRadius: BorderRadius.circular(8),
+                                                    border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
                                                   ),
                                                   child: Row(
                                                     children: [
-                                                      const Text("\$", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 10)),
+                                                      const Text("\$", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 11)),
                                                       Expanded(
                                                         child: TextField(
                                                           keyboardType: TextInputType.number,
                                                           textAlign: TextAlign.right,
-                                                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                                                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                                           decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.zero),
                                                           controller: TextEditingController(text: _individualShares[index].toStringAsFixed(0))..selection = TextSelection.fromPosition(TextPosition(offset: _individualShares[index].toStringAsFixed(0).length)),
                                                           onChanged: (val) {
@@ -643,6 +823,19 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                                                     ],
                                                   ),
                                                 ),
+                                                if (_splitParticipants.length > 1)
+                                                  IconButton(
+                                                    icon: const Icon(Icons.remove_circle_outline, size: 20, color: Colors.redAccent),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _splitParticipants.removeAt(index);
+                                                        _splitPeopleCount = _splitParticipants.length;
+                                                        _updateSplitShares();
+                                                      });
+                                                    },
+                                                    padding: const EdgeInsets.only(left: 8),
+                                                    constraints: const BoxConstraints(),
+                                                  ),
                                               ],
                                             ),
                                           );
@@ -673,8 +866,8 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                 decoration: BoxDecoration(
                   color: theme.brightness == Brightness.dark ? Colors.black : Colors.white,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
-                  border: Border(top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.05))),
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
+                  border: Border(top: BorderSide(color: theme.dividerColor.withOpacity(0.05))),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -701,7 +894,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
               color: theme.brightness == Brightness.dark ? Colors.black : Colors.white,
               boxShadow: [
                 if (!showCustomKeypad) 
-                  BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, -2))
+                  BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, -2))
               ],
             ),
             child: SizedBox(
@@ -776,7 +969,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: matches ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
+        color: matches ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -810,7 +1003,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(width: 12),
@@ -833,18 +1026,23 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
     final name = _selectedMurtaaxName ?? _selectedContact?.displayName ?? "Contact";
     final amount = _amountController.text;
 
+    String displayReceiver = name;
+    if (_isSplitEnabled && _splitParticipants.length > 1) {
+      displayReceiver = "${_splitParticipants.length} people";
+    }
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: "Request Sent!",
-          message: "We've sent your request for \$$amount to $name",
+          message: "We've sent your request for \$$amount to $displayReceiver",
           buttonText: "Done",
-          subMessage: "Awaiting confirmation from $name",
+          subMessage: "Awaiting confirmation from $displayReceiver",
           transactionData: {
             'title': 'Money Request',
             'amount': '\$$amount',
-            'receiver': name,
+            'receiver': displayReceiver,
             'date': DateFormat('MMM dd, yyyy HH:mm').format(DateTime.now()),
             'status': 'Pending',
             'type': 'request_out',
@@ -854,6 +1052,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
             'reminder': _reminderOption,
             'isSplit': _isSplitEnabled.toString(),
             'splitCount': _isSplitEnabled ? _splitPeopleCount.toString() : '1',
+            'participants': _isSplitEnabled ? _splitParticipants.map((p) => p['name']).join(', ') : name,
           },
           onPressed: () {
             Provider.of<AppState>(context, listen: false).setNavIndex(0);
@@ -874,13 +1073,13 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
       padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 8),
       child: Row(
         children: [
-          Icon(icon, size: 18 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
+          Icon(icon, size: 18 * context.fontSizeFactor, color: theme.colorScheme.primary.withOpacity(0.7)),
           const SizedBox(width: 8),
           Text(
             title,
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7),
+              color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
               letterSpacing: 0.5,
             ),
           ),

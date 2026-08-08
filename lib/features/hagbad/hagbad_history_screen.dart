@@ -43,7 +43,7 @@ class HagbadHistoryScreen extends StatelessWidget {
                     Icon(
                       Icons.history,
                       size: 64 * context.fontSizeFactor,
-                      color: AppColors.grey.withValues(alpha: 0.5),
+                      color: AppColors.grey.withOpacity(0.5),
                     ),
                     SizedBox(height: 16 * context.fontSizeFactor),
                     Text(
@@ -99,7 +99,7 @@ class HagbadHistoryScreen extends StatelessWidget {
               height: 4 * context.fontSizeFactor,
               margin: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
               decoration: BoxDecoration(
-                color: AppColors.grey.withValues(alpha: 0.3),
+                color: AppColors.grey.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(2 * context.fontSizeFactor),
               ),
             ),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui' as ui;
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -23,13 +24,14 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final state = AppState();
+    final state = Provider.of<AppState>(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     double progress = widget.campaign.raisedAmount / widget.campaign.goalAmount;
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
+      bottomNavigationBar: _buildBottomAction(),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -139,9 +141,14 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                         SizedBox(height: 32 * context.fontSizeFactor),
                         FadeInUp(
                           delay: const Duration(milliseconds: 700),
+                          child: _buildUpdatesTimeline(context, state, l10n),
+                        ),
+                        SizedBox(height: 32 * context.fontSizeFactor),
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 800),
                           child: _buildDonorsList(context, state, l10n),
                         ),
-                        SizedBox(height: 120 * context.fontSizeFactor), // padding for bottom button
+                        const SizedBox(height: 24), // minimal padding as we use bottomNavigationBar
                       ],
                     ),
                   ),
@@ -151,23 +158,37 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           ),
         ],
       ),
-      bottomSheet: MaxWidthBox(
-        maxWidth: 800,
-        child: Container(
-          padding: EdgeInsets.all(24 * context.fontSizeFactor),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, -5))],
-            border: isDark ? Border(top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))) : null,
-          ),
-          child: ElevatedButton(
-            onPressed: () => _showDonateDialog(context, state, l10n, theme, isDark),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.accentTeal,
-              minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+    );
+  }
+
+  Widget _buildBottomAction() {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, -5))],
+        border: isDark ? Border(top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))) : null,
+      ),
+      child: SafeArea(
+        child: Center(
+          child: MaxWidthBox(
+            maxWidth: 800,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(24 * context.fontSizeFactor, 12 * context.fontSizeFactor, 24 * context.fontSizeFactor, 12 * context.fontSizeFactor),
+              child: ElevatedButton(
+                onPressed: () => _showDonateDialog(context, Provider.of<AppState>(context, listen: false), l10n, theme, isDark),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.accentTeal,
+                  minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                ),
+                child: Text(l10n.donateNow, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Colors.white)),
+              ),
             ),
-            child: Text(l10n.donateNow, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Colors.white)),
           ),
         ),
       ),
@@ -175,6 +196,19 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   }
 
   Widget _buildProgressCard(AppState state, AppLocalizations l10n, double progress, ThemeData theme, bool isDark) {
+    String milestoneText = "";
+    if (progress >= 1.0) {
+      milestoneText = "Goal Reached! 🎉";
+    } else if (progress >= 0.9) {
+      milestoneText = "Almost There! 🔥";
+    } else if (progress >= 0.75) {
+      milestoneText = "75% Completed 🚀";
+    } else if (progress >= 0.5) {
+      milestoneText = "Halfway There! 🙌";
+    } else if (progress >= 0.25) {
+      milestoneText = "Gaining Momentum ✨";
+    }
+
     return Container(
       padding: EdgeInsets.all(24 * context.fontSizeFactor),
       decoration: BoxDecoration(
@@ -186,32 +220,54 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("\$${widget.campaign.raisedAmount.toInt()}", style: TextStyle(fontSize: 28 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
-              SizedBox(width: 8 * context.fontSizeFactor),
-              Expanded(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Row(
-                    children: [
-                      Text(l10n.sadaqahRaisedOf, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
-                      SizedBox(width: 4 * context.fontSizeFactor),
-                      Text("\$${widget.campaign.goalAmount.toInt()} ${l10n.goal}", style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                    ],
+              Row(
+                children: [
+                  Text("\$${widget.campaign.raisedAmount.toInt()}", style: TextStyle(fontSize: 28 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
+                  SizedBox(width: 8 * context.fontSizeFactor),
+                  Text(l10n.sadaqahRaisedOf, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+                ],
+              ),
+              if (milestoneText.isNotEmpty)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
+                  decoration: BoxDecoration(
+                    color: AppColors.accentTeal.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8 * context.fontSizeFactor),
+                  ),
+                  child: Text(
+                    milestoneText,
+                    style: TextStyle(color: AppColors.accentTeal, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                   ),
                 ),
-              ),
             ],
           ),
+          SizedBox(height: 8 * context.fontSizeFactor),
+          Text("\$${widget.campaign.goalAmount.toInt()} ${l10n.goal}", style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           SizedBox(height: 16 * context.fontSizeFactor),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10 * context.fontSizeFactor),
-            child: LinearProgressIndicator(
-              value: progress,
-              backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.1),
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
-              minHeight: 12 * context.fontSizeFactor,
+          TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 1500),
+            curve: Curves.easeOutCubic,
+            tween: Tween<double>(begin: 0, end: progress),
+            builder: (context, value, child) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10 * context.fontSizeFactor),
+                  child: LinearProgressIndicator(
+                    value: value,
+                    backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.1),
+                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+                    minHeight: 12 * context.fontSizeFactor,
+                  ),
+                ),
+                SizedBox(height: 4 * context.fontSizeFactor),
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Text("${(value * 100).toInt()}%", style: TextStyle(color: AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                ),
+              ],
             ),
           ),
           SizedBox(height: 16 * context.fontSizeFactor),
@@ -332,367 +388,603 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   }
 
   Widget _buildDonorsList(BuildContext context, AppState state, AppLocalizations l10n) {
-    final donors = [
-      {"name": "Ali Hassan", "amount": 50, "time": "2m ago"},
-      {"name": l10n.anonymous, "amount": 100, "time": "15m ago"},
-      {"name": "Sahra Jama", "amount": 25, "time": "1h ago"},
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.recentDonations, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(l10n.recentDonations, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+            if (widget.campaign.recentDonors.length > 3)
+              TextButton(
+                onPressed: () {},
+                child: Text(l10n.viewAll, style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
+              ),
+          ],
+        ),
         SizedBox(height: 16 * context.fontSizeFactor),
-        ...donors.map((donor) => Padding(
-          padding: EdgeInsets.only(bottom: 16 * context.fontSizeFactor),
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
-                child: Text(donor["name"].toString().substring(0, 1), style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
+        if (widget.campaign.recentDonors.isEmpty)
+          Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 24 * context.fontSizeFactor),
+              child: Text(
+                l10n.beTheFirstToDonate,
+                style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor, fontStyle: FontStyle.italic),
               ),
-              SizedBox(width: 16 * context.fontSizeFactor),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(donor["name"].toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text(donor["time"].toString(), style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor)),
-                  ],
+            ),
+          )
+        else
+          ...widget.campaign.recentDonors.take(5).map((donor) => Padding(
+            padding: EdgeInsets.only(bottom: 16 * context.fontSizeFactor),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+                  backgroundImage: (donor.isAnonymous || donor.avatarUrl == null) ? null : NetworkImage(donor.avatarUrl!),
+                  child: (donor.isAnonymous || donor.avatarUrl == null)
+                    ? Text(donor.isAnonymous ? "?" : donor.name.substring(0, 1), style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold))
+                    : null,
                 ),
-              ),
-              Text("\$${donor["amount"]}", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor)),
-            ],
-          ),
-        )).toList(),
+                SizedBox(width: 16 * context.fontSizeFactor),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(donor.isAnonymous ? l10n.anonymous : donor.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      if (donor.message != null && donor.message!.isNotEmpty) ...[
+                        SizedBox(height: 4 * context.fontSizeFactor),
+                        Container(
+                          padding: EdgeInsets.all(12 * context.fontSizeFactor),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).dividerColor.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
+                          ),
+                          child: Text(
+                            donor.message!,
+                            style: TextStyle(fontSize: 13 * context.fontSizeFactor, fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ],
+                      SizedBox(height: 4 * context.fontSizeFactor),
+                      Text(
+                        DateFormat('MMM dd, hh:mm a').format(donor.donatedAt), 
+                        style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor)
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  NumberFormat.simpleCurrency(name: "USD", decimalDigits: 0).format(donor.amount), 
+                  style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor)
+                ),
+              ],
+            ),
+          )).toList(),
       ],
     );
   }
 
-  void _showDonateDialog(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme, bool isDark) {
-    int selectedAmount = 50;
-    int currentStep = 0;
-    String selectedMethod = "Wallet";
-    final TextEditingController customAmountController = TextEditingController();
-    final TextEditingController pinController = TextEditingController();
+  Widget _buildUpdatesTimeline(BuildContext context, AppState state, AppLocalizations l10n) {
+    if (widget.campaign.updates.isEmpty) return const SizedBox.shrink();
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => MaxWidthBox(
-          maxWidth: 600,
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.75,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(36 * context.fontSizeFactor)),
-              boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 40, offset: const Offset(0, -10)),
-              ],
-            ),
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: Column(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.campaignUpdates, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+        SizedBox(height: 24 * context.fontSizeFactor),
+        ...widget.campaign.updates.asMap().entries.map((entry) {
+          final index = entry.key;
+          final update = entry.value;
+          final isLast = index == widget.campaign.updates.length - 1;
+
+          return IntrinsicHeight(
+            child: Row(
               children: [
-                SizedBox(height: 12 * context.fontSizeFactor),
-                Container(width: 40 * context.fontSizeFactor, height: 4 * context.fontSizeFactor, decoration: BoxDecoration(color: AppColors.grey.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(2 * context.fontSizeFactor))),
-                SizedBox(height: 24 * context.fontSizeFactor),
-                Row(
+                Column(
                   children: [
-                     if (currentStep > 0) IconButton(
-                       icon: Icon(Directionality.of(context) == ui.TextDirection.rtl ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded),
-                       onPressed: () => setModalState(() => currentStep--),
-                     ),
-                     const Spacer(),
-                     Text(
-                       currentStep == 0 ? l10n.selectAmount : 
-                       currentStep == 1 ? l10n.paymentMethod :
-                       l10n.securityVerification,
-                       style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                     ),
-                     const Spacer(),
-                     if (currentStep > 0) SizedBox(width: 48 * context.fontSizeFactor),
+                    Container(
+                      width: 12 * context.fontSizeFactor,
+                      height: 12 * context.fontSizeFactor,
+                      decoration: const BoxDecoration(color: AppColors.accentTeal, shape: BoxShape.circle),
+                    ),
+                    if (!isLast)
+                      Expanded(
+                        child: Container(
+                          width: 2 * context.fontSizeFactor,
+                          color: AppColors.accentTeal.withValues(alpha: 0.2),
+                        ),
+                      ),
                   ],
                 ),
-                const Divider(),
+                SizedBox(width: 16 * context.fontSizeFactor),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 32 * context.fontSizeFactor),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (currentStep == 0) ...[
-                          _buildAmountStep(state, l10n, selectedAmount, customAmountController, theme, (val) => setModalState(() => selectedAmount = val)),
-                        ] else if (currentStep == 1) ...[
-                          _buildPaymentMethodStep(state, l10n, selectedMethod, theme, (val) => setModalState(() => selectedMethod = val)),
-                        ] else ...[
-                          Text(
-                            l10n.enterTransactionPin,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 24 * context.fontSizeFactor),
-                          SizedBox(
-                            width: 200 * context.fontSizeFactor,
-                            child: TextField(
-                              controller: pinController,
-                              obscureText: true,
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
-                              autofocus: true,
-                              style: TextStyle(fontSize: 24 * context.fontSizeFactor, letterSpacing: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(4),
-                              ],
-                              decoration: InputDecoration(
-                                hintText: "****",
-                                hintStyle: TextStyle(letterSpacing: 16 * context.fontSizeFactor, fontSize: 24 * context.fontSizeFactor),
-                                filled: true,
-                                fillColor: theme.dividerColor.withValues(alpha: 0.05),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
-                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2)),
-                              ),
-                              onChanged: (val) {
-                                if (val.length == 4) {
-                                   final double amount = customAmountController.text.isNotEmpty 
-                                      ? double.tryParse(customAmountController.text) ?? 0 
-                                      : selectedAmount.toDouble();
-                                  _processDonation(context, state, l10n, amount, val);
-                                }
-                              },
-                            ),
+                        Text(
+                          DateFormat('MMM dd, yyyy').format(update.timestamp),
+                          style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 12 * context.fontSizeFactor),
+                        ),
+                        SizedBox(height: 8 * context.fontSizeFactor),
+                        Text(update.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+                        SizedBox(height: 8 * context.fontSizeFactor),
+                        Text(
+                          update.content,
+                          style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor, height: 1.5),
+                        ),
+                        if (update.imageUrl != null) ...[
+                          SizedBox(height: 16 * context.fontSizeFactor),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                            child: Image.network(update.imageUrl!, fit: BoxFit.cover),
                           ),
                         ],
                       ],
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(l10n.total, style: const TextStyle(color: AppColors.grey)),
-                          Text("\$${customAmountController.text.isNotEmpty ? customAmountController.text : selectedAmount}", style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
-                        ],
-                      ),
-                      SizedBox(height: 16 * context.fontSizeFactor),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56 * context.fontSizeFactor,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor))),
-                          onPressed: () {
-                            if (currentStep < 2) {
-                              setModalState(() => currentStep++);
-                            } else {
-                               final double amount = customAmountController.text.isNotEmpty 
-                                  ? double.tryParse(customAmountController.text) ?? 0 
-                                  : selectedAmount.toDouble();
-                              _processDonation(context, state, l10n, amount, pinController.text);
-                            }
-                          },
+              ],
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
+
+  void _showDonateDialog(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme, bool isDark) {
+    double amount = 50.0;
+    String selectedMethod = "Main Wallet";
+    String? selectedCardId;
+    bool isPinStage = false;
+    bool isAnonymous = false;
+    bool isRecurring = false;
+    final TextEditingController amountController = TextEditingController(text: "50");
+    final TextEditingController messageController = TextEditingController();
+    final TextEditingController pinController = TextEditingController();
+    final TextEditingController phoneController = TextEditingController();
+
+    final isZakat = widget.campaign.category == "Zakat / Agoomo";
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(36 * context.fontSizeFactor)),
+          ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(24 * context.fontSizeFactor),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!isPinStage) ...[
+                Text(
+                  "${l10n.sadaqahDonateTo} ${widget.campaign.title}",
+                  style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                if (isZakat) ...[
+                  SizedBox(height: 12 * context.fontSizeFactor),
+                  Container(
+                    padding: EdgeInsets.all(12 * context.fontSizeFactor),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentTeal.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info_outline_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                        SizedBox(width: 8 * context.fontSizeFactor),
+                        Expanded(
                           child: Text(
-                            currentStep < 2 ? l10n.continueLabel : l10n.donateNow,
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
+                            "${l10n.nisabThreshold}: ${NumberFormat.simpleCurrency(name: "USD").format(state.nisabGold)}",
+                            style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w600, fontSize: 13 * context.fontSizeFactor),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                ],
+                SizedBox(height: 24 * context.fontSizeFactor),
+                
+                // Funding Source Selector
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _buildSourceOption(
+                        context, 
+                        "Main Wallet", 
+                        l10n.walletBalance, 
+                        state.balance, 
+                        selectedMethod == "Main Wallet",
+                        (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }),
+                        state
                       ),
-                      SizedBox(height: 12 * context.fontSizeFactor),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.lock_outline_rounded, size: 14 * context.fontSizeFactor, color: AppColors.grey),
-                          SizedBox(width: 4 * context.fontSizeFactor),
-                          Text(l10n.securedByMurtaaxPay, style: TextStyle(color: AppColors.grey, fontSize: 10 * context.fontSizeFactor)),
-                        ],
+                      ...state.cards.map((card) => _buildSourceOption(
+                        context, 
+                        "card_${card.id}", 
+                        card.cardHolder, 
+                        card.balance, 
+                        selectedMethod == "card_${card.id}",
+                        (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }),
+                        state,
+                        cardId: card.id,
+                        isCard: true
+                      )),
+                      _buildSourceOption(
+                        context, 
+                        "EVC Plus", 
+                        "EVC Plus", 
+                        0, 
+                        selectedMethod == "EVC Plus",
+                        (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }),
+                        state,
+                        icon: Icons.phone_android_rounded
                       ),
+                      _buildSourceOption(
+                        context, 
+                        "Somnet", 
+                        "Somnet", 
+                        0, 
+                        selectedMethod == "Somnet",
+                        (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }),
+                        state,
+                        icon: Icons.signal_cellular_alt_rounded
+                      ),
+                      if (state.savingsBalance > 0)
+                        _buildSourceOption(
+                          context, 
+                          "Savings Account", 
+                          l10n.savingsBalance, 
+                          state.savingsBalance, 
+                          selectedMethod == "Savings Account",
+                          (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }),
+                          state
+                        ),
                     ],
                   ),
                 ),
+                SizedBox(height: 24 * context.fontSizeFactor),
+
+                if (selectedMethod == "EVC Plus" || selectedMethod == "Somnet") ...[
+                   TextField(
+                    controller: phoneController,
+                    keyboardType: TextInputType.phone,
+                    style: TextStyle(fontSize: 14 * context.fontSizeFactor),
+                    decoration: InputDecoration(
+                      hintText: l10n.enterPhoneNumber,
+                      prefixIcon: Icon(Icons.phone_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                      filled: true,
+                      fillColor: theme.dividerColor.withValues(alpha: 0.05),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
+                    ),
+                  ),
+                  SizedBox(height: 16 * context.fontSizeFactor),
+                ],
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [10, 20, 50, 100, 250].map((val) {
+                    final isSel = amount == val.toDouble();
+                    return GestureDetector(
+                      onTap: () => setModalState(() {
+                        amount = val.toDouble();
+                        amountController.text = val.toString();
+                      }),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 12 * context.fontSizeFactor),
+                        decoration: BoxDecoration(
+                          color: isSel ? AppColors.accentTeal : Colors.transparent,
+                          borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
+                          border: Border.all(color: isSel ? AppColors.accentTeal : AppColors.grey.withValues(alpha: 0.3)),
+                        ),
+                        child: Text("\$$val", style: TextStyle(color: isSel ? Colors.white : theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold)),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 16 * context.fontSizeFactor),
+                
+                TextField(
+                  controller: amountController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  onChanged: (val) => setModalState(() => amount = double.tryParse(val) ?? 0),
+                  decoration: InputDecoration(
+                    prefixText: r"$ ",
+                    hintText: l10n.customAmount,
+                    filled: true,
+                    fillColor: theme.dividerColor.withValues(alpha: 0.05),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
+                  ),
+                ),
+
+                if (isZakat && amount > 0 && amount < state.nisabGold)
+                  Padding(
+                    padding: EdgeInsets.only(top: 12 * context.fontSizeFactor),
+                    child: Text(
+                      l10n.belowNisabWarning(NumberFormat.simpleCurrency(name: "USD").format(state.nisabGold)),
+                      style: const TextStyle(color: Colors.orange, fontSize: 12, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+
+                SizedBox(height: 16 * context.fontSizeFactor),
+
+                // Recurring Toggle
+                SwitchListTile(
+                  title: Text(l10n.makeRecurringDonation, style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w600)),
+                  subtitle: Text(state.translate("Donate automatically every month", "Bixi si otomaatig ah bil walba"), style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
+                  value: isRecurring,
+                  onChanged: (val) => setModalState(() => isRecurring = val),
+                  activeThumbColor: AppColors.accentTeal,
+                  contentPadding: EdgeInsets.zero,
+                ),
+
+                // Anonymity Toggle
+                SwitchListTile(
+                  title: Text(l10n.anonymous, style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w600)),
+                  subtitle: Text(state.translate("Hide your name from the public donor list", "Magacaaga ka qari liiska dadka wax bixiyey"), style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
+                  value: isAnonymous,
+                  onChanged: (val) => setModalState(() => isAnonymous = val),
+                  activeThumbColor: AppColors.accentTeal,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                
+                SizedBox(height: 12 * context.fontSizeFactor),
+                
+                // Message Input
+                TextField(
+                  controller: messageController,
+                  maxLines: 2,
+                  style: TextStyle(fontSize: 14 * context.fontSizeFactor),
+                  decoration: InputDecoration(
+                    hintText: state.translate("Leave a message (optional)", "Farriin ka tag (waa ikhtiyaari)"),
+                    hintStyle: TextStyle(fontSize: 13 * context.fontSizeFactor),
+                    filled: true,
+                    fillColor: theme.dividerColor.withValues(alpha: 0.05),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
+                    contentPadding: EdgeInsets.all(16 * context.fontSizeFactor),
+                  ),
+                ),
+                SizedBox(height: 24 * context.fontSizeFactor),
+
+                // Fee Summary Block
+                if (amount > 0) ...[
+                  Container(
+                    padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                    decoration: BoxDecoration(
+                      color: theme.dividerColor.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                      border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(l10n.amount, style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
+                            Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(amount), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                          ],
+                        ),
+                        SizedBox(height: 8 * context.fontSizeFactor),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(l10n.fee, style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
+                            Text(
+                              "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateFeeForSource(amount, selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod))}",
+                              style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
+                          child: Divider(height: 1, color: theme.dividerColor.withValues(alpha: 0.1)),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(l10n.total, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                            Text(
+                              NumberFormat.simpleCurrency(name: state.currencyCode).format(amount + state.calculateFeeForSource(amount, selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod)),
+                              style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                ],
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 56 * context.fontSizeFactor,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (selectedMethod == "EVC Plus" || selectedMethod == "Somnet") {
+                        if (phoneController.text.length < 9) {
+                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.phoneLengthError)));
+                           return;
+                        }
+                        setModalState(() => isPinStage = true);
+                        return;
+                      }
+
+                      String sourceKey = selectedMethod;
+                      if (selectedMethod.startsWith("card_")) sourceKey = "Debit Card";
+                      
+                      if (!state.hasSufficientBalanceForSource(amount, sourceKey, cardId: selectedCardId)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red),
+                        );
+                        return;
+                      }
+                      setModalState(() => isPinStage = true);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.accentTeal,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                    ),
+                    child: Text(l10n.donateNow, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ] else ...[
+                Text(
+                  l10n.securityVerification,
+                  style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8 * context.fontSizeFactor),
+                Text(
+                  selectedMethod == "EVC Plus" || selectedMethod == "Somnet" 
+                    ? state.translate("Enter Mobile Money PIN", "Geli PIN-ka Mobile-ka")
+                    : selectedCardId != null ? state.translate("Enter Card PIN", "Geli PIN-ka Kaadhka") : l10n.enterTransactionPin,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 24 * context.fontSizeFactor),
+                SizedBox(
+                  width: 200 * context.fontSizeFactor,
+                  child: TextField(
+                    controller: pinController,
+                    obscureText: true,
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.number,
+                    autofocus: true,
+                    style: TextStyle(fontSize: 24 * context.fontSizeFactor, letterSpacing: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(4),
+                    ],
+                    decoration: InputDecoration(
+                      hintText: "****",
+                      hintStyle: TextStyle(letterSpacing: 16 * context.fontSizeFactor, fontSize: 24 * context.fontSizeFactor),
+                      filled: true,
+                      fillColor: theme.dividerColor.withValues(alpha: 0.05),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2)),
+                    ),
+                    onChanged: (val) {
+                      if (val.length == 4) {
+                        if (context.mounted) {
+                          _processDonation(context, state, l10n, amount, val, selectedMethod, selectedCardId, isAnonymous: isAnonymous, message: messageController.text, isRecurring: isRecurring);
+                        }
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(height: 32 * context.fontSizeFactor),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => setModalState(() => isPinStage = false),
+                        child: Text(l10n.cancel, style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    SizedBox(width: 16 * context.fontSizeFactor),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (context.mounted) {
+                            _processDonation(context, state, l10n, amount, pinController.text, selectedMethod, selectedCardId, isAnonymous: isAnonymous, message: messageController.text, isRecurring: isRecurring);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accentTeal,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                        ),
+                        child: Text(l10n.confirm, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+
+  Widget _buildSourceOption(
+    BuildContext context, 
+    String id, 
+    String title, 
+    double balance, 
+    bool isSelected,
+    Function(String, String?) onTap,
+    AppState state,
+    {String? cardId, bool isCard = false, IconData? icon}
+  ) {
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: () => onTap(id, cardId),
+      child: Container(
+        margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
+        padding: EdgeInsets.all(12 * context.fontSizeFactor),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.accentTeal.withValues(alpha: 0.1) : theme.cardColor,
+          borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+          border: Border.all(
+            color: isSelected ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.1),
+            width: 2
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon ?? (isCard ? Icons.credit_card_rounded : Icons.account_balance_wallet_rounded),
+              color: isSelected ? AppColors.accentTeal : AppColors.grey,
+              size: 20 * context.fontSizeFactor,
+            ),
+            SizedBox(width: 8 * context.fontSizeFactor),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12 * context.fontSizeFactor)),
+                if (balance > 0 || !isCard && id != "EVC Plus" && id != "Somnet")
+                  Text(
+                    NumberFormat.simpleCurrency(name: state.currencyCode).format(balance),
+                    style: TextStyle(color: AppColors.grey, fontSize: 11 * context.fontSizeFactor),
+                  ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildAmountStep(AppState state, AppLocalizations l10n, int selectedAmount, TextEditingController controller, ThemeData theme, Function(int) onSelect) {
-    final amounts = [10, 20, 50, 100, 250, 500];
-    return Column(
-      children: [
-        // Live Balance Display
-        Container(
-          padding: EdgeInsets.all(16 * context.fontSizeFactor),
-          margin: EdgeInsets.only(bottom: 24 * context.fontSizeFactor),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.secondary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-            border: Border.all(color: theme.colorScheme.secondary.withValues(alpha: 0.2)),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.account_balance_wallet_rounded, color: theme.colorScheme.secondary, size: 24 * context.fontSizeFactor),
-              SizedBox(width: 12 * context.fontSizeFactor),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l10n.walletBalance, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                    Text(
-                      NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance),
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, 
-            crossAxisSpacing: 12 * context.fontSizeFactor, 
-            mainAxisSpacing: 12 * context.fontSizeFactor, 
-            childAspectRatio: 2
-          ),
-          itemCount: amounts.length,
-          itemBuilder: (context, index) => GestureDetector(
-            onTap: () {
-              onSelect(amounts[index]);
-              controller.clear();
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-              decoration: BoxDecoration(
-                color: selectedAmount == amounts[index] ? AppColors.accentTeal.withValues(alpha: 0.12) : theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-                border: Border.all(
-                  color: selectedAmount == amounts[index] ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.1),
-                  width: selectedAmount == amounts[index] ? 2 : 1,
-                ),
-                boxShadow: selectedAmount == amounts[index] 
-                  ? [BoxShadow(color: AppColors.accentTeal.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 4))]
-                  : [],
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                "\$${amounts[index]}", 
-                style: TextStyle(
-                  fontWeight: FontWeight.bold, 
-                  fontSize: 16 * context.fontSizeFactor,
-                  color: selectedAmount == amounts[index] ? AppColors.accentTeal : theme.colorScheme.primary.withValues(alpha: 0.7),
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 24 * context.fontSizeFactor),
-        TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          style: TextStyle(fontSize: 16 * context.fontSizeFactor),
-          onChanged: (val) { if (val.isNotEmpty) onSelect(0); },
-          decoration: InputDecoration(
-            hintText: l10n.customAmount,
-            prefixIcon: const Icon(Icons.attach_money_rounded),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPaymentMethodStep(AppState state, AppLocalizations l10n, String selectedMethod, ThemeData theme, Function(String) onSelect) {
-    final methods = [
-      {"id": "Wallet", "name": l10n.murtaaxWallet, "desc": l10n.murtaaxWalletDesc, "icon": Icons.account_balance_wallet_rounded},
-      {"id": "Mobile", "name": l10n.mobileMoney, "desc": l10n.mobileMoneyDesc, "icon": Icons.phone_android_rounded},
-      {"id": "Bank", "name": l10n.bankTransfer, "desc": l10n.localBankTransfer, "icon": Icons.account_balance_rounded},
-      {"id": "Card", "name": l10n.debitCreditCard, "desc": l10n.payWithInternationalCard, "icon": Icons.credit_card_rounded},
-    ];
-
-    return Column(
-      children: methods.map((m) => GestureDetector(
-        onTap: () => onSelect(m["id"] as String),
-        child: Container(
-          margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
-          padding: EdgeInsets.all(16 * context.fontSizeFactor),
-          decoration: BoxDecoration(
-            color: selectedMethod == m["id"] ? AppColors.accentTeal.withValues(alpha: 0.08) : theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
-            border: Border.all(
-              color: selectedMethod == m["id"] ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.1),
-              width: selectedMethod == m["id"] ? 1.5 : 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(10 * context.fontSizeFactor),
-                decoration: BoxDecoration(
-                  color: selectedMethod == m["id"] ? AppColors.accentTeal.withValues(alpha: 0.1) : theme.dividerColor.withValues(alpha: 0.05),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(m["icon"] as IconData, color: selectedMethod == m["id"] ? AppColors.accentTeal : AppColors.grey, size: 20 * context.fontSizeFactor),
-              ),
-              SizedBox(width: 16 * context.fontSizeFactor),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      m["name"] as String, 
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14 * context.fontSizeFactor,
-                        color: selectedMethod == m["id"] ? theme.colorScheme.primary : theme.textTheme.bodyLarge?.color,
-                      ),
-                    ),
-                    Text(
-                      m["desc"] as String,
-                      style: TextStyle(fontSize: 12 * context.fontSizeFactor, color: AppColors.grey),
-                    ),
-                  ],
-                ),
-              ),
-              if (selectedMethod == m["id"]) 
-                Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor),
-            ],
-          ),
-        ),
-      )).toList(),
-    );
-  }
-
-  void _processDonation(BuildContext context, AppState state, AppLocalizations l10n, double amount, String pin) async {
+  void _processDonation(BuildContext context, AppState state, AppLocalizations l10n, double amount, String pin, String method, String? cardId, {bool isAnonymous = false, String? message, bool isRecurring = false}) async {
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.pleaseEnterValidAmount)));
       return;
     }
 
-    if (pin.length < 4) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.enterSecurityPin)));
-      return;
+    if (pin.length < 4) return;
+
+    bool isPinValid = false;
+    if (cardId != null) {
+      isPinValid = state.verifyCardPin(pin, cardId: cardId);
+    } else {
+      isPinValid = state.verifyPin(pin);
     }
 
-    if (!state.verifyPin(pin)) {
+    if (!isPinValid) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(state.translate("Incorrect PIN. Please try again.", "PIN-kaagu waa khalad. Fadlan isku day markale.")),
-        backgroundColor: Colors.redAccent,
-      ));
-      return;
-    }
-
-    if (state.balance < amount) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(l10n.insufficientBalanceSadaqah),
         backgroundColor: Colors.redAccent,
       ));
       return;
@@ -719,7 +1011,15 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     );
 
     try {
-      await state.donateToCampaign(widget.campaign.id, amount);
+      await state.donateToCampaign(
+        widget.campaign.id, 
+        amount,
+        cardId: cardId,
+        paymentMethod: method,
+        isAnonymous: isAnonymous,
+        message: message,
+        isRecurring: isRecurring,
+      );
       
       if (!context.mounted) return;
       
@@ -732,7 +1032,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
         'date': DateFormat('MMM dd, yyyy').format(DateTime.now()),
         'status': 'Success',
         'type': 'transfer_out',
-        'method': 'Wallet',
+        'method': method.startsWith("card_") ? 'Card' : method,
         'isNegative': true,
         'id': 'TX-SAD-${DateTime.now().millisecondsSinceEpoch}',
       };

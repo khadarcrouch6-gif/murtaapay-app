@@ -17,6 +17,7 @@ class BankScreen extends StatefulWidget {
   final String method;
   final String currencyCode;
   final String senderSource;
+  final String? cardId;
   final String? prefilledName;
   final String? prefilledAccount;
 
@@ -26,6 +27,7 @@ class BankScreen extends StatefulWidget {
     required this.method, 
     required this.currencyCode,
     required this.senderSource,
+    this.cardId,
     this.prefilledName,
     this.prefilledAccount,
   });
@@ -232,6 +234,7 @@ class _BankScreenState extends State<BankScreen> {
           receiverPhone: _accountController.text,
           payoutMethod: "Bank Transfer",
           paymentMethod: _selectedSource,
+          cardId: widget.cardId,
           currencyCode: widget.currencyCode,
           purpose: _selectedPurpose,
           sourceOfFunds: _selectedFundSource,

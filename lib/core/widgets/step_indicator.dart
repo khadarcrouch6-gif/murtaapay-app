@@ -24,11 +24,11 @@ class StepIndicator extends StatelessWidget {
     
     Color activeColor = isHeader ? Colors.white : theme.colorScheme.secondary;
     Color inactiveColor = isHeader 
-        ? Colors.white.withValues(alpha: 0.3) 
-        : theme.dividerColor.withValues(alpha: 0.1);
+        ? Colors.white.withOpacity(0.3) 
+        : theme.dividerColor.withOpacity(0.1);
     
     Color textColor = isHeader 
-        ? (isActive ? Colors.white : Colors.white.withValues(alpha: 0.6)) 
+        ? (isActive ? Colors.white : Colors.white.withOpacity(0.6)) 
         : (isActive ? theme.colorScheme.secondary : theme.textTheme.bodySmall?.color ?? Colors.grey);
 
     return Column(
@@ -42,7 +42,7 @@ class StepIndicator extends StatelessWidget {
             shape: BoxShape.circle,
             border: isActive 
                 ? Border.all(
-                    color: activeColor.withValues(alpha: 0.2), 
+                    color: activeColor.withOpacity(0.2), 
                     width: 4 * fontSizeFactor
                   ) 
                 : null,
@@ -102,10 +102,10 @@ class StepLine extends StatelessWidget {
     final fontSizeFactor = context.fontSizeFactor;
     
     Color color = isHeader
-        ? (isCompleted ? Colors.white : Colors.white.withValues(alpha: 0.3))
+        ? (isCompleted ? Colors.white : Colors.white.withOpacity(0.3))
         : (isCompleted 
             ? theme.colorScheme.secondary 
-            : theme.dividerColor.withValues(alpha: 0.1));
+            : theme.dividerColor.withOpacity(0.1));
 
     return Expanded(
       child: Container(

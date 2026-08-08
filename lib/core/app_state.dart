@@ -13,6 +13,8 @@ import 'models/crypto_asset.dart';
 import 'models/hagbad_model.dart';
 import 'models/recurring_payment_model.dart';
 import '../features/more/models/campaign.dart';
+import 'api_service.dart';
+import 'dart:math' as math;
 
 class AppState extends ChangeNotifier {
   static final AppState _instance = AppState._internal();
@@ -54,7 +56,7 @@ class AppState extends ChangeNotifier {
   final String _walletId = '102234';
   String get walletId => _walletId;
 
-  String _pin = '1234'; // Default mock PIN
+  String _pin = '0011'; // Default mock PIN
   
   bool verifyPin(String pin) {
     return _pin == pin;
@@ -131,6 +133,81 @@ class AppState extends ChangeNotifier {
   List<Campaign> _campaigns = [];
   List<Campaign> get campaigns => _campaigns;
 
+  // Market Rates (FX & Commodities)
+  Map<String, double> _fxRates = {
+    'USD': 1.0,
+    'EUR': 0.92,
+    'GBP': 0.79,
+    'KES': 130.50,
+    'SOS': 575.00,
+    'AED': 3.67,
+    'TRY': 32.20,
+    'DJF': 177.72,
+    'ETB': 57.15,
+    'SAR': 3.75,
+    'CAD': 1.35,
+    'AUD': 1.52,
+    'CNY': 7.23,
+    'JPY': 151.80,
+    'INR': 83.30,
+    'UGX': 3780.00,
+    'RWF': 1285.00,
+    'TZS': 2580.00,
+  };
+  Map<String, double> get fxRates => _fxRates;
+
+  double _goldPrice = 74.50;   // USD per gram
+  double _silverPrice = 0.95;  // USD per gram
+  
+  double get goldPrice => _goldPrice;
+  double get silverPrice => _silverPrice;
+
+  // Zakat/Nisab State
+  double _nisabGold = 6500.0;
+  double _nisabSilver = 550.0;
+  String _preferredNisab = 'gold'; // 'gold' or 'silver'
+
+  double get nisabGold => _nisabGold;
+  double get nisabSilver => _nisabSilver;
+  String get preferredNisab => _preferredNisab;
+  double get effectiveNisab => _preferredNisab == 'gold' ? _nisabGold : _nisabSilver;
+
+  void setPreferredNisab(String type) {
+    if (type == 'gold' || type == 'silver') {
+      _preferredNisab = type;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateMarketRates() async {
+    try {
+      final newRates = await ApiService.fetchAllRates();
+      if (newRates.isNotEmpty) {
+        _fxRates = newRates;
+        
+        // Update commodity prices (simulated or from API if added)
+        // In a real scenario, these would also come from the API
+        _goldPrice = 74.0 + (math.Random().nextDouble() * 2);
+        _silverPrice = 0.90 + (math.Random().nextDouble() * 0.1);
+        
+        updateNisabValues();
+      }
+    } catch (e) {
+      debugPrint("Error updating market rates: $e");
+    }
+  }
+
+  void updateNisabValues() {
+    // Gold Nisab: 87.48g of Gold
+    // Silver Nisab: 612.36g of Silver
+    _nisabGold = 87.48 * _goldPrice;
+    _nisabSilver = 612.36 * _silverPrice;
+    notifyListeners();
+  }
+
+  bool get hasUrgentCampaigns => _campaigns.any((c) => c.isUrgent);
+  bool get hasNewCampaigns => _campaigns.any((c) => c.status == 'new');
+
   void _loadCampaigns() {
     final List<String>? campaignsJson = _prefs.getStringList('sadaqah_campaigns');
     if (campaignsJson != null) {
@@ -151,19 +228,40 @@ class AppState extends ChangeNotifier {
           donorCount: 1240,
           lastDonationAgo: "5m",
           isUrgent: true,
+          status: 'trending',
+          donorAvatars: [
+            "https://i.pravatar.cc/150?u=1",
+            "https://i.pravatar.cc/150?u=2",
+            "https://i.pravatar.cc/150?u=3",
+            "https://i.pravatar.cc/150?u=4",
+          ],
+          partnerLogos: ["GOLIS", "TELESOM", "SOMTEL"],
+          recentDonors: [
+            Donor(name: 'Axmed M.', amount: 50.0, donatedAt: DateTime.now().subtract(const Duration(minutes: 2))),
+            Donor(name: 'Sahra A.', amount: 100.0, donatedAt: DateTime.now().subtract(const Duration(minutes: 5))),
+          ],
         ),
         Campaign(
           id: "2",
           title: "Caawinta Agoomaha",
           description: "Daryeelka carruurta agoomaha ah ee u baahan waxbarasho iyo cunto.",
           goalAmount: 15000.0,
-          raisedAmount: 8200.0,
+          raisedAmount: 13800.0,
           creator: "Ururka Samafalka",
           icon: Icons.child_care_rounded,
           imageUrl: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070",
-          category: "Agoomo",
+          category: "Zakat / Agoomo",
           donorCount: 456,
           lastDonationAgo: "15m",
+          status: 'ending_soon',
+          donorAvatars: [
+            "https://i.pravatar.cc/150?u=5",
+            "https://i.pravatar.cc/150?u=6",
+          ],
+          partnerLogos: ["DARASALAM", "OOMAAR"],
+          recentDonors: [
+            Donor(name: 'Jaamac K.', amount: 20.0, donatedAt: DateTime.now().subtract(const Duration(minutes: 15))),
+          ],
         ),
         Campaign(
           id: "3",
@@ -177,6 +275,16 @@ class AppState extends ChangeNotifier {
           category: "Biyo",
           donorCount: 256,
           lastDonationAgo: "2m",
+          status: 'new',
+          donorAvatars: [
+            "https://i.pravatar.cc/150?u=8",
+            "https://i.pravatar.cc/150?u=9",
+            "https://i.pravatar.cc/150?u=10",
+          ],
+          partnerLogos: ["INDHA DEERO", "UNICEF"],
+          recentDonors: [
+            Donor(name: 'Muna H.', amount: 25.0, donatedAt: DateTime.now().subtract(const Duration(minutes: 2))),
+          ],
         ),
       ];
       _saveCampaigns();
@@ -188,72 +296,127 @@ class AppState extends ChangeNotifier {
     _prefs.setStringList('sadaqah_campaigns', campaignsJson);
   }
 
-  Future<void> donateToCampaign(String campaignId, double amount) async {
-    if (_balance < amount) throw Exception('insufficient_funds');
+  void addCampaign(Campaign campaign) {
+    _campaigns.insert(0, campaign);
+    _saveCampaigns();
+    notifyListeners();
+  }
+
+  Future<void> donateToCampaign(
+    String campaignId, 
+    double amount, {
+    String? cardId, 
+    String? paymentMethod, 
+    bool isAnonymous = false,
+    String? message,
+    bool isRecurring = false,
+  }) async {
+    final method = paymentMethod ?? "Main Wallet";
+    if (method == "Savings Account") {
+      throw Exception('Savings accounts cannot be used for bill payments');
+    }
+
+    final fee = calculateFeeForSource(amount, method, cardId: cardId);
+    final total = amount + fee;
+    
+    if (!hasSufficientBalanceForSource(amount, method, cardId: cardId)) {
+      throw Exception('insufficient_funds');
+    }
 
     final index = _campaigns.indexWhere((c) => c.id == campaignId);
     if (index == -1) throw Exception('campaign_not_found');
 
     // Capture state for rollback
     final double originalBalance = _balance;
-    final List<Campaign> originalCampaigns = List.from(_campaigns.map((e) => Campaign(
-      id: e.id,
-      title: e.title,
-      description: e.description,
-      goalAmount: e.goalAmount,
-      raisedAmount: e.raisedAmount,
-      creator: e.creator,
-      icon: e.icon,
-      imageUrl: e.imageUrl,
-      category: e.category,
-      donorCount: e.donorCount,
-      lastDonationAgo: e.lastDonationAgo,
-      isUrgent: e.isUrgent,
-    )));
+    final double originalSavingsBalance = _savingsBalance;
+    final List<Campaign> originalCampaigns = List.from(_campaigns.map((e) => e.copyWith()));
     final List<Transaction> originalTransactions = List.from(_transactions);
+    final List<VirtualCard> originalCards = List.from(_cards.map((e) => e.copyWith()));
 
     try {
-      _balance -= amount;
+      // Deduct from source
+      if (method == "Main Wallet" || method == "Murtaax Wallet") {
+        _balance -= total;
+        await _prefs.setDouble('balance', _balance);
+      } else if (method == "Savings Account") {
+        _savingsBalance -= total;
+        await _prefs.setDouble('savings_balance', _savingsBalance);
+      } else if (cardId != null) {
+        final cardIndex = _cards.indexWhere((c) => c.id == cardId);
+        if (cardIndex != -1) {
+          final card = _cards[cardIndex];
+          _cards[cardIndex] = card.copyWith(balance: card.balance - total);
+          await _saveCards();
+        }
+      }
+
       final campaign = _campaigns[index];
-      _campaigns[index] = Campaign(
-        id: campaign.id,
-        title: campaign.title,
-        description: campaign.description,
-        goalAmount: campaign.goalAmount,
+      final newDonors = List<Donor>.from(campaign.recentDonors);
+      
+      final donor = Donor(
+        name: isAnonymous ? "Anonymous" : (_userName.split(' ')[0] + '.'),
+        amount: amount,
+        donatedAt: DateTime.now(),
+        isAnonymous: isAnonymous,
+        message: message,
+      );
+      
+      newDonors.insert(0, donor);
+      if (newDonors.length > 5) newDonors.removeLast();
+
+      _campaigns[index] = campaign.copyWith(
         raisedAmount: campaign.raisedAmount + amount,
-        creator: campaign.creator,
-        icon: campaign.icon,
-        imageUrl: campaign.imageUrl,
-        category: campaign.category,
         donorCount: campaign.donorCount + 1,
         lastDonationAgo: "Just now",
-        isUrgent: campaign.isUrgent,
+        recentDonors: newDonors,
       );
+
+      if (isRecurring) {
+        final recurringPayment = RecurringPayment(
+          id: "REC-DON-${DateTime.now().millisecondsSinceEpoch}",
+          title: "Recurring Donation: ${campaign.title}",
+          receiverId: campaignId,
+          receiverName: campaign.title,
+          amount: amount,
+          frequency: RecurringFrequency.monthly,
+          startDate: DateTime.now(),
+          nextPaymentDate: DateTime.now().add(const Duration(days: 30)),
+          status: RecurringStatus.active,
+          category: "Sadaqah",
+          cardId: cardId,
+        );
+        addRecurringPayment(recurringPayment);
+      }
 
       final tx = Transaction(
         id: "TX-SAD-${DateTime.now().millisecondsSinceEpoch}",
         title: "Sadaqah: ${campaign.title}",
         date: DateFormat('MMM dd').format(DateTime.now()),
-        amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(amount)}",
+        amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(total)}",
         numericAmount: amount,
+        fee: fee,
         isNegative: true,
         category: "Sadaqah",
         status: "Success",
         type: "transfer_out",
         method: "Wallet",
+        paymentMethod: method,
+        cardId: cardId,
         referenceId: campaignId,
+        purpose: message,
       );
       _transactions.insert(0, tx);
 
-      await _prefs.setDouble('balance', _balance);
       await _saveTransactions();
       _saveCampaigns();
       notifyListeners();
     } catch (e) {
       // Rollback
       _balance = originalBalance;
+      _savingsBalance = originalSavingsBalance;
       _campaigns = originalCampaigns;
       _transactions = originalTransactions;
+      _cards = originalCards;
       notifyListeners();
       rethrow;
     }
@@ -482,7 +645,7 @@ class AppState extends ChangeNotifier {
         _balance -= catchUpAmount;
         await _prefs.setDouble('balance', _balance);
         
-        final tx = Transaction(
+      final tx = Transaction(
           id: "TX-HAG-CATCHUP-${DateTime.now().millisecondsSinceEpoch}",
           title: "Hagbad Catch-up: ${group.name}",
           purpose: "For ${member.name}",
@@ -986,6 +1149,8 @@ class AppState extends ChangeNotifier {
     _balance = _prefs.getDouble('balance') ?? 12450.80;
     _savingsBalance = _prefs.getDouble('savings_balance') ?? 520.50;
 
+    await updateMarketRates();
+
     _loadRecentWithdrawals();
     _loadQuickProfiles();
     _loadBanks();
@@ -1249,6 +1414,10 @@ class AppState extends ChangeNotifier {
   }
 
   void addBank(BankAccount bank) {
+    // Prevent duplicates
+    if (_linkedBanks.any((b) => b.accountNumber == bank.accountNumber && b.bankName == bank.bankName)) {
+      return;
+    }
     _linkedBanks.add(bank);
     _saveBanks();
     analytics.logEvent('add_bank', parameters: {'bank': bank.bankName});
@@ -1397,33 +1566,21 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // FX Rates (Mock)
-  final Map<String, double> _fxRates = {
-    'USD_EUR': 0.92,
-    'EUR_USD': 1.09,
-    'USD_GBP': 0.79,
-    'GBP_USD': 1.27,
-    'USD_KES': 130.50,
-    'USD_SOS': 575.00,
-    'USD_AED': 3.67,
-    'USD_TRY': 32.20,
-    'USD_DJF': 177.72,
-    'USD_ETB': 57.15,
-    'USD_SAR': 3.75,
-    'USD_CAD': 1.35,
-    'USD_AUD': 1.52,
-    'USD_CNY': 7.23,
-    'USD_JPY': 151.80,
-    'USD_INR': 83.30,
-    'USD_UGX': 3780.00,
-    'USD_RWF': 1285.00,
-    'USD_TZS': 2580.00,
-  };
-
   double getExchangeRate(String from, String to) {
     if (from == to) return 1.0;
-    final key = '${from}_${to}';
-    return _fxRates[key] ?? 1.0;
+    
+    // Convert through USD base
+    double fromRate = _fxRates[from] ?? 1.0;
+    double toRate = _fxRates[to] ?? 1.0;
+    
+    // If our rates are USD-based (1 USD = X EUR), then fromRate is EUR/USD
+    // This depends on how the map is structured. 
+    // Usually, 1 USD = _fxRates['EUR'] EUR.
+    // So to convert X FROM to TO:
+    // X / fromRate = amount in USD
+    // (X / fromRate) * toRate = amount in TO
+    
+    return toRate / fromRate;
   }
 
   double convertAmount(double amount, String from, String to) {
@@ -1434,12 +1591,12 @@ class AppState extends ChangeNotifier {
   }
 
   final double walletFlatFee = 1.0; // $1.0 per $100
-  final double bankFlatFee = 1.5;   // $1.5 per $100
+  final double bankFlatFee = 2.5;   // $2.5 per $100
   final double mobileMoneyFlatFee = 2.5; // $2.5 per $100
-  final double cardFlatFee = 1.5;
+  final double cardFlatFee = 2.5;
   final double savingsFlatFee = 0.5;
 
-  double calculateFeeForSource(double amount, String source, {String? payoutMethod}) {
+  double calculateFeeForSource(double amount, String source, {String? payoutMethod, String? cardId}) {
     if (amount <= 0) return 0.0;
     
     double feeRate = 0.0;
@@ -1467,17 +1624,17 @@ class AppState extends ChangeNotifier {
       feeRate = walletFlatFee; // Default
     }
 
-    // Calculate fee: $feeRate per $100 (e.g., $1.5 per $100 = 1.5% fee)
+    // Calculate fee: $feeRate per $100 (e.g., $2.5 per $100 = 2.5% fee)
     return (amount / 100) * feeRate;
   }
 
-  double calculateTotalForSource(double amount, String source, {String? payoutMethod}) {
-    return amount + calculateFeeForSource(amount, source, payoutMethod: payoutMethod);
+  double calculateTotalForSource(double amount, String source, {String? payoutMethod, String? cardId}) {
+    return amount + calculateFeeForSource(amount, source, payoutMethod: payoutMethod, cardId: cardId);
   }
 
   // Validation: Check if balance is sufficient
   bool hasSufficientBalanceForSource(double amount, String source, {String? cardId, String? payoutMethod}) {
-    double total = calculateTotalForSource(amount, source, payoutMethod: payoutMethod);
+    double total = calculateTotalForSource(amount, source, payoutMethod: payoutMethod, cardId: cardId);
     if (source == "Main Wallet" || source == "Murtaax Wallet") {
       return _balance >= total;
     } else if (source == "Savings Account") {
@@ -1956,7 +2113,7 @@ class AppState extends ChangeNotifier {
   }
 
   /// Atomically process a withdrawal from Wallet to Bank/Mobile.
-  Future<void> processWalletWithdrawal({
+  Future<Transaction> processWalletWithdrawal({
     required double amount,
     required double fee,
     required String method,
@@ -1964,6 +2121,7 @@ class AppState extends ChangeNotifier {
     required String provider,
     required String name,
     required String type,
+    String status = "Success",
     String? purpose,
   }) async {
     final total = amount + fee;
@@ -1988,7 +2146,7 @@ class AppState extends ChangeNotifier {
         fee: fee,
         isNegative: true,
         category: "Transfer",
-        status: "Success",
+        status: status,
         type: "withdraw",
         method: method,
         purpose: purpose,
@@ -2014,17 +2172,111 @@ class AppState extends ChangeNotifier {
       });
 
       notifyListeners();
-      analytics.logEvent('wallet_withdrawal_success', parameters: {
-        'amount': amount,
-        'method': method,
-      });
+      analytics.logEvent('withdraw_success', parameters: {'amount': amount, 'method': method});
+      return tx;
     } catch (e) {
       _balance = originalBalance;
       _transactions = originalTransactions;
-      notifyListeners();
       rethrow;
     }
   }
+
+  Future<Transaction> processCardWithdrawal({
+    required String cardId,
+    required double amount,
+    required double fee,
+    required String method,
+    required String detail,
+    required String provider,
+    required String name,
+    required String type,
+    String status = "Success",
+    String? purpose,
+  }) async {
+    final total = amount + fee;
+    final card = _cards.firstWhere((c) => c.id == cardId, orElse: () => throw Exception('card_not_found'));
+    
+    if (card.balance < total) {
+      throw Exception('insufficient_funds');
+    }
+
+    _checkTransactionLimits(total);
+
+    // Atomic state capture
+    final List<VirtualCard> originalCards = _cards.map((c) => c.copyWith()).toList();
+    final double originalBalance = _balance;
+    final List<Transaction> originalTransactions = List.from(_transactions);
+
+    try {
+      // 1. Deduct from Card
+      final cardIndex = _cards.indexWhere((c) => c.id == cardId);
+      _cards[cardIndex] = card.copyWith(balance: card.balance - total);
+
+      final now = DateTime.now();
+      final dateStr = DateFormat('MMM dd').format(now);
+      
+      // 2. Log withdrawal from card
+      final cardTx = Transaction(
+        id: "TX-CARD-${now.millisecondsSinceEpoch}",
+        title: name,
+        date: dateStr,
+        amount: "-${NumberFormat.simpleCurrency(name: _currencyCode).format(total)}",
+        numericAmount: total,
+        fee: fee,
+        isNegative: true,
+        category: "Withdraw",
+        status: status,
+        type: "withdraw",
+        method: "Virtual Card",
+        purpose: purpose ?? "Withdrawal",
+        cardId: cardId,
+        referenceId: detail,
+      );
+      _transactions.insert(0, cardTx);
+
+      // 3. If withdrawing to Murtaax Wallet, increment wallet balance and log deposit
+      if (type == "wallet") {
+        _balance += amount;
+        final walletTx = Transaction(
+          id: "TX-WALLET-${now.millisecondsSinceEpoch}",
+          title: "Card Topup",
+          date: dateStr,
+          amount: "+${NumberFormat.simpleCurrency(name: _currencyCode).format(amount)}",
+          numericAmount: amount,
+          isNegative: false,
+          category: "Transfer",
+          status: "Success",
+          type: "deposit",
+          method: "Virtual Card",
+          purpose: "Transfer",
+          cardId: null,
+        );
+        _transactions.insert(0, walletTx);
+      }
+
+      await _saveTransactions();
+      await _saveCards();
+      await _prefs.setDouble('balance', _balance);
+
+      addRecentWithdrawal({
+        'id': now.millisecondsSinceEpoch.toString(),
+        'type': type,
+        'name': name,
+        'detail': detail,
+        'provider': provider,
+      });
+
+      notifyListeners();
+      analytics.logEvent('card_withdraw_success', parameters: {'amount': amount, 'method': method, 'type': type});
+      return cardTx;
+    } catch (e) {
+      _cards = originalCards;
+      _balance = originalBalance;
+      _transactions = originalTransactions;
+      rethrow;
+    }
+  }
+
 
   /// Send money to a contact or phone number
   Future<void> sendMoney(double amount, String contactInfo, {String? name}) async {
@@ -2060,6 +2312,17 @@ class AppState extends ChangeNotifier {
       
       _transactions.insert(0, tx);
       
+      // Update Quick Profile lastAmount if it's a known profile
+      final profileIndex = _quickProfiles.indexWhere((p) => p.walletId == contactInfo);
+      if (profileIndex != -1) {
+        _quickProfiles[profileIndex] = _quickProfiles[profileIndex].copyWith(
+          lastAmount: amount,
+          lastReceiverMethod: 'Wallet',
+          lastSenderMethod: 'Wallet',
+        );
+        _saveQuickProfiles();
+      }
+      
       await _prefs.setDouble('balance', _balance);
       await _saveTransactions();
       
@@ -2077,26 +2340,46 @@ class AppState extends ChangeNotifier {
   }
 
   /// Atomically process a bill payment.
-  Future<void> processBillPayment({
+  Future<Transaction> processBillPayment({
     required String category,
     required String accountId,
     required double amount,
     required String l10nKey,
+    String? paymentMethod,
+    String? cardId,
   }) async {
-    final fee = calculateFee(amount);
+    final method = paymentMethod ?? "Main Wallet";
+    if (method == "Savings Account") {
+      throw Exception('Savings accounts cannot be used for bill payments');
+    }
+
+    final fee = calculateFeeForSource(amount, method, cardId: cardId);
     final total = amount + fee;
     
-    if (_balance < total) {
+    if (!hasSufficientBalanceForSource(amount, method, cardId: cardId)) {
       throw Exception('insufficient_funds');
     }
 
     _checkTransactionLimits(total);
 
     final double originalBalance = _balance;
+    final double originalSavingsBalance = _savingsBalance;
+    final List<VirtualCard> originalCards = List.from(_cards.map((e) => e.copyWith()));
     final List<Transaction> originalTransactions = List.from(_transactions);
 
     try {
-      _balance -= total;
+      // Deduct from source
+      if (method == "Main Wallet" || method == "Murtaax Wallet") {
+        _balance -= total;
+      } else if (method == "Savings Account") {
+        _savingsBalance -= total;
+      } else if (method.contains("Card") && cardId != null) {
+        final cardIdx = _cards.indexWhere((c) => c.id == cardId);
+        if (cardIdx != -1) {
+          final updatedCard = _cards[cardIdx].copyWith(balance: _cards[cardIdx].balance - total);
+          _cards[cardIdx] = updatedCard;
+        }
+      }
       
       final tx = Transaction(
         id: "TX-BILL-${DateTime.now().millisecondsSinceEpoch}",
@@ -2109,28 +2392,26 @@ class AppState extends ChangeNotifier {
         category: "Bills",
         status: "Success",
         type: "payment",
-        method: "Murtaax Wallet",
-        referenceId: accountId,
+        method: method,
+        referenceId: "BILL-${accountId.substring(0, math.min(4, accountId.length))}-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}",
       );
       
       _transactions.insert(0, tx);
-      
-      await _prefs.setDouble('balance', _balance);
-      await _saveTransactions();
-      
       notifyListeners();
-      analytics.logEvent('bill_payment_success', parameters: {
-        'amount': amount,
-        'category': category,
-        'account': accountId,
-      });
+      _saveTransactions();
+      _saveCards();
+      return tx;
     } catch (e) {
       _balance = originalBalance;
+      _savingsBalance = originalSavingsBalance;
+      _cards = originalCards;
       _transactions = originalTransactions;
       notifyListeners();
       rethrow;
     }
   }
+
+  int min(int a, int b) => a < b ? a : b;
 
   // Crypto Logic
   Future<void> buyCrypto(CryptoAsset asset, double fiatAmount, double cryptoAmount) async {

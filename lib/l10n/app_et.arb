@@ -10,6 +10,7 @@
   "searchTransactions": "Otsi tehinguid...",
   "noTransactionsFound": "Tehinguid ei leitud",
   "recentTransactions": "Viimased tehingud",
+  "noTransactions": "Tehinguid pole",
   "settings": "Seaded",
   "language": "Keel",
   "theme": "Teema",
@@ -21,6 +22,7 @@
   "vouchers": "Vautšerid",
   "seeAll": "Vaata kõiki",
   "more": "Rohkem",
+  "viewAll": "Vaata kõiki",
   "spendingAnalysis": "Kulude analüüs",
   "walletBalance": "Rahakoti saldo",
   "getStarted": "Alusta",
@@ -91,6 +93,7 @@
   "stepPayment": "Makse",
   "stepReview": "Ülevaade",
   "feeInfoTitle": "Vahetustasu teave",
+  "feeInfoDescription": "Lisateave meie läbipaistva tasustruktuuri kohta.",
   "feeInfoContent": "Tasu on 0,99%. Näiteks: 100 dollari saatmine maksab vaid 0,99 dollarit tasusid.",
   "maxLabel": "MAX",
   "continueLabel": "Jätka",
@@ -458,6 +461,7 @@
   "copy": "KOPEERI",
   "whatsApp": "WhatsApp",
   "sadaqahCommunity": "Annetused ja kogukond",
+  "beTheFirstToDonate": "Ole esimene annetaja",
   "medicalEmergency": "Meditsiiniline hädaabi",
   "medicalEmergencyDesc": "Aita Ahmedil katta südameoperatsiooni kulud Türgis.",
   "villageWaterWell": "Küla veekaev",
@@ -483,6 +487,8 @@
   "activeGoals": "Aktiivsed eesmärgid",
   "createNewGoal": "Loo uus eesmärk",
   "totalSavings": "Kogu säästud",
+  "savingsBalance": "Säästude saldo",
+  "goalLabel": "Eesmärk",
   "chooseWithdrawalMethod": "Vali väljamakse meetod",
   "sendToWallet": "Saada rahakotti",
   "payFromSavingBalance": "Maksa oma säästuarve saldost",
@@ -696,5 +702,7 @@
     }
   },
   "noCampaignsFound": "Kampaaniaid ei leitud",
-  "tryAdjustingFilters": "Proovige filtreid kohandada, et leida otsitav."
+  "tryAdjustingFilters": "Proovige filtreid kohandada, et leida otsitav.",
+  "finalizingTransaction": "Tehingu lõpetamine...",
+  "pleaseWait": "Palun oota..."
 }

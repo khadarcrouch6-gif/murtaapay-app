@@ -25,11 +25,13 @@ class PaymentScreen extends StatefulWidget {
   final String paymentMethod;
   final String currencyCode;
   final String purpose;
+  final String? cardId;
   final String? sourceOfFunds;
   final String? swiftCode;
   final String? address;
   final String? city;
   final String? country;
+  final ScrollController? scrollController;
 
   const PaymentScreen({
     super.key,
@@ -40,11 +42,13 @@ class PaymentScreen extends StatefulWidget {
     required this.paymentMethod,
     required this.currencyCode,
     required this.purpose,
+    this.cardId,
     this.sourceOfFunds,
     this.swiftCode,
     this.address,
     this.city,
     this.country,
+    this.scrollController,
   });
 
   @override
@@ -58,7 +62,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedPaymentMethod = widget.paymentMethod;
+    if (widget.cardId != null) {
+      _selectedPaymentMethod = "card_${widget.cardId}";
+    } else {
+      _selectedPaymentMethod = widget.paymentMethod;
+    }
     _simulateLoading();
   }
 
@@ -98,6 +106,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
 
     if (_selectedPaymentMethod == "Main Wallet") {
+      if (widget.scrollController != null) Navigator.pop(context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -117,6 +126,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ),
       );
     } else if (_selectedPaymentMethod == "New Card") {
+      if (widget.scrollController != null) Navigator.pop(context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -134,6 +144,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       final cardId = _selectedPaymentMethod.replaceFirst("card_", "");
       final card = appState.cards.firstWhere((c) => c.id == cardId);
       
+      if (widget.scrollController != null) Navigator.pop(context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -158,6 +169,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       final bankId = _selectedPaymentMethod.replaceFirst("bank_", "");
       final bank = appState.linkedBanks.firstWhere((b) => b.id == bankId);
       
+      if (widget.scrollController != null) Navigator.pop(context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -178,6 +190,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ),
       );
     } else if (_selectedPaymentMethod == "Bank Transfer") {
+      if (widget.scrollController != null) Navigator.pop(context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -192,6 +205,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ),
       );
     } else if (_selectedPaymentMethod == "Mobile Money") {
+      if (widget.scrollController != null) Navigator.pop(context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -211,6 +225,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         displayMethod = "Savings Account";
       }
 
+      if (widget.scrollController != null) Navigator.pop(context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -312,7 +327,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
+      appBar: widget.scrollController != null ? null : AppBar(
         backgroundColor: theme.brightness == Brightness.dark ? AppColors.primaryDark : theme.colorScheme.secondary,
         elevation: 0,
         leading: IconButton(
@@ -382,6 +397,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: _isLoading 
                 ? _buildSkeletonLoader(theme)
                 : SingleChildScrollView(
+                controller: widget.scrollController,
                 child: Center(
                   child: MaxWidthBox(
                     maxWidth: 500,
@@ -643,7 +659,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               padding: EdgeInsets.all(10 * context.fontSizeFactor),
               decoration: BoxDecoration(
                 color: isSelected 
-                  ? (!hasEnough ? Colors.red.withValues(alpha: 0.1) : theme.colorScheme.secondary.withValues(alpha: 0.1)) 
+                  ? (!hasEnough ? Colors.red.withValues(alpha: 0.1) : theme.colorScheme.secondary.withValues(alpha: 0.1))
                   : theme.dividerColor.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),

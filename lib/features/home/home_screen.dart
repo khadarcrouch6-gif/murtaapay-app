@@ -39,6 +39,7 @@ import '../../core/widgets/success_screen.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/models/quick_profile.dart';
+import 'widgets/quick_send_sheet.dart';
 
 enum ChartType { bar, pie, line }
 
@@ -677,7 +678,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   _buildFeatureItem(context, l10n.bills, Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
                   _buildFeatureItem(context, "Hagbad", Icons.group_work_rounded, Colors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HagbadScreen()))),
                   _buildFeatureItem(context, l10n.exchange, Icons.currency_exchange_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
-                  _buildFeatureItem(context, l10n.sadaqah, Icons.volunteer_activism_rounded, AppColors.accentTeal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen()))),
+                  _buildSadaqahFeatureItem(context, state, l10n, AppColors.accentTeal),
                   _buildFeatureItem(context, l10n.savings, Icons.account_balance_outlined, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsScreen()))),
                 ],
               );
@@ -853,6 +854,57 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
+  Widget _buildSadaqahFeatureItem(BuildContext context, AppState state, AppLocalizations l10n, Color color) {
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen())),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: Center(
+              child: FittedBox(
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(12 * context.fontSizeFactor),
+                      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                      child: AdaptiveIcon(Icons.volunteer_activism_rounded, color: color, size: 24 * context.fontSizeFactor),
+                    ),
+                    if (state.hasUrgentCampaigns)
+                      Positioned(
+                        top: -2,
+                        right: -2,
+                        child: Pulse(
+                          infinite: true,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.redAccent,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.priority_high_rounded, color: Colors.white, size: 8),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 4 * context.fontSizeFactor),
+          Text(
+            l10n.sadaqah,
+            style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w500), 
+            textAlign: TextAlign.center, 
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildChartTypeToggle(ChartType type, dynamic icon, [bool isSmall = false]) {
     final isSelected = _selectedChartType == type;
     return GestureDetector(
@@ -985,19 +1037,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   void _handleQuickSend(QuickProfile profile, AppState state, AppLocalizations l10n) {
     HapticFeedback.mediumImpact();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        settings: const RouteSettings(name: 'SendAmountScreen'),
-        builder: (context) => SendAmountScreen(
-          prefilledWalletId: profile.walletId,
-          prefilledName: profile.name,
-          prefilledAmount: profile.lastAmount,
-          prefilledSenderMethod: profile.lastSenderMethod,
-          prefilledReceiverMethod: profile.lastReceiverMethod,
-        ),
-      ),
-    );
+    QuickSendSheet.show(context, profile);
   }
 
   Widget _buildQuickSend(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {

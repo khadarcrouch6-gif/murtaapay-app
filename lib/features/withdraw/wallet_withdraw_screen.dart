@@ -13,9 +13,11 @@ import '../../core/widgets/failure_screen.dart';
 import '../navigation/main_navigation.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/widgets/detail_row.dart';
+import '../../core/widgets/pin_entry_dialog.dart';
 import '../../core/models/transaction.dart' as model;
 import 'package:responsive_framework/responsive_framework.dart';
-import '../../core/widgets/pin_entry_dialog.dart';
+import 'unified_bank_withdraw_screen.dart';
+import 'unified_mobile_withdraw_screen.dart';
 
 class WalletWithdrawScreen extends StatefulWidget {
   const WalletWithdrawScreen({super.key});
@@ -61,12 +63,9 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
   // Constants for Logic Gaps
   static const double _minWithdraw = 1.0;
   static const double _maxWithdraw = 2000.0;
-  static const double _feePercentage = 0.01; // 1%
   static const double _minFee = 0.10;
 
   double get _amount => double.tryParse(_amountController.text) ?? 0;
-  double get _fee => _amount > 0 ? (_amount * _feePercentage < _minFee ? _minFee : _amount * _feePercentage) : 0;
-  double get _totalDeduct => _amount + _fee;
 
   @override
   void dispose() {
@@ -100,6 +99,11 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final state = Provider.of<AppState>(context);
+
+    // Dynamic fee calculation using AppState constants
+    final double feeRate = state.calculateFeeForSource(100, _selectedMethodId == "bank" ? "Bank" : "Mobile Money") / 100;
+    final double fee = _amount > 0 ? (_amount * feeRate < _minFee ? _minFee : _amount * feeRate) : 0;
+    final double totalDeduct = _amount + fee;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -184,10 +188,10 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                             suffixIcon: TextButton(
                                               onPressed: () {
                                                 // Calculate max possible withdraw amount considering fee
-                                                // Amount + (Amount * 0.01) = Balance
-                                                // Amount * 1.01 = Balance
-                                                // Amount = Balance / 1.01
-                                                double maxAmount = state.balance / (1 + _feePercentage);
+                                                // Amount + (Amount * feeRate) = Balance
+                                                // Amount * (1 + feeRate) = Balance
+                                                // Amount = Balance / (1 + feeRate)
+                                                double maxAmount = state.balance / (1 + feeRate);
                                                 _amountController.text = maxAmount.toStringAsFixed(2);
                                                 setState(() {});
                                               },
@@ -229,14 +233,14 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                                   SizedBox(height: 12 * context.fontSizeFactor),
                                   DetailRow(
                                     label: l10n.feeLabel,
-                                    value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_fee),
+                                    value: NumberFormat.simpleCurrency(name: state.currencyCode).format(fee),
                                     labelColor: Colors.white70,
                                     valueColor: Colors.white,
                                     isBold: false,
                                   ),
                                   DetailRow(
                                     label: l10n.totalDeduct,
-                                    value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_totalDeduct),
+                                    value: NumberFormat.simpleCurrency(name: state.currencyCode).format(totalDeduct),
                                     labelColor: Colors.white70,
                                     valueColor: AppColors.accentTeal,
                                     isBold: true,
@@ -300,12 +304,28 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                       opacity: isAmountValid ? 1.0 : 0.6,
                       child: GestureDetector(
                         onTap: isAmountValid ? () {
-                          setState(() {
-                            _selectedMethodId = method["id"];
-                            _selectedProvider = null; // Clear provider on method switch
-                            _field1Controller.clear();
-                            _field2Controller.clear();
-                          });
+                          final double amount = double.tryParse(_amountController.text) ?? 0;
+                          if (method["id"] == "mobile") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UnifiedMobileWithdrawScreen(
+                                  source: "Wallet",
+                                  initialAmount: amount,
+                                ),
+                              ),
+                            );
+                          } else if (method["id"] == "bank") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UnifiedBankWithdrawScreen(
+                                  source: "Wallet",
+                                  initialAmount: amount,
+                                ),
+                              ),
+                            );
+                          }
                         } : null,
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 250),
@@ -378,10 +398,12 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                   );
                 }),
 
+                /*
                 if (_selectedMethodId != null) ...[
                   SizedBox(height: 24 * context.fontSizeFactor),
                   FadeInUp(child: _buildDetailsForm(context, l10n, state)),
                 ],
+                */
     
                 SizedBox(height: 120 * context.fontSizeFactor),
               ],
@@ -686,11 +708,15 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
     bool isFormValid = false;
     String? error;
 
+    final double feeRate = state.calculateFeeForSource(100, _selectedMethodId == "bank" ? "Bank" : "Mobile Money") / 100;
+    final double fee = _amount > 0 ? (_amount * feeRate < _minFee ? _minFee : _amount * feeRate) : 0;
+    final double totalDeduct = _amount + fee;
+
     if (_amount < _minWithdraw) {
       error = l10n.minAmountError(NumberFormat.simpleCurrency(name: state.currencyCode).format(_minWithdraw));
     } else if (_amount > _maxWithdraw) {
       error = l10n.maxAmountError(NumberFormat.simpleCurrency(name: state.currencyCode).format(_maxWithdraw));
-    } else if (_totalDeduct > state.balance) {
+    } else if (totalDeduct > state.balance) {
       error = l10n.insufficientBalanceWithFee;
     } else {
       if (_selectedMethodId == "mobile") {
@@ -731,6 +757,10 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
 
 
   void _showReviewSheet(BuildContext context, AppLocalizations l10n, AppState state) {
+    final double feeRate = state.calculateFeeForSource(100, _selectedMethodId == "bank" ? "Bank" : "Mobile Money") / 100;
+    final double fee = _amount > 0 ? (_amount * feeRate < _minFee ? _minFee : _amount * feeRate) : 0;
+    final double totalDeduct = _amount + fee;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -775,10 +805,10 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
                       if (_selectedMethodId == "mobile") ...[
                         DetailRow(label: l10n.phoneNumber, value: "+252 ${_field1Controller.text}"),
                       ],
-                      DetailRow(label: l10n.feeLabel, value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_fee)),
+                      DetailRow(label: l10n.feeLabel, value: NumberFormat.simpleCurrency(name: state.currencyCode).format(fee)),
                       DetailRow(
                         label: l10n.totalDeduct, 
-                        value: NumberFormat.simpleCurrency(name: state.currencyCode).format(_totalDeduct),
+                        value: NumberFormat.simpleCurrency(name: state.currencyCode).format(totalDeduct),
                         valueColor: AppColors.accentTeal,
                       ),
                       DetailRow(label: l10n.purpose, value: _selectedPurpose ?? l10n.familySupport),
@@ -831,7 +861,9 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
   }
 
   void _processWithdrawal(BuildContext context, AppLocalizations l10n, AppState state) async {
-    final double amountToDeduct = _totalDeduct;
+    final double feeRate = state.calculateFeeForSource(100, _selectedMethodId == "bank" ? "Bank" : "Mobile Money") / 100;
+    final double fee = _amount > 0 ? (_amount * feeRate < _minFee ? _minFee : _amount * feeRate) : 0;
+    final double totalDeduct = _amount + fee;
     
     showDialog(
       context: context,
@@ -862,9 +894,9 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
         finalName = "${_field2Controller.text} (${_selectedPurpose ?? l10n.familySupport})";
       }
 
-      await state.processWalletWithdrawal(
+      final tx = await state.processWalletWithdrawal(
         amount: _amount,
-        fee: _fee,
+        fee: fee,
         method: _selectedMethodId == "mobile" ? "Mobile Money" : (_selectedProvider ?? l10n.bankTransfer),
         detail: _field1Controller.text,
         provider: (_selectedMethodId == "bank" && _selectedProvider == l10n.otherBank) 
@@ -885,6 +917,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
             message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(_amount)),
             subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
             buttonText: l10n.backToHome,
+            transactionData: tx.toJson(),
             onPressed: () {
               state.setNavIndex(0); // Reset to Home tab
               Navigator.pushAndRemoveUntil(

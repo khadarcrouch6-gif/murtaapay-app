@@ -1,7 +1,16 @@
 {
   "@@locale": "en",
   "anonymous": "Anonymous",
+  "donationHistory": "Donation History",
+  "noDonationsFound": "No donations found",
+  "searchCampaigns": "Search campaigns...",
+  "calculateZakatEasily": "Calculate your Zakat easily and fulfill your obligation.",
+  "calculateNow": "Calculate Now",
+  "featuredCampaign": "Featured Campaign",
+  "safeAndSecureDonations": "Safe & Secure Donations",
+  "weEnsureFundsReach": "We ensure your funds reach those in need safely.",
   "donationSuccessful": "Donation Successful!",
+  "beTheFirstToDonate": "Be the first to donate",
   "donationSuccessMessage": "Thank you for your donation. It will make a big difference in the lives of those in need.",
   "pleaseEnterValidAmount": "Please enter a valid amount",
   "apply": "Apply",
@@ -23,6 +32,7 @@
   "confirm": "Confirm",
   "searchTransactions": "Search transactions...",
   "noTransactionsFound": "No transactions found",
+  "noTransactions": "No transactions",
   "recentTransactions": "Recent Transactions",
   "settings": "Settings",
   "language": "Language",
@@ -35,6 +45,7 @@
   "vouchers": "Vouchers",
   "seeAll": "See All",
   "more": "More",
+  "viewAll": "View All",
   "spendingAnalysis": "Spending Analysis",
   "walletBalance": "Wallet Balance",
   "getStarted": "Get Started",
@@ -131,6 +142,7 @@
   "reference": "Reference",
   "backToHome": "Back to Home",
   "addMoney": "Add Money",
+  "amountToDeposit": "Amount to Deposit",
   "enterAmountToDeposit": "Enter Amount to Deposit",
   "confirmTopUp": "Confirm Top-Up",
   "expiry": "Expiry",
@@ -158,9 +170,10 @@
   "refreshed": "Refreshed",
   "ok": "OK",
   "feeInfoTitle": "Exchange Fee Info",
-  "feeInfoContent": "Transaction fees depend on the payout method: Wallet ($1.0/100), Bank ($1.5/100), Mobile Money ($2.5/100).",
-  "bankFeeInfo": "The fee for bank transfers is $1.50 per $100.",
-  "cardFeeInfo": "The fee for card transfers is $1.50 per $100.",
+  "feeInfoDescription": "Learn more about our transparent fee structure.",
+  "feeInfoContent": "Transaction fees depend on the payout method: Wallet ($1.0/100), Bank ($2.5/100), Mobile Money ($2.5/100).",
+  "bankFeeInfo": "The fee for bank transfers is $2.50 per $100.",
+  "cardFeeInfo": "The fee for card transfers is $2.50 per $100.",
   "walletFeeInfo": "The fee for wallet transfers is $1.00 per $100.",
   "mobileMoneyFeeInfo": "The fee for mobile money transfers is $2.50 per $100.",
   "savingsFeeInfo": "The fee for savings transfers is a flat $0.50.",
@@ -274,6 +287,7 @@
   "biometricMatch": "Biometric Match",
   "comparingSelfie": "Comparing selfie with ID",
   "cardHolder": "CARD HOLDER",
+  "provider": "Provider",
   "yourName": "YOUR NAME",
   "expires": "EXPIRES",
   "expiryDate": "Expiry Date",
@@ -312,6 +326,7 @@
   "enterWalletPinMessage": "Enter your 4-digit wallet PIN to authorize top-up.",
   "confirm": "Confirm",
   "submit": "Submit",
+  "iHaveSentTheMoney": "I have sent the money",
   "accountName": "Account Name",
   "transferToAccountBelow": "Please transfer the amount to the account below and click continue.",
   "cardEndingIn": "Card ending in {lastFour}",
@@ -430,6 +445,8 @@
     }
   },
   "withdrawalRequested": "Withdrawal Requested!",
+  "withdrawalPending": "Withdrawal Pending",
+  "bankProcessingNotice": "Bank transfers usually take 24-48 hours to complete. You can track the status in your transaction history.",
   "withdrawalSuccessMessage": "Your withdrawal of {amount} is being processed.",
   "@withdrawalSuccessMessage": {
     "placeholders": {
@@ -439,7 +456,7 @@
     }
   },
   "withdrawal": "Withdrawal",
-  "feeLabel": "Fee (0.99%):",
+  "feeLabel": "Fee (2.5%):",
   "totalDeduct": "Total Deduct:",
   "minAmountError": "Minimum amount is {amount}",
   "@minAmountError": {
@@ -455,6 +472,7 @@
   },
   "insufficientBalanceWithFee": "Insufficient balance (incl. fee)",
   "phoneLengthError": "Number must be 9 digits",
+  "back": "Back",
   "payBills": "Pay Bills",
   "selectCategory": "Select Category",
   "recentBills": "Recent Bills",
@@ -478,9 +496,11 @@
   "accountId": "Account ID",
   "amountPaid": "Amount Paid",
   "paymentDate": "Payment Date",
-  "status": "Status",
   "success": "Success",
   "pending": "Pending",
+  "processing": "Processing",
+  "failed": "Failed",
+  "status": "Status",
   "completed": "Completed",
   "downloadReceipt": "Download Receipt",
   "downloadPdf": "Download PDF",
@@ -506,7 +526,7 @@
   "stripe": "Stripe",
   "debitCreditCard": "Debit / Credit Card",
   "justAMoment": "Just a moment",
-  "processing": "Processing...",
+  "processing": "Processing",
   "processingTransaction": "Processing Transaction...",
   "stkPushSent": "STK Push Sent",
   "stkPushInstructions": "Please check your phone for the {provider} PIN prompt to authorize the payment.",
@@ -515,6 +535,32 @@
       "provider": { "type": "String" }
     }
   },
+  "invalidPrefixError": "Invalid prefix for selected provider",
+  "pushNotificationSent": "Push Notification Sent",
+  "pushNotificationInstructions": "Please check your phone and enter your PIN to authorize the transaction of {amount}",
+  "@pushNotificationInstructions": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "depositToOurAccount": "Deposit to our account:",
+  "bankReferenceNote": "Note: Please include the reference above in your bank transfer description for automatic processing.",
+  "confirmTransfer": "Confirm Transfer",
+  "confirmTransferRep": "By clicking confirm, you represent that you have already initiated the bank transfer of {amount} to the selected account.",
+  "@confirmTransferRep": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "confirmAndSubmit": "Confirm & Submit",
+  "transferNoted": "Transfer Noted",
+  "transferNotedMessage": "We have received your request for {amount}. Your balance will be updated once the transfer is verified.",
+  "@transferNotedMessage": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "takes30to60Minutes": "Usually takes 30-60 minutes.",
   "waitingForProvider": "Waiting for provider confirmation...",
   "copiedToClipboard": "Copied to clipboard",
   "otherBank": "Other Bank",
@@ -696,6 +742,7 @@
   "verified": "Verified",
   "by": "By",
   "raised": "Raised",
+  "goalLabel": "Goal",
   "goal": "Goal",
   "startAFundraiser": "Start a Fundraiser",
   "totalInvestment": "Total Investment",
@@ -717,6 +764,7 @@
   "activeGoals": "Active Goals",
   "createNewGoal": "Create New Goal",
   "totalSavings": "Total Savings",
+  "savingsBalance": "Savings Balance",
   "cardBalanceLabel": "Card: ",
   "chooseWithdrawalMethod": "Choose Withdrawal Method",
   "sendToWallet": "Send to Wallet",
@@ -1105,7 +1153,22 @@
   "sadaqahBixi": "Bixi",
   "sadaqahXaqiiji": "Xaqiiji",
   "sadaqahZakatCalcDesc": "Calculate and pay your zakat accurately",
-  "sadaqahTrending": "Trending",
+  "sadaqahTrending": "TRENDING",
+  "sadaqahNew": "NEW",
+  "sadaqahEndingSoon": "ENDING SOON",
+  "sadaqahCompleted": "COMPLETED",
+  "sadaqahDonorsCount": "+{count} donors",
+  "@sadaqahDonorsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "sadaqahSharingCampaign": "Sharing {title}...",
+  "@sadaqahSharingCampaign": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
   "sadaqahAgo": "ago",
   "catAll": "All",
   "catMedical": "Medical",
@@ -1295,5 +1358,16 @@
   },
   "exceedsLimitWarning": "This transaction exceeds your remaining limit.",
   "limitExceeded": "Limit Exceeded",
-  "approachingLimitWarning": "You are approaching your daily limit."
+  "approachingLimitWarning": "You are approaching your daily limit.",
+  "nisabThreshold": "Nisab Threshold",
+  "belowNisabWarning": "Your assets are below the Nisab threshold ({threshold}). Zakat is only mandatory if your wealth exceeds this.",
+  "@belowNisabWarning": {
+    "placeholders": {
+      "threshold": { "type": "String" }
+    }
+  },
+  "makeRecurringDonation": "Make this a recurring donation",
+  "campaignUpdates": "Campaign Updates",
+  "finalizingTransaction": "Finalizing transaction...",
+  "pleaseWait": "Please wait..."
 }

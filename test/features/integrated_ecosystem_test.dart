@@ -1,10 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:murtaaxpay_app/core/app_state.dart';
+import 'package:murtaaxpay_app/core/models/transaction.dart';
 import 'package:murtaaxpay_app/core/models/hagbad_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('Integrated Ecosystem End-to-End Tests', () {
     late AppState appState;
 
@@ -65,7 +67,8 @@ void main() {
       final donationAmount = 50.0;
       await appState.donateToCampaign(campaignId, donationAmount);
       
-      expect(appState.balance, 650.0);
+      final fee = appState.calculateFeeForSource(donationAmount, "Main Wallet");
+      expect(appState.balance, 650.0 - fee);
       expect(appState.campaigns.firstWhere((c) => c.id == campaignId).raisedAmount, initialRaised + donationAmount);
 
       // 5. Receive Hagbad Payout (Friend pays then Me receives)
@@ -82,7 +85,8 @@ void main() {
       final payoutAmount = 200.0 - appState.hagbadGroups[gIdx].serviceFee;
       await appState.processHagbadPayout(groupId);
       
-      expect(appState.balance, 650.0 + payoutAmount);
+      final expectedBalance = (650.0 - fee) + payoutAmount;
+      expect(appState.balance, closeTo(expectedBalance, 0.01));
       expect(appState.hagbadGroups.firstWhere((g) => g.id == groupId).members[0].hasReceived, true);
       expect(appState.hagbadGroups.firstWhere((g) => g.id == groupId).currentCycle, 2);
 
@@ -90,6 +94,22 @@ void main() {
       expect(appState.transactions.any((tx) => tx.title.contains("Sadaqah")), true);
       expect(appState.transactions.any((tx) => tx.title.contains("Hagbad")), true);
       expect(appState.transactions.any((tx) => tx.title.contains("Payout")), true);
+
+      // 7. Verify Deposit recording
+      final depositAmount = 500.0;
+      appState.addBalance(depositAmount);
+      await appState.addTransaction(Transaction(
+        id: "DEP-TEST",
+        title: "Deposit",
+        date: "Oct 25",
+        amount: "+\$500.00",
+        numericAmount: 500.0,
+        isNegative: false,
+        category: "Deposit",
+        status: "Success",
+        type: "deposit",
+      ));
+      expect(appState.transactions.any((tx) => tx.type == "deposit"), true);
     });
   });
 }

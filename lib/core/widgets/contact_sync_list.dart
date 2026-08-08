@@ -255,7 +255,7 @@ class _ContactSyncListState extends State<ContactSyncList> {
 
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: isMurtaax ? theme.colorScheme.secondary.withValues(alpha: 0.1) : Colors.grey[200],
+        backgroundColor: isMurtaax ? theme.colorScheme.secondary.withOpacity(0.1) : Colors.grey[200],
         backgroundImage: photoBytes != null ? MemoryImage(photoBytes) : null,
         child: photoBytes == null 
           ? Text((contact.displayName ?? "").isNotEmpty ? contact.displayName![0] : "?", 
@@ -297,7 +297,7 @@ class _ContactSyncListState extends State<ContactSyncList> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.contacts_rounded, size: 64, color: theme.colorScheme.secondary.withValues(alpha: 0.5)),
+                Icon(Icons.contacts_rounded, size: 64, color: theme.colorScheme.secondary.withOpacity(0.5)),
                 const SizedBox(height: 24),
                 Text(
                   "Sync your contacts",

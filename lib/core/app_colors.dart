@@ -11,6 +11,12 @@ class AppColors {
   static const Color grey = Color(0xFF64748B); // Slate Grey
   static const Color textPrimary = Color(0xFF1E293B); // Slate Dark
   static const Color textSecondary = Color(0xFF475569); // Muted Slate
+
+  // Status Colors
+  static const Color statusSuccess = Color(0xFF10B981); // Emerald Teal
+  static const Color statusPending = Color(0xFFF59E0B); // Amber
+  static const Color statusProcessing = Color(0xFF3B82F6); // Blue
+  static const Color statusFailed = Color(0xFFEF4444); // Red
   
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [primaryDark, Color(0xFF1A4B7A)],

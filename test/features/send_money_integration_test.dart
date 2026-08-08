@@ -21,7 +21,7 @@ void main() {
       const receiverId = '204456'; // Mohamed Abdi Ali
       const amount = 100.0;
       final initialBalance = appState.balance;
-      final expectedFee = 0.50; // Wallet fee is fixed at $0.50 in current AppState logic
+      final expectedFee = 1.0; // Wallet fee is 1.0 per $100 in current AppState logic
       final expectedTotal = amount + expectedFee;
 
       await appState.processP2PTransfer(
@@ -126,12 +126,12 @@ void main() {
       expect(appState.balance, initialBalance);
     });
 
-    test('Mobile Money fee should be 0.99 flat', () async {
+    test('Mobile Money fee should be 2.5 per 100', () async {
       const receiverId = '204456';
       const amount = 100.0;
       const paymentMethod = 'EVC Plus';
       
-      const expectedFee = 0.99;
+      const expectedFee = 2.5;
 
       await appState.processP2PTransfer(
         receiverId: receiverId,

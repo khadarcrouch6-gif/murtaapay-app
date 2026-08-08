@@ -12,7 +12,36 @@ class AppLocalizationsEt extends AppLocalizations {
   String get anonymous => 'Anonymous';
 
   @override
+  String get donationHistory => 'Donation History';
+
+  @override
+  String get noDonationsFound => 'No donations found';
+
+  @override
+  String get searchCampaigns => 'Search campaigns...';
+
+  @override
+  String get calculateZakatEasily =>
+      'Calculate your Zakat easily and fulfill your obligation.';
+
+  @override
+  String get calculateNow => 'Calculate Now';
+
+  @override
+  String get featuredCampaign => 'Featured Campaign';
+
+  @override
+  String get safeAndSecureDonations => 'Safe & Secure Donations';
+
+  @override
+  String get weEnsureFundsReach =>
+      'We ensure your funds reach those in need safely.';
+
+  @override
   String get donationSuccessful => 'Donation Successful!';
+
+  @override
+  String get beTheFirstToDonate => 'Ole esimene annetaja';
 
   @override
   String get donationSuccessMessage =>
@@ -81,6 +110,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get noTransactionsFound => 'Tehinguid ei leitud';
 
   @override
+  String get noTransactions => 'Tehinguid pole';
+
+  @override
   String get recentTransactions => 'Viimased tehingud';
 
   @override
@@ -115,6 +147,9 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get more => 'Rohkem';
+
+  @override
+  String get viewAll => 'Vaata kõiki';
 
   @override
   String get spendingAnalysis => 'Kulude analüüs';
@@ -353,6 +388,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get addMoney => 'Lisa raha';
 
   @override
+  String get amountToDeposit => 'Amount to Deposit';
+
+  @override
   String get enterAmountToDeposit => 'Sisesta hoiustatav summa';
 
   @override
@@ -415,14 +453,18 @@ class AppLocalizationsEt extends AppLocalizations {
   String get feeInfoTitle => 'Vahetustasu teave';
 
   @override
+  String get feeInfoDescription =>
+      'Lisateave meie läbipaistva tasustruktuuri kohta.';
+
+  @override
   String get feeInfoContent =>
       'Tasu on 0,99%. Näiteks: 100 dollari saatmine maksab vaid 0,99 dollarit tasusid.';
 
   @override
-  String get bankFeeInfo => 'The fee for bank transfers is \$1.50 per \$100.';
+  String get bankFeeInfo => 'The fee for bank transfers is \$2.50 per \$100.';
 
   @override
-  String get cardFeeInfo => 'The fee for card transfers is \$1.50 per \$100.';
+  String get cardFeeInfo => 'The fee for card transfers is \$2.50 per \$100.';
 
   @override
   String get walletFeeInfo =>
@@ -732,6 +774,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get cardHolder => 'CARD HOLDER';
 
   @override
+  String get provider => 'Provider';
+
+  @override
   String get yourName => 'YOUR NAME';
 
   @override
@@ -799,6 +844,9 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get submit => 'Saada';
+
+  @override
+  String get iHaveSentTheMoney => 'I have sent the money';
 
   @override
   String get accountName => 'Konto nimi';
@@ -1059,6 +1107,13 @@ class AppLocalizationsEt extends AppLocalizations {
   String get withdrawalRequested => 'Väljamakse taotletud!';
 
   @override
+  String get withdrawalPending => 'Withdrawal Pending';
+
+  @override
+  String get bankProcessingNotice =>
+      'Bank transfers usually take 24-48 hours to complete. You can track the status in your transaction history.';
+
+  @override
   String withdrawalSuccessMessage(String amount) {
     return 'Teie väljamakset summas $amount töödeldakse.';
   }
@@ -1067,7 +1122,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get withdrawal => 'Withdrawal';
 
   @override
-  String get feeLabel => 'Fee (0.99%):';
+  String get feeLabel => 'Fee (2.5%):';
 
   @override
   String get totalDeduct => 'Total Deduct:';
@@ -1087,6 +1142,9 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get phoneLengthError => 'Number must be 9 digits';
+
+  @override
+  String get back => 'Back';
 
   @override
   String get payBills => 'Maksa arveid';
@@ -1130,13 +1188,19 @@ class AppLocalizationsEt extends AppLocalizations {
   String get paymentDate => 'Makse kuupäev';
 
   @override
-  String get status => 'Olek';
-
-  @override
   String get success => 'Success';
 
   @override
   String get pending => 'Pending';
+
+  @override
+  String get processing => 'Töötlemine...';
+
+  @override
+  String get failed => 'Failed';
+
+  @override
+  String get status => 'Olek';
 
   @override
   String get completed => 'Lõpetatud';
@@ -1193,9 +1257,6 @@ class AppLocalizationsEt extends AppLocalizations {
   String get justAMoment => 'Üks hetk';
 
   @override
-  String get processing => 'Töötlemine...';
-
-  @override
   String get processingTransaction => 'Processing Transaction...';
 
   @override
@@ -1205,6 +1266,46 @@ class AppLocalizationsEt extends AppLocalizations {
   String stkPushInstructions(String provider) {
     return 'Please check your phone for the $provider PIN prompt to authorize the payment.';
   }
+
+  @override
+  String get invalidPrefixError => 'Invalid prefix for selected provider';
+
+  @override
+  String get pushNotificationSent => 'Push Notification Sent';
+
+  @override
+  String pushNotificationInstructions(String amount) {
+    return 'Please check your phone and enter your PIN to authorize the transaction of $amount';
+  }
+
+  @override
+  String get depositToOurAccount => 'Deposit to our account:';
+
+  @override
+  String get bankReferenceNote =>
+      'Note: Please include the reference above in your bank transfer description for automatic processing.';
+
+  @override
+  String get confirmTransfer => 'Confirm Transfer';
+
+  @override
+  String confirmTransferRep(String amount) {
+    return 'By clicking confirm, you represent that you have already initiated the bank transfer of $amount to the selected account.';
+  }
+
+  @override
+  String get confirmAndSubmit => 'Confirm & Submit';
+
+  @override
+  String get transferNoted => 'Transfer Noted';
+
+  @override
+  String transferNotedMessage(String amount) {
+    return 'We have received your request for $amount. Your balance will be updated once the transfer is verified.';
+  }
+
+  @override
+  String get takes30to60Minutes => 'Usually takes 30-60 minutes.';
 
   @override
   String get waitingForProvider => 'Waiting for provider confirmation...';
@@ -1602,6 +1703,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get raised => 'Kogutud';
 
   @override
+  String get goalLabel => 'Eesmärk';
+
+  @override
   String get goal => 'Eesmärk';
 
   @override
@@ -1664,6 +1768,9 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get totalSavings => 'Kogu säästud';
+
+  @override
+  String get savingsBalance => 'Säästude saldo';
 
   @override
   String get cardBalanceLabel => 'Card: ';
@@ -2475,6 +2582,25 @@ class AppLocalizationsEt extends AppLocalizations {
   String get sadaqahTrending => 'Populaarne';
 
   @override
+  String get sadaqahNew => 'NEW';
+
+  @override
+  String get sadaqahEndingSoon => 'ENDING SOON';
+
+  @override
+  String get sadaqahCompleted => 'COMPLETED';
+
+  @override
+  String sadaqahDonorsCount(int count) {
+    return '+$count donors';
+  }
+
+  @override
+  String sadaqahSharingCampaign(String title) {
+    return 'Sharing $title...';
+  }
+
+  @override
   String get sadaqahAgo => 'tagasi';
 
   @override
@@ -2891,4 +3017,24 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get approachingLimitWarning => 'You are approaching your daily limit.';
+
+  @override
+  String get nisabThreshold => 'Nisab Threshold';
+
+  @override
+  String belowNisabWarning(String threshold) {
+    return 'Your assets are below the Nisab threshold ($threshold). Zakat is only mandatory if your wealth exceeds this.';
+  }
+
+  @override
+  String get makeRecurringDonation => 'Make this a recurring donation';
+
+  @override
+  String get campaignUpdates => 'Campaign Updates';
+
+  @override
+  String get finalizingTransaction => 'Tehingu lõpetamine...';
+
+  @override
+  String get pleaseWait => 'Palun oota...';
 }

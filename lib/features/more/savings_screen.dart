@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
@@ -152,19 +153,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    ListenableBuilder(
-                      listenable: state,
-                      builder: (context, _) {
-                        final currentCardBalance = state.cards.isNotEmpty 
-                            ? state.cards[state.selectedCardIndex < state.cards.length ? state.selectedCardIndex : 0].balance 
-                            : 0.0;
-                        return Text(
-                          "${l10n.cardBalanceLabel}${NumberFormat.simpleCurrency(name: 'USD').format(currentCardBalance)}",
-                          style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w600),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 4 * context.fontSizeFactor),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
                       decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
@@ -265,7 +253,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                 letterSpacing: 1.2
                               )
                             ),
-                            SizedBox(height: 8 * context.fontSizeFactor),
+                            /*SizedBox(height: 8 * context.fontSizeFactor),
                             FittedBox(
                               fit: BoxFit.scaleDown, 
                               child: ListenableBuilder(
@@ -275,7 +263,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                   style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: -1)
                                 )
                               )
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -989,107 +977,173 @@ class _SavingsScreenState extends State<SavingsScreen> {
     IconData selectedIcon = Icons.star_rounded;
     Color selectedColor = AppColors.accentTeal;
     final screenContext = context;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    final List<IconData> goalIcons = [Icons.star_rounded, Icons.flight_rounded, Icons.home_rounded, Icons.directions_car_rounded, Icons.school_rounded, Icons.shopping_bag_rounded, Icons.favorite_rounded, Icons.mosque_rounded];
-    final List<Color> goalColors = [AppColors.accentTeal, const Color(0xFF6366F1), const Color(0xFFF43F5E), const Color(0xFFF59E0B), const Color(0xFF10B981), const Color(0xFF8B5CF6), const Color(0xFFEC4899), const Color(0xFF0EA5E9)];
+    final List<IconData> goalIcons = [
+      Icons.star_rounded, 
+      Icons.flight_rounded, 
+      Icons.home_rounded, 
+      Icons.directions_car_rounded, 
+      Icons.school_rounded, 
+      Icons.shopping_bag_rounded, 
+      Icons.favorite_rounded, 
+      Icons.mosque_rounded,
+      Icons.computer_rounded,
+      Icons.restaurant_rounded
+    ];
+    
+    final List<Color> goalColors = [
+      AppColors.accentTeal, 
+      const Color(0xFF6366F1), 
+      const Color(0xFFF43F5E), 
+      const Color(0xFFF59E0B), 
+      const Color(0xFF10B981), 
+      const Color(0xFF8B5CF6), 
+      const Color(0xFFEC4899), 
+      const Color(0xFF0EA5E9)
+    ];
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          scrollable: true,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28 * context.fontSizeFactor)),
-          title: Text(l10n.createNewGoal, style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5, fontSize: 18 * context.fontSizeFactor)),
-          content: MaxWidthBox(
-            maxWidth: 450,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                    _dialogInputField(context, l10n.goalName, Icons.edit_rounded, titleController),
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    _dialogInputField(context, l10n.targetAmount, Icons.attach_money_rounded, amountController, isNumber: true),
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    _dialogInputField(
-                      context,
-                      l10n.deadline,
-                      Icons.calendar_today_rounded,
-                      deadlineController,
-                      readOnly: true,
-                      onTap: () async {
-                        final date = await showDatePicker(context: context, initialDate: DateTime.now().add(const Duration(days: 30)), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 3650)));
-                        if (date != null) {
-                          if (!context.mounted) return;
-                          final time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
-                          if (time != null) {
-                            final fullDateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (context, setDialogState) => Container(
+          height: MediaQuery.of(context).size.height * 0.85,
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+              const SizedBox(height: 24),
+              Text(
+                l10n.createNewGoal,
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22 * context.fontSizeFactor, letterSpacing: -0.5),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _dialogInputField(context, l10n.goalName, Icons.edit_rounded, titleController),
+                      SizedBox(height: 20 * context.fontSizeFactor),
+                      _dialogInputField(context, l10n.targetAmount, Icons.attach_money_rounded, amountController, isNumber: true),
+                      SizedBox(height: 20 * context.fontSizeFactor),
+                      _dialogInputField(
+                        context,
+                        l10n.deadline,
+                        Icons.calendar_today_rounded,
+                        deadlineController,
+                        readOnly: true,
+                        onTap: () async {
+                          final date = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now().add(const Duration(days: 30)),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime.now().add(const Duration(days: 3650)),
+                          );
+                          if (date != null) {
                             setDialogState(() {
-                              deadlineController.text = DateFormat('dd MMM yyyy').format(fullDateTime);
+                              deadlineController.text = DateFormat('dd MMM yyyy').format(date);
                             });
                           }
-                        }
-                      },
-                    ),
-                    SizedBox(height: 24 * context.fontSizeFactor),
-                    Text(l10n.selectIcon, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
-                    SizedBox(height: 12 * context.fontSizeFactor),
-                    SizedBox(
-                      height: 55 * context.fontSizeFactor,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: goalIcons.length,
-                        itemBuilder: (context, index) {
-                          bool isSelected = selectedIcon == goalIcons[index];
-                          return GestureDetector(
-                            onTap: () => setDialogState(() => selectedIcon = goalIcons[index]),
-                            child: Container(
-                              margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
-                              width: 50 * context.fontSizeFactor,
-                              decoration: BoxDecoration(color: isSelected ? selectedColor : Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(14 * context.fontSizeFactor), border: Border.all(color: isSelected ? selectedColor : Theme.of(context).dividerColor.withValues(alpha: 0.1))),
-                              child: Icon(goalIcons[index], color: isSelected ? Colors.white : AppColors.grey, size: 26 * context.fontSizeFactor),
-                            ),
-                          );
                         },
                       ),
-                    ),
-                    SizedBox(height: 24 * context.fontSizeFactor),
-                    Text(l10n.selectColor, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: AppColors.grey)),
-                    SizedBox(height: 12 * context.fontSizeFactor),
-                    SizedBox(
-                      height: 45 * context.fontSizeFactor,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: goalColors.length,
-                        itemBuilder: (context, index) {
-                          bool isSelected = selectedColor == goalColors[index];
-                          return GestureDetector(
-                            onTap: () => setDialogState(() => selectedColor = goalColors[index]),
-                            child: Container(
-                              margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
-                              width: 45 * context.fontSizeFactor,
-                              decoration: BoxDecoration(color: goalColors[index], shape: BoxShape.circle, border: Border.all(color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent, width: 3)),
-                              child: isSelected ? Icon(Icons.check, color: Colors.white, size: 24 * context.fontSizeFactor) : null,
-                            ),
-                          );
-                        },
+                      SizedBox(height: 32 * context.fontSizeFactor),
+                      Text(l10n.selectIcon, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor, color: theme.colorScheme.primary)),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      SizedBox(
+                        height: 60 * context.fontSizeFactor,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: goalIcons.length,
+                          itemBuilder: (context, index) {
+                            bool isSelected = selectedIcon == goalIcons[index];
+                            return GestureDetector(
+                              onTap: () => setDialogState(() => selectedIcon = goalIcons[index]),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                margin: EdgeInsets.only(right: 12 * context.fontSizeFactor),
+                                width: 60 * context.fontSizeFactor,
+                                decoration: BoxDecoration(
+                                  color: isSelected ? selectedColor : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03)),
+                                  borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                                  border: Border.all(color: isSelected ? selectedColor : Colors.transparent, width: 2),
+                                ),
+                                child: Icon(goalIcons[index], color: isSelected ? Colors.white : (isDark ? Colors.white38 : Colors.black38), size: 28 * context.fontSizeFactor),
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 32 * context.fontSizeFactor),
+                      Text(l10n.selectColor, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor, color: theme.colorScheme.primary)),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      SizedBox(
+                        height: 50 * context.fontSizeFactor,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: goalColors.length,
+                          itemBuilder: (context, index) {
+                            bool isSelected = selectedColor == goalColors[index];
+                            return GestureDetector(
+                              onTap: () => setDialogState(() => selectedColor = goalColors[index]),
+                              child: Container(
+                                margin: EdgeInsets.only(right: 16 * context.fontSizeFactor),
+                                width: 50 * context.fontSizeFactor,
+                                decoration: BoxDecoration(
+                                  color: goalColors[index],
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.transparent, width: 3),
+                                  boxShadow: isSelected ? [BoxShadow(color: goalColors[index].withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 4))] : null,
+                                ),
+                                child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 24) : null,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 48 * context.fontSizeFactor),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56 * context.fontSizeFactor,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
+                              Navigator.pop(sheetCtx);
+                              _processCreateGoal(screenContext, l10n, titleController.text, amountController.text, deadlineController.text, selectedIcon, selectedColor);
+                            } else {
+                              HapticFeedback.vibrate();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accentTeal,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                          ),
+                          child: Text(l10n.create, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16 * context.fontSizeFactor, letterSpacing: 0.5)),
+                        ),
+                      ),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      Center(
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(sheetCtx),
+                          child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                      SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+                    ],
+                  ),
                 ),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)))),
-            ElevatedButton(
-              onPressed: () {
-                if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
-                  Navigator.pop(context);
-                  _processCreateGoal(screenContext, l10n, titleController.text, amountController.text, deadlineController.text, selectedIcon, selectedColor);
-                }
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
-              child: FittedBox(child: Text(l10n.create, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
-            ),
-          ],
         ),
       ),
     );

@@ -68,7 +68,7 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
-          backgroundColor: AppColors.primaryDark.withValues(alpha: 25 / 255),
+          backgroundColor: AppColors.primaryDark.withOpacity(25 / 255),
           child: const Icon(Icons.repeat, color: AppColors.primaryDark),
         ),
         title: Text(payment.title, style: const TextStyle(fontWeight: FontWeight.bold)),

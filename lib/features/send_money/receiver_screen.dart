@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/contact_sync_list.dart';
 import '../../core/widgets/step_indicator.dart';
@@ -16,6 +18,7 @@ class ReceiverScreen extends StatefulWidget {
   final String method;
   final String currencyCode;
   final String senderSource;
+  final String? cardId;
   final String? prefilledName;
   final String? prefilledPhone;
 
@@ -25,6 +28,7 @@ class ReceiverScreen extends StatefulWidget {
     required this.method, 
     required this.currencyCode,
     required this.senderSource,
+    this.cardId,
     this.prefilledName,
     this.prefilledPhone,
   });
@@ -141,19 +145,20 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
     
     setState(() => _isVerifying = true);
     
-    // Simulate API Call for name lookup
-    await Future.delayed(const Duration(milliseconds: 1500));
+    final state = Provider.of<AppState>(context, listen: false);
+    
+    // Simulate API Call delay for realistic feel
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     if (mounted) {
+      final name = await state.resolveAccountName(rawId, type: 'mobile');
       setState(() {
         _isVerifying = false;
-        // Mocking a name based on the number - in real app, this comes from API
-        if (rawId.contains("615")) {
-          _nameController.text = "Mohamed Hassan Ali";
-        } else if (rawId.contains("634")) {
-          _nameController.text = "Ahmed Ismail Hersi";
+        if (name != null) {
+          _nameController.text = name;
         } else {
-          _nameController.text = "Abdirahman Osman";
+          // If not found in mocks, we can leave it or set a placeholder
+          // _nameController.text = "Unknown Receiver";
         }
       });
       HapticFeedback.lightImpact();
@@ -292,17 +297,38 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
     HapticFeedback.mediumImpact();
     String finalMethod = _detectedProvider ?? widget.method;
     
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PaymentScreen(
-          amount: widget.amount,
-          receiverName: _nameController.text,
-          receiverPhone: "$_selectedCountryCode ${_idController.text}",
-          payoutMethod: finalMethod,
-          paymentMethod: widget.senderSource,
-          currencyCode: widget.currencyCode,
-          purpose: _selectedPurpose ?? _getPurposes(l10n).first,
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (_, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 50, height: 6, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+              Expanded(
+                child: PaymentScreen(
+                  amount: widget.amount,
+                  receiverName: _nameController.text,
+                  receiverPhone: "$_selectedCountryCode ${_idController.text}",
+                  payoutMethod: finalMethod,
+                  paymentMethod: widget.senderSource,
+                  cardId: widget.cardId,
+                  currencyCode: widget.currencyCode,
+                  purpose: _selectedPurpose ?? _getPurposes(l10n).first,
+                  scrollController: scrollController,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

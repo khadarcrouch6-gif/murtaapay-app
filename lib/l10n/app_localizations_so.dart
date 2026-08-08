@@ -12,7 +12,36 @@ class AppLocalizationsSo extends AppLocalizations {
   String get anonymous => 'Qof aan la aqoon';
 
   @override
+  String get donationHistory => 'Donation History';
+
+  @override
+  String get noDonationsFound => 'No donations found';
+
+  @override
+  String get searchCampaigns => 'Search campaigns...';
+
+  @override
+  String get calculateZakatEasily =>
+      'Calculate your Zakat easily and fulfill your obligation.';
+
+  @override
+  String get calculateNow => 'Calculate Now';
+
+  @override
+  String get featuredCampaign => 'Featured Campaign';
+
+  @override
+  String get safeAndSecureDonations => 'Safe & Secure Donations';
+
+  @override
+  String get weEnsureFundsReach =>
+      'We ensure your funds reach those in need safely.';
+
+  @override
   String get donationSuccessful => 'Deeqdu Way Guulaysatay!';
+
+  @override
+  String get beTheFirstToDonate => 'Noqo qofka ugu horreeya ee deeq bixiya';
 
   @override
   String get donationSuccessMessage =>
@@ -82,6 +111,9 @@ class AppLocalizationsSo extends AppLocalizations {
   String get noTransactionsFound => 'Dhaqdhaqaaqyo lama helin';
 
   @override
+  String get noTransactions => 'Ma jiraan dhaqdhaqaaqyo';
+
+  @override
   String get recentTransactions => 'Dhaqdhaqaaqadii u dambeeyay';
 
   @override
@@ -112,10 +144,13 @@ class AppLocalizationsSo extends AppLocalizations {
   String get vouchers => 'Vouchers';
 
   @override
-  String get seeAll => 'See All';
+  String get seeAll => 'Eeg Dhammaan';
 
   @override
   String get more => 'Wax kale';
+
+  @override
+  String get viewAll => 'Eeg Dhammaan';
 
   @override
   String get spendingAnalysis => 'Spending Analysis';
@@ -140,7 +175,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get transferLimit => 'Limit: \$50,000.00';
 
   @override
-  String get feeRate => 'Khidmadda: \$0.99 halkii \$100';
+  String get feeRate => 'Khidmadda: \$2.5 halkii \$100';
 
   @override
   String feeRateDynamic(String percentage, String amount) {
@@ -226,7 +261,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get finalSummary => 'Final Summary';
 
   @override
-  String get amount => 'Cadadka';
+  String get amount => 'Amount';
 
   @override
   String get instantPaymentFromWallet => 'Instant payment from wallet';
@@ -309,10 +344,10 @@ class AppLocalizationsSo extends AppLocalizations {
   String get receiverSource => 'Qaataha/Isha';
 
   @override
-  String get transactionId => 'ID-ga Dhaqdhaqaaqa';
+  String get transactionId => 'Transaction ID';
 
   @override
-  String get date => 'Taariikhda';
+  String get date => 'Date';
 
   @override
   String get purpose => 'Ujeedada';
@@ -351,7 +386,10 @@ class AppLocalizationsSo extends AppLocalizations {
   String get backToHome => 'Ku laabo Hoyga';
 
   @override
-  String get addMoney => 'Add Money';
+  String get addMoney => 'Ku shubo Lacag';
+
+  @override
+  String get amountToDeposit => 'Cadadka lagu shubayo';
 
   @override
   String get enterAmountToDeposit => 'Enter Amount to Deposit';
@@ -416,16 +454,20 @@ class AppLocalizationsSo extends AppLocalizations {
   String get feeInfoTitle => 'Macluumaadka Khidmadda Sarrifka';
 
   @override
+  String get feeInfoDescription =>
+      'Wax badan ka baro qaab-dhismeedka khidmadayada hufan.';
+
+  @override
   String get feeInfoContent =>
-      'Khidmaddu waxay ku xidhan tahay habka lacag bixinta: Wallet (\$1.0/100), Bank (\$1.5/100), Mobile Money (\$2.5/100).';
+      'Khidmaddu waxay ku xidhan tahay habka lacag bixinta: Wallet (\$1.0/100), Bank (\$2.5/100), Mobile Money (\$2.5/100).';
 
   @override
   String get bankFeeInfo =>
-      'Khidmadda wareejinta bangigu waa \$1.50 halkii \$100.';
+      'Khidmadda wareejinta bangigu waa \$2.50 halkii \$100.';
 
   @override
   String get cardFeeInfo =>
-      'Khidmadda wareejinta kaarku waa \$1.50 halkii \$100.';
+      'Khidmadda wareejinta kaarku waa \$2.50 halkii \$100.';
 
   @override
   String get walletFeeInfo =>
@@ -735,6 +777,9 @@ class AppLocalizationsSo extends AppLocalizations {
   String get cardHolder => 'CARD HOLDER';
 
   @override
+  String get provider => 'Shirkadda';
+
+  @override
   String get yourName => 'MAGACAAGA';
 
   @override
@@ -804,7 +849,10 @@ class AppLocalizationsSo extends AppLocalizations {
   String get submit => 'Gudbi';
 
   @override
-  String get accountName => 'Account Name';
+  String get iHaveSentTheMoney => 'Lacagta waan soo diray';
+
+  @override
+  String get accountName => 'Magaca Akoonka';
 
   @override
   String get transferToAccountBelow =>
@@ -853,7 +901,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get spendingLimit => 'Xadka Kharashka';
 
   @override
-  String get whyTerminateCard => 'Maxaad u tirtiraysaa kaadhka?';
+  String get whyTerminateCard => 'Maxaad u tirtirays بر kaadhka?';
 
   @override
   String get shareReasonImprove =>
@@ -1010,7 +1058,7 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get newCardReady =>
-      'Kaadhkaaga cusub ee virtual-ka ah hadda waa diyaar.';
+      'Kaadhkaaga cusub ee virtual-ka ah hadدا waa diyaar.';
 
   @override
   String get withdrawMoney => 'Withdraw Money';
@@ -1067,6 +1115,13 @@ class AppLocalizationsSo extends AppLocalizations {
   String get withdrawalRequested => 'Withdrawal Requested!';
 
   @override
+  String get withdrawalPending => 'Withdrawal Pending';
+
+  @override
+  String get bankProcessingNotice =>
+      'Bank transfers usually take 24-48 hours to complete. You can track the status in your transaction history.';
+
+  @override
   String withdrawalSuccessMessage(String amount) {
     return 'Your withdrawal of $amount is being processed.';
   }
@@ -1075,7 +1130,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get withdrawal => 'Withdrawal';
 
   @override
-  String get feeLabel => 'Fee (0.99%):';
+  String get feeLabel => 'Fee (2.5%):';
 
   @override
   String get totalDeduct => 'Total Deduct:';
@@ -1095,6 +1150,9 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get phoneLengthError => 'Number must be 9 digits';
+
+  @override
+  String get back => 'Back';
 
   @override
   String get payBills => 'Pay Bills';
@@ -1138,16 +1196,22 @@ class AppLocalizationsSo extends AppLocalizations {
   String get paymentDate => 'Payment Date';
 
   @override
-  String get status => 'Xaaladda';
-
-  @override
   String get success => 'Guul';
 
   @override
   String get pending => 'Wuu socdaa';
 
   @override
-  String get completed => 'Guulaystay';
+  String get processing => 'Waa la socodsiiyay';
+
+  @override
+  String get failed => 'Wuu fashilmay';
+
+  @override
+  String get status => 'Xaaladda';
+
+  @override
+  String get completed => 'Completed';
 
   @override
   String get downloadReceipt => 'Download Receipt';
@@ -1201,21 +1265,59 @@ class AppLocalizationsSo extends AppLocalizations {
   String get justAMoment => 'Just a moment';
 
   @override
-  String get processing => 'Waa la socodsiiyay';
-
-  @override
   String get processingTransaction => 'Lacagta ayaa la socodsiinayaa...';
 
   @override
-  String get stkPushSent => 'STK Push Sent';
+  String get stkPushSent => 'Fariintii STK Push waa la diray';
 
   @override
   String stkPushInstructions(String provider) {
-    return 'Please check your phone for the $provider PIN prompt to authorize the payment.';
+    return 'Fadlan ka eeg talefankaaga fariinta PIN-ka ee $provider si aad u xaqiijiso bixinta.';
   }
 
   @override
-  String get waitingForProvider => 'Waiting for provider confirmation...';
+  String get invalidPrefixError =>
+      'Horgalahu kuma habboona shirkadda la doortay';
+
+  @override
+  String get pushNotificationSent => 'Fariinta STK Push waa la diray';
+
+  @override
+  String pushNotificationInstructions(String amount) {
+    return 'Fadlan ka eeg talefankaaga oo geli PIN-kaaga si aad u xaqiijiso wareejinta lacagta ee $amount';
+  }
+
+  @override
+  String get depositToOurAccount => 'Lacagta ku shub akoonkeena:';
+
+  @override
+  String get bankReferenceNote =>
+      'Fiiro gaar ah: Fadlan ku dar tixraaca (reference) kore sharaxaadda xawaaladdaada bangiga si toos ah loogu socodsiiyo.';
+
+  @override
+  String get confirmTransfer => 'Xaqiiji Wareejinta';
+
+  @override
+  String confirmTransferRep(String amount) {
+    return 'Markaad gujiso xaqiijinta, waxaad sheegaysaa inaad horay u bilowday wareejinta bangiga ee $amount ee akoonka la doortay.';
+  }
+
+  @override
+  String get confirmAndSubmit => 'Xaqiiji oo Gudbi';
+
+  @override
+  String get transferNoted => 'Xawaaladda waa la diwaangeliyey';
+
+  @override
+  String transferNotedMessage(String amount) {
+    return 'Waxaan helnay codsigaaga oo dhan $amount. Haraagaaga waa la cusboonaysiin doonaa marka xawaaladda la xaqiijiyo.';
+  }
+
+  @override
+  String get takes30to60Minutes => 'Badanaa waxay qaadataa 30-60 daqiiqo.';
+
+  @override
+  String get waitingForProvider => 'Sugaya adeeg bixiyaha';
 
   @override
   String get copiedToClipboard => 'Copied to clipboard';
@@ -1607,6 +1709,9 @@ class AppLocalizationsSo extends AppLocalizations {
   String get raised => 'Raised';
 
   @override
+  String get goalLabel => 'Hadafka';
+
+  @override
   String get goal => 'Goal';
 
   @override
@@ -1668,6 +1773,9 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get totalSavings => 'Total Savings';
+
+  @override
+  String get savingsBalance => 'Haraaga Kaydka';
 
   @override
   String get cardBalanceLabel => 'Card: ';
@@ -2397,7 +2505,7 @@ class AppLocalizationsSo extends AppLocalizations {
       'Isku diri kartid lacag (Naftaada ma casuumi kartid)';
 
   @override
-  String get invalidWalletFormat => 'ID-ga Wallet-ka waa khaldan yahay';
+  String get invalidWalletFormat => 'Invalid Wallet ID format';
 
   @override
   String get searching => 'Raadinaya...';
@@ -2481,7 +2589,26 @@ class AppLocalizationsSo extends AppLocalizations {
   String get sadaqahZakatCalcDesc => 'Xisaabi oo bixi sakadaada si sax ah';
 
   @override
-  String get sadaqahTrending => 'Trending';
+  String get sadaqahTrending => 'TRENDING';
+
+  @override
+  String get sadaqahNew => 'NEW';
+
+  @override
+  String get sadaqahEndingSoon => 'ENDING SOON';
+
+  @override
+  String get sadaqahCompleted => 'COMPLETED';
+
+  @override
+  String sadaqahDonorsCount(int count) {
+    return '+$count donors';
+  }
+
+  @override
+  String sadaqahSharingCampaign(String title) {
+    return 'Sharing $title...';
+  }
 
   @override
   String get sadaqahAgo => 'ago';
@@ -2635,7 +2762,7 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get createCampaignDesc =>
-      'Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doonaa ololahaaga si loo dhiso kalsoonida.';
+      'Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doونا ololahaaga si loo dhiso kalsoonida.';
 
   @override
   String get campaignDetails => 'Faahfaahinta Ololaha';
@@ -2693,7 +2820,7 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String cryptoDescription(String asset) {
-    return '$asset waa lacag dhijitaal ah oo aan lahayn bangi dhexe ama maamule keliya, taas qof loogu diri karo qof kale iyada oo aan loo baahnayn dhex-dhexaadiye.';
+    return '$asset waa lacag dhijitaal ah oo aan lahayn bangi dhexe ama maامule keliya, taas qof loogu diri karo qof kale iyada oo aan loo baahnayn dhex-dhexaadiye.';
   }
 
   @override
@@ -2902,4 +3029,24 @@ class AppLocalizationsSo extends AppLocalizations {
   @override
   String get approachingLimitWarning =>
       'Waxaad ku dhowdahay xadkaaga maalinlaha ah.';
+
+  @override
+  String get nisabThreshold => 'Xadka Nisaabka';
+
+  @override
+  String belowNisabWarning(String threshold) {
+    return 'Hantidaadu waxay ka hoosaysaa xadka nisaabka ($threshold). Sakadu waxay qasab tahay oo kaliya haddii hantidaadu ka badato xadkan.';
+  }
+
+  @override
+  String get makeRecurringDonation => 'Ka dhig deeqdan mid joogto ah';
+
+  @override
+  String get campaignUpdates => 'Wararkii Ololaha';
+
+  @override
+  String get finalizingTransaction => 'Lacagta ayaa la dhammaystirayaa...';
+
+  @override
+  String get pleaseWait => 'Fadlan sug...';
 }

@@ -110,7 +110,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                 counterText: "",
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.2)),
+                                  borderSide: BorderSide(color: AppColors.grey.withOpacity(0.2)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),

@@ -2,6 +2,7 @@
   "@@locale": "so",
   "anonymous": "Qof aan la aqoon",
   "donationSuccessful": "Deeqdu Way Guulaysatay!",
+  "beTheFirstToDonate": "Noqo qofka ugu horreeya ee deeq bixiya",
   "donationSuccessMessage": "Waad ku mahadsan tahay deeqdaada. Waxay wax weyn ka tari doontaa nolosha dadka u baahan.",
   "pleaseEnterValidAmount": "Fadlan geli cadad sax ah",
   "facebook": "Facebook",
@@ -22,6 +23,7 @@
   "confirm": "Xaqiiji",
   "searchTransactions": "Raadi dhaqdhaqaaqyada...",
   "noTransactionsFound": "Dhaqdhaqaaqyo lama helin",
+  "noTransactions": "Ma jiraan dhaqdhaqaaqyo",
   "recentTransactions": "Dhaqdhaqaaqadii u dambeeyay",
   "settings": "Habsamada",
   "language": "Luuqadda",
@@ -34,13 +36,11 @@
   "topUpCard": "Kaadh Buuxi",
   "withdraw": "Kala bax",
   "transactionDetails": "Faahfaahinta Dhaqdhaqaaqa",
-  "status": "Xaaladda",
-  "date": "Taariikhda",
-  "transactionId": "ID-ga Dhaqdhaqaaqa",
-  "amount": "Cadadka",
-  "completed": "Guulaystay",
+  "success": "Guul",
   "pending": "Wuu socdaa",
+  "processing": "Waa la socodsiiyay",
   "failed": "Wuu fashilmay",
+  "status": "Xaaladda",
   "totalBalance": "Wadarta Haraaga",
   "quickActions": "Waxqabad Degdeg ah",
   "scan": "Scan",
@@ -61,14 +61,17 @@
   "login": "Soo gal",
   "signUp": "Isku diwaangeli",
   "createAccount": "Abuur Akoon",
-  "feeRate": "Khidmadda: $0.99 halkii $100",
+  "seeAll": "Eeg Dhammaan",
+  "more": "Wax kale",
+  "viewAll": "Eeg Dhammaan",
+  "feeRate": "Khidmadda: $2.5 halkii $100",
   "youSend": "Adiga ayaa diraya",
   "searchCurrency": "Raadi lacagta",
   "receiverGets": "Qaataha ayaa helaya",
   "password": "Sirta",
   "forgotPassword": "Ma ilaaway sirtii?",
   "donthaveAccount": "Ma haysatid akoon?",
-  "alreadyHaveAccount": "Horay ma u lahayd akoon?",
+  "alreadyHaveAccount": "Horay ma u lahayد akoon?",
   "fullName": "Magaca oo dhammaystiran",
   "emailAddress": "Email-ka",
   "joinMurtaaxPayToday": "Ku soo biir MurtaaxPay maanta",
@@ -95,9 +98,10 @@
   "maxLabel": "MAX",
   "refreshed": "La cusboonaysiiyay",
   "feeInfoTitle": "Macluumaadka Khidmadda Sarrifka",
-  "feeInfoContent": "Khidmaddu waxay ku xidhan tahay habka lacag bixinta: Wallet ($1.0/100), Bank ($1.5/100), Mobile Money ($2.5/100).",
-  "bankFeeInfo": "Khidmadda wareejinta bangigu waa $1.50 halkii $100.",
-  "cardFeeInfo": "Khidmadda wareejinta kaarku waa $1.50 halkii $100.",
+  "feeInfoDescription": "Wax badan ka baro qaab-dhismeedka khidmadayada hufan.",
+  "feeInfoContent": "Khidmaddu waxay ku xidhan tahay habka lacag bixinta: Wallet ($1.0/100), Bank ($2.5/100), Mobile Money ($2.5/100).",
+  "bankFeeInfo": "Khidmadda wareejinta bangigu waa $2.50 halkii $100.",
+  "cardFeeInfo": "Khidmadda wareejinta kaarku waa $2.50 halkii $100.",
   "walletFeeInfo": "Khidmadda wareejinta boorsada (Wallet) waa $1.00 halkii $100.",
   "mobileMoneyFeeInfo": "Khidmadda wareejinta Mobile Money waa $2.50 halkii $100.",
   "ok": "WAAYE",
@@ -108,6 +112,40 @@
   "notifications": "Ogaysiisyada",
   "noNotifications": "Ma jiraan ogaysiisyo cusub",
   "security": "Amniga",
+  "stkPushSent": "Fariintii STK Push waa la diray",
+  "stkPushInstructions": "Fadlan ka eeg talefankaaga fariinta PIN-ka ee {provider} si aad u xaqiijiso bixinta.",
+  "@stkPushInstructions": {
+    "placeholders": {
+      "provider": { "type": "String" }
+    }
+  },
+  "invalidPrefixError": "Horgalahu kuma habboona shirkadda la doortay",
+  "pushNotificationSent": "Fariinta STK Push waa la diray",
+  "pushNotificationInstructions": "Fadlan ka eeg talefankaaga oo geli PIN-kaaga si aad u xaqiijiso wareejinta lacagta ee {amount}",
+  "@pushNotificationInstructions": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "depositToOurAccount": "Lacagta ku shub akoonkeena:",
+  "bankReferenceNote": "Fiiro gaar ah: Fadlan ku dar tixraaca (reference) kore sharaxaadda xawaaladdaada bangiga si toos ah loogu socodsiiyo.",
+  "confirmTransfer": "Xaqiiji Wareejinta",
+  "confirmTransferRep": "Markaad gujiso xaqiijinta, waxaad sheegaysaa inaad horay u bilowday wareejinta bangiga ee {amount} ee akoonka la doortay.",
+  "@confirmTransferRep": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "confirmAndSubmit": "Xaqiiji oo Gudbi",
+  "transferNoted": "Xawaaladda waa la diwaangeliyey",
+  "transferNotedMessage": "Waxaan helnay codsigaaga oo dhan {amount}. Haraagaaga waa la cusboonaysiin doonaa marka xawaaladda la xaqiijiyo.",
+  "@transferNotedMessage": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "takes30to60Minutes": "Badanaa waxay qaadataa 30-60 daqiiqo.",
+  "waitingForProvider": "Sugaya adeeg bixiyaha",
   "changePin": "Beddel PIN-ka",
   "biometricAuth": "Aqoonsiga Faraha/Wajiga",
   "helpSupport": "Caawinaad",
@@ -152,7 +190,6 @@
   "freezeCard": "Xir kaadhka",
   "showDetails": "Muuji faahfaahinta",
   "transactions": "Dhaqdhaqaaqyada",
-  "noTransactions": "Ma jiraan dhaqdhaqaaqyo",
   "hagbadTitle": "Hagbad (Kayd Group)",
   "createHagbad": "Abuur Hagbad",
   "joinHagbad": "Ku biir Hagbad",
@@ -262,6 +299,7 @@
   "noData": "Xog lama helin",
   "loading": "Wuu soo raryaa...",
   "pleaseWait": "Fadlan sug...",
+  "finalizingTransaction": "Lacagta ayaa la dhammaystirayaa...",
   "comingSoon": "Dhawaan filo",
   "featureNotAvailable": "Adeeggan weli lama helin",
   "maintenanceMode": "Habka dayactirka",
@@ -283,6 +321,7 @@
   "cancelled": "Waa la joojiyay",
   "processing": "Waa la socodsiiyay",
   "processingTransaction": "Lacagta ayaa la socodsiinayaa...",
+  "finalizingTransaction": "Lacagta ayaa la dhammaystirayaa...",
   "lowBalance": "Hadhaagaaga waa yar yahay",
   "topUpSuccess": "Shubista way guulaysatay",
   "withdrawSuccess": "Kala bixitaanka way guulaysatay",
@@ -710,6 +749,7 @@
   "murtaaxWalletDesc": "Ka bixi hadhaaga app-kaaga",
   "visaMastercardDesc": "Ku bixi adoo isticmaalaya kaadhkaaga",
   "bankTransferDesc": "Xawilaad toos ah oo bangi",
+  "provider": "Shirkadda",
   "yourName": "MAGACAAGA",
   "requiredField": "Waa lagama maarmaan",
   "chooseProviderAndEnterPhone": "Dooro shirkadda oo geli lambarka telefoonka",
@@ -730,6 +770,8 @@
       }
     }
   },
+  "addMoney": "Ku shubo Lacag",
+  "amountToDeposit": "Cadadka lagu shubayo",
   "enterAmountToTopUp": "Geli cadadka aad ku shubayso",
   "topUp": "Ku Shubo",
   "topUpInstantlyVia": "Si degdeg ah ugu shubo {method}",
@@ -744,6 +786,8 @@
   "enterWalletPinMessage": "Geli 4-digit PIN-kaaga wallet-ka si aad u xaqiijiso lacag ku shubista.",
   "confirm": "Xaqiiji",
   "submit": "Gudbi",
+  "iHaveSentTheMoney": "Lacagta waan soo diray",
+  "accountName": "Magaca Akoonka",
   "cardEndingIn": "Kaadhka ku dhammaada {lastFour}",
   "@cardEndingIn": {
     "placeholders": {
@@ -817,7 +861,7 @@
   },
   "inviteViaSms": "Ku casuum SMS",
   "selfTransferError": "Isku diri kartid lacag (Naftaada ma casuumi kartid)",
-  "invalidWalletFormat": "ID-ga Wallet-ka waa khaldan yahay",
+  "invalidWalletIdFormat": "ID-ga Wallet-ka waa khaldan yahay",
   "searching": "Raadinaya...",
   "invite": "Casuun",
   "exchangeRates": "Sarifka Lacagta",
@@ -853,7 +897,7 @@
   "insufficientBalanceSadaqah": "Haraagaagu kuguma filna.",
   "startFundraiser": "Bilow Ururinta Sadaqo",
   "createCampaign": "Samee Ololaha",
-  "createCampaignDesc": "Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doonaa ololahaaga si loo dhiso kalsoonida.",
+  "createCampaignDesc": "Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doونا ololahaaga si loo dhiso kalsoonida.",
   "campaignDetails": "Faahfaahinta Ololaha",
   "campaignTitle": "Cinwaanka Ololaha",
   "campaignTitleHint": "Tusaale: Caawi dhisidda ceel biyood Gedo",
@@ -876,7 +920,7 @@
       "asset": { "type": "String" }
     }
   },
-  "cryptoDescription": "{asset} waa lacag dhijitaal ah oo aan lahayn bangi dhexe ama maamule keliya, taas qof loogu diri karo qof kale iyada oo aan loo baahnayn dhex-dhexaadiye.",
+  "cryptoDescription": "{asset} waa lacag dhijitaal ah oo aan lahayn bangi dhexe ama maامule keliya, taas qof loogu diri karo qof kale iyada oo aan loo baahnayn dhex-dhexaadiye.",
   "@cryptoDescription": {
     "placeholders": {
       "asset": { "type": "String" }
@@ -975,7 +1019,7 @@
   "subscriptionManager": "Maareeyaha Isdiiwaangelinta",
   "manageSubscriptions": "Maaree isdiiwaangelinta iyo lacagaha joogtada ah",
   "spendingLimit": "Xadka Kharashka",
-  "whyTerminateCard": "Maxaad u tirtiraysaa kaadhka?",
+  "whyTerminateCard": "Maxaad u tirtirays بر kaadhka?",
   "shareReasonImprove": "Fadlan nala wadaag sababta si aan adeegga u horumarinno.",
   "reasonLostStolen": "Kaadhkaygii baa iga lumay ama waa la iga xaday",
   "reasonBetterService": "Waxaan helay adeeg ka fiican",
@@ -1040,7 +1084,7 @@
     }
   },
   "cardCreated": "Kaadhka waa la abuuray",
-  "newCardReady": "Kaadhkaaga cusub ee virtual-ka ah hadda waa diyaar.",
+  "newCardReady": "Kaadhkaaga cusub ee virtual-ka ah hadدا waa diyaar.",
   "personalPayment": "Bixinta Shakhsiga",
   "merchantPayment": "Bixinta Ganacsiga",
   "tillNumber": "Lambarka Till-ka",
@@ -1078,5 +1122,17 @@
     }
   },
   "exceedsLimitWarning": "Lacagtan waxay ka badan tahay xadka kuu hadhay.",
-  "approachingLimitWarning": "Waxaad ku dhowdahay xadkaaga maalinlaha ah."
+  "approachingLimitWarning": "Waxaad ku dhowdahay xadkaaga maalinlaha ah.",
+  "limitExceeded": "Xadkii waa la dhaafay",
+  "savingsBalance": "Haraaga Kaydka",
+  "goalLabel": "Hadafka",
+  "nisabThreshold": "Xadka Nisaabka",
+  "belowNisabWarning": "Hantidaadu waxay ka hoosaysaa xadka nisaabka ({threshold}). Sakadu waxay qasab tahay oo kaliya haddii hantidaadu ka badato xadkan.",
+  "@belowNisabWarning": {
+    "placeholders": {
+      "threshold": { "type": "String" }
+    }
+  },
+  "makeRecurringDonation": "Ka dhig deeqdan mid joogto ah",
+  "campaignUpdates": "Wararkii Ololaha"
 }

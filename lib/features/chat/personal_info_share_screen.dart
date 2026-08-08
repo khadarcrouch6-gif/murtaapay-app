@@ -75,7 +75,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
                 l10n.infoSharedNotice,
                 style: TextStyle(
                   fontSize: 14 * context.fontSizeFactor,
-                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                 ),
               ),
               const SizedBox(height: 24),
