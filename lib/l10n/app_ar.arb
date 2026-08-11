@@ -17,7 +17,7 @@
   "send": "إرسال",
   "add": "إضافة",
   "bills": "فواتير",
-  "sadaqah": "صدقة",
+  "fundraiser": "صدقة",
   "exchange": "تبديل",
   "vouchers": "قسائم",
   "seeAll": "عرض الكل",
@@ -419,7 +419,7 @@
   "yourReferralCode": "رمز الإحالة الخاص بك",
   "copy": "نسخ",
   "whatsApp": "واتساب",
-  "sadaqahCommunity": "الصدقة والمجتمع",
+  "fundraiserCommunity": "الصدقة والمجتمع",
   "beTheFirstToDonate": "كن أول من يتبرع",
   "medicalEmergency": "حالة طبية طارئة",
   "medicalEmergencyDesc": "ساعد أحمد في تغطية تكاليف جراحة القلب في تركيا.",
@@ -572,5 +572,16 @@
   "makeRecurringDonation": "اجعل هذا تبرعًا متكررًا",
   "campaignUpdates": "تحديثات الحملة",
   "finalizingTransaction": "جاري إنهاء المعاملة...",
-  "pleaseWait": "يرجى الانتظار..."
+  "pleaseWait": "يرجى الانتظار...",
+  "withdrawalRequested": "تم طلب السحب!",
+  "withdrawalPending": "سحب معلق",
+  "bankProcessingNotice": "تستغرق التحويلات البنكية عادةً من 24 إلى 48 ساعة لتكتمل. يمكنك تتبع الحالة في سجل المعاملات الخاص بك.",
+  "withdrawalSuccessMessage": "جاري معالجة سحب {amount}.",
+  "@withdrawalSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  }
 }

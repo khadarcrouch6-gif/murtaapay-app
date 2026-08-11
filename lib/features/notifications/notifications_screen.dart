@@ -7,6 +7,9 @@ import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 
+import '../../core/widgets/pin_entry_dialog.dart';
+import '../../core/models/notification_model.dart';
+
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
 
@@ -54,6 +57,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final filters = [
       state.translate("All", "Dhammaan", ar: "الكل", de: "Alle"),
       state.translate("Transactions", "Xawaaladaha", ar: "المعاملات", de: "Transaktionen"),
+      state.translate("Requests", "Codsiyada", ar: "الطلبات", de: "Anfragen"),
       state.translate("Promos", "Dalabyada", ar: "العروض", de: "Angebote"),
     ];
 
@@ -96,12 +100,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Widget _buildNotificationsList(BuildContext context, AppState state, ThemeData theme) {
-    final List<NotificationData> allNotifications = [
+    final List<NotificationData> staticNotifications = [
+      NotificationData(
+        title: state.translate("Money Request", "Codsi Lacag", ar: "طلب مبلغ", de: "Geldanforderung"),
+        subtitle: state.translate("Mustafe Gedi requested \$45.00 for Lunch.", "Mustafe Gedi wuxuu ku waydiistay \$45.00 qadadii.", ar: "طلب مصطفى جيدي مبلغ \$45.00 للغداء.", de: "Mustafe Gedi hat \$45.00 für das Mittagessen angefordert."),
+        time: state.translate("Just now", "Hadda", ar: "الآن", de: "Gerade eben"),
+        icon: Icons.payments_outlined,
+        iconColor: Colors.blue,
+        type: 3,
+        extraData: {'sender': 'Mustafe Gedi', 'amount': 45.0},
+      ),
       NotificationData(
         title: state.translate("Transaction Successful", "Xawaalad Guulaysatay", ar: "تمت العملية بنجاح", de: "Transaktion erfolgreich"),
         subtitle: state.translate("You sent \$2,500 to Ahmed Warsame.", "Waxaad \$2,500 u dirtay Ahmed Warsame.", ar: "لقد أرسلت \$2,500 إلى أحمد ورسمة.", de: "Sie haben \$2.500 an Ahmed Warsame gesendet."),
         time: state.translate("2 mins ago", "2 daqiiqo ka hor", ar: "منذ دقيقتين", de: "vor 2 Min."),
-        icon: FontAwesomeIcons.circleCheck,
+        icon: Icons.check_circle_outline,
         iconColor: AppColors.accentTeal,
         type: 1,
       ),
@@ -130,10 +143,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         type: 0,
       ),
     ];
+    
+    final List<NotificationData> allNotifications = [...state.notifications, ...staticNotifications];
 
     final filteredList = _selectedFilter == 0
         ? allNotifications
-        : allNotifications.where((n) => n.type == (_selectedFilter == 1 ? 1 : 2)).toList();
+        : allNotifications.where((n) {
+            if (_selectedFilter == 1) return n.type == 1; // Transactions
+            if (_selectedFilter == 2) return n.type == 3; // Requests
+            if (_selectedFilter == 3) return n.type == 2; // Promos
+            return false;
+          }).toList();
 
     if (filteredList.isEmpty) {
       return Center(
@@ -240,7 +260,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       isScrollControlled: true,
       builder: (context) => GlassmorphicContainer(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.45,
+        height: notification.type == 3 ? MediaQuery.of(context).size.height * 0.5 : MediaQuery.of(context).size.height * 0.45,
         borderRadius: 32,
         blur: 20,
         alignment: Alignment.center,
@@ -304,68 +324,124 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 ),
               ),
               const Spacer(),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey.shade200,
-                        foregroundColor: Colors.black87,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: Text(state.translate("Close", "Xidh", ar: "إغلاق", de: "Schließen")),
+              if (notification.type == 3)
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red.shade50,
+                              foregroundColor: Colors.red,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: Text(state.translate("Decline", "Diid", ar: "رفض", de: "Ablehnen")),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              _handleApproveRequest(context, notification, state);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryDark,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: Text(state.translate("Approve", "Oggolow", ar: "موافقة", de: "Genehmigen")),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  if (notification.type == 1) ...[
-                    const SizedBox(width: 16),
+                  ],
+                )
+              else
+                Row(
+                  children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          // 1. Bedel index-ka si history tab loo tago
-                          state.setNavIndex(1);
-                          // 2. Xidh modal-ka
-                          Navigator.pop(context);
-                          // 3. Xidh Notifications screen-ka si loo laabto MainNavigation
-                          Navigator.pop(context);
-                        },
+                        onPressed: () => Navigator.pop(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryDark,
-                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.grey.shade200,
+                          foregroundColor: Colors.black87,
                           elevation: 0,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        child: Text(state.translate("View", "Eeg", ar: "عرض", de: "Ansehen")),
+                        child: Text(state.translate("Close", "Xidh", ar: "إغلاق", de: "Schließen")),
                       ),
                     ),
+                    if (notification.type == 1) ...[
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            state.setNavIndex(1);
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryDark,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: Text(state.translate("View", "Eeg", ar: "عرض", de: "Ansehen")),
+                        ),
+                      ),
+                    ],
                   ],
-                ],
-              ),
+                ),
             ],
           ),
         ),
       ),
     );
   }
+
+  void _handleApproveRequest(BuildContext context, NotificationData notification, AppState state) {
+    showDialog(
+      context: context,
+      builder: (context) => PinEntryDialog(
+        title: state.translate("Confirm Payment", "Hubi Lacag Bixinta", ar: "تأكيد الدفع", de: "Zahlung bestätigen"),
+        description: state.translate("Enter PIN to pay ${notification.extraData?['sender'] ?? 'Request'}", "Geli PIN si aad u bixiso", ar: "أدخل PIN للدفع", de: "PIN eingeben, um zu bezahlen"),
+        onConfirm: (pin) async {
+          try {
+            await state.approveMoneyRequest(notification.extraData?['requestId'] ?? "", pin);
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.translate("Payment successful!", "Lacag bixintu way lagu guulaystay!", ar: "تم الدفع بنجاح!", de: "Zahlung erfolgreich!")),
+                  backgroundColor: AppColors.accentTeal,
+                ),
+              );
+            }
+          } catch (e) {
+            if (context.mounted) {
+              String errorMsg = e.toString();
+              if (errorMsg.contains("insufficient_funds")) {
+                errorMsg = state.translate("Insufficient balance", "Haraagu kuguma filna", ar: "رصيد غير كاف", de: "Unzureichendes Guthaben");
+              } else if (errorMsg.contains("daily_limit_exceeded")) {
+                errorMsg = state.translate("Daily limit exceeded", "Xadka maalinlaha ah waa laga gudbay", ar: "تم تجاوز الحد اليومي", de: "Tageslimit überschritten");
+              }
+              
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(errorMsg), backgroundColor: Colors.redAccent),
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
 }
 
-class NotificationData {
-  final String title;
-  final String subtitle;
-  final String time;
-  final dynamic icon;
-  final Color iconColor;
-  final int type; // 0: System/Safety, 1: Transactions, 2: Promos
-
-  NotificationData({
-    required this.title,
-    required this.subtitle,
-    required this.time,
-    required this.icon,
-    required this.iconColor,
-    required this.type,
-  });
-}

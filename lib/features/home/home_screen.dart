@@ -20,7 +20,7 @@ import '../history/history_screen.dart';
 import '../cards/cards_screen.dart';
 import '../bills/pay_bills_screen.dart';
 import '../chat/chat_screen.dart';
-import '../more/sadaqah_screen.dart';
+import '../more/fundraiser_screen.dart';
 import '../more/exchange_rates_screen.dart';
 import '../profile/account_limits_screen.dart';
 
@@ -40,6 +40,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/models/quick_profile.dart';
 import 'widgets/quick_send_sheet.dart';
+import 'widgets/add_quick_profile_sheet.dart';
 
 enum ChartType { bar, pie, line }
 
@@ -569,10 +570,30 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildSpendingAnalysis(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme, List<double> weeklyData) {
-    // Calculate category totals for stats
-    final categoryTotals = <String, double>{};
+    // Calculate category totals for stats using requested categories
+    final categoryTotals = <String, double>{
+      'SEND': 0.0,
+      'SHOPPING': 0.0,
+      'SAVING': 0.0,
+      'HAGBAD': 0.0,
+      'WITHDRAW': 0.0,
+    };
+
     for (var tx in state.transactions.where((t) => t.isNegative)) {
-       categoryTotals[tx.category] = (categoryTotals[tx.category] ?? 0) + tx.numericAmount;
+      final category = tx.category.toUpperCase();
+      final type = tx.type.toLowerCase();
+      
+      if (category.contains('TRANSFER') || category.contains('SEND') || type.contains('transfer_out')) {
+        categoryTotals['SEND'] = (categoryTotals['SEND'] ?? 0) + tx.numericAmount;
+      } else if (category.contains('SHOPPING') || category.contains('GROCERY') || category.contains('BILL') || type.contains('payment')) {
+        categoryTotals['SHOPPING'] = (categoryTotals['SHOPPING'] ?? 0) + tx.numericAmount;
+      } else if (category.contains('SAVING')) {
+        categoryTotals['SAVING'] = (categoryTotals['SAVING'] ?? 0) + tx.numericAmount;
+      } else if (category.contains('HAGBAD')) {
+        categoryTotals['HAGBAD'] = (categoryTotals['HAGBAD'] ?? 0) + tx.numericAmount;
+      } else if (category.contains('WITHDRAW') || type.contains('withdrawal')) {
+        categoryTotals['WITHDRAW'] = (categoryTotals['WITHDRAW'] ?? 0) + tx.numericAmount;
+      }
     }
 
     return Padding(
@@ -626,26 +647,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     ),
                     const SizedBox(height: 24),
                   ],
-                  if (isSmall) 
-                    Column(
-                      children: [
-                        _buildStatItem(context, l10n.send, NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Transfer'] ?? 0), Colors.blue, isList: true),
-                        const SizedBox(height: 12),
-                        _buildStatItem(context, "Hagbad", NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Hagbad'] ?? 0), Colors.orange, isList: true),
-                        const SizedBox(height: 12),
-                        _buildStatItem(context, "Shopping", NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Shopping'] ?? 0), AppColors.accentTeal, isList: true),
-                      ],
-                    )
-                  else
-                    Row(
-                      children: [
-                        Expanded(child: _buildStatItem(context, l10n.send, NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Transfer'] ?? 0), Colors.blue)),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildStatItem(context, "Hagbad", NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Hagbad'] ?? 0), Colors.orange)),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildStatItem(context, "Shop", NumberFormat.simpleCurrency(name: state.currencyCode, decimalDigits: 0).format(categoryTotals['Shopping'] ?? 0), AppColors.accentTeal)),
-                      ],
-                    ),
+                  // Responsive grid for stat items
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: constraints.maxWidth > 600 ? 5 : 3,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 2.5,
+                    children: [
+                      _buildStatItem(context, "Send", NumberFormat.compactCurrency(symbol: r'$').format(categoryTotals['SEND']), Colors.blue, isList: true),
+                      _buildStatItem(context, "Shop", NumberFormat.compactCurrency(symbol: r'$').format(categoryTotals['SHOPPING']), AppColors.accentTeal, isList: true),
+                      _buildStatItem(context, "Hagbad", NumberFormat.compactCurrency(symbol: r'$').format(categoryTotals['HAGBAD']), Colors.orange, isList: true),
+                      _buildStatItem(context, "Saving", NumberFormat.compactCurrency(symbol: r'$').format(categoryTotals['SAVING']), Colors.indigo, isList: true),
+                      _buildStatItem(context, "Draw", NumberFormat.compactCurrency(symbol: r'$').format(categoryTotals['WITHDRAW']), Colors.redAccent, isList: true),
+                    ],
+                  ),
                 ],
               );
             }
@@ -856,7 +873,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   Widget _buildSadaqahFeatureItem(BuildContext context, AppState state, AppLocalizations l10n, Color color) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SadaqahScreen())),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FundraiserScreen())),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -894,7 +911,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
           SizedBox(height: 4 * context.fontSizeFactor),
           Text(
-            l10n.sadaqah,
+            l10n.fundraiser,
             style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w500), 
             textAlign: TextAlign.center, 
             overflow: TextOverflow.ellipsis,
@@ -927,6 +944,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildBarChart(ThemeData theme, List<double> weeklyData) {
+    // Determine the max value for scaling, ensuring a minimum for empty charts
     final double maxVal = weeklyData.fold(50.0, (prev, element) => element > prev ? element : prev);
     
     return BarChart(
@@ -935,11 +953,31 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         maxY: maxVal * 1.2,
         barTouchData: BarTouchData(
           enabled: true,
+          touchCallback: (FlTouchEvent event, barTouchResponse) {
+            if (!event.isInterestedForInteractions ||
+                barTouchResponse == null ||
+                barTouchResponse.spot == null) {
+              return;
+            }
+            if (event is FlTapUpEvent) {
+              final index = barTouchResponse.spot!.touchedBarGroupIndex;
+              final targetDate = DateTime.now().subtract(Duration(days: 6 - index));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AnalyticsScreen(
+                    targetDate: targetDate,
+                  ),
+                ),
+              );
+            }
+          },
           touchTooltipData: BarTouchTooltipData(
             getTooltipColor: (_) => AppColors.primaryDark,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              final date = DateTime.now().subtract(Duration(days: 6 - group.x.toInt()));
               return BarTooltipItem(
-                '${_days[group.x.toInt()]}\n',
+                '${DateFormat('E').format(date)}\n',
                 const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 children: [
                   TextSpan(
@@ -953,39 +991,117 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ),
         titlesData: FlTitlesData(
           show: true,
-          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, meta) => Text(_days[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 10)))),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true, 
+              getTitlesWidget: (value, meta) {
+                final date = DateTime.now().subtract(Duration(days: 6 - value.toInt()));
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    DateFormat('E').format(date), 
+                    style: const TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)
+                  ),
+                );
+              }
+            )
+          ),
           leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
-        gridData: const FlGridData(show: false),
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: maxVal > 0 ? maxVal / 4 : 10,
+          getDrawingHorizontalLine: (value) => FlLine(color: Colors.grey.withValues(alpha: 0.1), strokeWidth: 1),
+        ),
         borderData: FlBorderData(show: false),
-        barGroups: List.generate(weeklyData.length, (i) => BarChartGroupData(x: i, barRods: [BarChartRodData(toY: weeklyData[i] == 0 ? 2 : weeklyData[i], gradient: AppColors.primaryGradient, width: 12, borderRadius: BorderRadius.circular(4))])),
+        barGroups: List.generate(weeklyData.length, (i) => BarChartGroupData(
+          x: i, 
+          barRods: [
+            BarChartRodData(
+              toY: weeklyData[i], 
+              gradient: AppColors.primaryGradient, 
+              width: 16, 
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(6))
+            )
+          ]
+        )),
       ),
     );
   }
 
   Widget _buildLineChart(ThemeData theme, List<double> weeklyData) {
+    final double maxVal = weeklyData.fold(50.0, (prev, element) => element > prev ? element : prev);
+    
     return LineChart(
       LineChartData(
         lineTouchData: LineTouchData(
           enabled: true,
+          touchCallback: (FlTouchEvent event, lineTouchResponse) {
+            if (!event.isInterestedForInteractions ||
+                lineTouchResponse == null ||
+                lineTouchResponse.lineBarSpots == null ||
+                lineTouchResponse.lineBarSpots!.isEmpty) {
+              return;
+            }
+            if (event is FlTapUpEvent) {
+              final index = lineTouchResponse.lineBarSpots!.first.x.toInt();
+              final targetDate = DateTime.now().subtract(Duration(days: 6 - index));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AnalyticsScreen(
+                    targetDate: targetDate,
+                  ),
+                ),
+              );
+            }
+          },
           touchTooltipData: LineTouchTooltipData(
             getTooltipColor: (_) => AppColors.primaryDark,
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
+                final date = DateTime.now().subtract(Duration(days: 6 - spot.x.toInt()));
                 return LineTooltipItem(
-                  '\$${spot.y.toStringAsFixed(2)}',
-                  const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold),
+                  '${DateFormat('E').format(date)}\n',
+                  const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  children: [
+                    TextSpan(
+                      text: '\$${spot.y.toStringAsFixed(2)}',
+                      style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 );
               }).toList();
             },
           ),
         ),
-        gridData: const FlGridData(show: false),
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: maxVal > 0 ? maxVal / 4 : 10,
+          getDrawingHorizontalLine: (value) => FlLine(color: Colors.grey.withValues(alpha: 0.05), strokeWidth: 1),
+        ),
         titlesData: FlTitlesData(
           show: true,
-          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, meta) => value.toInt() < _days.length ? Text(_days[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 10)) : const SizedBox())),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true, 
+              getTitlesWidget: (value, meta) {
+                if (value.toInt() < 0 || value.toInt() > 6) return const SizedBox();
+                final date = DateTime.now().subtract(Duration(days: 6 - value.toInt()));
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    DateFormat('E').format(date), 
+                    style: const TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)
+                  ),
+                );
+              }
+            )
+          ),
           leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -995,11 +1111,27 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           LineChartBarData(
             spots: List.generate(weeklyData.length, (i) => FlSpot(i.toDouble(), weeklyData[i])),
             isCurved: true,
+            curveSmoothness: 0.35,
             gradient: AppColors.primaryGradient,
             barWidth: 4,
             isStrokeCapRound: true,
-            dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(show: true, gradient: LinearGradient(colors: [AppColors.primaryDark.withValues(alpha: 0.2), AppColors.primaryDark.withValues(alpha: 0)])),
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+                radius: 4,
+                color: Colors.white,
+                strokeWidth: 2,
+                strokeColor: AppColors.primaryDark,
+              ),
+            ),
+            belowBarData: BarAreaData(
+              show: true, 
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [AppColors.primaryDark.withValues(alpha: 0.15), AppColors.primaryDark.withValues(alpha: 0)]
+              )
+            ),
           ),
         ],
       ),
@@ -1007,31 +1139,57 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildPieChart(ThemeData theme, Map<String, double> categoryTotals) {
-    if (categoryTotals.isEmpty) {
-      return const Center(child: Text("No spending data"));
+    if (categoryTotals.values.every((v) => v == 0)) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.pie_chart_outline_rounded, size: 48, color: Colors.grey.withValues(alpha: 0.3)),
+            const SizedBox(height: 8),
+            const Text("No spending data", style: TextStyle(color: Colors.grey)),
+          ],
+        )
+      );
     }
     
-    final sorted = categoryTotals.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
-    final top3 = sorted.take(3).toList();
+    final entries = categoryTotals.entries.where((e) => e.value > 0).toList();
     final total = categoryTotals.values.fold(0.0, (sum, v) => sum + v);
     
-    final colors = [Colors.blue, Colors.orange, AppColors.accentTeal];
+    final colorMap = {
+      'SEND': Colors.blue,
+      'SHOPPING': AppColors.accentTeal,
+      'SAVING': Colors.indigo,
+      'HAGBAD': Colors.orange,
+      'WITHDRAW': Colors.redAccent,
+    };
 
-    return PieChart(
-      PieChartData(
-        sectionsSpace: 0,
-        centerSpaceRadius: 40,
-        sections: List.generate(top3.length, (i) {
-          final percentage = (top3[i].value / total * 100).toStringAsFixed(0);
-          return PieChartSectionData(
-            color: colors[i], 
-            value: top3[i].value, 
-            title: '$percentage%', 
-            radius: 50, 
-            titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)
-          );
-        }),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final radius = constraints.maxWidth / 4;
+        final centerSpaceRadius = radius / 1.5;
+
+        return PieChart(
+          PieChartData(
+            sectionsSpace: 2,
+            centerSpaceRadius: centerSpaceRadius,
+            sections: entries.map((e) {
+              final percentage = (e.value / total * 100).toStringAsFixed(0);
+              return PieChartSectionData(
+                color: colorMap[e.key] ?? Colors.grey, 
+                value: e.value, 
+                title: '$percentage%', 
+                radius: radius, 
+                titleStyle: TextStyle(
+                  color: Colors.white, 
+                  fontWeight: FontWeight.bold, 
+                  fontSize: (radius / 5).clamp(10, 14)
+                ),
+                showTitle: e.value / total > 0.08,
+              );
+            }).toList(),
+          ),
+        );
+      }
     );
   }
 
@@ -1056,7 +1214,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               TextButton(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountLimitsScreen())),
                 child: Text(
-                  l10n.seeAll,
+                  state.translate("More", "Dheeraad", ar: "المزيد"),
                   style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
                 ),
               ),
@@ -1081,7 +1239,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     child: GestureDetector(
                       onTap: () {
                         HapticFeedback.lightImpact();
-                        _pickAndAddContact(state);
+                        AddQuickProfileSheet.show(context);
                       },
                       child: Column(
                         children: [

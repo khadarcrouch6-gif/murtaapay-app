@@ -17,7 +17,7 @@
   "send": "Saada",
   "add": "Lisa",
   "bills": "Arved",
-  "sadaqah": "Annetus",
+  "fundraiser": "Annetus",
   "exchange": "Vahetus",
   "vouchers": "Vautšerid",
   "seeAll": "Vaata kõiki",
@@ -460,7 +460,7 @@
   "yourReferralCode": "Sinu soovituskood",
   "copy": "KOPEERI",
   "whatsApp": "WhatsApp",
-  "sadaqahCommunity": "Annetused ja kogukond",
+  "fundraiserCommunity": "Annetused ja kogukond",
   "beTheFirstToDonate": "Ole esimene annetaja",
   "medicalEmergency": "Meditsiiniline hädaabi",
   "medicalEmergencyDesc": "Aita Ahmedil katta südameoperatsiooni kulud Türgis.",
@@ -603,12 +603,12 @@
   "recentSavingsActivity": "Viimased säästutegevused",
   "noActivityYet": "Tegevusi veel pole",
   "recurringPayments": "Püsikorraldused",
-  "sadaqahUrgent": "KIIRE",
-  "sadaqahRaised": "kogutud",
-  "sadaqahRaisedOf": "kogutud",
-  "sadaqahDonations": "annetust",
-  "sadaqahTrending": "Populaarne",
-  "sadaqahAgo": "tagasi",
+  "fundraiserUrgent": "KIIRE",
+  "fundraiserRaised": "kogutud",
+  "fundraiserRaisedOf": "kogutud",
+  "fundraiserDonations": "annetust",
+  "fundraiserTrending": "Populaarne",
+  "fundraiserAgo": "tagasi",
   "catAll": "Kõik",
   "catMedical": "Meditsiin",
   "catWater": "Vesi",
@@ -652,7 +652,7 @@
   "transferDirectlyDesc": "Kanna üle otse oma pangaäpi kaudu.",
   "payWithVisaMastercard": "Maksa Visa/Mastercardiga",
   "secureInternationalGateway": "Turvaline rahvusvaheline maksevärav.",
-  "insufficientBalanceSadaqah": "Teie MurtaaxPay rahakotis on ebapiisav jääk.",
+  "insufficientBalanceFundraiser": "Teie MurtaaxPay rahakotis on ebapiisav jääk.",
   "startFundraiser": "Alusta annetuskampaaniat",
   "createCampaign": "Loo kampaania",
   "createCampaignDesc": "Kogu raha eesmärgi nimel, mis sulle korda läheb. Me kinnitame su kampaania usalduse suurendamiseks.",
@@ -704,5 +704,16 @@
   "noCampaignsFound": "Kampaaniaid ei leitud",
   "tryAdjustingFilters": "Proovige filtreid kohandada, et leida otsitav.",
   "finalizingTransaction": "Tehingu lõpetamine...",
-  "pleaseWait": "Palun oota..."
+  "pleaseWait": "Palun oota...",
+  "withdrawalRequested": "Väljamakse taotletud!",
+  "withdrawalPending": "Väljamakse ootel",
+  "bankProcessingNotice": "Pangaülekanded võtavad tavaliselt aega 24–48 tundi. Staatust saate jälgida oma tehingute ajaloost.",
+  "withdrawalSuccessMessage": "Teie väljamakset summas {amount} töödeldakse.",
+  "@withdrawalSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  }
 }

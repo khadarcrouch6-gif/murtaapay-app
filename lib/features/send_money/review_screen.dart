@@ -203,10 +203,12 @@ class _ReviewScreenState extends State<ReviewScreen> {
       if (widget.paymentMethod == "Main Wallet" || widget.paymentMethod == "Savings Account" || widget.paymentMethod == "Murtaax Wallet" || widget.paymentMethod.contains("Virtual Card")) {
         await state.processP2PTransfer(
           receiverId: widget.receiverPhone,
+          receiverName: widget.receiverName,
           amount: amountVal,
           currencyCode: widget.currencyCode,
           purpose: widget.purpose,
           paymentMethod: widget.paymentMethod,
+          payoutMethod: _getCanonicalMethod(widget.method),
           cardId: widget.cardId,
         );
       } else {
@@ -220,7 +222,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           fee: fee,
           isNegative: true,
           category: "Transfer",
-          status: "Success",
+          status: widget.method.contains("Bank") ? "Pending" : "Success",
           type: "send",
           method: widget.method,
           paymentMethod: widget.paymentMethod,
@@ -260,7 +262,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
       'fee': fee,
       'currencyCode': widget.currencyCode,
       'date': DateFormat('MMM dd, yyyy HH:mm').format(DateTime.now()),
-      'status': 'Success',
+      'status': widget.method.contains("Bank") ? 'Pending' : 'Success',
       'id': 'TX${DateTime.now().millisecondsSinceEpoch}',
       'type': 'send',
       'method': widget.method,
@@ -636,13 +638,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
           SizedBox(height: 12 * context.fontSizeFactor),
           Builder(
             builder: (context) {
+              final effectivePayoutMethod = _getCanonicalMethod(widget.method);
               final fee = state.calculateFeeForSource(
                 amount, 
                 _sourceKey, 
-                payoutMethod: _getCanonicalMethod(widget.method)
+                payoutMethod: effectivePayoutMethod
               );
+              final feeRate = state.getFeeRate(effectivePayoutMethod);
               final feeRateText = l10n.feeRateDynamic(
-                _sourceKey == "Savings Account" ? "0.5" : (_sourceKey.contains("Wallet") ? "1.0" : "2.5"),
+                feeRate.toStringAsFixed(1),
                 NumberFormat.simpleCurrency(name: widget.currencyCode).format(fee)
               );
               

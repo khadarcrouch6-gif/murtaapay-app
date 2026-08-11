@@ -119,7 +119,7 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(l10n.bankTransfer, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(l10n.bankTransfer, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -531,6 +531,7 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
   }
 
   void _process(BuildContext context, AppLocalizations l10n, AppState state) async {
+    final theme = Theme.of(context);
     final double feeRate = state.calculateFeeForSource(100, "Bank") / 100;
     final double fee = _amount > 0 ? (_amount * feeRate < 0.10 ? 0.10 : _amount * feeRate) : 0;
     
@@ -548,11 +549,11 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
           margin: const EdgeInsets.symmetric(horizontal: 40),
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withOpacity(0.05),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -573,7 +574,7 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
                       backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                     ),
                   ),
-                  Icon(Icons.security_rounded, color: AppColors.accentTeal, size: 32),
+                  Icon(Icons.account_balance_rounded, color: AppColors.accentTeal, size: 32),
                 ],
               ),
               const SizedBox(height: 32),
@@ -581,9 +582,9 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
               const SizedBox(height: 12),
               Text(
                 l10n.pleaseWait,
-                style: TextStyle(
-                  color: AppColors.grey.withValues(alpha: 0.6),
-                  fontSize: 12,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.hintColor.withValues(alpha: 0.6),
+                  fontFamily: theme.textTheme.bodySmall?.fontFamily,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -593,11 +594,10 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
       ),
     );
 
-    await Future.delayed(const Duration(seconds: 4));
-    if (!context.mounted) return;
-    Navigator.pop(context);
-
     try {
+      // Simulate network delay
+      await Future.delayed(const Duration(seconds: 3));
+
       final tx = widget.source == "Wallet"
           ? await state.processWalletWithdrawal(
               amount: _amount,
@@ -607,7 +607,7 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
               provider: _isOtherBank ? "Other Bank" : _selectedBank!,
               name: _accountNameController.text,
               type: "bank",
-              status: "Pending",
+              status: "Pending", // Status-ku waa Pending sidii aad rabtay
               purpose: _selectedPurpose ?? l10n.familySupport,
             )
           : await state.processCardWithdrawal(
@@ -623,28 +623,36 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
               purpose: _selectedPurpose ?? l10n.familySupport,
             );
       
-      Navigator.pushAndRemoveUntil(
+      if (!mounted) return;
+      
+      // Marka hore xir dialog-ga loading-ka ah
+      Navigator.of(context, rootNavigator: true).pop();
+      
+      // Ka dib u gudbi SuccessScreen
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => SuccessScreen(
             title: l10n.withdrawalPending,
             message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(_amount)),
             subtitle: l10n.bankProcessingNotice,
+            subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
             buttonText: l10n.backToHome,
             transactionData: tx.toJson(),
             onPressed: () {
               state.setNavIndex(0);
-              Navigator.pushAndRemoveUntil(
-                context,
+              Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const MainNavigation()),
                 (route) => false,
               );
             },
           ),
         ),
-        (route) => false,
       );
     } catch (e) {
+      if (mounted) Navigator.of(context, rootNavigator: true).pop();
+      
+      if (!mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -657,6 +665,7 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
         ),
       );
     }
+
   }
 }
 
@@ -703,10 +712,9 @@ class _StepTextState extends State<_StepText> {
       child: Text(
         widget.steps[_currentStep],
         textAlign: TextAlign.center,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 18,
-          color: theme.textTheme.bodyLarge?.color,
+        style: theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: theme.textTheme.titleLarge?.color,
         ),
       ),
     );

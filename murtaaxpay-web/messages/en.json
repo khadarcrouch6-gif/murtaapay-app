@@ -106,7 +106,7 @@
     "ctaTitle": "Ready to master your {service}?",
     "ctaDesc": "Join thousands of users who trust MurtaaxPay for their {service} needs.",
     "ctaPrimary": "Get Started Now",
-    "viewAll": "Explore All Services",
+    "viewAll": "More",
     "request": {
       "title": "Request Money",
       "description": "The easiest way to ask for payments globally.",
@@ -377,7 +377,7 @@
     "monthlyIncome": "Monthly Income",
     "monthlySpending": "Monthly Spending",
     "recentActivity": "Recent Activity",
-    "viewAll": "View All",
+    "viewAll": "More",
     "categories": {
       "software": "Software",
       "income": "Income",

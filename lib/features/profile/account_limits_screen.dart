@@ -67,11 +67,11 @@ class AccountLimitsScreen extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
+          gradient: AppColors.silverGradient,
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryDark.withOpacity(0.3),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 20,
               offset: const Offset(0, 10),
             )
@@ -82,15 +82,15 @@ class AccountLimitsScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.speed_rounded, color: AppColors.accentTeal, size: 40),
+              child: const Icon(Icons.speed_rounded, color: AppColors.primaryDark, size: 40),
             ),
             const SizedBox(height: 16),
             Text(
-              state.translate("Verified Tier 2", "Heerka 2aad ee La Hubiyay", ar: "المستوى 2 تم التحقق منه"),
-              style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900),
+              state.translate("Premium Silver", "Premium Silver", ar: "الفضي المتميز"),
+              style: const TextStyle(color: AppColors.primaryDark, fontSize: 20, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 8),
             Text(
@@ -100,7 +100,7 @@ class AccountLimitsScreen extends StatelessWidget {
                 ar: "حسابك له حدود قياسية. أكمل KYC للحصول على حدود أعلى."
               ),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13, fontWeight: FontWeight.w500),
+              style: TextStyle(color: AppColors.primaryDark.withOpacity(0.7), fontSize: 13, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -212,11 +212,11 @@ class AccountLimitsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  state.translate("Increase your limits", "Kordhi xadkaaga", ar: "زيادة حدودك"),
+                  state.translate("Increase your limits? try it?", "Kordhi xadkaaga? isku day?", ar: "زيادة حدودك؟ جربها؟"),
                   style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
                 ),
                 Text(
-                  state.translate("Verify your identity to send more.", "Hubi aqoonsigaaga si aad u dirto wax badan.", ar: "تحقق من هويتك لإرسال المزيد."),
+                  state.translate("try with affordable prices to unlimitted", "isku day qiimo jaban oo aan xad lahayn", ar: "حاول بأسعار معقولة لغير محدود"),
                   style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black54),
                 ),
               ],

@@ -6,12 +6,20 @@ import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
+import '../../core/models/transaction.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/shimmer_loading.dart';
 import '../../core/widgets/adaptive_icon.dart';
 
 class AnalyticsScreen extends StatefulWidget {
-  const AnalyticsScreen({super.key});
+  final String initialPeriod;
+  final DateTime? targetDate;
+
+  const AnalyticsScreen({
+    super.key, 
+    this.initialPeriod = 'Monthly',
+    this.targetDate,
+  });
 
   @override
   State<AnalyticsScreen> createState() => _AnalyticsScreenState();
@@ -20,13 +28,18 @@ class AnalyticsScreen extends StatefulWidget {
 class _AnalyticsScreenState extends State<AnalyticsScreen> {
   bool _isLoading = true;
   int _touchedIndex = -1;
-  String _selectedPeriod = 'Monthly'; // Weekly, Monthly, Yearly
+  int _selectedBarIndex = -1;
+  late String _selectedPeriod;
+  String? _selectedCategory;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 800), () {
-      if (mounted) setState(() => _isLoading = false);
+    _selectedPeriod = widget.targetDate != null ? 'Daily' : widget.initialPeriod;
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     });
   }
 
@@ -67,6 +80,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   SizedBox(height: 24 * context.fontSizeFactor),
                   _buildTrendChart(theme, state),
                   SizedBox(height: 24 * context.fontSizeFactor),
+                  _buildRecentTransactionsHeader(theme, state),
+                  SizedBox(height: 16 * context.fontSizeFactor),
                   _buildTopCategoriesList(theme, state),
                   SizedBox(height: 100 * context.fontSizeFactor),
                 ],
@@ -96,6 +111,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               _periodItem(context, 'Weekly', state.translate("Weekly", "Todobaadle")),
               _periodItem(context, 'Monthly', state.translate("Monthly", "Bille")),
               _periodItem(context, 'Yearly', state.translate("Yearly", "Sanadle")),
+              if (widget.targetDate != null)
+                _periodItem(context, 'Daily', state.translate("Specific Day", "Maalin Cayiman")),
             ],
           ),
         );
@@ -108,7 +125,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       title: Text(label, style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
       trailing: _selectedPeriod == value ? Icon(Icons.check_circle, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor) : null,
       onTap: () {
-        setState(() => _selectedPeriod = value);
+        setState(() {
+          _selectedPeriod = value;
+          _selectedBarIndex = -1; // Reset bar filter when period changes
+          _selectedCategory = null; // Reset category filter
+        });
         Navigator.pop(context);
       },
     );
@@ -119,16 +140,36 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final double spending = state.transactions
         .where((tx) {
           if (!tx.isNegative) return false;
-          if (_selectedPeriod == 'Monthly') return tx.timestamp.month == now.month && tx.timestamp.year == now.year;
-          if (_selectedPeriod == 'Weekly') return now.difference(tx.timestamp).inDays < 7;
-          if (_selectedPeriod == 'Yearly') return tx.timestamp.year == now.year;
+          final txLocal = tx.timestamp.toLocal();
+          if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
+            final target = widget.targetDate!.toLocal();
+            return txLocal.year == target.year &&
+                   txLocal.month == target.month &&
+                   txLocal.day == target.day;
+          }
+          if (_selectedPeriod == 'Monthly') {
+            return txLocal.month == now.month && txLocal.year == now.year;
+          }
+          if (_selectedPeriod == 'Weekly') {
+            final today = DateTime(now.year, now.month, now.day);
+            final txDate = DateTime(txLocal.year, txLocal.month, txLocal.day);
+            return today.difference(txDate).inDays < 7;
+          }
+          if (_selectedPeriod == 'Yearly') {
+            return txLocal.year == now.year;
+          }
           return true;
         })
         .fold(0.0, (sum, tx) => sum + tx.numericAmount);
 
-    final periodLabel = _selectedPeriod == 'Monthly' 
-        ? state.translate("this Month", "bishaan") 
-        : (_selectedPeriod == 'Weekly' ? state.translate("this Week", "todobaadkan") : state.translate("this Year", "sanadkan"));
+    final String periodLabel;
+    if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
+      periodLabel = DateFormat('MMM dd, yyyy').format(widget.targetDate!);
+    } else {
+      periodLabel = _selectedPeriod == 'Monthly' 
+          ? state.translate("this Month", "bishaan") 
+          : (_selectedPeriod == 'Weekly' ? state.translate("this Week", "todobaadkan") : state.translate("this Year", "sanadkan"));
+    }
 
     return FadeInDown(
       child: Container(
@@ -187,11 +228,27 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   Widget _buildCategoryDistribution(ThemeData theme, AppState state) {
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final Map<String, double> categorySpending = {};
     for (var tx in state.transactions.where((t) => t.isNegative)) {
-      if (_selectedPeriod == 'Monthly' && (tx.timestamp.month != now.month || tx.timestamp.year != now.year)) continue;
-      if (_selectedPeriod == 'Weekly' && now.difference(tx.timestamp).inDays >= 7) continue;
-      if (_selectedPeriod == 'Yearly' && tx.timestamp.year != now.year) continue;
+      final txLocal = tx.timestamp.toLocal();
+      if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
+        final target = widget.targetDate!.toLocal();
+        if (txLocal.year != target.year ||
+            txLocal.month != target.month ||
+            txLocal.day != target.day) {
+          continue;
+        }
+      } else if (_selectedPeriod == 'Monthly' && (txLocal.month != now.month || txLocal.year != now.year)) {
+        continue;
+      } else if (_selectedPeriod == 'Weekly') {
+        final txDate = DateTime(txLocal.year, txLocal.month, txLocal.day);
+        if (today.difference(txDate).inDays >= 7) {
+          continue;
+        }
+      } else if (_selectedPeriod == 'Yearly' && txLocal.year != now.year) {
+        continue;
+      }
 
       categorySpending[tx.category] = (categorySpending[tx.category] ?? 0.0) + tx.numericAmount;
     }
@@ -234,6 +291,17 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                 return;
                               }
                               _touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                              if (event is FlTapUpEvent) {
+                                final index = _touchedIndex;
+                                if (index >= 0 && index < sortedCategories.length) {
+                                  final category = sortedCategories[index].key;
+                                  if (_selectedCategory == category) {
+                                    _selectedCategory = null;
+                                  } else {
+                                    _selectedCategory = category;
+                                  }
+                                }
+                              }
                             });
                           },
                         ),
@@ -277,7 +345,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final colors = [Colors.blue, Colors.orange, AppColors.accentTeal, Colors.purple, Colors.red, Colors.green];
     
     return List.generate(categories.length.clamp(0, 6), (i) {
-      final isTouched = i == _touchedIndex;
+      final isTouched = i == _touchedIndex || (_selectedCategory != null && categories[i].key == _selectedCategory);
       final radius = (isTouched ? 35.0 : 25.0) * context.fontSizeFactor;
       return PieChartSectionData(
         color: colors[i % colors.length],
@@ -300,17 +368,49 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              _selectedPeriod == 'Yearly' 
-                ? state.translate("Monthly Trend", "Isbeddelka Billaha")
-                : state.translate("Daily Trend", "Isbeddelka Maalmaha"),
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) * context.fontSizeFactor),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _selectedPeriod == 'Yearly' 
+                    ? state.translate("Monthly Trend", "Isbeddelka Billaha")
+                    : state.translate("Daily Trend", "Isbeddelka Maalmaha"),
+                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) * context.fontSizeFactor),
+                ),
+                if (_selectedBarIndex != -1)
+                  GestureDetector(
+                    onTap: () => setState(() => _selectedBarIndex = -1),
+                    child: Text(
+                      state.translate("Clear Filter", "Nadiifi"),
+                      style: TextStyle(color: AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+              ],
             ),
             SizedBox(height: 32 * context.fontSizeFactor),
             SizedBox(
               height: 180 * context.fontSizeFactor,
               child: BarChart(
                 BarChartData(
+                  alignment: BarChartAlignment.spaceAround,
+                  barTouchData: BarTouchData(
+                    touchCallback: (FlTouchEvent event, barTouchResponse) {
+                      if (!event.isInterestedForInteractions ||
+                          barTouchResponse == null ||
+                          barTouchResponse.spot == null) {
+                        return;
+                      }
+                      if (event is FlTapUpEvent) {
+                        setState(() {
+                          if (_selectedBarIndex == barTouchResponse.spot!.touchedBarGroupIndex) {
+                            _selectedBarIndex = -1;
+                          } else {
+                            _selectedBarIndex = barTouchResponse.spot!.touchedBarGroupIndex;
+                          }
+                        });
+                      }
+                    },
+                  ),
                   barGroups: _isLoading ? _buildDefaultBars(context) : _buildTrendBars(context, state),
                   borderData: FlBorderData(show: false),
                   gridData: const FlGridData(show: false),
@@ -329,11 +429,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                child: Text(labels[idx], style: TextStyle(color: Colors.grey, fontSize: 10 * context.fontSizeFactor)),
                              );
                           } else {
-                            const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                            if (value.toInt() < 0 || value.toInt() >= labels.length) return const SizedBox();
+                            final date = DateTime.now().subtract(Duration(days: 6 - value.toInt()));
+                            final label = DateFormat('E').format(date);
                             return Padding(
                               padding: EdgeInsets.only(top: 8 * context.fontSizeFactor),
-                              child: Text(labels[value.toInt()], style: TextStyle(color: Colors.grey, fontSize: 10 * context.fontSizeFactor)),
+                              child: Text(label, style: TextStyle(color: Colors.grey, fontSize: 10 * context.fontSizeFactor)),
                             );
                           }
                         },
@@ -366,36 +466,60 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         monthlyTotals[tx.timestamp.month - 1] += tx.numericAmount;
       }
       return List.generate(12, (i) {
+        final isSelected = i == _selectedBarIndex;
         return BarChartGroupData(
           x: i,
           barRods: [
             BarChartRodData(
               toY: monthlyTotals[i] > 0 ? monthlyTotals[i] : 2,
-              gradient: i == now.month - 1 ? AppColors.accentGradient : LinearGradient(colors: [Colors.grey.withOpacity(0.2), Colors.grey.withOpacity(0.3)]),
+              gradient: isSelected || (i == now.month - 1 && _selectedBarIndex == -1) 
+                  ? AppColors.accentGradient 
+                  : LinearGradient(colors: [Colors.grey.withOpacity(0.2), Colors.grey.withOpacity(0.3)]),
               width: 10 * context.fontSizeFactor,
               borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
+              borderSide: isSelected ? const BorderSide(color: AppColors.accentTeal, width: 2) : BorderSide.none,
             )
           ],
         );
       });
     } else {
       // Last 7 days
+      final today = DateTime(now.year, now.month, now.day);
       final List<double> dailyTotals = List.filled(7, 0.0);
       for (var tx in state.transactions.where((t) => t.isNegative)) {
-        final diff = now.difference(tx.timestamp).inDays;
+        final txLocal = tx.timestamp.toLocal();
+        final txDate = DateTime(txLocal.year, txLocal.month, txLocal.day);
+        final diff = today.difference(txDate).inDays;
         if (diff >= 0 && diff < 7) {
           dailyTotals[6 - diff] += tx.numericAmount;
         }
       }
+
+      int highlightedIndex = 6;
+      if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
+        final target = widget.targetDate!.toLocal();
+        final targetDate = DateTime(target.year, target.month, target.day);
+        final diff = today.difference(targetDate).inDays;
+        if (diff >= 0 && diff < 7) {
+          highlightedIndex = 6 - diff;
+        } else {
+          highlightedIndex = -1;
+        }
+      }
+
       return List.generate(7, (i) {
+        final isSelected = i == _selectedBarIndex;
         return BarChartGroupData(
           x: i,
           barRods: [
             BarChartRodData(
               toY: dailyTotals[i] > 0 ? dailyTotals[i] : 2,
-              gradient: i == 6 ? AppColors.accentGradient : LinearGradient(colors: [Colors.grey.withOpacity(0.2), Colors.grey.withOpacity(0.3)]),
+              gradient: isSelected || (i == highlightedIndex && _selectedBarIndex == -1) 
+                  ? AppColors.accentGradient 
+                  : LinearGradient(colors: [Colors.grey.withOpacity(0.2), Colors.grey.withOpacity(0.3)]),
               width: 16 * context.fontSizeFactor,
               borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
+              borderSide: isSelected ? const BorderSide(color: AppColors.accentTeal, width: 2) : BorderSide.none,
             )
           ],
         );
@@ -403,14 +527,83 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     }
   }
 
+  Widget _buildRecentTransactionsHeader(ThemeData theme, AppState state) {
+    String filterText = "";
+    if (_selectedCategory != null) {
+      filterText = "in $_selectedCategory";
+    }
+    if (_selectedBarIndex != -1) {
+      if (_selectedPeriod == 'Yearly') {
+        filterText += " for ${DateFormat('MMMM').format(DateTime(2024, _selectedBarIndex + 1))}";
+      } else {
+        final date = DateTime.now().subtract(Duration(days: 6 - _selectedBarIndex));
+        filterText += " on ${DateFormat('MMM dd').format(date)}";
+      }
+    }
+
+    return FadeInUp(
+      delay: const Duration(milliseconds: 500),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "${state.translate("Filtered List", "Liiska la sifeeyay")} $filterText",
+            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) * context.fontSizeFactor),
+          ),
+          if (_selectedCategory != null || _selectedBarIndex != -1)
+            GestureDetector(
+              onTap: () => setState(() {
+                _selectedCategory = null;
+                _selectedBarIndex = -1;
+              }),
+              child: Text(
+                state.translate("Show All", "Muuji Dhamaan"),
+                style: TextStyle(color: AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTopCategoriesList(ThemeData theme, AppState state) {
     final now = DateTime.now();
-    final Map<String, double> categorySpending = {};
-    for (var tx in state.transactions.where((t) => t.isNegative)) {
-      if (_selectedPeriod == 'Monthly' && (tx.timestamp.month != now.month || tx.timestamp.year != now.year)) continue;
-      if (_selectedPeriod == 'Weekly' && now.difference(tx.timestamp).inDays >= 7) continue;
-      if (_selectedPeriod == 'Yearly' && tx.timestamp.year != now.year) continue;
+    final today = DateTime(now.year, now.month, now.day);
+    
+    final filteredTransactions = state.transactions.where((tx) {
+      if (!tx.isNegative) return false;
       
+      // Period/Bar Filter
+      final txLocal = tx.timestamp.toLocal();
+      if (_selectedBarIndex != -1) {
+        if (_selectedPeriod == 'Yearly') {
+          if (txLocal.year != now.year || txLocal.month != _selectedBarIndex + 1) return false;
+        } else {
+          final targetDate = DateTime.now().subtract(Duration(days: 6 - _selectedBarIndex));
+          if (txLocal.year != targetDate.year || txLocal.month != targetDate.month || txLocal.day != targetDate.day) return false;
+        }
+      } else {
+        if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
+          final target = widget.targetDate!.toLocal();
+          if (txLocal.year != target.year || txLocal.month != target.month || txLocal.day != target.day) return false;
+        } else if (_selectedPeriod == 'Monthly' && (txLocal.month != now.month || txLocal.year != now.year)) {
+          return false;
+        } else if (_selectedPeriod == 'Weekly') {
+          final txDate = DateTime(txLocal.year, txLocal.month, txLocal.day);
+          if (today.difference(txDate).inDays >= 7) return false;
+        } else if (_selectedPeriod == 'Yearly' && txLocal.year != now.year) {
+          return false;
+        }
+      }
+
+      // Category Filter
+      if (_selectedCategory != null && tx.category != _selectedCategory) return false;
+
+      return true;
+    }).toList();
+
+    final Map<String, double> categorySpending = {};
+    for (var tx in filteredTransactions) {
       categorySpending[tx.category] = (categorySpending[tx.category] ?? 0.0) + tx.numericAmount;
     }
     
@@ -424,31 +617,78 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            state.translate("Top Categories", "Qaybaha ugu sarreeya"),
-            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) * context.fontSizeFactor),
-          ),
-          SizedBox(height: 16 * context.fontSizeFactor),
-          if (sortedCategories.isEmpty)
+          if (_selectedCategory == null) ...[
+            Text(
+              state.translate("Top Categories", "Qaybaha ugu sarreeya"),
+              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) * context.fontSizeFactor),
+            ),
+            SizedBox(height: 16 * context.fontSizeFactor),
+          ],
+          if (filteredTransactions.isEmpty)
              Center(child: Padding(
                padding: EdgeInsets.all(20.0 * context.fontSizeFactor),
-               child: Text("No transactions recorded yet", style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
+               child: Text(state.translate("No transactions found", "Wax macaamil ah lama helin"), style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
              ))
+          else if (_selectedCategory != null)
+            ...filteredTransactions.map((tx) => _buildTransactionItem(context, tx, state))
           else
             ...sortedCategories.take(5).map((entry) {
               final color = _getCategoryColor(entry.key);
               final icon = _getCategoryIcon(entry.key);
               final percentage = totalSpent > 0 ? entry.value / totalSpent : 0.0;
               
-              return _buildCategoryItem(
-                context, 
-                entry.key, 
-                NumberFormat.simpleCurrency(name: state.currencyCode).format(entry.value), 
-                color, 
-                icon,
-                percentage
+              return GestureDetector(
+                onTap: () => setState(() => _selectedCategory = entry.key),
+                child: _buildCategoryItem(
+                  context, 
+                  entry.key, 
+                  NumberFormat.simpleCurrency(name: state.currencyCode).format(entry.value), 
+                  color, 
+                  icon,
+                  percentage
+                ),
               );
             }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransactionItem(BuildContext context, Transaction tx, AppState state) {
+    final theme = Theme.of(context);
+    final color = _getCategoryColor(tx.category);
+    final icon = _getCategoryIcon(tx.category);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
+      padding: EdgeInsets.all(16 * context.fontSizeFactor),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(12 * context.fontSizeFactor),
+            decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+            child: AdaptiveIcon(icon, color: color, size: 18 * context.fontSizeFactor),
+          ),
+          SizedBox(width: 16 * context.fontSizeFactor),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(tx.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                if (tx.subCategory != null)
+                   Text(tx.subCategory!, style: TextStyle(color: Colors.grey, fontSize: 12 * context.fontSizeFactor)),
+                Text(DateFormat('MMM dd, hh:mm a').format(tx.timestamp), style: TextStyle(color: Colors.grey, fontSize: 11 * context.fontSizeFactor)),
+              ],
+            ),
+          ),
+          Text(
+            NumberFormat.simpleCurrency(name: state.currencyCode).format(tx.numericAmount),
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 14 * context.fontSizeFactor)
+          ),
         ],
       ),
     );
@@ -508,6 +748,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       case 'Savings': return Colors.green;
       case 'Hagbad': return Colors.teal;
       case 'Investment': return Colors.amber;
+      case 'Bills': return Colors.redAccent;
+      case 'Fundraiser': return Colors.deepPurple;
       default: return Colors.grey;
     }
   }
@@ -524,6 +766,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       case 'Savings': return FontAwesomeIcons.piggyBank;
       case 'Hagbad': return FontAwesomeIcons.users;
       case 'Investment': return FontAwesomeIcons.chartLine;
+      case 'Bills': return FontAwesomeIcons.fileInvoiceDollar;
+      case 'Fundraiser': return FontAwesomeIcons.handHoldingHeart;
       default: return FontAwesomeIcons.tag;
     }
   }

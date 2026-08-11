@@ -13,6 +13,9 @@ import '../navigation/main_navigation.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter/services.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class BankDepositScreen extends StatefulWidget {
   final double amount;
@@ -27,6 +30,8 @@ class _BankDepositScreenState extends State<BankDepositScreen> {
   int _selectedCategoryIndex = 0; // 0 for Local, 1 for International
   String? _selectedBank;
   bool _isReceiptAttached = false;
+  File? _receiptImage;
+  final ImagePicker _picker = ImagePicker();
   bool _saveAccount = false;
   final TextEditingController _accountNumberController = TextEditingController();
   final TextEditingController _accountNameController = TextEditingController();
@@ -357,12 +362,23 @@ class _BankDepositScreenState extends State<BankDepositScreen> {
         ),
         const SizedBox(height: 24),
         GestureDetector(
-          onTap: () {
-            // Simulate image picking
-            setState(() => _isReceiptAttached = true);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Receipt attached successfully!")),
-            );
+          onTap: () async {
+            if (_isReceiptAttached) {
+              _showReceiptZoom();
+            } else {
+              final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+              if (image != null) {
+                setState(() {
+                  _receiptImage = File(image.path);
+                  _isReceiptAttached = true;
+                });
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Receipt attached successfully!")),
+                  );
+                }
+              }
+            }
           },
           child: Container(
             padding: const EdgeInsets.all(20),
@@ -383,7 +399,7 @@ class _BankDepositScreenState extends State<BankDepositScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    _isReceiptAttached ? Icons.check_rounded : Icons.add_a_photo_rounded,
+                    _isReceiptAttached ? Icons.zoom_in_rounded : Icons.add_a_photo_rounded,
                     color: _isReceiptAttached ? Colors.white : AppColors.grey,
                   ),
                 ),
@@ -393,11 +409,11 @@ class _BankDepositScreenState extends State<BankDepositScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _isReceiptAttached ? "Receipt Attached" : "Upload Transfer Receipt",
+                        _isReceiptAttached ? "Receipt Attached (Tap to zoom)" : "Upload Transfer Receipt",
                         style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15 * context.fontSizeFactor),
                       ),
                       Text(
-                        _isReceiptAttached ? "Screenshot_20240321.png" : "Please attach a screenshot of the transaction",
+                        _isReceiptAttached ? (_receiptImage?.path.split('/').last ?? "receipt.png") : "Please attach a screenshot of the transaction",
                         style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor),
                       ),
                     ],
@@ -406,13 +422,46 @@ class _BankDepositScreenState extends State<BankDepositScreen> {
                 if (_isReceiptAttached)
                   IconButton(
                     icon: const Icon(Icons.close_rounded, color: Colors.red),
-                    onPressed: () => setState(() => _isReceiptAttached = false),
+                    onPressed: () => setState(() {
+                      _isReceiptAttached = false;
+                      _receiptImage = null;
+                    }),
                   ),
               ],
             ),
           ),
         ),
       ],
+    );
+  }
+
+  void _showReceiptZoom() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          children: [
+            PhotoView(
+              imageProvider: _receiptImage != null 
+                  ? FileImage(_receiptImage!) 
+                  : const NetworkImage("https://images.unsplash.com/photo-1554224155-1696413565d3?q=80&w=2070") as ImageProvider,
+              backgroundDecoration: const BoxDecoration(color: Colors.black87),
+              minScale: PhotoViewComputedScale.contained,
+              maxScale: PhotoViewComputedScale.covered * 2,
+            ),
+            Positioned(
+              top: 40,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -534,10 +583,25 @@ class _BankDepositScreenState extends State<BankDepositScreen> {
             children: [
               Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
               const SizedBox(height: 24),
-              Icon(Icons.check_circle_outline_rounded, color: AppColors.accentTeal, size: 48 * context.fontSizeFactor),
+              Icon(
+                _selectedCategoryIndex == 0 ? Icons.check_circle_outline_rounded : Icons.link_rounded, 
+                color: AppColors.accentTeal, 
+                size: 48 * context.fontSizeFactor
+              ),
               const SizedBox(height: 16),
-              Text(l10n.confirmTransfer, style: TextStyle(fontSize: 22 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+              Text(
+                _selectedCategoryIndex == 0 ? l10n.confirmTransfer : "Link Account & Deposit", 
+                style: TextStyle(fontSize: 22 * context.fontSizeFactor, fontWeight: FontWeight.bold)
+              ),
               const SizedBox(height: 24),
+              if (_selectedCategoryIndex == 1) ...[
+                Text(
+                  "We'll verify your account with $_selectedBank. This typically takes a few seconds.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
+                ),
+                const SizedBox(height: 24),
+              ],
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -562,14 +626,21 @@ class _BankDepositScreenState extends State<BankDepositScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    _processBankDeposit();
+                    if (_selectedCategoryIndex == 1) {
+                      _showAccountLinkingVerification();
+                    } else {
+                      _processBankDeposit();
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.accentTeal,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
-                  child: Text(l10n.confirmAndSubmit, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text(
+                    _selectedCategoryIndex == 0 ? l10n.confirmAndSubmit : "Verify & Deposit", 
+                    style: const TextStyle(fontWeight: FontWeight.bold)
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -578,6 +649,82 @@ class _BankDepositScreenState extends State<BankDepositScreen> {
         ),
       ),
     );
+  }
+
+  void _showAccountLinkingVerification() {
+    final theme = Theme.of(context);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return Center(
+            child: FadeIn(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 32),
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: theme.scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 30)],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      height: 80,
+                      width: 80,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 6,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      "Verifying Account",
+                      style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      "Connecting securely to $_selectedBank to verify your details...",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
+                    ),
+                    const SizedBox(height: 40),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.accentTeal.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.lock_rounded, size: 14, color: AppColors.accentTeal),
+                          const SizedBox(width: 8),
+                          Text(
+                            "End-to-end Encrypted",
+                            style: TextStyle(color: AppColors.accentTeal, fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+
+    // Simulate verification delay
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        Navigator.pop(context);
+        _processBankDeposit();
+      }
+    });
   }
 
   Widget _summaryRow(String label, String value, {bool isTotal = false}) {

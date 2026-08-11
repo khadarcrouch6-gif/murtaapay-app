@@ -74,9 +74,8 @@ class FailureScreen extends StatelessWidget {
                 Text(
                   message,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.grey,
-                    fontSize: 16 * context.fontSizeFactor,
                     height: 1.5,
                   ),
                 ),

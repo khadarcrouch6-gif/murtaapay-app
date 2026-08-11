@@ -149,501 +149,374 @@ class _CardsScreenState extends State<CardsScreen> {
                 ],
               ),
             ),
-            Expanded(child: _buildCardsTab(context, state, theme, filteredTransactions)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showPinRequiredAction(BuildContext context, AppState state, VoidCallback onVerified) {
-    final l10n = AppLocalizations.of(context)!;
-    _showNewPinVerification(context, l10n, isTerminate: false, customAction: onVerified);
-  }
-
-
-  void _showProfessionalPinUnlock(BuildContext context, AppState state, int targetIndex) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final targetCard = state.cards[targetIndex];
-    final TextEditingController pinController = TextEditingController();
-
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.6),
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, anim1, anim2) => const SizedBox(),
-      transitionBuilder: (context, anim1, anim2, child) {
-        return Transform.scale(
-          scale: anim1.value,
-          child: Opacity(
-            opacity: anim1.value,
-            child: Center(
-              child: Material(
-                color: Colors.transparent,
-                child: GlassmorphicContainer(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  height: 380 * context.fontSizeFactor,
-                  borderRadius: 32,
-                  blur: 20,
-                  alignment: AlignmentDirectional.center,
-                  border: 2,
-                  linearGradient: LinearGradient(
-                    colors: isDark 
-                        ? [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)]
-                        : [Colors.black.withValues(alpha: 0.05), Colors.black.withValues(alpha: 0.02)],
-                  ),
-                  borderGradient: LinearGradient(
-                    colors: [AppColors.accentTeal.withValues(alpha: 0.5), Colors.transparent],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppColors.accentTeal.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(Icons.lock_person_rounded, color: AppColors.accentTeal, size: 32 * context.fontSizeFactor),
-                        ),
-                        const SizedBox(height: 24),
-                        Text(
-                          l10n.verifyOwnership,
-                          style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          l10n.enterPinForCard(targetCard.cardNumber.substring(targetCard.cardNumber.length - 4)),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
-                        ),
-                        const SizedBox(height: 32),
-                        TextField(
-                          controller: pinController,
-                          obscureText: true,
-                          maxLength: 4,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                          autofocus: true,
-                          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 20, color: AppColors.accentTeal),
-                          decoration: InputDecoration(
-                            counterText: "",
-                            hintText: "••••",
-                            hintStyle: TextStyle(color: Colors.grey.withValues(alpha: 0.3), letterSpacing: 20),
-                            border: InputBorder.none,
-                          ),
-                          onChanged: (value) {
-                            if (value.length == 4) {
-                              if (state.verifyCardPin(value, cardId: targetCard.id)) {
-                                Navigator.pop(context);
-                                HapticFeedback.mediumImpact();
+            Expanded(
+              child: state.cards.isEmpty
+                  ? _buildEmptyState(context, state)
+                  : SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 240 * context.fontSizeFactor,
+                            child: PageView.builder(
+                              controller: _pageController,
+                              onPageChanged: (index) {
                                 setState(() {
-                                  _verifiedIndex = targetIndex;
-                                  state.setSelectedCardIndex(targetIndex);
+                                  _currentIndex = index;
+                                  _showBack = false;
+                                  _showNumber = false;
                                 });
-                              } else {
-                                pinController.clear();
-                                HapticFeedback.heavyImpact();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(l10n.incorrectPin),
-                                    backgroundColor: Colors.redAccent,
-                                    behavior: SnackBarBehavior.floating,
-                                    margin: const EdgeInsets.all(20),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                        ),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            _pageController.animateToPage(_verifiedIndex, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
-                          },
-                          child: Text(l10n.cancel, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildCardsTab(BuildContext context, AppState state, ThemeData theme, List<dynamic> filteredTransactions) {
-    final l10n = AppLocalizations.of(context)!;
-    return MaxWidthBox(
-      maxWidth: 800,
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(vertical: context.verticalPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FadeInDown(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-                child: ElevatedButton(
-                  onPressed: () => _showNewCardDialog(context, state),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
-                    foregroundColor: AppColors.accentTeal,
-                    elevation: 0,
-                    side: const BorderSide(color: AppColors.accentTeal, width: 1.5),
-                    minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add_circle_outline_rounded, size: 20 * context.fontSizeFactor),
-                      const SizedBox(width: 8),
-                      Text(l10n.addNewCard, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            
-            // --- CAROUSEL ---
-            if (state.cards.isEmpty)
-              Container(
-                height: 230 * context.fontSizeFactor,
-                width: double.infinity,
-                margin: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.credit_card_off_rounded, size: 48 * context.fontSizeFactor, color: Colors.grey.withValues(alpha: 0.3)),
-                    const SizedBox(height: 16),
-                    Text(l10n.noActiveCards, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              )
-            else
-              Scrollbar(
-                controller: _pageController,
-                thumbVisibility: true,
-                thickness: 3,
-                radius: const Radius.circular(10),
-                child: Container(
-                  height: 245 * context.fontSizeFactor,
-                  padding: const EdgeInsets.only(bottom: 15),
-                  child: ScrollConfiguration(
-                    behavior: ScrollConfiguration.of(context).copyWith(
-                      dragDevices: {ui.PointerDeviceKind.touch, ui.PointerDeviceKind.mouse},
-                    ),
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: state.cards.length,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentIndex = index;
-                          _showBack = false;
-                          _showNumber = false;
-                        });
-                        
-                        // Show professional PIN dialog when switching cards
-                        if (_verifiedIndex != index) {
-                          _showProfessionalPinUnlock(context, state, index);
-                        } else {
-                          state.setSelectedCardIndex(index);
-                        }
-                      },
-                      itemBuilder: (context, index) {
-                        return AnimatedBuilder(
-                          animation: _pageController,
-                          builder: (context, child) {
-                            double value = 1.0;
-                            if (_pageController.position.haveDimensions) {
-                              value = _pageController.page! - index;
-                              value = (1 - (value.abs() * 0.15)).clamp(0.0, 1.0);
-                            }
-                            return Center(
-                              child: Transform.scale(
-                                scale: Curves.easeOut.transform(value),
-                                child: Opacity(
-                                  opacity: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                    child: RepaintBoundary(
-                                      child: EliteVirtualCard(
-                                        card: state.cards[index],
-                                        showNumber: _showNumber,
-                                        showBack: _showBack,
-                                        onFlip: _flipCard,
-                                        onToggleShowNumber: _toggleShowNumber,
-                                        onCopyNumber: () => _copyCardNumber(context, state),
+                              },
+                              itemCount: state.cards.length,
+                              itemBuilder: (context, index) {
+                                return AnimatedBuilder(
+                                  animation: _pageController,
+                                  builder: (context, child) {
+                                    double value = 1.0;
+                                    if (_pageController.position.haveDimensions) {
+                                      value = _pageController.page! - index;
+                                      value = (1 - (value.abs() * 0.1)).clamp(0.0, 1.0);
+                                    }
+                                    return Center(
+                                      child: SizedBox(
+                                        height: Curves.easeInOut.transform(value) * 240 * context.fontSizeFactor,
+                                        width: Curves.easeInOut.transform(value) * MediaQuery.of(context).size.width,
+                                        child: child,
                                       ),
+                                    );
+                                  },
+                                  child: GestureDetector(
+                                    onTap: _flipCard,
+                                    child: EliteVirtualCard(
+                                      card: state.cards[index],
+                                      showBack: _showBack,
+                                      showNumber: _showNumber,
+                                      onFlip: _flipCard,
+                                      onToggleShowNumber: _toggleShowNumber,
+                                      onCopyNumber: () => _copyCardNumber(context, state),
                                     ),
                                   ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            
-            const SizedBox(height: 16),
-            if (state.cards.isNotEmpty)
-              Center(
-                child: SmoothPageIndicator(
-                  controller: _pageController,
-                  count: state.cards.length,
-                  effect: const ExpandingDotsEffect(
-                    activeDotColor: AppColors.accentTeal,
-                    dotColor: Colors.grey,
-                    dotHeight: 6,
-                    dotWidth: 6,
-                    expansionFactor: 4,
-                    spacing: 4,
-                  ),
-                ),
-              ),
-            
-            const SizedBox(height: 32),
-            if (state.cards.isNotEmpty)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildQuickAction(
-                            context, 
-                            state, 
-                            "Deposit", 
-                            l10n.deposit, 
-                            Icons.add_circle_rounded, 
-                            Colors.green, 
-                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DepositCardScreen(amount: "0", currencyCode: "USD", cardId: state.cards[_currentIndex].id))),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildQuickAction(
-                            context, 
-                            state, 
-                            "Withdraw", 
-                            l10n.withdraw, 
-                            Icons.remove_circle_rounded, 
-                            Colors.red, 
-                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => WithdrawScreen(cardId: state.cards[_currentIndex].id))),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if (!_isSearching)
-                          Text(l10n.transactions, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))
-                        else
-                          Expanded(
-                            child: TextField(
-                              controller: _searchController,
-                              autofocus: true,
-                              decoration: InputDecoration(
-                                hintText: l10n.searchTransactions,
-                                border: InputBorder.none,
-                                hintStyle: TextStyle(fontSize: 14 * context.fontSizeFactor),
-                              ),
-                              style: TextStyle(fontSize: 14 * context.fontSizeFactor),
-                              onChanged: (value) => setState(() => _searchQuery = value),
+                                );
+                              },
                             ),
                           ),
-                        IconButton(
-                          onPressed: () => setState(() {
-                            _isSearching = !_isSearching;
-                            if (!_isSearching) {
-                              _searchController.clear();
-                              _searchQuery = "";
-                            }
-                          }),
-                          icon: Icon(_isSearching ? Icons.close_rounded : Icons.search_rounded),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildFilterChip(l10n.all, _selectedFilter == "All", (sel) => setState(() => _selectedFilter = "All")),
-                          _buildFilterChip(l10n.shopping, _selectedFilter == "Shopping", (sel) => setState(() => _selectedFilter = "Shopping")),
-                          _buildFilterChip(l10n.food, _selectedFilter == "Food", (sel) => setState(() => _selectedFilter = "Food")),
-                          _buildFilterChip(l10n.subscriptions, _selectedFilter == "Subscriptions", (sel) => setState(() => _selectedFilter = "Subscriptions")),
+                          const SizedBox(height: 16),
+                          Center(
+                            child: SmoothPageIndicator(
+                              controller: _pageController,
+                              count: state.cards.length,
+                              effect: ExpandingDotsEffect(
+                                dotHeight: 8 * context.fontSizeFactor,
+                                dotWidth: 8 * context.fontSizeFactor,
+                                activeDotColor: theme.colorScheme.primary,
+                                dotColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          _buildQuickActions(context, state),
+                          const SizedBox(height: 32),
+                          _buildTransactionList(context, state, filteredTransactions),
                         ],
                       ),
                     ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: state.cards.length < 2
+          ? FloatingActionButton.extended(
+              onPressed: () => _showNewCardDialog(context, state),
+              label: Text(l10n.addNewCard),
+              icon: const Icon(Icons.add_rounded),
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+            )
+          : null,
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context, AppState state) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withValues(alpha: 0.05),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.credit_card_off_rounded, size: 64 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.4)),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            l10n.noActiveCards,
+            style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Text(
+              state.translate("Ma jiraan kaadhadh shaqaynaya hadda. Fadlan sameyso kaadh cusub si aad u bilowdo.", "You don't have any active cards yet. Please create one to get started."),
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.grey),
+            ),
+          ),
+          const SizedBox(height: 32),
+          ElevatedButton.icon(
+            onPressed: () => _showNewCardDialog(context, state),
+            icon: const Icon(Icons.add_rounded),
+            label: Text(state.translate("Sameyso Kaadhkaagii Koowaad", "Create Your First Card")),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+          ),
+          if (state.terminatedCards.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            TextButton.icon(
+              onPressed: () => _showRestoreCardDialog(context, state),
+              icon: const Icon(Icons.restore_rounded),
+              label: Text(state.translate("Soo cesho kaadh hore", "Restore previous card")),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActions(BuildContext context, AppState state) {
+    final l10n = AppLocalizations.of(context)!;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _actionButton(
+            context,
+            Icons.add_circle_outline_rounded,
+            l10n.topUp,
+            () {
+              if (state.cards.isEmpty) return;
+              Navigator.push(context, MaterialPageRoute(builder: (_) => DepositCardScreen(
+                amount: "0", 
+                currencyCode: state.currencyCode, 
+                cardId: state.cards[_currentIndex].id
+              )));
+            },
+          ),
+          _actionButton(
+            context,
+            Icons.arrow_circle_down_rounded,
+            l10n.withdraw,
+            () {
+              if (state.cards.isEmpty) return;
+              Navigator.push(context, MaterialPageRoute(builder: (_) => WithdrawScreen(cardId: state.cards[_currentIndex].id)));
+            },
+          ),
+          _actionButton(
+            context,
+            Icons.receipt_long_rounded,
+            state.translate("Warbixin", "Statement"),
+            () {
+              if (state.cards.isEmpty) return;
+              Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: state.cards[_currentIndex])));
+            },
+          ),
+          _actionButton(
+            context,
+            Icons.ac_unit_rounded,
+            state.cards[_currentIndex].isFrozen ? state.translate("Ka saar barafka", "Unfreeze") : state.translate("Baraf mari", "Freeze"),
+            () {
+              _showPinRequiredAction(context, state, () {
+                final card = state.cards[_currentIndex];
+                state.updateCard(_currentIndex, card.copyWith(isFrozen: !card.isFrozen));
+              });
+            },
+            color: state.cards[_currentIndex].isFrozen ? Colors.orange : null,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionButton(BuildContext context, IconData icon, String label, VoidCallback onTap, {Color? color}) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: (color ?? theme.colorScheme.primary).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: color ?? theme.colorScheme.primary, size: 24 * context.fontSizeFactor),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 12 * context.fontSizeFactor,
+              color: isDark ? Colors.white70 : AppColors.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransactionList(BuildContext context, AppState state, List<Transaction> transactions) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l10n.recentTransactions,
+                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (state.cards.isNotEmpty) {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: state.cards[_currentIndex])));
+                  }
+                },
+                child: Text(l10n.viewAll),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (transactions.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 40),
+                child: Column(
+                  children: [
+                    Icon(Icons.receipt_outlined, size: 48, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
                     const SizedBox(height: 16),
-                    if (_currentIndex == _verifiedIndex)
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: filteredTransactions.length,
-                        itemBuilder: (context, index) {
-                          final tx = filteredTransactions[index];
-                          return _buildTxItem(
-                            context, 
-                            state, 
-                            tx.title, 
-                            tx.date, 
-                            tx.amount, 
-                            tx.isNegative,
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-                              ReceiptView.show(context, tx.toJson());
-                            },
-                          );
-                        },
-                      )
-                    else
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 40),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surface.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(Icons.lock_outline_rounded, size: 40, color: Colors.grey.withValues(alpha: 0.5)),
-                            const SizedBox(height: 16),
-                            Text(
-                              l10n.pleaseUnlockCard,
-                              style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                    if (filteredTransactions.isEmpty)
-                      FadeIn(
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 40),
-                            child: Column(
-                              children: [
-                                Icon(Icons.receipt_long_outlined, size: 48 * context.fontSizeFactor, color: Colors.grey.withValues(alpha: 0.2)),
-                                const SizedBox(height: 16),
-                                Text(
-                                  _isSearching ? l10n.noTransactionsFound : l10n.noTransactionsForCard,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 100),
+                    Text(l10n.noTransactionsYet, style: TextStyle(color: AppColors.grey)),
                   ],
                 ),
               ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuickAction(BuildContext context, AppState state, String title, String translatedTitle, IconData icon, Color color, {VoidCallback? onTap}) {
-    final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
-          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: color, size: 26 * context.fontSizeFactor),
-            ),
-            const SizedBox(height: 14),
-            Text(
-              translatedTitle,
-              style: TextStyle(
-                fontSize: 14 * context.fontSizeFactor,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.3,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
             )
-          ],
-        ),
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: transactions.length > 5 ? 5 : transactions.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final tx = transactions[index];
+                return _buildTransactionItem(context, tx, isDark, theme);
+              },
+            ),
+          const SizedBox(height: 100), // Space for FAB
+        ],
       ),
     );
   }
 
-  Widget _buildTxItem(BuildContext context, AppState state, String title, String date, String amt, bool neg, {VoidCallback? onTap}) {
-    final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12), padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20)),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12), 
-              decoration: BoxDecoration(color: neg ? Colors.red.withValues(alpha: 0.1) : Colors.green.withValues(alpha: 0.1), shape: BoxShape.circle), 
-              child: Icon(neg ? Icons.remove_rounded : Icons.add_rounded, color: neg ? Colors.red : Colors.green, size: 20 * context.fontSizeFactor)
-            ),
-            const SizedBox(width: 16),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)), Text(date, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor))])),
-            Text(
-              neg ? amt : "+$amt", 
-              style: TextStyle(fontWeight: FontWeight.bold, color: neg ? Colors.red : Colors.green, fontSize: 14 * context.fontSizeFactor)
-            ),
-          ],
+  Widget _buildTransactionItem(BuildContext context, Transaction tx, bool isDark, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: _getCategoryColor(tx.category).withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(_getCategoryIcon(tx.category), color: _getCategoryColor(tx.category), size: 20 * context.fontSizeFactor),
         ),
+        title: Text(tx.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        subtitle: Text(tx.date, style: TextStyle(color: AppColors.grey, fontSize: 12)),
+        trailing: Text(
+          tx.amount,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: tx.isNegative ? Colors.redAccent : Colors.greenAccent,
+            fontSize: 16,
+          ),
+        ),
+        onTap: () => _showTransactionDetails(context, tx),
       ),
     );
   }
 
-  Widget _buildFilterChip(String label, bool sel, ValueChanged<bool> onSelected) => Padding(padding: const EdgeInsetsDirectional.only(end: 8), child: FilterChip(label: Text(label), selected: sel, onSelected: onSelected, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), selectedColor: AppColors.accentTeal.withValues(alpha: 0.2), checkmarkColor: AppColors.accentTeal));
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'shopping': return Icons.shopping_bag_outlined;
+      case 'food': return Icons.restaurant_outlined;
+      case 'transport': return Icons.directions_bus_outlined;
+      case 'entertainment': return Icons.movie_outlined;
+      case 'health': return Icons.medical_services_outlined;
+      case 'refund': return Icons.replay_circle_filled_outlined;
+      case 'subscription': return Icons.subscriptions_outlined;
+      default: return Icons.receipt_long_outlined;
+    }
+  }
+
+  Color _getCategoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'shopping': return Colors.orange;
+      case 'food': return Colors.red;
+      case 'transport': return Colors.blue;
+      case 'entertainment': return Colors.purple;
+      case 'health': return Colors.green;
+      case 'refund': return Colors.teal;
+      case 'subscription': return Colors.indigo;
+      default: return AppColors.primary;
+    }
+  }
+
+  void _showTransactionDetails(BuildContext context, Transaction tx) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ReceiptView(transaction: tx.toJson()),
+    );
+  }
+
+  void _showPinRequiredAction(BuildContext context, AppState state, VoidCallback onVerified) async {
+    showDialog(
+      context: context,
+      builder: (context) => PinEntryDialog(
+        title: state.translate("Xaqiijinta PIN-ka", "PIN Verification"),
+        description: state.translate("Fadlan geli PIN-kaaga si aad u sii waddo.", "Please enter your PIN to continue."),
+        onConfirm: (pin) {
+          if (state.verifyPin(pin)) {
+            onVerified();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.translate("PIN-ku waa khalad", "Incorrect PIN")))
+            );
+          }
+        },
+      ),
+    );
+  }
 
   void _showCardSettings(BuildContext context, AppState state) {
     if (state.cards.isEmpty) return;
@@ -836,27 +709,163 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  void _showPinVerification(BuildContext context, AppState state, AppLocalizations l10n, Function(bool) onResult) {
-    final currentCard = state.cards[state.selectedCardIndex];
-    
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => PinEntryDialog(
-        title: l10n.cardPin,
-        description: l10n.enterPinForCard(currentCard.cardNumber.substring(currentCard.cardNumber.length - 4)),
-        isCardPin: true,
-        cardId: currentCard.id,
-        onConfirm: (pin) {
-          if (state.verifyCardPin(pin)) {
-            onResult(true);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.incorrectPin), backgroundColor: Colors.red),
-            );
-            onResult(false);
-          }
-        },
+  Widget _walletSection(BuildContext context, AppState state, VirtualCard card) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(state.translate("Haraaga Kaadhka", "Card Balance"), style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor)),
+                  const SizedBox(height: 4),
+                  Text("\$${card.balance.toStringAsFixed(2)}", style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => DepositCardScreen(
+                    amount: "0", 
+                    currencyCode: state.cards[state.selectedCardIndex].theme == CardThemeType.gold ? "USD" : "SOS", 
+                    cardId: card.id
+                  )));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.accentTeal,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                ),
+                child: Text(state.translate("Ku Shub", "Top Up")),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(BuildContext context, String title, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, bottom: 12),
+      child: Text(
+        title.toUpperCase(),
+        style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.4) : Colors.black45, fontSize: 10 * context.fontSizeFactor, letterSpacing: 1.5, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildSettingsTile({
+    required BuildContext context,
+    required bool isDark,
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool isLast = false,
+  }) {
+    return Column(
+      children: [
+        ListTile(
+          onTap: onTap,
+          contentPadding: EdgeInsets.zero,
+          leading: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)),
+            child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
+          ),
+          title: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary)),
+          subtitle: Text(subtitle, style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 12 * context.fontSizeFactor)),
+          trailing: Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white24 : Colors.black26),
+        ),
+        if (!isLast) Divider(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), height: 24),
+      ],
+    );
+  }
+
+  Widget _buildSwitchTile({
+    required BuildContext context,
+    required bool isDark,
+    required IconData icon,
+    required Color color,
+    required String title,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+            child: Icon(icon, color: color, size: 20 * context.fontSizeFactor),
+          ),
+          const SizedBox(width: 16),
+          Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary))),
+          Switch(value: value, onChanged: onChanged, activeColor: AppColors.accentTeal),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpendingLimitTile(BuildContext context, AppState state, VirtualCard card, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(state.translate("Xadka Bisha", "Monthly Limit"), style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor)),
+                  const SizedBox(height: 4),
+                  Text("\$2,500.00", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary)),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
+                child: Icon(Icons.edit_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(value: 0.65, backgroundColor: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal), minHeight: 8),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(state.translate("La isticmaalay: \$1,625.00", "Spent: \$1,625.00"), style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 12 * context.fontSizeFactor)),
+              Text("65%", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 12 * context.fontSizeFactor)),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -948,36 +957,16 @@ class _CardsScreenState extends State<CardsScreen> {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppColors.accentTeal.withValues(alpha: 0.1),
+                          color: Colors.redAccent.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.help_outline_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+                        child: const Icon(Icons.info_outline, color: Colors.redAccent, size: 20),
                       ),
-                      title: Text(
-                        reason["label"]!,
-                        style: TextStyle(
-                          fontSize: 14 * context.fontSizeFactor,
-                          fontWeight: FontWeight.w500,
-                          color: isDark ? Colors.white : AppColors.textPrimary,
-                        ),
-                      ),
+                      title: Text(reason["label"]!, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w600)),
                       trailing: Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white24 : Colors.black26),
                     ),
                   );
                 },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(sheetCtx),
-                      child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ],
               ),
             ),
           ],
@@ -1098,13 +1087,13 @@ class _CardsScreenState extends State<CardsScreen> {
         decoration: BoxDecoration(
           color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
               child: Icon(icon, color: color, size: 24 * fontSizeFactor),
             ),
@@ -1113,23 +1102,9 @@ class _CardsScreenState extends State<CardsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16 * fontSizeFactor,
-                      color: isDark ? Colors.white : AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 12 * fontSizeFactor,
-                      color: isDark ? Colors.white60 : AppColors.textSecondary,
-                      height: 1.4,
-                    ),
-                  ),
+                  Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary)),
+                  const SizedBox(height: 4),
+                  Text(description, style: TextStyle(fontSize: 12 * fontSizeFactor, color: isDark ? Colors.white60 : AppColors.textSecondary)),
                 ],
               ),
             ),
@@ -1378,126 +1353,31 @@ class _CardsScreenState extends State<CardsScreen> {
                             SnackBar(
                               content: Text(state.translate(
                                 "PIN-kani waa kii hadda. Fadlan dooro PIN cusub.", 
-                                "This is the current PIN. Please choose a new PIN."
+                                "This is your current PIN. Please choose a new PIN."
                               )),
-                              backgroundColor: Colors.orange,
                             ),
                           );
                           pinController.clear();
-                          return;
+                        } else {
+                          state.updateCardPin(value, cardId: currentCard.id);
+                          Navigator.pop(sheetCtx);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.translate("PIN-ka si guul leh ayaa loo beddelay!", "PIN changed successfully!")),
+                              backgroundColor: AppColors.accentTeal,
+                            ),
+                          );
                         }
-                      }
-                      Navigator.pop(sheetCtx);
-                      _showConfirmNewPin(context, l10n, value, isChange: isChange);
-                    }
-                  },
-                ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: TextButton(
-                  onPressed: () => Navigator.pop(sheetCtx),
-                  child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showConfirmNewPin(BuildContext context, AppLocalizations l10n, String newPin, {bool isChange = false}) {
-    final TextEditingController pinController = TextEditingController();
-    final state = Provider.of<AppState>(context, listen: false);
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetCtx) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(sheetCtx).viewInsets.bottom),
-        child: GlassmorphicContainer(
-          width: double.infinity,
-          height: 400 * context.fontSizeFactor,
-          borderRadius: 24,
-          blur: 30,
-          alignment: Alignment.topCenter,
-          border: 2,
-          linearGradient: LinearGradient(
-            colors: isDark 
-                ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
-                : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
-          ),
-          borderGradient: LinearGradient(
-            colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)],
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 24),
-              Icon(Icons.verified_user_rounded, color: AppColors.accentTeal, size: 48 * context.fontSizeFactor),
-              const SizedBox(height: 16),
-              Text(
-                state.translate("Xaqiiji PIN-ka", "Confirm PIN"),
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                state.translate("Fadlan mar kale geli PIN-ka cusub.", "Please re-enter the new PIN to confirm."),
-                textAlign: TextAlign.center,
-                style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: 220 * context.fontSizeFactor,
-                child: TextField(
-                  controller: pinController,
-                  obscureText: true,
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  style: TextStyle(fontSize: 28 * context.fontSizeFactor, letterSpacing: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    hintText: "****",
-                    hintStyle: TextStyle(letterSpacing: 20 * context.fontSizeFactor, fontSize: 28 * context.fontSizeFactor, color: isDark ? Colors.white24 : Colors.black12),
-                    filled: true,
-                    fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                  ),
-                  onChanged: (value) async {
-                    if (value.length == 4) {
-                        if (value == newPin) {
-                        Navigator.pop(sheetCtx);
+                      } else {
                         final currentCard = state.cards[state.selectedCardIndex];
                         state.updateCardPin(value, cardId: currentCard.id);
-                        _audioPlayer.play(AssetSource('sounds/success.mp3'));
+                        Navigator.pop(sheetCtx);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(isChange 
-                              ? state.translate("PIN-ka waa la beddelay!", "PIN changed successfully!")
-                              : state.translate("PIN-ka waa la sameeyay!", "PIN created successfully!")),
+                            content: Text(state.translate("PIN-ka waa la keydiyay!", "PIN saved successfully!")),
                             backgroundColor: AppColors.accentTeal,
-                            behavior: SnackBarBehavior.floating,
                           ),
                         );
-                        // Navigate back to card screen
-                        Navigator.pop(context);
-                      } else {
-                        HapticFeedback.vibrate();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.translate("Fadlan xaqiiji PIN-ka cusub.", "Please confirm the new PIN.")),
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                        pinController.clear();
                       }
                     }
                   },
@@ -1678,152 +1558,21 @@ class _CardsScreenState extends State<CardsScreen> {
   Widget _buildBalanceDisplay(BuildContext context, AppState state, ThemeData theme) {
     final currencyFormatter = NumberFormat.simpleCurrency(name: state.currencyCode);
     final currentCardIndex = state.selectedCardIndex;
-    final cardBalance = state.cards.isNotEmpty && currentCardIndex < state.cards.length 
-        ? state.cards[currentCardIndex].balance 
-        : 0.0;
+    if (state.cards.isEmpty || currentCardIndex >= state.cards.length) return const SizedBox.shrink();
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      margin: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.accentTeal.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2)),
+        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.account_balance_wallet_rounded, color: AppColors.accentTeal, size: 14 * context.fontSizeFactor),
-          const SizedBox(width: 6),
-          Text(
-            currencyFormatter.format(cardBalance),
-            style: TextStyle(
-              color: AppColors.accentTeal,
-              fontWeight: FontWeight.bold,
-              fontSize: 14 * context.fontSizeFactor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _walletSection(BuildContext context, AppState state, VirtualCard card) {
-    if (kIsWeb) return const SizedBox.shrink();
-    final bool isIOS = Platform.isIOS;
-    final l10n = AppLocalizations.of(context)!;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: OutlinedButton(
-        onPressed: () {},
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          side: const BorderSide(color: AppColors.accentTeal, width: 1.5),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(isIOS ? Icons.apple : Icons.g_mobiledata_rounded, color: AppColors.accentTeal),
-            const SizedBox(width: 12),
-            Text(isIOS ? l10n.addToAppleWallet : l10n.addToGooglePay, style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(BuildContext context, String title, bool isDark) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 12, bottom: 12),
       child: Text(
-        title.toUpperCase(),
-        style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.4) : Colors.black45, fontSize: 10 * context.fontSizeFactor, letterSpacing: 1.5, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Widget _buildSettingsTile({required BuildContext context, required IconData icon, required Color color, required String title, required String subtitle, VoidCallback? onTap, bool isLast = false, bool isDark = true}) {
-    return Column(
-      children: [
-        ListTile(
-          onTap: onTap,
-          leading: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)),
-          title: Text(title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-          subtitle: Text(subtitle, style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary, fontSize: 11 * context.fontSizeFactor)),
-          trailing: Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white.withValues(alpha: 0.2) : Colors.black26, size: 24 * context.fontSizeFactor),
+        currencyFormatter.format(state.cards[currentCardIndex].balance),
+        style: theme.textTheme.titleMedium?.copyWith(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
         ),
-        if (!isLast) Divider(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05), indent: 64),
-      ],
-    );
-  }
-
-  Widget _buildSpendingLimitTile(BuildContext context, AppState state, VirtualCard card, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-        borderRadius: BorderRadius.circular(16),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                state.translate("Xadka Maalinlaha ah", "Daily Limit"),
-                style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 14 * context.fontSizeFactor),
-              ),
-              Text(
-                "\$${card.dailyLimit.toStringAsFixed(0)}",
-                style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: AppColors.accentTeal,
-              inactiveTrackColor: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
-              thumbColor: AppColors.accentTeal,
-              overlayColor: AppColors.accentTeal.withValues(alpha: 0.2),
-              trackHeight: 4,
-            ),
-            child: Slider(
-              value: card.dailyLimit,
-              min: 100,
-              max: 5000,
-              divisions: 49,
-              onChanged: (value) {
-                final currentCardIndex = state.selectedCardIndex;
-                if (currentCardIndex < state.cards.length) {
-                  state.updateCard(currentCardIndex, card.copyWith(dailyLimit: value));
-                }
-              },
-            ),
-          ),
-          Text(
-            state.translate("Waxaad isticmaashay \$${card.currentSpending.toStringAsFixed(0)} maanta", "You've used \$${card.currentSpending.toStringAsFixed(0)} today"),
-            style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSwitchTile({required BuildContext context, required IconData icon, required Color color, required String title, required bool value, required ValueChanged<bool> onChanged, bool isDark = true}) {
-    return Column(
-      children: [
-        SwitchListTile(
-          value: value,
-          onChanged: onChanged,
-          secondary: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22 * context.fontSizeFactor)),
-          title: Text(title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-          activeTrackColor: AppColors.accentTeal,
-        ),
-        Divider(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05), indent: 64),
-      ],
     );
   }
 
@@ -1880,10 +1629,37 @@ class _CardsScreenState extends State<CardsScreen> {
             Text(l10n.addNewCard, style: TextStyle(color: Colors.white, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              child: _buildSettingsTile(context: context, icon: Icons.add_card_rounded, color: AppColors.accentTeal, title: l10n.orderVirtualCard, subtitle: l10n.instantlyIssueNewCard, onTap: () {
-                Navigator.pop(sheetCtx);
-                _createNewVirtualCard(context, state);
-              }, isLast: true),
+              child: Column(
+                children: [
+                  _buildSettingsTile(
+                    context: context, 
+                    icon: Icons.add_card_rounded, 
+                    color: AppColors.accentTeal, 
+                    title: l10n.orderVirtualCard, 
+                    subtitle: l10n.instantlyIssueNewCard, 
+                    onTap: () {
+                      Navigator.pop(sheetCtx);
+                      _createNewVirtualCard(context, state);
+                    }, 
+                    isLast: state.terminatedCards.isEmpty,
+                    isDark: true
+                  ),
+                  if (state.terminatedCards.isNotEmpty)
+                    _buildSettingsTile(
+                      context: context,
+                      icon: Icons.restore_rounded,
+                      color: Colors.orange,
+                      title: state.translate("Soo cesho Kaadh", "Restore Card"),
+                      subtitle: state.translate("Ka soo cesho kaadhka tirtiran", "Recover recently terminated card"),
+                      onTap: () {
+                        Navigator.pop(sheetCtx);
+                        _showRestoreCardDialog(context, state);
+                      },
+                      isLast: true,
+                      isDark: true
+                    ),
+                ],
+              ),
             ),
           ],
         ),
@@ -1962,74 +1738,39 @@ class _CardsScreenState extends State<CardsScreen> {
                         final sub = subscriptions[index];
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             leading: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                _getIconForMerchant(sub.receiverName),
-                                color: isDark ? Colors.white70 : AppColors.textPrimary,
-                              ),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(color: Colors.purple.withOpacity(0.1), shape: BoxShape.circle),
+                              child: const Icon(Icons.subscriptions, color: Colors.purple),
                             ),
-                            title: Text(
-                              sub.receiverName,
-                              style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
-                            ),
-                            subtitle: Text(
-                              "${state.translate("Bishii", "Monthly")} \$${sub.amount.toStringAsFixed(2)}",
-                              style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary),
-                            ),
+                            title: Text(sub.title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontWeight: FontWeight.bold)),
+                            subtitle: Text("\$${sub.amount.toStringAsFixed(2)} / ${sub.frequency}", style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary)),
                             trailing: Switch(
                               value: sub.status == RecurringStatus.active,
-                              activeThumbColor: AppColors.accentTeal,
-                              onChanged: (val) {
-                                final globalIndex = state.recurringPayments.indexOf(sub);
-                                if (globalIndex != -1) {
-                                  state.updateRecurringPayment(
-                                    globalIndex, 
-                                    sub.copyWith(status: val ? RecurringStatus.active : RecurringStatus.paused)
-                                  );
-                                  setModalState(() {});
-                                }
+                              onChanged: (v) {
+                                state.toggleRecurringPayment(sub.id);
+                                setModalState(() {});
                               },
+                              activeColor: AppColors.accentTeal,
                             ),
                           ),
                         );
                       },
                     ),
                   ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(sheetCtx),
-                    child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
-                  ),
-                ),
+                const SizedBox(height: 24),
               ],
             ),
           );
         },
       ),
     );
-  }
-
-  IconData _getIconForMerchant(String name) {
-    final n = name.toLowerCase();
-    if (n.contains('netflix')) return Icons.movie_outlined;
-    if (n.contains('amazon')) return Icons.shopping_cart_outlined;
-    if (n.contains('apple')) return Icons.apple;
-    if (n.contains('spotify')) return Icons.music_note_outlined;
-    if (n.contains('google')) return Icons.g_mobiledata;
-    return Icons.subscriptions_outlined;
   }
 
   void _createNewVirtualCard(BuildContext context, AppState state) async {
@@ -2102,5 +1843,134 @@ class _CardsScreenState extends State<CardsScreen> {
         ),
       ),
     );
+  }
+
+  void _showRestoreCardDialog(BuildContext context, AppState state) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => GlassmorphicContainer(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.6,
+        borderRadius: 24,
+        blur: 30,
+        alignment: Alignment.topCenter,
+        border: 2,
+        linearGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark 
+              ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
+              : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
+        ),
+        borderGradient: LinearGradient(
+          colors: [
+            (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.2), 
+            (isDark ? Colors.white : AppColors.primaryDark).withValues(alpha: 0.05)
+          ],
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
+            const SizedBox(height: 24),
+            Text(
+              state.translate("Soo cesho Kaadhka", "Restore Card"),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              state.translate("Dooro kaadhka aad rabto inaad soo celiso", "Select the card you want to restore"),
+              style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
+            ),
+            const SizedBox(height: 24),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: state.terminatedCards.length,
+                itemBuilder: (context, index) {
+                  final card = state.terminatedCards[index];
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
+                    ),
+                    child: ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.accentTeal.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.credit_card, color: AppColors.accentTeal),
+                      ),
+                      title: Text(
+                        "Visa • ${card.cardNumber.substring(card.cardNumber.length - 4)}",
+                        style: TextStyle(
+                          color: isDark ? Colors.white : AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(
+                        "Expired: ${card.expiryDate}",
+                        style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary),
+                      ),
+                      trailing: ElevatedButton(
+                        onPressed: () async {
+                          if (state.cards.length >= 2) {
+                             ScaffoldMessenger.of(context).showSnackBar(
+                               SnackBar(content: Text(state.translate("Ma abuuri kartid wax ka badan laba kaadh.", "You cannot have more than two active cards.")))
+                             );
+                             return;
+                          }
+                          
+                          final success = await _showSecurityPinDialog(context);
+                          if (success) {
+                            await state.restoreCard(card.id);
+                            if (context.mounted) {
+                              Navigator.pop(sheetCtx);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(state.translate("Kaadhka waa la soo celiyay!", "Card restored successfully!")))
+                              );
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accentTeal,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        child: Text(state.translate("Soo celi", "Restore")),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<bool> _showSecurityPinDialog(BuildContext context) async {
+    final state = Provider.of<AppState>(context, listen: false);
+    final pin = await showDialog<String>(
+      context: context,
+      builder: (context) => PinEntryDialog(
+        title: state.translate("Geli PIN", "Enter PIN"),
+        description: state.translate("Fadlan geli PIN-kaaga si aad u sii wadato.", "Please enter your PIN to continue."),
+        onConfirm: (pin) {
+          // Handled by Navigator.pop in dialog
+        },
+      ),
+    );
+    return pin != null && state.verifyPin(pin);
   }
 }

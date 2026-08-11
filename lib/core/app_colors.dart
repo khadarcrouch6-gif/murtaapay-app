@@ -18,6 +18,22 @@ class AppColors {
   static const Color statusProcessing = Color(0xFF3B82F6); // Blue
   static const Color statusFailed = Color(0xFFEF4444); // Red
   
+  // Silver/Metallic Theme Colors
+  static const Color silverLight = Color(0xFFE2E8F0);
+  static const Color silverMain = Color(0xFFCBD5E1);
+  static const Color silverDark = Color(0xFF94A3B8);
+
+  static const LinearGradient silverGradient = LinearGradient(
+    colors: [
+      Color(0xFFE2E8F0),
+      Color(0xFFCBD5E1),
+      Color(0xFF94A3B8),
+      Color(0xFFCBD5E1),
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [primaryDark, Color(0xFF1A4B7A)],
     begin: Alignment.topLeft,

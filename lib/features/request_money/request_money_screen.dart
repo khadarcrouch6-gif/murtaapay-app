@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/widgets/contact_sync_list.dart';
@@ -189,19 +190,29 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                 verifiedName = null;
                 error = null;
                 isVerifying = false;
-                suggestions = [];
+                // Suggest recent quick profiles when input is empty
+                suggestions = appState.quickProfiles.map((p) => MapEntry(p.walletId, p.name)).toList();
               });
               return;
             }
 
-            // Show suggestions immediately from local mock data if available
+            // Show suggestions from both mock users and quick profiles
             final matches = appState.mockUsers.entries
                 .where((e) => e.key.startsWith(id) || e.value.toLowerCase().contains(id.toLowerCase()))
-                .take(5)
                 .toList();
             
+            final profileMatches = appState.quickProfiles
+                .where((p) => p.walletId.startsWith(id) || p.name.toLowerCase().contains(id.toLowerCase()))
+                .map((p) => MapEntry(p.walletId, p.name))
+                .toList();
+
             setDialogState(() {
-              suggestions = matches;
+              // Combine and unique by key (walletId)
+              final combined = <String, String>{};
+              for (var e in [...profileMatches, ...matches]) {
+                combined[e.key] = e.value;
+              }
+              suggestions = combined.entries.take(5).toList();
               error = null;
               verifiedName = null;
             });
@@ -939,6 +950,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
+          HapticFeedback.lightImpact();
           setState(() {
             if (isIcon) {
               if (_amountController.text.isNotEmpty) {
@@ -955,7 +967,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
         child: Center(
           child: isIcon 
             ? const Icon(Icons.backspace_outlined, color: Colors.grey, size: 16)
-            : Text(val, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            : Text(val, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
         ),
       ),
     );
@@ -1022,50 +1034,72 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
     );
   }
 
-  void _showSuccessDialog() {
+  void _showSuccessDialog() async {
+    final appState = Provider.of<AppState>(context, listen: false);
     final name = _selectedMurtaaxName ?? _selectedContact?.displayName ?? "Contact";
-    final amount = _amountController.text;
+    final amountText = _amountController.text;
+    final double amount = double.tryParse(amountText) ?? 0.0;
 
     String displayReceiver = name;
     if (_isSplitEnabled && _splitParticipants.length > 1) {
       displayReceiver = "${_splitParticipants.length} people";
     }
 
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SuccessScreen(
-          title: "Request Sent!",
-          message: "We've sent your request for \$$amount to $displayReceiver",
-          buttonText: "Done",
-          subMessage: "Awaiting confirmation from $displayReceiver",
-          transactionData: {
-            'title': 'Money Request',
-            'amount': '\$$amount',
-            'receiver': displayReceiver,
-            'date': DateFormat('MMM dd, yyyy HH:mm').format(DateTime.now()),
-            'status': 'Pending',
-            'type': 'request_out',
-            'reference': 'REQ-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
-            'note': _noteController.text,
-            'expiry': _expiryDate == null ? 'Never' : DateFormat('MMM dd, yyyy').format(_expiryDate!),
-            'reminder': _reminderOption,
-            'isSplit': _isSplitEnabled.toString(),
-            'splitCount': _isSplitEnabled ? _splitPeopleCount.toString() : '1',
-            'participants': _isSplitEnabled ? _splitParticipants.map((p) => p['name']).join(', ') : name,
-          },
-          onPressed: () {
-            Provider.of<AppState>(context, listen: false).setNavIndex(0);
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const MainNavigation()),
-              (route) => false,
-            );
-          },
+    // Actually create the request in AppState
+    try {
+      await appState.createMoneyRequest(
+        amount: amount,
+        receiverName: name,
+        receiverId: _selectedWalletId ?? "",
+        note: _noteController.text,
+        isSplit: _isSplitEnabled,
+        splitCount: _isSplitEnabled ? _splitParticipants.length : 1,
+      );
+
+      if (!mounted) return;
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SuccessScreen(
+            title: "Request Sent!",
+            message: "We've sent your request for \$${amount.toStringAsFixed(2)} to $displayReceiver",
+            buttonText: "Done",
+            subMessage: "Awaiting confirmation from $displayReceiver",
+            transactionData: {
+              'title': 'Money Request',
+              'amount': '\$${amount.toStringAsFixed(2)}',
+              'receiver': displayReceiver,
+              'date': DateFormat('MMM dd, yyyy HH:mm').format(DateTime.now()),
+              'status': 'Pending',
+              'type': 'request_out',
+              'reference': 'REQ-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
+              'note': _noteController.text,
+              'expiry': _expiryDate == null ? 'Never' : DateFormat('MMM dd, yyyy').format(_expiryDate!),
+              'reminder': _reminderOption,
+              'isSplit': _isSplitEnabled.toString(),
+              'splitCount': _isSplitEnabled ? _splitPeopleCount.toString() : '1',
+              'participants': _isSplitEnabled ? _splitParticipants.map((p) => p['name']).join(', ') : name,
+            },
+            onPressed: () {
+              appState.setNavIndex(0);
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const MainNavigation()),
+                (route) => false,
+              );
+            },
+          ),
         ),
-      ),
-      (route) => false,
-    );
+        (route) => false,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error sending request: $e")),
+        );
+      }
+    }
   }
 
   Widget _buildHeader(String title, IconData icon, ThemeData theme) {

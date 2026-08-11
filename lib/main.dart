@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:provider/provider.dart';
@@ -13,9 +14,27 @@ import 'package:flutter/scheduler.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  // Configure System UI
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: Colors.white,
+    systemNavigationBarIconBrightness: Brightness.dark,
+  ));
+
+  // Ensure portrait orientation for better UX on mobile
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  
   // Create the single instance and initialize it
   final state = AppState();
-  await state.init();
+  try {
+    await state.init();
+  } catch (e) {
+    debugPrint("Failed to initialize AppState: $e");
+  }
   
   // Fix for potential font assertion errors in complex layouts
   // by ensuring the scheduler knows when to paint fonts.

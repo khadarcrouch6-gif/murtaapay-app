@@ -74,7 +74,7 @@ class _UnifiedMobileWithdrawScreenState extends State<UnifiedMobileWithdrawScree
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(l10n.mobileMoney, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(l10n.mobileMoney, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -399,23 +399,34 @@ class _UnifiedMobileWithdrawScreenState extends State<UnifiedMobileWithdrawScree
   void _process(BuildContext context, AppLocalizations l10n, AppState state) async {
     final double feeRate = state.calculateFeeForSource(100, "Mobile Money") / 100;
     final double fee = _amount > 0 ? (_amount * feeRate < 0.10 ? 0.10 : _amount * feeRate) : 0;
+    final theme = Theme.of(context);
     
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => Center(
         child: Container(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const CircularProgressIndicator(color: AppColors.accentTeal),
+              const CircularProgressIndicator(color: AppColors.accentTeal, strokeWidth: 3),
               const SizedBox(height: 24),
-              Text(l10n.processing, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(
+                l10n.processing, 
+                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
         ),
@@ -423,8 +434,6 @@ class _UnifiedMobileWithdrawScreenState extends State<UnifiedMobileWithdrawScree
     );
 
     await Future.delayed(const Duration(seconds: 2));
-    if (!context.mounted) return;
-    Navigator.pop(context);
 
     try {
       final tx = widget.source == "Wallet"
@@ -450,12 +459,16 @@ class _UnifiedMobileWithdrawScreenState extends State<UnifiedMobileWithdrawScree
               purpose: _selectedPurpose ?? l10n.familySupport,
             );
 
+      if (!context.mounted) return;
+      Navigator.pop(context); // Close loading dialog
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => SuccessScreen(
             title: l10n.withdrawalRequested,
             message: l10n.withdrawalSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(_amount)),
+            subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
             buttonText: l10n.backToHome,
             transactionData: tx.toJson(),
             onPressed: () {
@@ -467,6 +480,9 @@ class _UnifiedMobileWithdrawScreenState extends State<UnifiedMobileWithdrawScree
         (route) => false,
       );
     } catch (e) {
+      if (context.mounted) Navigator.pop(context); // Close loading dialog
+      
+      if (!context.mounted) return;
       Navigator.push(context, MaterialPageRoute(builder: (context) => FailureScreen(title: l10n.transactionFailed, message: e.toString(), buttonText: l10n.tryAgain, onPressed: () => Navigator.pop(context))));
     }
   }

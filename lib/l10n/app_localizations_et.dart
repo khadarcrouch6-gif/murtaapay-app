@@ -134,7 +134,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get bills => 'Arved';
 
   @override
-  String get sadaqah => 'Annetus';
+  String get fundraiser => 'Annetus';
 
   @override
   String get exchange => 'Vahetus';
@@ -1107,11 +1107,11 @@ class AppLocalizationsEt extends AppLocalizations {
   String get withdrawalRequested => 'Väljamakse taotletud!';
 
   @override
-  String get withdrawalPending => 'Withdrawal Pending';
+  String get withdrawalPending => 'Väljamakse ootel';
 
   @override
   String get bankProcessingNotice =>
-      'Bank transfers usually take 24-48 hours to complete. You can track the status in your transaction history.';
+      'Pangaülekanded võtavad tavaliselt aega 24–48 tundi. Staatust saate jälgida oma tehingute ajaloost.';
 
   @override
   String withdrawalSuccessMessage(String amount) {
@@ -1672,7 +1672,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get whatsApp => 'WhatsApp';
 
   @override
-  String get sadaqahCommunity => 'Annetused ja kogukond';
+  String get fundraiserCommunity => 'Annetused ja kogukond';
 
   @override
   String get medicalEmergency => 'Meditsiiniline hädaabi';
@@ -2531,77 +2531,78 @@ class AppLocalizationsEt extends AppLocalizations {
   String get payoutAmount => 'Payout Amount';
 
   @override
-  String get sadaqahUrgent => 'KIIRE';
+  String get fundraiserUrgent => 'KIIRE';
 
   @override
-  String get sadaqahRaised => 'kogutud';
+  String get fundraiserRaised => 'kogutud';
 
   @override
-  String get sadaqahRaisedOf => 'kogutud';
+  String get fundraiserRaisedOf => 'kogutud';
 
   @override
-  String get sadaqahDonations => 'annetust';
+  String get fundraiserDonations => 'annetust';
 
   @override
-  String get sadaqahHistory => 'Donation History';
+  String get fundraiserHistory => 'Donation History';
 
   @override
-  String get sadaqahTotal => 'Total';
+  String get fundraiserTotal => 'Total';
 
   @override
-  String get sadaqahSearchHint => 'Search campaigns or creator...';
+  String get fundraiserSearchHint => 'Search fundraisers or creators...';
 
   @override
-  String get sadaqahDonateTo => 'Donate to';
+  String get fundraiserDonateTo => 'Donate to';
 
   @override
-  String get sadaqahThankYou => 'Thank you! Your donation was successful.';
+  String get fundraiserThankYou => 'Thank you! Your donation was successful.';
 
   @override
-  String get sadaqahConfirmDonation => 'Confirm Donation';
+  String get fundraiserConfirmDonation => 'Confirm Donation';
 
   @override
-  String get sadaqahDonate => 'Donate';
+  String get fundraiserDonate => 'Donate';
 
   @override
-  String get sadaqahDonateNow => 'Donate Now';
+  String get fundraiserDonateNow => 'Donate Now';
 
   @override
-  String get sadaqahBixiHadda => 'Bixi Hadda';
+  String get fundraiserBixiHadda => 'Bixi Hadda';
 
   @override
-  String get sadaqahBixi => 'Bixi';
+  String get fundraiserBixi => 'Bixi';
 
   @override
-  String get sadaqahXaqiiji => 'Xaqiiji';
+  String get fundraiserXaqiiji => 'Xaqiiji';
 
   @override
-  String get sadaqahZakatCalcDesc => 'Calculate and pay your zakat accurately';
+  String get fundraiserZakatCalcDesc =>
+      'Calculate and pay your contribution accurately';
 
   @override
-  String get sadaqahTrending => 'Populaarne';
+  String get fundraiserTrending => 'Populaarne';
 
   @override
-  String get sadaqahNew => 'NEW';
+  String get fundraiserNew => 'NEW';
 
   @override
-  String get sadaqahEndingSoon => 'ENDING SOON';
+  String get fundraiserEndingSoon => 'ENDING SOON';
 
   @override
-  String get sadaqahCompleted => 'COMPLETED';
+  String get fundraiserCompleted => 'COMPLETED';
 
   @override
-  String sadaqahDonorsCount(int count) {
+  String fundraiserDonorsCount(int count) {
     return '+$count donors';
   }
 
   @override
-  String sadaqahSharingCampaign(String title) {
+  String fundraiserSharingCampaign(String title) {
     return 'Sharing $title...';
   }
 
   @override
-  String get sadaqahAgo => 'tagasi';
+  String get fundraiserAgo => 'tagasi';
 
   @override
   String get catAll => 'Kõik';
@@ -2740,7 +2741,7 @@ class AppLocalizationsEt extends AppLocalizations {
       'Turvaline rahvusvaheline maksevärav.';
 
   @override
-  String get insufficientBalanceSadaqah =>
+  String get insufficientBalanceFundraiser =>
       'Teie MurtaaxPay rahakotis on ebapiisav jääk.';
 
   @override
@@ -3037,4 +3038,7 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get pleaseWait => 'Palun oota...';
+
+  @override
+  String get recipient => 'Recipient';
 }

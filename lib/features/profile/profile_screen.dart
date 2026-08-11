@@ -19,6 +19,7 @@ import '../more/vouchers_screen.dart';
 import '../chat/chat_screen.dart';
 import 'terms_screen.dart';
 import 'security_center_screen.dart';
+import 'linked_accounts_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -70,17 +71,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       _buildSettingsTile(
                         context,
-                        Icons.account_balance_outlined,
-                        state.translate("Linked Banks", "Bangiyada ku Xidhan", ar: "البنوك المرتبطة", de: "Verknüpfte Banken", et: "Seotud pangad"),
-                        state.translate("Manage bank accounts", "Maamul akoonada bangiga", ar: "إدارة الحسابات البنكية", de: "Bankkonten verwalten", et: "Pangakontode haldamine"),
-                        onTap: () => _showLinkedBanks(context, state),
+                        Icons.star_outline_rounded,
+                        state.translate("Premium Subscription", "Rukunka Premium", ar: "اشتراك بريميوم", de: "Premium-Abonnement", et: "Premium tellimus"),
+                        state.translate("Unlock all features & limits", "Fur dhammaan sifooyinka & xadka", ar: "فتح جميع الميزات والحدود", de: "Alle Funktionen & Limits freischalten", et: "Ava kõik funktsioonid ja piirangud"),
+                        trailing: Transform.scale(
+                          scale: 0.8 * context.fontSizeFactor,
+                          child: Switch(
+                            value: state.isPremium,
+                            onChanged: (value) => state.togglePremium(value),
+                            activeThumbColor: AppColors.accentTeal,
+                          ),
+                        ),
                       ),
                       _buildSettingsTile(
                         context,
-                        Icons.verified_user_outlined,
-                        state.translate("Identity (KYC)", "Aqoonsiga (KYC)", ar: "الهوية (KYC)", de: "Identität (KYC)", et: "Isikutuvastus (KYC)"),
-                        state.translate("Verify your account", "Xaqiiji akoonkaaga", ar: "توثيق حسابك", de: "Konto verifizieren", et: "Kinnita oma konto"),
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const KYCScreen())),
+                        Icons.account_balance_outlined,
+                        state.translate("Linked Banks", "Bangiyada ku Xidhan", ar: "البنوك المرتبطة", de: "Verknüpfte Banken", et: "Seotud pangad"),
+                        state.translate("Manage bank accounts", "Maamul akoonada bangiga", ar: "إدارة الحسابات البنكية", de: "Bankkonten verwalten", et: "Pangakontode haldamine"),
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LinkedAccountsScreen())),
                       ),
                     ], isDark, context),
                     SizedBox(height: 32 * context.fontSizeFactor),
@@ -245,23 +253,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(height: 4 * context.fontSizeFactor),
                     Text(state.userEmail, style: TextStyle(color: Colors.grey, fontSize: 14 * context.fontSizeFactor)),
                     SizedBox(height: 8 * context.fontSizeFactor),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.verified_rounded, color: Colors.green, size: 14 * context.fontSizeFactor),
-                          SizedBox(width: 4 * context.fontSizeFactor),
-                          Text(
-                            state.translate("Verified Account", "Akoon Xaqiijisan", ar: "حساب موثق", de: "Verifiziertes Konto", et: "Kinnitatud konto"),
-                            style: TextStyle(color: Colors.green, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                    Wrap(
+                      spacing: 8 * context.fontSizeFactor,
+                      runSpacing: 4 * context.fontSizeFactor,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ],
-                      ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.verified_rounded, color: Colors.green, size: 14 * context.fontSizeFactor),
+                              SizedBox(width: 4 * context.fontSizeFactor),
+                              Text(
+                                state.translate("Verified Account", "Akoon Xaqiijisan", ar: "حساب موثق", de: "Verifiziertes Konto", et: "Kinnitatud konto"),
+                                style: TextStyle(color: Colors.green, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (state.isPremium)
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.star_rounded, color: Colors.amber[800], size: 14 * context.fontSizeFactor),
+                                SizedBox(width: 4 * context.fontSizeFactor),
+                                Text(
+                                  "PREMIUM",
+                                  style: TextStyle(color: Colors.amber[800], fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
                   ],
                 ),

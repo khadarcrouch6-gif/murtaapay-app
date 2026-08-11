@@ -4,8 +4,11 @@ import { ArrowLeft, Target, PlusCircle, ArrowUpRight, CheckCircle2 } from "lucid
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { useTranslations } from "next-intl";
+
 export default function SavingsPage() {
   const router = useRouter();
+  const t = useTranslations("Dashboard");
 
   const goals = [
     { title: "Hajj Fund", icon: "🕋", saved: 1200, target: 5000, color: "text-emerald-500", bg: "bg-emerald-100", progressColor: "bg-emerald-500" },
@@ -50,7 +53,7 @@ export default function SavingsPage() {
 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-[#0f172a]">Active Goals</h2>
-        <button className="text-emerald-600 font-bold hover:underline py-2">See All</button>
+        <button className="text-emerald-600 font-bold hover:underline py-2">{t('viewAll')}</button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">

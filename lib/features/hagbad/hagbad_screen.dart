@@ -704,6 +704,15 @@ class _HagbadScreenState extends State<HagbadScreen> {
                          );
                          appState.updateHagbadMember(group.id, mIdx, updatedMember);
                          appState.logHagbadEvent(group.id, "Guarantor request declined by ${appState.userName} for ${member.name}");
+                         
+                         // Notify the member that their guarantor request was declined
+                         if (member.walletId != null) {
+                           appState.sendHagbadNotification(
+                             member.walletId!,
+                             "${appState.userName} declined your guarantor request for '${group.name}'.",
+                             isSms: true,
+                           );
+                         }
                       }
                     },
                     child: Text(l10n.cancel),
@@ -725,6 +734,15 @@ class _HagbadScreenState extends State<HagbadScreen> {
                          appState.updateHagbadMember(group.id, mIdx, updatedMember);
                          appState.logHagbadEvent(group.id, "Guarantor request accepted by ${appState.userName} for ${member.name}");
                          
+                         // Notify the member that their guarantor request was accepted
+                         if (member.walletId != null) {
+                           appState.sendHagbadNotification(
+                             member.walletId!,
+                             "${appState.userName} has accepted to be your guarantor for '${group.name}'.",
+                             isSms: true,
+                           );
+                         }
+
                          if (context.mounted) {
                            ScaffoldMessenger.of(context).showSnackBar(
                              SnackBar(content: Text("You are now the guarantor for ${member.name}"))

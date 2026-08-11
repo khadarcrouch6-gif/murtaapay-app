@@ -43,13 +43,13 @@
             'status' => 'Delivered',
         ],
     ];
-    
+
     $productsList = !empty($products) ? $products : $defaultProducts;
-    
+
     // Helper function for status classes
     $getStatusClasses = function($status) {
         $baseClasses = 'rounded-full px-2 py-0.5 text-theme-xs font-medium';
-        
+
         return match($status) {
             'Delivered' => $baseClasses . ' bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500',
             'Pending' => $baseClasses . ' bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-orange-400',
@@ -77,7 +77,7 @@
             </button>
 
             <button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
-                See all
+                More
             </button>
         </div>
     </div>

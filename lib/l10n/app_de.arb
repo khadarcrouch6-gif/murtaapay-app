@@ -17,7 +17,7 @@
   "send": "Senden",
   "add": "Hinzufügen",
   "bills": "Rechnungen",
-  "sadaqah": "Sadaqah",
+  "fundraiser": "Sadaqah",
   "exchange": "Umtausch",
   "vouchers": "Gutscheine",
   "seeAll": "Alle ansehen",
@@ -408,7 +408,7 @@
   "yourReferralCode": "Ihr Empfehlungscode",
   "copy": "KOPIEREN",
   "whatsApp": "WhatsApp",
-  "sadaqahCommunity": "Sadaqah & Gemeinschaft",
+  "fundraiserCommunity": "Sadaqah & Gemeinschaft",
   "beTheFirstToDonate": "Sei der Erste, der spendet",
   "medicalEmergency": "Medizinischer Notfall",
   "medicalEmergencyDesc": "Helfen Sie Ahmed, seine Kosten für die Herz-OP in der Türkei zu decken.",
@@ -555,5 +555,16 @@
   "noCampaignsFound": "Keine Kampagnen gefunden",
   "tryAdjustingFilters": "Versuchen Sie, die Filter anzupassen, um das zu finden, was Sie suchen.",
   "finalizingTransaction": "Transaktion wird abgeschlossen...",
-  "pleaseWait": "Bitte warten..."
+  "pleaseWait": "Bitte warten...",
+  "withdrawalRequested": "Auszahlung beantragt!",
+  "withdrawalPending": "Auszahlung ausstehend",
+  "bankProcessingNotice": "Banküberweisungen dauern in der Regel 24 bis 48 Stunden. Sie können den Status in Ihrem Transaktionsverlauf verfolgen.",
+  "withdrawalSuccessMessage": "Ihre Auszahlung von {amount} wird bearbeitet.",
+  "@withdrawalSuccessMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -10,6 +10,7 @@ import '../cards/cards_screen.dart';
 import '../send_money/send_amount_screen.dart';
 import '../history/history_screen.dart';
 import '../profile/profile_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -81,6 +82,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
     final theme = Theme.of(context);
     final state = AppState();
     final screens = _getScreens();
+    final l10n = AppLocalizations.of(context)!;
 
     return ListenableBuilder(
       listenable: state,
@@ -135,6 +137,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
   }
 
   Widget _buildSidebar(BuildContext context, AppState state, ThemeData theme, {bool isDrawer = false}) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: 280,
       height: isDrawer ? double.infinity : null,
@@ -179,7 +182,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                       state.setNavIndex(2);
                     }),
                     _buildSidebarItem(-1, "Hagbad", FontAwesomeIcons.peopleGroup, state, isDrawer),
-                    _buildSidebarItem(-1, "Sadaqah", FontAwesomeIcons.handHoldingHeart, state, isDrawer),
+                    _buildSidebarItem(-1, l10n.fundraiser, FontAwesomeIcons.handHoldingHeart, state, isDrawer),
 
                     const SizedBox(height: 20),
                     _buildSectionTitle(state.translate("SYSTEM", "NIDAAMKA")),

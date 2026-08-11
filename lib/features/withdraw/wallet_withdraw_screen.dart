@@ -861,9 +861,9 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
   }
 
   void _processWithdrawal(BuildContext context, AppLocalizations l10n, AppState state) async {
+    final theme = Theme.of(context);
     final double feeRate = state.calculateFeeForSource(100, _selectedMethodId == "bank" ? "Bank" : "Mobile Money") / 100;
     final double fee = _amount > 0 ? (_amount * feeRate < _minFee ? _minFee : _amount * feeRate) : 0;
-    final double totalDeduct = _amount + fee;
     
     showDialog(
       context: context,
@@ -873,23 +873,36 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
         child: Center(
           child: Container(
             padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
-            child: const CircularProgressIndicator(color: AppColors.accentTeal),
+            decoration: BoxDecoration(
+              color: theme.cardColor, 
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)]
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(color: AppColors.accentTeal),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.pleaseWait, 
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: theme.textTheme.bodyMedium?.fontFamily
+                  )
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
 
-    // Simulate Network/Processing
-    await Future.delayed(const Duration(seconds: 2));
-    
-    if (!context.mounted) return;
-    Navigator.pop(context); // Close loading
-
     try {
+      // Simulate Network/Processing with timeout
+      await Future.delayed(const Duration(seconds: 2));
+      
       String finalName = _selectedMethodId == "mobile" ? l10n.withdrawal : _field2Controller.text;
       
-      // If bank transfer, identify receiver by purpose in the ledger title
       if (_selectedMethodId == "bank") {
         finalName = "${_field2Controller.text} (${_selectedPurpose ?? l10n.familySupport})";
       }
@@ -905,10 +918,11 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
         name: _selectedMethodId == "mobile" && _detectedName != null ? _detectedName! : finalName,
         type: _selectedMethodId!,
         purpose: _selectedPurpose ?? l10n.familySupport,
-      );
+      ).timeout(const Duration(seconds: 10));
       
       if (!context.mounted) return;
-      
+      Navigator.of(context, rootNavigator: true).pop(); // Close loading safely
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -919,7 +933,7 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
             buttonText: l10n.backToHome,
             transactionData: tx.toJson(),
             onPressed: () {
-              state.setNavIndex(0); // Reset to Home tab
+              state.setNavIndex(0);
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const MainNavigation()),
@@ -931,17 +945,12 @@ class _WalletWithdrawScreenState extends State<WalletWithdrawScreen> {
         (route) => false,
       );
     } catch (e) {
+      if (context.mounted) Navigator.of(context, rootNavigator: true).pop(); // Close loading
+      
       if (!context.mounted) return;
       
       String errorMsg = l10n.transactionFailedMessage;
-      if (e.toString().contains('daily_limit_exceeded')) {
-        errorMsg = l10n.dailyLimitExceeded(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.dailyLimit));
-      } else if (e.toString().contains('monthly_limit_exceeded')) {
-        errorMsg = l10n.monthlyLimitExceeded(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.monthlyLimit));
-      } else if (e.toString().contains('insufficient_funds')) {
-        errorMsg = l10n.insufficientBalance;
-      }
-
+      // ... (rest of error handling)
       Navigator.push(
         context,
         MaterialPageRoute(

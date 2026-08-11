@@ -106,7 +106,7 @@
     "ctaTitle": "Ma diyaar u tahay inaad barato {service}?",
     "ctaDesc": "Ku biir kumanaan isticmaale oo ku kalsoon MurtaaxPay baahiyahooda {service}.",
     "ctaPrimary": "Hadda Bilow",
-    "viewAll": "Baadh Dhammaan Adeegyada",
+    "viewAll": "Wax kale",
     "request": {
       "title": "Lacag Codso",
       "description": "Habka ugu habboon ee lacag lagu codsado adduunka oo dhan.",
@@ -377,7 +377,7 @@
     "monthlyIncome": "Dakhliga Bisha",
     "monthlySpending": "Kharashka Bisha",
     "recentActivity": "Dhaqdhaqaaqii ugu dambeeyay",
-    "viewAll": "Arag dhammaan",
+    "viewAll": "Wax kale",
     "categories": {
       "software": "Software",
       "income": "Dakhliga",

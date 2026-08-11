@@ -12,30 +12,30 @@ class AppLocalizationsSo extends AppLocalizations {
   String get anonymous => 'Qof aan la aqoon';
 
   @override
-  String get donationHistory => 'Donation History';
+  String get donationHistory => 'Taariikhda Deeqaha';
 
   @override
-  String get noDonationsFound => 'No donations found';
+  String get noDonationsFound => 'Wax deeq ah lama helin';
 
   @override
   String get searchCampaigns => 'Search campaigns...';
 
   @override
   String get calculateZakatEasily =>
-      'Calculate your Zakat easily and fulfill your obligation.';
+      'Si fudud u xisaabi sakadaada oo u bixi waajibkaaga.';
 
   @override
-  String get calculateNow => 'Calculate Now';
+  String get calculateNow => 'Xisaabi Hadda';
 
   @override
-  String get featuredCampaign => 'Featured Campaign';
+  String get featuredCampaign => 'Ololaha Gaarka ah';
 
   @override
-  String get safeAndSecureDonations => 'Safe & Secure Donations';
+  String get safeAndSecureDonations => 'Deeqo Ammaan ah & Sugan';
 
   @override
   String get weEnsureFundsReach =>
-      'We ensure your funds reach those in need safely.';
+      'Waxaan xaqiijineynaa in lacagtaadu ay si ammaan ah u gaarto dadka u baahan.';
 
   @override
   String get donationSuccessful => 'Deeqdu Way Guulaysatay!';
@@ -135,7 +135,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get bills => 'Biilasha';
 
   @override
-  String get sadaqah => 'Sadaqo';
+  String get fundraiser => 'Ururinta Lacagaha';
 
   @override
   String get exchange => 'Sarif';
@@ -144,7 +144,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get vouchers => 'Vouchers';
 
   @override
-  String get seeAll => 'Eeg Dhammaan';
+  String get seeAll => 'Wax kale';
 
   @override
   String get more => 'Wax kale';
@@ -1112,18 +1112,18 @@ class AppLocalizationsSo extends AppLocalizations {
   }
 
   @override
-  String get withdrawalRequested => 'Withdrawal Requested!';
+  String get withdrawalRequested => 'Codsi Kala-bixis!';
 
   @override
-  String get withdrawalPending => 'Withdrawal Pending';
+  String get withdrawalPending => 'Kala-bixis Sugaya';
 
   @override
   String get bankProcessingNotice =>
-      'Bank transfers usually take 24-48 hours to complete. You can track the status in your transaction history.';
+      'Wareejinta bangigu waxay inta badan qaadataa 24-48 saacadood si ay u dhammaato. Waxaad xaaladda kala socon kartaa taariikhda dhaqdhaqaaqyadaada.';
 
   @override
   String withdrawalSuccessMessage(String amount) {
-    return 'Your withdrawal of $amount is being processed.';
+    return 'Kala-bixistaada $amount waa la socodsiiyay.';
   }
 
   @override
@@ -1676,7 +1676,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get whatsApp => 'WhatsApp';
 
   @override
-  String get sadaqahCommunity => 'Sadaqah & Community';
+  String get fundraiserCommunity => 'Ururinta & Bulshada';
 
   @override
   String get medicalEmergency => 'Medical Emergency';
@@ -2541,92 +2541,92 @@ class AppLocalizationsSo extends AppLocalizations {
   String get payoutAmount => 'Payout Amount';
 
   @override
-  String get sadaqahUrgent => 'URGENT';
+  String get fundraiserUrgent => 'DEGDEG';
 
   @override
-  String get sadaqahRaised => 'raised';
+  String get fundraiserRaised => 'raised';
 
   @override
-  String get sadaqahRaisedOf => 'raised of';
+  String get fundraiserRaisedOf => 'ayaa laga ururiyey';
 
   @override
-  String get sadaqahDonations => 'donations';
+  String get fundraiserDonations => 'donations';
 
   @override
-  String get sadaqahHistory => 'Taariikhda Deeqaha';
+  String get fundraiserHistory => 'Taariikhda Deeqaha';
 
   @override
-  String get sadaqahTotal => 'Wadarta';
+  String get fundraiserTotal => 'Wadarta';
 
   @override
-  String get sadaqahSearchHint => 'Raadi ololaha ama qofka...';
+  String get fundraiserSearchHint => 'Raadi ololaha ama qofka...';
 
   @override
-  String get sadaqahDonateTo => 'Ku deeq';
+  String get fundraiserDonateTo => 'Ku deeq';
 
   @override
-  String get sadaqahThankYou => 'Mahadsanid! Deeqdaada waa la guddoomay.';
+  String get fundraiserThankYou => 'Mahadsanid! Deeqdaada waa la guddoomay.';
 
   @override
-  String get sadaqahConfirmDonation => 'Xaqiiji Deeqda';
+  String get fundraiserConfirmDonation => 'Xaqiiji Deeqda';
 
   @override
-  String get sadaqahDonate => 'Bixi';
+  String get fundraiserDonate => 'Bixi';
 
   @override
-  String get sadaqahDonateNow => 'Bixi Hadda';
+  String get fundraiserDonateNow => 'Bixi Hadda';
 
   @override
-  String get sadaqahBixiHadda => 'Bixi Hadda';
+  String get fundraiserBixiHadda => 'Bixi Hadda';
 
   @override
-  String get sadaqahBixi => 'Bixi';
+  String get fundraiserBixi => 'Bixi';
 
   @override
-  String get sadaqahXaqiiji => 'Xaqiiji';
+  String get fundraiserXaqiiji => 'Xaqiiji';
 
   @override
-  String get sadaqahZakatCalcDesc => 'Xisaabi oo bixi sakadaada si sax ah';
+  String get fundraiserZakatCalcDesc => 'Xisaabi oo bixi sakadaada si sax ah';
 
   @override
-  String get sadaqahTrending => 'TRENDING';
+  String get fundraiserTrending => 'HADDA SOCDA';
 
   @override
-  String get sadaqahNew => 'NEW';
+  String get fundraiserNew => 'CUSUB';
 
   @override
-  String get sadaqahEndingSoon => 'ENDING SOON';
+  String get fundraiserEndingSoon => 'DHOWAAN DHAMAANAYA';
 
   @override
-  String get sadaqahCompleted => 'COMPLETED';
+  String get fundraiserCompleted => 'DHAMMAYSTIRAN';
 
   @override
-  String sadaqahDonorsCount(int count) {
-    return '+$count donors';
+  String fundraiserDonorsCount(int count) {
+    return '+$count deeq-bixiyayaal';
   }
 
   @override
-  String sadaqahSharingCampaign(String title) {
+  String fundraiserSharingCampaign(String title) {
     return 'Sharing $title...';
   }
 
   @override
-  String get sadaqahAgo => 'ago';
+  String get fundraiserAgo => 'ago';
 
   @override
-  String get catAll => 'All';
+  String get catAll => 'Dhammaan';
 
   @override
-  String get catMedical => 'Medical';
+  String get catMedical => 'Caafimaad';
 
   @override
-  String get catWater => 'Water';
+  String get catWater => 'Biyo';
 
   @override
-  String get catEducation => 'Education';
+  String get catEducation => 'Waxbarasho';
 
   @override
-  String get catEmergency => 'Emergency';
+  String get catEmergency => 'Gurmad';
 
   @override
   String get campaignMedicalTitle => 'Medical Emergency';
@@ -2752,10 +2752,10 @@ class AppLocalizationsSo extends AppLocalizations {
       'Habka lacag bixinta ee caalamiga ah ee sugan.';
 
   @override
-  String get insufficientBalanceSadaqah => 'Haraagaagu kuguma filna.';
+  String get insufficientBalanceFundraiser => 'Haraagaagu kuguma filna.';
 
   @override
-  String get startFundraiser => 'Bilow Ururinta Sadaqo';
+  String get startFundraiser => 'Bilow Ururinta';
 
   @override
   String get createCampaign => 'Samee Ololaha';
@@ -2830,7 +2830,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get cryptoSold => 'Iibinta krifto-ga waa guul!';
 
   @override
-  String get zakatCalculator => 'Zakat Calculator';
+  String get zakatCalculator => 'Xisaabiyaha Sakada';
 
   @override
   String get totalZakatToPay => 'Wadarta Sakada laga rabo';
@@ -3049,4 +3049,7 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get pleaseWait => 'Fadlan sug...';
+
+  @override
+  String get recipient => 'Qaataha';
 }

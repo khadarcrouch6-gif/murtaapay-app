@@ -7,8 +7,8 @@ import '../../../l10n/app_localizations.dart';
 mixin WithdrawalLogicMixin<T extends StatefulWidget> on State<T> {
   String? getWithdrawPrefixError(String val, String? provider, AppLocalizations l10n) {
     if (val.isEmpty) return null;
-    if (provider == l10n.evcPlus && !(val.startsWith('61') || val.startsWith('77'))) {
-      return "EVC Plus prefix must be 61 or 77";
+    if (provider == l10n.evcPlus && !(val.startsWith('61') || val.startsWith('77') || val.startsWith('68'))) {
+      return "EVC Plus prefix must be 61, 77 or 68";
     }
     if (provider == l10n.edahab && !val.startsWith('65')) {
       return "e-Dahab prefix must be 65";
@@ -24,7 +24,7 @@ mixin WithdrawalLogicMixin<T extends StatefulWidget> on State<T> {
 
   String? detectProvider(String val, AppLocalizations l10n) {
     if (val.length >= 2) {
-      if (val.startsWith('61') || val.startsWith('77')) return l10n.evcPlus;
+      if (val.startsWith('61') || val.startsWith('77') || val.startsWith('68')) return l10n.evcPlus;
       if (val.startsWith('65')) return l10n.edahab;
       if (val.startsWith('63')) return l10n.zaad;
       if (val.startsWith('90')) return l10n.sahal;

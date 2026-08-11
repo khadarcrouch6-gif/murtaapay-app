@@ -140,9 +140,8 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     Text(
                       widget.message,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: AppColors.grey,
-                        fontSize: 16 * context.fontSizeFactor,
                         height: 1.5,
                       ),
                     ),
@@ -152,9 +151,8 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     Text(
                       widget.subtitle!,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: AppColors.grey,
-                        fontSize: 16 * context.fontSizeFactor,
                         height: 1.5,
                       ),
                     ),

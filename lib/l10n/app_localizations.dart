@@ -344,11 +344,11 @@ abstract class AppLocalizations {
   /// **'Bills'**
   String get bills;
 
-  /// No description provided for @sadaqah.
+  /// No description provided for @fundraiser.
   ///
   /// In en, this message translates to:
-  /// **'Sadaqah'**
-  String get sadaqah;
+  /// **'Fundraisers'**
+  String get fundraiser;
 
   /// No description provided for @exchange.
   ///
@@ -365,7 +365,7 @@ abstract class AppLocalizations {
   /// No description provided for @seeAll.
   ///
   /// In en, this message translates to:
-  /// **'See All'**
+  /// **'More'**
   String get seeAll;
 
   /// No description provided for @more.
@@ -3236,11 +3236,11 @@ abstract class AppLocalizations {
   /// **'WhatsApp'**
   String get whatsApp;
 
-  /// No description provided for @sadaqahCommunity.
+  /// No description provided for @fundraiserCommunity.
   ///
   /// In en, this message translates to:
-  /// **'Sadaqah & Community'**
-  String get sadaqahCommunity;
+  /// **'Fundraisers & Community'**
+  String get fundraiserCommunity;
 
   /// No description provided for @medicalEmergency.
   ///
@@ -4808,143 +4808,143 @@ abstract class AppLocalizations {
   /// **'Payout Amount'**
   String get payoutAmount;
 
-  /// No description provided for @sadaqahUrgent.
+  /// No description provided for @fundraiserUrgent.
   ///
   /// In en, this message translates to:
   /// **'URGENT'**
-  String get sadaqahUrgent;
+  String get fundraiserUrgent;
 
-  /// No description provided for @sadaqahRaised.
+  /// No description provided for @fundraiserRaised.
   ///
   /// In en, this message translates to:
   /// **'raised'**
-  String get sadaqahRaised;
+  String get fundraiserRaised;
 
-  /// No description provided for @sadaqahRaisedOf.
+  /// No description provided for @fundraiserRaisedOf.
   ///
   /// In en, this message translates to:
   /// **'raised of'**
-  String get sadaqahRaisedOf;
+  String get fundraiserRaisedOf;
 
-  /// No description provided for @sadaqahDonations.
+  /// No description provided for @fundraiserDonations.
   ///
   /// In en, this message translates to:
   /// **'donations'**
-  String get sadaqahDonations;
+  String get fundraiserDonations;
 
-  /// No description provided for @sadaqahHistory.
+  /// No description provided for @fundraiserHistory.
   ///
   /// In en, this message translates to:
   /// **'Donation History'**
-  String get sadaqahHistory;
+  String get fundraiserHistory;
 
-  /// No description provided for @sadaqahTotal.
+  /// No description provided for @fundraiserTotal.
   ///
   /// In en, this message translates to:
   /// **'Total'**
-  String get sadaqahTotal;
+  String get fundraiserTotal;
 
-  /// No description provided for @sadaqahSearchHint.
+  /// No description provided for @fundraiserSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search campaigns or creator...'**
-  String get sadaqahSearchHint;
+  /// **'Search fundraisers or creators...'**
+  String get fundraiserSearchHint;
 
-  /// No description provided for @sadaqahDonateTo.
+  /// No description provided for @fundraiserDonateTo.
   ///
   /// In en, this message translates to:
   /// **'Donate to'**
-  String get sadaqahDonateTo;
+  String get fundraiserDonateTo;
 
-  /// No description provided for @sadaqahThankYou.
+  /// No description provided for @fundraiserThankYou.
   ///
   /// In en, this message translates to:
   /// **'Thank you! Your donation was successful.'**
-  String get sadaqahThankYou;
+  String get fundraiserThankYou;
 
-  /// No description provided for @sadaqahConfirmDonation.
+  /// No description provided for @fundraiserConfirmDonation.
   ///
   /// In en, this message translates to:
   /// **'Confirm Donation'**
-  String get sadaqahConfirmDonation;
+  String get fundraiserConfirmDonation;
 
-  /// No description provided for @sadaqahDonate.
+  /// No description provided for @fundraiserDonate.
   ///
   /// In en, this message translates to:
   /// **'Donate'**
-  String get sadaqahDonate;
+  String get fundraiserDonate;
 
-  /// No description provided for @sadaqahDonateNow.
+  /// No description provided for @fundraiserDonateNow.
   ///
   /// In en, this message translates to:
   /// **'Donate Now'**
-  String get sadaqahDonateNow;
+  String get fundraiserDonateNow;
 
-  /// No description provided for @sadaqahBixiHadda.
+  /// No description provided for @fundraiserBixiHadda.
   ///
   /// In en, this message translates to:
   /// **'Bixi Hadda'**
-  String get sadaqahBixiHadda;
+  String get fundraiserBixiHadda;
 
-  /// No description provided for @sadaqahBixi.
+  /// No description provided for @fundraiserBixi.
   ///
   /// In en, this message translates to:
   /// **'Bixi'**
-  String get sadaqahBixi;
+  String get fundraiserBixi;
 
-  /// No description provided for @sadaqahXaqiiji.
+  /// No description provided for @fundraiserXaqiiji.
   ///
   /// In en, this message translates to:
   /// **'Xaqiiji'**
-  String get sadaqahXaqiiji;
+  String get fundraiserXaqiiji;
 
-  /// No description provided for @sadaqahZakatCalcDesc.
+  /// No description provided for @fundraiserZakatCalcDesc.
   ///
   /// In en, this message translates to:
-  /// **'Calculate and pay your zakat accurately'**
-  String get sadaqahZakatCalcDesc;
+  /// **'Calculate and pay your contribution accurately'**
+  String get fundraiserZakatCalcDesc;
 
-  /// No description provided for @sadaqahTrending.
+  /// No description provided for @fundraiserTrending.
   ///
   /// In en, this message translates to:
   /// **'TRENDING'**
-  String get sadaqahTrending;
+  String get fundraiserTrending;
 
-  /// No description provided for @sadaqahNew.
+  /// No description provided for @fundraiserNew.
   ///
   /// In en, this message translates to:
   /// **'NEW'**
-  String get sadaqahNew;
+  String get fundraiserNew;
 
-  /// No description provided for @sadaqahEndingSoon.
+  /// No description provided for @fundraiserEndingSoon.
   ///
   /// In en, this message translates to:
   /// **'ENDING SOON'**
-  String get sadaqahEndingSoon;
+  String get fundraiserEndingSoon;
 
-  /// No description provided for @sadaqahCompleted.
+  /// No description provided for @fundraiserCompleted.
   ///
   /// In en, this message translates to:
   /// **'COMPLETED'**
-  String get sadaqahCompleted;
+  String get fundraiserCompleted;
 
-  /// No description provided for @sadaqahDonorsCount.
+  /// No description provided for @fundraiserDonorsCount.
   ///
   /// In en, this message translates to:
   /// **'+{count} donors'**
-  String sadaqahDonorsCount(int count);
+  String fundraiserDonorsCount(int count);
 
-  /// No description provided for @sadaqahSharingCampaign.
+  /// No description provided for @fundraiserSharingCampaign.
   ///
   /// In en, this message translates to:
   /// **'Sharing {title}...'**
-  String sadaqahSharingCampaign(String title);
+  String fundraiserSharingCampaign(String title);
 
-  /// No description provided for @sadaqahAgo.
+  /// No description provided for @fundraiserAgo.
   ///
   /// In en, this message translates to:
   /// **'ago'**
-  String get sadaqahAgo;
+  String get fundraiserAgo;
 
   /// No description provided for @catAll.
   ///
@@ -5204,11 +5204,11 @@ abstract class AppLocalizations {
   /// **'Secure international payment gateway.'**
   String get secureInternationalGateway;
 
-  /// No description provided for @insufficientBalanceSadaqah.
+  /// No description provided for @insufficientBalanceFundraiser.
   ///
   /// In en, this message translates to:
   /// **'Insufficient balance in your MurtaaxPay wallet.'**
-  String get insufficientBalanceSadaqah;
+  String get insufficientBalanceFundraiser;
 
   /// No description provided for @startFundraiser.
   ///
@@ -5743,6 +5743,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please wait...'**
   String get pleaseWait;
+
+  /// No description provided for @recipient.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipient'**
+  String get recipient;
 }
 
 class _AppLocalizationsDelegate
