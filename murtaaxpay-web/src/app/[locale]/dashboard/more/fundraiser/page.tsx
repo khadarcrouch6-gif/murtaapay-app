@@ -4,7 +4,7 @@ import { ArrowLeft, Heart, CheckCircle2, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function SadaqahPage() {
+export default function FundraiserPage() {
   const router = useRouter();
 
   const campaigns = [
@@ -51,7 +51,7 @@ export default function SadaqahPage() {
             <ArrowLeft size={24} className="text-slate-700" />
           </button>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#0f172a]">Sadaqah & Community</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#0f172a]">Fundraiser & Community</h1>
             <p className="text-slate-500 mt-1">Donate directly to verified fundraisers and causes.</p>
           </div>
         </div>

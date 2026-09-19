@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
+import 'premium_upgrade_screen.dart';
 
 class AccountLimitsScreen extends StatelessWidget {
   const AccountLimitsScreen({super.key});
@@ -71,7 +72,7 @@ class AccountLimitsScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, 10),
             )
@@ -82,7 +83,7 @@ class AccountLimitsScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.speed_rounded, color: AppColors.primaryDark, size: 40),
@@ -100,7 +101,7 @@ class AccountLimitsScreen extends StatelessWidget {
                 ar: "حسابك له حدود قياسية. أكمل KYC للحصول على حدود أعلى."
               ),
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.primaryDark.withOpacity(0.7), fontSize: 13, fontWeight: FontWeight.w500),
+              style: TextStyle(color: AppColors.primaryDark.withValues(alpha: 0.7), fontSize: 13, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -117,9 +118,9 @@ class AccountLimitsScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? AppColors.primaryDark.withOpacity(0.5) : Colors.white,
+          color: isDark ? AppColors.primaryDark.withValues(alpha: 0.5) : Colors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.1)),
+          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.1)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +141,7 @@ class AccountLimitsScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.secondary.withOpacity(0.1),
+                    color: AppColors.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -196,34 +197,37 @@ class AccountLimitsScreen extends StatelessWidget {
   }
 
   Widget _buildUpgradeCard(BuildContext context, AppState state, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.accentTeal.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.accentTeal.withOpacity(0.2)),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.verified_user_rounded, color: AppColors.accentTeal, size: 32),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  state.translate("Increase your limits? try it?", "Kordhi xadkaaga? isku day?", ar: "زيادة حدودك؟ جربها؟"),
-                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                ),
-                Text(
-                  state.translate("try with affordable prices to unlimitted", "isku day qiimo jaban oo aan xad lahayn", ar: "حاول بأسعار معقولة لغير محدود"),
-                  style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black54),
-                ),
-              ],
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PremiumUpgradeScreen())),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppColors.accentTeal.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.verified_user_rounded, color: AppColors.accentTeal, size: 32),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    state.translate("Increase your limits? try it?", "Kordhi xadkaaga? isku day?", ar: "زيادة حدودك؟ جربها؟"),
+                    style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                  ),
+                  Text(
+                    state.translate("try with affordable prices to unlimitted", "isku day qiimo jaban oo aan xad lahayn", ar: "حاول بأسعار معقولة لغير محدود"),
+                    style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black54),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.accentTeal),
-        ],
+            const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.accentTeal),
+          ],
+        ),
       ),
     );
   }
@@ -281,3 +285,4 @@ class AccountLimitsScreen extends StatelessWidget {
     );
   }
 }
+

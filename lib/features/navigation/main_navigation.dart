@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animations/animations.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
+import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../home/home_screen.dart';
@@ -10,7 +12,7 @@ import '../cards/cards_screen.dart';
 import '../send_money/send_amount_screen.dart';
 import '../history/history_screen.dart';
 import '../profile/profile_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -80,13 +82,11 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
     final bool isTablet = ResponsiveBreakpoints.of(context).equals(TABLET);
     final bool isMobile = ResponsiveBreakpoints.of(context).isMobile;
     final theme = Theme.of(context);
-    final state = AppState();
+    final state = context.watch<AppState>();
     final screens = _getScreens();
     final l10n = AppLocalizations.of(context)!;
 
-    return ListenableBuilder(
-      listenable: state,
-      builder: (context, child) => PopScope(
+    return PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
@@ -100,11 +100,15 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
         },
         child: Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
-          drawer: isMobile ? null : _buildSidebar(context, state, theme, isDrawer: true),
+          drawer: _buildSidebar(context, state, theme, isDrawer: true),
           body: Row(
             children: [
               if (isDesktop)
-                _buildSidebar(context, state, theme),
+                SafeArea(
+                  top: false,
+                  bottom: false,
+                  child: _buildSidebar(context, state, theme),
+                ),
                 
               Expanded(
                 child: NotificationListener<ScrollNotification>(
@@ -132,8 +136,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildSidebar(BuildContext context, AppState state, ThemeData theme, {bool isDrawer = false}) {
@@ -225,11 +228,15 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
               child: CircleAvatar(
                 radius: 20,
                 backgroundColor: AppColors.primaryDark,
-                backgroundImage: const NetworkImage('https://i.pravatar.cc/150?u=rayaale'),
-                onBackgroundImageError: (exception, stackTrace) {
+                backgroundImage: const AssetImage('assets/images/logo.png'),
+                foregroundImage: NetworkImage('https://ui-avatars.com/api/?name=${state.userName}&background=random'),
+                onForegroundImageError: (exception, stackTrace) {
                   debugPrint("Image Load Error: $exception");
                 },
-                child: const Text("KA", style: TextStyle(color: Colors.white, fontSize: 12)),
+                child: Text(
+                  state.userName.split(' ').map((e) => e[0]).take(2).join().toUpperCase(),
+                  style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -400,7 +407,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
           ),
           child: Row(
             children: [
-              AdaptiveIcon(icon, size: 16, color: color ?? (isSelected ? AppColors.accentTeal : AppColors.grey)),
+              AdaptiveIcon(icon, size: 16.0 * context.fontSizeFactor, color: color ?? (isSelected ? AppColors.accentTeal : AppColors.grey)),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -500,7 +507,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                 child: AdaptiveIcon(
                   icon, 
                   color: isSelected ? AppColors.accentTeal : Colors.white.withValues(alpha: 0.5),
-                  size: 22,
+                  size: 22.0 * context.fontSizeFactor,
                 ),
               ),
             ],
@@ -531,8 +538,8 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
             )
           ]
         ),
-        child: const Center(
-          child: AdaptiveIcon(FontAwesomeIcons.paperPlane, color: Colors.white, size: 24),
+        child: Center(
+          child: AdaptiveIcon(FontAwesomeIcons.paperPlane, color: Colors.white, size: 24.0 * context.fontSizeFactor),
         ),
       ),
     );

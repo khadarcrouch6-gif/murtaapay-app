@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
@@ -150,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
               tag: 'avatar_${widget.userId}',
               child: CircleAvatar(
                 radius: 18 * context.fontSizeFactor,
-                backgroundColor: AppColors.accentTeal.withOpacity(0.1),
+                backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                 child: AdaptiveIcon(
                   FontAwesomeIcons.user,
                   size: 16 * context.fontSizeFactor,
@@ -339,7 +339,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     width: 60,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.grey.withOpacity(0.3),
+                      color: AppColors.grey.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -443,7 +443,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     width: 60,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.grey.withOpacity(0.3),
+                      color: AppColors.grey.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -506,7 +506,7 @@ class _ChatScreenState extends State<ChatScreen> {
           width: 44 * context.fontSizeFactor,
           height: 44 * context.fontSizeFactor,
           decoration: BoxDecoration(
-            color: AppColors.accentTeal.withOpacity(0.1),
+            color: AppColors.accentTeal.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: AdaptiveIcon(
@@ -573,6 +573,7 @@ class _ChatScreenState extends State<ChatScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
+              minimumSize: const Size(88, 36),
               textStyle: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold),
             ),
             child: Text(AppLocalizations.of(context)!.clear),
@@ -582,4 +583,5 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
+
 

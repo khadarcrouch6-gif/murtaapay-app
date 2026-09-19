@@ -89,7 +89,7 @@
             ['key' => 'enable_investments',   'name' => 'Investments',      'desc' => 'In-app investment portfolio tracking (coming soon)', 'bg' => '#fef3c7', 'color' => '#d97706'],
             ['key' => 'enable_refer_earn',    'name' => 'Refer & Earn',     'desc' => 'Referral program with reward bonuses', 'bg' => '#fff7ed', 'color' => '#ea580c'],
             ['key' => 'enable_gift_cards',    'name' => 'Gift Cards',       'desc' => 'Buy & send digital gift cards', 'bg' => '#fdf2f8', 'color' => '#db2777'],
-            ['key' => 'enable_sadaqah',       'name' => 'Sadaqah Module',   'desc' => 'Charitable giving and zakat calculation', 'bg' => '#f0f9ff', 'color' => '#0284c7'],
+            ['key' => 'enable_fundraiser',    'name' => 'Fundraiser Module',   'desc' => 'Charitable giving and zakat calculation', 'bg' => '#f0f9ff', 'color' => '#0284c7'],
             ['key' => 'enable_voucher',       'name' => 'Vouchers',         'desc' => 'Create and redeem payment vouchers', 'bg' => '#fef9c3', 'color' => '#ca8a04'],
         ] as $svc)
         <div class="sp-service-row">

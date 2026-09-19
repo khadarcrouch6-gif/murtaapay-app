@@ -6,6 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:murtaaxpay_app/main.dart';
@@ -14,6 +15,13 @@ import 'package:murtaaxpay_app/features/onboarding/onboarding_screen.dart';
 
 void main() {
   testWidgets('Onboarding screen smoke test', (WidgetTester tester) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('plugins.it_nomads.com/flutter_secure_storage'),
+      (MethodCall methodCall) async {
+        return null;
+      },
+    );
+
     SharedPreferences.setMockInitialValues({});
     final appState = AppState();
     

@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -202,6 +202,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         _buildQuickActions(context, state, l10n, theme),
                         SizedBox(height: context.verticalPadding),
                         _buildVirtualCardPromo(context, state, l10n, theme),
+                        SizedBox(height: context.verticalPadding),
+                        _buildSadaqahSection(context, state, l10n, theme),
                         SizedBox(height: context.verticalPadding * 1.5),
                         _buildRecentTransactions(context, state, l10n, theme),
                         const SizedBox(height: 100),
@@ -539,28 +541,37 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 ),
               ),
               SizedBox(height: 32 * context.fontSizeFactor),
-              Wrap(
-                spacing: 16 * context.fontSizeFactor,
-                runSpacing: 16 * context.fontSizeFactor,
-                alignment: WrapAlignment.center,
-                children: [
-                  ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 140 * context.fontSizeFactor, maxWidth: isWide ? 400 * context.fontSizeFactor : double.infinity),
-                    child: _buildActionButton(context, l10n.send, FontAwesomeIcons.circleArrowRight, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(settings: const RouteSettings(name: 'SendAmountScreen'), builder: (context) => const SendAmountScreen()))),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 140 * context.fontSizeFactor, maxWidth: isWide ? 400 * context.fontSizeFactor : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16 * context.fontSizeFactor) / 2),
-                    child: _buildActionButton(context, l10n.add, FontAwesomeIcons.circlePlus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 140 * context.fontSizeFactor, maxWidth: isWide ? 400 * context.fontSizeFactor : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16 * context.fontSizeFactor) / 2),
-                    child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.circleArrowUp, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletWithdrawScreen()))),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 140 * context.fontSizeFactor, maxWidth: isWide ? 400 * context.fontSizeFactor : (MediaQuery.of(context).size.width - (context.horizontalPadding * 2) - 16 * context.fontSizeFactor) / 2),
-                    child: _buildActionButton(context, l10n.requestMoney, FontAwesomeIcons.handHoldingDollar, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestMoneyScreen()))),
-                  ),
-                ],
+              Builder(
+                builder: (context) {
+                  final gridMaxWidth = isWide ? 400.0 * context.fontSizeFactor : ((constraints.maxWidth - 16 * context.fontSizeFactor) / 2).clamp(0.0, double.infinity);
+                  final clampedMinWidth = (140.0 * context.fontSizeFactor).clamp(0.0, gridMaxWidth);
+                  return Wrap(
+                    spacing: 16 * context.fontSizeFactor,
+                    runSpacing: 16 * context.fontSizeFactor,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: (140.0 * context.fontSizeFactor).clamp(0.0, isWide ? 400.0 * context.fontSizeFactor : constraints.maxWidth), 
+                          maxWidth: isWide ? 400.0 * context.fontSizeFactor : constraints.maxWidth
+                        ),
+                        child: _buildActionButton(context, l10n.send, FontAwesomeIcons.circleArrowRight, AppColors.accentGradient, () => Navigator.push(context, MaterialPageRoute(settings: const RouteSettings(name: 'SendAmountScreen'), builder: (context) => const SendAmountScreen()))),
+                      ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: clampedMinWidth, maxWidth: gridMaxWidth),
+                        child: _buildActionButton(context, l10n.add, FontAwesomeIcons.circlePlus, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DepositScreen()))),
+                      ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: clampedMinWidth, maxWidth: gridMaxWidth),
+                        child: _buildActionButton(context, l10n.withdraw, FontAwesomeIcons.circleArrowUp, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletWithdrawScreen()))),
+                      ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: clampedMinWidth, maxWidth: gridMaxWidth),
+                        child: _buildActionButton(context, l10n.requestMoney, FontAwesomeIcons.handHoldingDollar, LinearGradient(colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.1)]), () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestMoneyScreen()))),
+                      ),
+                    ],
+                  );
+                }
               ),
             ],
           );
@@ -679,7 +690,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(l10n.getStarted, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           LayoutBuilder(
             builder: (context, constraints) {
               final crossAxisCount = constraints.maxWidth < 350 ? 3 : 5;
@@ -688,15 +699,29 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 crossAxisCount: crossAxisCount, 
                 shrinkWrap: true, 
                 physics: const NeverScrollableScrollPhysics(), 
-                mainAxisSpacing: 4 * context.fontSizeFactor, 
+                mainAxisSpacing: 8 * context.fontSizeFactor, 
                 crossAxisSpacing: 8 * context.fontSizeFactor,
-                childAspectRatio: crossAxisCount == 3 ? 1.0 : 0.8,
+                childAspectRatio: 0.8,
                 children: [
                   _buildFeatureItem(context, l10n.bills, Icons.receipt_long_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PayBillsScreen()))),
                   _buildFeatureItem(context, "Hagbad", Icons.group_work_rounded, Colors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HagbadScreen()))),
                   _buildFeatureItem(context, l10n.exchange, Icons.currency_exchange_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeRatesScreen()))),
-                  _buildSadaqahFeatureItem(context, state, l10n, AppColors.accentTeal),
-                  _buildFeatureItem(context, l10n.savings, Icons.account_balance_outlined, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsScreen()))),
+                  _buildFeatureItem(context, l10n.savings, Icons.account_balance_outlined, Colors.indigo, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsScreen()))),
+                  _buildFeatureItem(
+                    context, 
+                    state.translate("Sadaqah", "Sadaqo"), 
+                    Icons.volunteer_activism_rounded, 
+                    AppColors.accentTeal, 
+                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FundraiserScreen())),
+                    badge: state.hasUrgentCampaigns ? Pulse(
+                      infinite: true,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(color: Colors.redAccent, shape: BoxShape.circle),
+                        child: const Icon(Icons.priority_high_rounded, color: Colors.white, size: 8),
+                      ),
+                    ) : null,
+                  ),
                 ],
               );
             },
@@ -841,27 +866,39 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildFeatureItem(BuildContext context, String label, dynamic icon, Color color, VoidCallback onTap) {
+  Widget _buildFeatureItem(BuildContext context, String label, dynamic icon, Color color, VoidCallback onTap, {Widget? badge}) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Expanded(
             child: Center(
-              child: FittedBox(
-                child: Container(
-                  padding: EdgeInsets.all(12 * context.fontSizeFactor),
-                  decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-                  child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor),
-                ),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(12 * context.fontSizeFactor),
+                    decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                    child: AdaptiveIcon(icon, color: color, size: 24 * context.fontSizeFactor),
+                  ),
+                  if (badge != null)
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: badge,
+                    ),
+                ],
               ),
             ),
           ),
-          SizedBox(height: 4 * context.fontSizeFactor),
+          SizedBox(height: 6 * context.fontSizeFactor),
           Text(
             label, 
-            style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w500), 
+            style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.primaryDark.withValues(alpha: 0.8)), 
             textAlign: TextAlign.center, 
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
@@ -871,56 +908,93 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildSadaqahFeatureItem(BuildContext context, AppState state, AppLocalizations l10n, Color color) {
-    return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FundraiserScreen())),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(
-            child: Center(
-              child: FittedBox(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(12 * context.fontSizeFactor),
-                      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-                      child: AdaptiveIcon(Icons.volunteer_activism_rounded, color: color, size: 24 * context.fontSizeFactor),
-                    ),
-                    if (state.hasUrgentCampaigns)
-                      Positioned(
-                        top: -2,
-                        right: -2,
-                        child: Pulse(
-                          infinite: true,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: Colors.redAccent,
-                              shape: BoxShape.circle,
+  Widget _buildSadaqahSection(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+      child: FadeInUp(
+        child: GestureDetector(
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FundraiserScreen())),
+          child: Container(
+            padding: EdgeInsets.all(20 * context.fontSizeFactor),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.accentTeal, AppColors.accentTeal.withValues(alpha: 0.8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.accentTeal.withValues(alpha: 0.3),
+                  blurRadius: 15 * context.fontSizeFactor,
+                  offset: Offset(0, 8 * context.fontSizeFactor),
+                )
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(12 * context.fontSizeFactor),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(Icons.volunteer_activism_rounded, color: Colors.white, size: 28 * context.fontSizeFactor),
+                      if (state.hasUrgentCampaigns)
+                        Positioned(
+                          top: -2,
+                          right: -2,
+                          child: Pulse(
+                            infinite: true,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.redAccent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.priority_high_rounded, color: Colors.white, size: 8),
                             ),
-                            child: const Icon(Icons.priority_high_rounded, color: Colors.white, size: 8),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+                SizedBox(width: 16 * context.fontSizeFactor),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.fundraiser,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18 * context.fontSizeFactor,
+                        ),
+                      ),
+                      SizedBox(height: 4 * context.fontSizeFactor),
+                      Text(
+                        state.translate("Support urgent causes & Sadaqah", "Taageer baahiyaha degdegga ah & Sadaqada"),
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 12 * context.fontSizeFactor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.arrow_forward_ios_rounded, color: Colors.white.withValues(alpha: 0.5), size: 16 * context.fontSizeFactor),
+              ],
             ),
           ),
-          SizedBox(height: 4 * context.fontSizeFactor),
-          Text(
-            l10n.fundraiser,
-            style: TextStyle(fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.w500), 
-            textAlign: TextAlign.center, 
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
-        ],
+        ),
       ),
     );
   }
+
 
   Widget _buildChartTypeToggle(ChartType type, dynamic icon, [bool isSmall = false]) {
     final isSelected = _selectedChartType == type;
@@ -1239,7 +1313,41 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     child: GestureDetector(
                       onTap: () {
                         HapticFeedback.lightImpact();
-                        AddQuickProfileSheet.show(context);
+                        if (!state.isPremium && state.quickProfiles.length >= 5) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              title: Text(state.translate("Profile Limit Reached", "Xadka Profaylka")),
+                              content: Text(state.translate(
+                                "Standard users can save up to 5 profiles. Upgrade to Premium for unlimited profiles!",
+                                "Isticmaalayaasha caadiga ah waxay badbaadin karaan ilaa 5 profile. U kici Premium profile aan xad lahayn!"
+                              )),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(state.translate("Later", "Dib u dhig")),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const AccountLimitsScreen()),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryDark,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                  child: Text(state.translate("Upgrade", "Kordhi")),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          AddQuickProfileSheet.show(context);
+                        }
                       },
                       child: Column(
                         children: [

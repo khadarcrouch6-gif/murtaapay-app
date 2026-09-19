@@ -16,6 +16,7 @@ class Transaction {
   final String? purpose;
   final String? referenceId; // External ID or Wallet ID
   final String? cardId; // Associated Virtual Card ID
+  final String? receiverVerificationStatus;
 
   Transaction({
     required this.id,
@@ -35,6 +36,7 @@ class Transaction {
     this.purpose,
     this.referenceId,
     this.cardId,
+    this.receiverVerificationStatus,
   }) : timestamp = timestamp ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
@@ -56,47 +58,9 @@ class Transaction {
       'purpose': purpose,
       'referenceId': referenceId,
       'cardId': cardId,
+      'receiverVerificationStatus': receiverVerificationStatus,
     };
-    Transaction copyWith({
-    String? id,
-    String? title,
-    String? date,
-    DateTime? timestamp,
-    String? amount,
-    double? numericAmount,
-    double? fee,
-    bool? isNegative,
-    String? category,
-    String? subCategory,
-    String? status,
-    String? type,
-    String? method,
-    String? paymentMethod,
-    String? purpose,
-    String? referenceId,
-    String? cardId,
-  }) {
-    return Transaction(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      date: date ?? this.date,
-      timestamp: timestamp ?? this.timestamp,
-      amount: amount ?? this.amount,
-      numericAmount: numericAmount ?? this.numericAmount,
-      fee: fee ?? this.fee,
-      isNegative: isNegative ?? this.isNegative,
-      category: category ?? this.category,
-      subCategory: subCategory ?? this.subCategory,
-      status: status ?? this.status,
-      type: type ?? this.type,
-      method: method ?? this.method,
-      paymentMethod: paymentMethod ?? this.paymentMethod,
-      purpose: purpose ?? this.purpose,
-      referenceId: referenceId ?? this.referenceId,
-      cardId: cardId ?? this.cardId,
-    );
   }
-}
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
@@ -119,47 +83,10 @@ class Transaction {
       purpose: json['purpose'],
       referenceId: json['referenceId'],
       cardId: json['cardId'],
-    );
-    Transaction copyWith({
-    String? id,
-    String? title,
-    String? date,
-    DateTime? timestamp,
-    String? amount,
-    double? numericAmount,
-    double? fee,
-    bool? isNegative,
-    String? category,
-    String? subCategory,
-    String? status,
-    String? type,
-    String? method,
-    String? paymentMethod,
-    String? purpose,
-    String? referenceId,
-    String? cardId,
-  }) {
-    return Transaction(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      date: date ?? this.date,
-      timestamp: timestamp ?? this.timestamp,
-      amount: amount ?? this.amount,
-      numericAmount: numericAmount ?? this.numericAmount,
-      fee: fee ?? this.fee,
-      isNegative: isNegative ?? this.isNegative,
-      category: category ?? this.category,
-      subCategory: subCategory ?? this.subCategory,
-      status: status ?? this.status,
-      type: type ?? this.type,
-      method: method ?? this.method,
-      paymentMethod: paymentMethod ?? this.paymentMethod,
-      purpose: purpose ?? this.purpose,
-      referenceId: referenceId ?? this.referenceId,
-      cardId: cardId ?? this.cardId,
+      receiverVerificationStatus: json['receiverVerificationStatus'],
     );
   }
-}
+
   Transaction copyWith({
     String? id,
     String? title,
@@ -178,6 +105,7 @@ class Transaction {
     String? purpose,
     String? referenceId,
     String? cardId,
+    String? receiverVerificationStatus,
   }) {
     return Transaction(
       id: id ?? this.id,
@@ -197,6 +125,7 @@ class Transaction {
       purpose: purpose ?? this.purpose,
       referenceId: referenceId ?? this.referenceId,
       cardId: cardId ?? this.cardId,
+      receiverVerificationStatus: receiverVerificationStatus ?? this.receiverVerificationStatus,
     );
   }
 }

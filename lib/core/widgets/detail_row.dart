@@ -8,6 +8,7 @@ class DetailRow extends StatelessWidget {
   final Color? labelColor;
   final Color? valueColor;
   final bool isBold;
+  final double? valueSize;
 
   const DetailRow({
     super.key,
@@ -16,6 +17,7 @@ class DetailRow extends StatelessWidget {
     this.labelColor,
     this.valueColor,
     this.isBold = true,
+    this.valueSize,
   });
 
   @override
@@ -43,7 +45,7 @@ class DetailRow extends StatelessWidget {
               style: TextStyle(
                 fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
                 color: valueColor ?? theme.textTheme.bodyLarge?.color,
-                fontSize: 14 * context.fontSizeFactor,
+                fontSize: valueSize ?? (14 * context.fontSizeFactor),
               ),
             ),
           ),

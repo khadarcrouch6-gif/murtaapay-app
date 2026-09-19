@@ -19,7 +19,7 @@ import '../../core/models/transaction.dart';
 import '../deposit/deposit_card_screen.dart';
 import '../../core/widgets/receipt_view.dart';
 import '../withdraw/withdraw_screen.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'models/card_model.dart';
 import 'widgets/elite_virtual_card.dart';
 import 'card_statement_screen.dart';
@@ -39,6 +39,7 @@ class _CardsScreenState extends State<CardsScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   int _currentIndex = 0;
   int _verifiedIndex = 0; // Tracks which card is currently unlocked
+  bool _isUnlocking = false;
   bool _showBack = false;
   bool _showNumber = false;
   bool _isSearching = false;
@@ -92,8 +93,8 @@ class _CardsScreenState extends State<CardsScreen> {
       final matchesFilter = _selectedFilter == "All" || tx.category == _selectedFilter;
       
       // Filter by the currently selected card if any cards exist
-      bool matchesCard = true;
-      if (state.cards.isNotEmpty) {
+      bool matchesCard = false;
+      if (state.cards.isNotEmpty && _currentIndex < state.cards.length) {
         final currentCardId = state.cards[_currentIndex].id;
         // Show only transactions specifically for this card
         matchesCard = tx.cardId == currentCardId;
@@ -115,123 +116,260 @@ class _CardsScreenState extends State<CardsScreen> {
             )
           : null,
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(context.horizontalPadding, 16, context.horizontalPadding, 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      l10n.myCards,
-                      style: theme.textTheme.displaySmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24 * context.fontSizeFactor,
-                        color: theme.textTheme.titleLarge?.color,
-                      ),
-                    ),
-                  ),
-                  _buildBalanceDisplay(context, state, theme),
-                  IconButton(
-                    onPressed: () {
-                      if (state.cards.isNotEmpty) {
-                        _showPinRequiredAction(context, state, () {
-                          _showCardSettings(context, state);
-                        });
-                      }
-                    },
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: theme.colorScheme.primary.withValues(alpha: 0.1), shape: BoxShape.circle),
-                      child: Icon(Icons.settings_outlined, color: theme.colorScheme.primary, size: 22 * context.fontSizeFactor),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: state.cards.isEmpty
-                  ? _buildEmptyState(context, state)
-                  : SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 16),
-                          SizedBox(
-                            height: 240 * context.fontSizeFactor,
-                            child: PageView.builder(
-                              controller: _pageController,
-                              onPageChanged: (index) {
-                                setState(() {
-                                  _currentIndex = index;
-                                  _showBack = false;
-                                  _showNumber = false;
-                                });
-                              },
-                              itemCount: state.cards.length,
-                              itemBuilder: (context, index) {
-                                return AnimatedBuilder(
-                                  animation: _pageController,
-                                  builder: (context, child) {
-                                    double value = 1.0;
-                                    if (_pageController.position.haveDimensions) {
-                                      value = _pageController.page! - index;
-                                      value = (1 - (value.abs() * 0.1)).clamp(0.0, 1.0);
-                                    }
-                                    return Center(
-                                      child: SizedBox(
-                                        height: Curves.easeInOut.transform(value) * 240 * context.fontSizeFactor,
-                                        width: Curves.easeInOut.transform(value) * MediaQuery.of(context).size.width,
-                                        child: child,
-                                      ),
-                                    );
-                                  },
-                                  child: GestureDetector(
-                                    onTap: _flipCard,
-                                    child: EliteVirtualCard(
-                                      card: state.cards[index],
-                                      showBack: _showBack,
-                                      showNumber: _showNumber,
-                                      onFlip: _flipCard,
-                                      onToggleShowNumber: _toggleShowNumber,
-                                      onCopyNumber: () => _copyCardNumber(context, state),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Center(
-                            child: SmoothPageIndicator(
-                              controller: _pageController,
-                              count: state.cards.length,
-                              effect: ExpandingDotsEffect(
-                                dotHeight: 8 * context.fontSizeFactor,
-                                dotWidth: 8 * context.fontSizeFactor,
-                                activeDotColor: theme.colorScheme.primary,
-                                dotColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: context.responsiveBody(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(context.horizontalPadding, 16, context.horizontalPadding, 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.myCards,
+                              style: theme.textTheme.displaySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24 * context.fontSizeFactor,
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 24),
-                          _buildQuickActions(context, state),
-                          const SizedBox(height: 32),
-                          _buildTransactionList(context, state, filteredTransactions),
-                        ],
+                            if (state.cards.isNotEmpty) ...[
+                              Text(
+                                state.cards[_currentIndex].cardHolder,
+                                style: TextStyle(
+                                  color: AppColors.grey,
+                                  fontSize: 14 * context.fontSizeFactor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                NumberFormat.simpleCurrency(name: state.currencyCode).format(state.cards[_currentIndex].balance),
+                                style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontSize: 20 * context.fontSizeFactor,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: _buildBalanceDisplay(context, state, theme),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          if (state.cards.isNotEmpty) {
+                            // First ensure the card at _currentIndex is selected/unlocked
+                            if (_verifiedIndex != _currentIndex) {
+                              _unlockCard(_currentIndex);
+                              return;
+                            }
+                            
+                            showDialog(
+                              context: context,
+                              builder: (context) => PinEntryDialog(
+                                title: l10n.pinVerification,
+                                description: l10n.enterPinToContinue,
+                                isCardPin: true,
+                                cardId: state.cards[_currentIndex].id,
+                                onValidate: (pin) async {
+                                  if (pin == "BIOMETRIC_SUCCESS" || state.verifyCardPin(pin, cardId: state.cards[_currentIndex].id)) {
+                                    return true;
+                                  }
+                                  return false;
+                                },
+                                onConfirm: (pin) {
+                                  _showCardSettings(context, state);
+                                },
+                              ),
+                            );
+                          }
+                        },
+                        icon: Container(
+                          padding: EdgeInsets.all(8 * context.fontSizeFactor),
+                          decoration: BoxDecoration(color: theme.colorScheme.primary.withValues(alpha: 0.1), shape: BoxShape.circle),
+                          child: Icon(Icons.settings_outlined, color: theme.colorScheme.primary, size: 22 * context.fontSizeFactor),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: state.cards.isEmpty
+                      ? _buildEmptyState(context, state)
+                      : SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                height: 240 * context.fontSizeFactor,
+                                child: LayoutBuilder(
+                                  builder: (context, boxConstraints) {
+                                    return PageView.builder(
+                                      controller: _pageController,
+                                      onPageChanged: (index) {
+                                        setState(() {
+                                          _currentIndex = index;
+                                          _showBack = false;
+                                          _showNumber = false;
+                                        });
+                                        if (index < state.cards.length) {
+                                          _unlockCard(index);
+                                        }
+                                      },
+                                      itemCount: state.cards.length + 1, // Add slot for "Add Card"
+                                      itemBuilder: (context, index) {
+                                        return AnimatedBuilder(
+                                          animation: _pageController,
+                                          builder: (context, child) {
+                                            double value = 1.0;
+                                            if (_pageController.position.haveDimensions) {
+                                              value = _pageController.page! - index;
+                                              value = (1 - (value.abs() * 0.15)).clamp(0.0, 1.0);
+                                            }
+                                            return Center(
+                                              child: Transform.scale(
+                                                scale: Curves.easeOut.transform(value),
+                                                child: SizedBox(
+                                                  height: 240 * context.fontSizeFactor,
+                                                  width: boxConstraints.maxWidth,
+                                                  child: child,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: index == state.cards.length 
+                                            ? _buildAddCardPlaceholder(context, theme)
+                                            : GestureDetector(
+                                            onTap: _flipCard,
+                                            child: Stack(
+                                              children: [
+                                                EliteVirtualCard(
+                                                  card: state.cards[index],
+                                                  showBack: _showBack,
+                                                  showNumber: _showNumber,
+                                                  onFlip: _flipCard,
+                                                  onToggleShowNumber: _toggleShowNumber,
+                                                  onCopyNumber: () => _copyCardNumber(context, state),
+                                                ),
+                                                if (state.cards[index].isFrozen)
+                                                  Positioned.fill(
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.blue.withValues(alpha: 0.15),
+                                                        ),
+                                                        child: BackdropFilter(
+                                                          filter: ui.ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                                                          child: Center(
+                                                            child: Container(
+                                                              padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
+                                                              decoration: BoxDecoration(
+                                                                color: Colors.black54,
+                                                                borderRadius: BorderRadius.circular(12),
+                                                              ),
+                                                              child: Row(
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Icon(Icons.ac_unit_rounded, color: Colors.blue[200], size: 20 * context.fontSizeFactor),
+                                                                  SizedBox(width: 8 * context.fontSizeFactor),
+                                                                  Text(
+                                                                    l10n.frozen.toUpperCase(),
+                                                                    style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontWeight: FontWeight.w900,
+                                                                      fontSize: 12 * context.fontSizeFactor,
+                                                                      letterSpacing: 1.2,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                if (_verifiedIndex != index)
+                                                  Positioned.fill(
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+                                                      child: BackdropFilter(
+                                                        filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                                        child: Container(
+                                                          color: Colors.black.withValues(alpha: 0.3),
+                                                          child: Center(
+                                                            child: Column(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Icon(Icons.lock_outline_rounded, color: Colors.white, size: 40 * context.fontSizeFactor),
+                                                                SizedBox(height: 8 * context.fontSizeFactor),
+                                                                Text(
+                                                                  l10n.pleaseUnlockCard,
+                                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Center(
+                                child: SmoothPageIndicator(
+                                  controller: _pageController,
+                                  count: state.cards.length,
+                                  effect: ExpandingDotsEffect(
+                                    dotHeight: 8 * context.fontSizeFactor,
+                                    dotWidth: 8 * context.fontSizeFactor,
+                                    activeDotColor: theme.colorScheme.primary,
+                                    dotColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              _buildQuickActions(context, state),
+                              const SizedBox(height: 32),
+                              _buildTransactionList(context, state, filteredTransactions),
+                              const SizedBox(height: 100), // Space for FAB
+                            ],
+                          ),
+                        ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
       floatingActionButton: state.cards.length < 2
-          ? FloatingActionButton.extended(
-              onPressed: () => _showNewCardDialog(context, state),
-              label: Text(l10n.addNewCard),
-              icon: const Icon(Icons.add_rounded),
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: FloatingActionButton.extended(
+                onPressed: () => _showNewCardDialog(context, state),
+                label: Text(l10n.addNewCard, style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                icon: Icon(Icons.add_rounded, size: 24 * context.fontSizeFactor),
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+              ),
             )
           : null,
     );
@@ -245,43 +383,46 @@ class _CardsScreenState extends State<CardsScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(24 * context.fontSizeFactor),
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withValues(alpha: 0.05),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.credit_card_off_rounded, size: 64 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.4)),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24 * context.fontSizeFactor),
           Text(
             l10n.noActiveCards,
-            style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, fontSize: 24 * context.fontSizeFactor),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8 * context.fontSizeFactor),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
+            padding: EdgeInsets.symmetric(horizontal: 40 * context.fontSizeFactor),
             child: Text(
-              state.translate("Ma jiraan kaadhadh shaqaynaya hadda. Fadlan sameyso kaadh cusub si aad u bilowdo.", "You don't have any active cards yet. Please create one to get started."),
+              l10n.noActiveCardsDesc,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.grey),
+              style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32 * context.fontSizeFactor),
           ElevatedButton.icon(
             onPressed: () => _showNewCardDialog(context, state),
-            icon: const Icon(Icons.add_rounded),
-            label: Text(state.translate("Sameyso Kaadhkaagii Koowaad", "Create Your First Card")),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            icon: Icon(Icons.add_rounded, size: 20 * context.fontSizeFactor),
+            label: Text(l10n.createFirstCard, style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
+            style: context.elevatedButtonStyle(
+              height: 48,
+              borderRadius: 16,
+            ).copyWith(
+              minimumSize: WidgetStateProperty.all(Size(200 * context.fontSizeFactor, 48 * context.fontSizeFactor)),
             ),
           ),
           if (state.terminatedCards.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: 16 * context.fontSizeFactor),
             TextButton.icon(
               onPressed: () => _showRestoreCardDialog(context, state),
-              icon: const Icon(Icons.restore_rounded),
-              label: Text(state.translate("Soo cesho kaadh hore", "Restore previous card")),
+              icon: Icon(Icons.restore_rounded, size: 20 * context.fontSizeFactor),
+              label: Text(l10n.restorePreviousCard, style: TextStyle(fontSize: 15 * context.fontSizeFactor)),
+              style: context.textButtonStyle(height: 40, fullWidth: false, fontSize: 15),
             ),
           ],
         ],
@@ -296,48 +437,72 @@ class _CardsScreenState extends State<CardsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _actionButton(
-            context,
-            Icons.add_circle_outline_rounded,
-            l10n.topUp,
-            () {
-              if (state.cards.isEmpty) return;
-              Navigator.push(context, MaterialPageRoute(builder: (_) => DepositCardScreen(
-                amount: "0", 
-                currencyCode: state.currencyCode, 
-                cardId: state.cards[_currentIndex].id
-              )));
-            },
+          Expanded(
+            child: _actionButton(
+              context,
+              Icons.add_circle_outline_rounded,
+              l10n.topUp,
+              () {
+                if (state.cards.isEmpty) return;
+                Navigator.push(context, MaterialPageRoute(builder: (_) => DepositCardScreen(
+                  amount: "0", 
+                  currencyCode: state.currencyCode, 
+                  cardId: state.cards[_verifiedIndex].id
+                )));
+              },
+            ),
           ),
-          _actionButton(
-            context,
-            Icons.arrow_circle_down_rounded,
-            l10n.withdraw,
-            () {
-              if (state.cards.isEmpty) return;
-              Navigator.push(context, MaterialPageRoute(builder: (_) => WithdrawScreen(cardId: state.cards[_currentIndex].id)));
-            },
+          Expanded(
+            child: _actionButton(
+              context,
+              Icons.arrow_circle_down_rounded,
+              l10n.withdraw,
+              () {
+                if (state.cards.isEmpty) return;
+                Navigator.push(context, MaterialPageRoute(builder: (_) => WithdrawScreen(cardId: state.cards[_verifiedIndex].id)));
+              },
+            ),
           ),
-          _actionButton(
-            context,
-            Icons.receipt_long_rounded,
-            state.translate("Warbixin", "Statement"),
-            () {
-              if (state.cards.isEmpty) return;
-              Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: state.cards[_currentIndex])));
-            },
+          Expanded(
+            child: _actionButton(
+              context,
+              Icons.receipt_long_rounded,
+              l10n.statement,
+              () {
+                if (state.cards.isEmpty) return;
+                Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: state.cards[_verifiedIndex])));
+              },
+            ),
           ),
-          _actionButton(
-            context,
-            Icons.ac_unit_rounded,
-            state.cards[_currentIndex].isFrozen ? state.translate("Ka saar barafka", "Unfreeze") : state.translate("Baraf mari", "Freeze"),
-            () {
-              _showPinRequiredAction(context, state, () {
-                final card = state.cards[_currentIndex];
-                state.updateCard(_currentIndex, card.copyWith(isFrozen: !card.isFrozen));
-              });
-            },
-            color: state.cards[_currentIndex].isFrozen ? Colors.orange : null,
+          Expanded(
+            child: _actionButton(
+              context,
+              Icons.ac_unit_rounded,
+              state.cards[_verifiedIndex].isFrozen ? l10n.unfreeze : l10n.freeze,
+              () {
+                final currentCard = state.cards[_verifiedIndex];
+                showDialog(
+                  context: context,
+                  builder: (context) => PinEntryDialog(
+                    title: l10n.pinVerification,
+                    description: l10n.enterPinToContinue,
+                    isCardPin: true,
+                    cardId: currentCard.id,
+                    onValidate: (pin) async {
+                      if (pin == "BIOMETRIC_SUCCESS" || state.verifyCardPin(pin, cardId: currentCard.id)) {
+                        return true;
+                      }
+                      return false;
+                    },
+                    onConfirm: (pin) {
+                      final card = state.cards[_verifiedIndex];
+                      state.updateCard(_verifiedIndex, card.copyWith(isFrozen: !card.isFrozen));
+                    },
+                  ),
+                );
+              },
+              color: state.cards[_verifiedIndex].isFrozen ? Colors.orange : null,
+            ),
           ),
         ],
       ),
@@ -350,21 +515,25 @@ class _CardsScreenState extends State<CardsScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(12 * context.fontSizeFactor),
             decoration: BoxDecoration(
               color: (color ?? theme.colorScheme.primary).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
             ),
             child: Icon(icon, color: color ?? theme.colorScheme.primary, size: 24 * context.fontSizeFactor),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8 * context.fontSizeFactor),
           Text(
             label,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: theme.textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              fontSize: 12 * context.fontSizeFactor,
+              fontSize: 11 * context.fontSizeFactor,
               color: isDark ? Colors.white70 : AppColors.textPrimary,
             ),
           ),
@@ -386,46 +555,55 @@ class _CardsScreenState extends State<CardsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                l10n.recentTransactions,
-                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              Expanded(
+                child: Text(
+                  l10n.recentTransactions,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
+                ),
               ),
+              const SizedBox(width: 8),
               TextButton(
                 onPressed: () {
-                  if (state.cards.isNotEmpty) {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: state.cards[_currentIndex])));
+                  if (state.cards.isNotEmpty && _verifiedIndex < state.cards.length) {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: state.cards[_verifiedIndex])));
                   }
                 },
-                child: Text(l10n.viewAll),
+                style: context.textButtonStyle(height: 32, fontSize: 13, fullWidth: false),
+                child: Text(l10n.viewAll, style: TextStyle(fontSize: 13 * context.fontSizeFactor)),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8 * context.fontSizeFactor),
           if (transactions.isEmpty)
             Center(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40),
+                padding: EdgeInsets.symmetric(vertical: 40 * context.fontSizeFactor),
                 child: Column(
                   children: [
-                    Icon(Icons.receipt_outlined, size: 48, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
-                    const SizedBox(height: 16),
-                    Text(l10n.noTransactionsYet, style: TextStyle(color: AppColors.grey)),
+                    Icon(Icons.receipt_outlined, size: 48 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                    SizedBox(height: 16 * context.fontSizeFactor),
+                    Text(l10n.noTransactionsYet, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
                   ],
                 ),
               ),
             )
           else
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: transactions.length > 5 ? 5 : transactions.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemBuilder: (context, index) {
-                final tx = transactions[index];
-                return _buildTransactionItem(context, tx, isDark, theme);
-              },
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                itemCount: transactions.length > 5 ? 5 : transactions.length,
+                separatorBuilder: (context, index) => SizedBox(height: 12 * context.fontSizeFactor),
+                itemBuilder: (context, index) {
+                  final tx = transactions[index];
+                  return _buildTransactionItem(context, tx, isDark, theme);
+                },
+              ),
             ),
-          const SizedBox(height: 100), // Space for FAB
+          const SizedBox(height: 16),
         ],
       ),
     );
@@ -433,30 +611,30 @@ class _CardsScreenState extends State<CardsScreen> {
 
   Widget _buildTransactionItem(BuildContext context, Transaction tx, bool isDark, ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
+        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+        boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10 * context.fontSizeFactor, offset: Offset(0, 4 * context.fontSizeFactor))],
       ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         leading: Container(
-          padding: const EdgeInsets.all(10),
+          padding: EdgeInsets.all(10 * context.fontSizeFactor),
           decoration: BoxDecoration(
             color: _getCategoryColor(tx.category).withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(_getCategoryIcon(tx.category), color: _getCategoryColor(tx.category), size: 20 * context.fontSizeFactor),
         ),
-        title: Text(tx.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        subtitle: Text(tx.date, style: TextStyle(color: AppColors.grey, fontSize: 12)),
+        title: Text(tx.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary)),
+        subtitle: Text(tx.date, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor)),
         trailing: Text(
           tx.amount,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: tx.isNegative ? Colors.redAccent : Colors.greenAccent,
-            fontSize: 16,
+            fontSize: 16 * context.fontSizeFactor,
           ),
         ),
         onTap: () => _showTransactionDetails(context, tx),
@@ -496,25 +674,6 @@ class _CardsScreenState extends State<CardsScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => ReceiptView(transaction: tx.toJson()),
-    );
-  }
-
-  void _showPinRequiredAction(BuildContext context, AppState state, VoidCallback onVerified) async {
-    showDialog(
-      context: context,
-      builder: (context) => PinEntryDialog(
-        title: state.translate("Xaqiijinta PIN-ka", "PIN Verification"),
-        description: state.translate("Fadlan geli PIN-kaaga si aad u sii waddo.", "Please enter your PIN to continue."),
-        onConfirm: (pin) {
-          if (state.verifyPin(pin)) {
-            onVerified();
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.translate("PIN-ku waa khalad", "Incorrect PIN")))
-            );
-          }
-        },
-      ),
     );
   }
 
@@ -564,9 +723,12 @@ class _CardsScreenState extends State<CardsScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        l10n.cardSettings,
-                        style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                      Expanded(
+                        child: Text(
+                          l10n.cardSettings,
+                          style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -587,117 +749,163 @@ class _CardsScreenState extends State<CardsScreen> {
                 ),
                 const SizedBox(height: 32),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _walletSection(context, state, currentCard),
-                        const SizedBox(height: 24),
-                        _buildSectionTitle(context, l10n.security, isDark),
-                        _buildSettingsTile(
-                          context: context,
-                          isDark: isDark,
-                          icon: Icons.receipt_long_rounded,
-                          color: Colors.teal,
-                          title: l10n.cardStatement,
-                          subtitle: l10n.viewCardHistory,
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: currentCard)));
-                          },
+                  child: Center(
+                    child: MaxWidthBox(
+                      maxWidth: 800,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSectionTitle(context, l10n.security, isDark),
+                            _buildSettingsTile(
+                              context: context,
+                              isDark: isDark,
+                              icon: Icons.receipt_long_rounded,
+                              color: Colors.teal,
+                              title: l10n.cardStatement,
+                              subtitle: l10n.viewCardHistory,
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => CardStatementScreen(card: currentCard)));
+                              },
+                            ),
+                            _buildSettingsTile(
+                              context: context,
+                              isDark: isDark,
+                              icon: Icons.lock_reset_rounded,
+                              color: Colors.blueAccent,
+                              title: l10n.changePin,
+                              subtitle: l10n.updateCardPin,
+                              onTap: () {
+                                final currentCard = state.cards[_currentIndex];
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => PinEntryDialog(
+                                    title: l10n.enterCurrentPin,
+                                    description: l10n.enterCurrentPinDesc,
+                                    isCardPin: true,
+                                    cardId: currentCard.id,
+                                    onValidate: (pin) async {
+                                      if (pin == "BIOMETRIC_SUCCESS" || state.verifyCardPin(pin, cardId: currentCard.id)) {
+                                        return true;
+                                      }
+                                      return false;
+                                    },
+                                    onConfirm: (pin) {
+                                      _showSetupNewPin(context, currentCard.id);
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            _buildSettingsTile(
+                              context: context,
+                              isDark: isDark,
+                              icon: Icons.ac_unit_rounded,
+                              color: Colors.blue,
+                              title: currentCard.isFrozen 
+                                ? l10n.unfreezeCard
+                                : l10n.freezeCard,
+                              subtitle: l10n.temporarilyDisablePayments,
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => PinEntryDialog(
+                                    title: l10n.pinVerification,
+                                    description: l10n.enterPinConfirmAction,
+                                    isCardPin: true,
+                                    cardId: currentCard.id,
+                                    onValidate: (pin) async {
+                                      if (pin == "BIOMETRIC_SUCCESS" || state.verifyCardPin(pin, cardId: currentCard.id)) {
+                                        return true;
+                                      }
+                                      return false;
+                                    },
+                                    onConfirm: (pin) {
+                                      state.updateCard(state.selectedCardIndex, currentCard.copyWith(isFrozen: !currentCard.isFrozen));
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            _buildSwitchTile(
+                              context: context,
+                              isDark: isDark,
+                              icon: Icons.fingerprint_rounded,
+                              color: Colors.blueGrey,
+                              title: l10n.biometricAuth,
+                              value: state.cardBiometricEnabled,
+                              onChanged: (v) {
+                                state.setCardBiometricEnabled(v);
+                              },
+                            ),
+                            const SizedBox(height: 24),
+                            _buildSectionTitle(context, l10n.cardControls, isDark),
+                            _buildSettingsTile(
+                              context: context,
+                              isDark: isDark,
+                              icon: Icons.subscriptions_rounded,
+                              color: Colors.purple,
+                              title: l10n.subscriptionManager,
+                              subtitle: l10n.manageSubscriptions,
+                              onTap: () {
+                                _showSubscriptionManager(context, state, currentCard);
+                              },
+                            ),
+                            _buildSwitchTile(
+                              context: context,
+                              isDark: isDark,
+                              icon: Icons.shopping_basket_outlined,
+                              color: Colors.teal,
+                              title: l10n.onlinePayments,
+                              value: currentCard.allowOnline,
+                              onChanged: (v) {
+                                state.updateCard(state.selectedCardIndex, currentCard.copyWith(allowOnline: v));
+                              },
+                            ),
+                            _buildSwitchTile(
+                              context: context,
+                              isDark: isDark,
+                              icon: Icons.public_rounded,
+                              color: Colors.orange,
+                              title: l10n.internationalUsage,
+                              value: currentCard.allowInternational,
+                              onChanged: (v) {
+                                state.updateCard(state.selectedCardIndex, currentCard.copyWith(allowInternational: v));
+                              },
+                            ),
+                            _buildSwitchTile(
+                              context: context,
+                              isDark: isDark,
+                              icon: Icons.contactless_rounded,
+                              color: Colors.purple,
+                              title: l10n.contactlessPayments,
+                              value: currentCard.allowContactless,
+                              onChanged: (v) {
+                                state.updateCard(state.selectedCardIndex, currentCard.copyWith(allowContactless: v));
+                              },
+                            ),
+                            const SizedBox(height: 24),
+                            _buildSectionTitle(context, l10n.spendingLimit, isDark),
+                            _buildSpendingLimitTile(context, state, currentCard, isDark),
+                            const SizedBox(height: 32),
+                            _buildSettingsTile(
+                              context: context,
+                              isDark: isDark,
+                              icon: Icons.delete_forever_rounded,
+                              color: Colors.redAccent,
+                              title: l10n.terminateCard,
+                              subtitle: l10n.permanentlyDeleteCard,
+                              onTap: () {
+                                Navigator.pop(context);
+                                _showTerminateReasons(context, l10n, state);
+                              },
+                              isLast: true,
+                            ),
+                            const SizedBox(height: 40),
+                          ],
                         ),
-                        _buildSettingsTile(
-                          context: context,
-                          isDark: isDark,
-                          icon: Icons.lock_reset_rounded,
-                          color: Colors.blueAccent,
-                          title: l10n.changePin,
-                          subtitle: l10n.updateCardPin,
-                          onTap: () {
-                            _showNewPinVerification(context, l10n, isTerminate: false, isChangePin: true);
-                          },
-                        ),
-                        _buildSettingsTile(
-                          context: context,
-                          isDark: isDark,
-                          icon: Icons.ac_unit_rounded,
-                          color: Colors.blue,
-                          title: currentCard.isFrozen 
-                            ? l10n.unfreezeCard
-                            : l10n.freezeCard,
-                          subtitle: l10n.temporarilyDisablePayments,
-                          onTap: () {
-                            // Ask for PIN for freezing/unfreezing
-                            _showNewPinVerification(context, l10n, isTerminate: false, customAction: () {
-                              state.updateCard(state.selectedCardIndex, currentCard.copyWith(isFrozen: !currentCard.isFrozen));
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 24),
-                        _buildSectionTitle(context, l10n.cardControls, isDark),
-                        _buildSettingsTile(
-                          context: context,
-                          isDark: isDark,
-                          icon: Icons.subscriptions_rounded,
-                          color: Colors.purple,
-                          title: l10n.subscriptionManager,
-                          subtitle: l10n.manageSubscriptions,
-                          onTap: () {
-                            _showSubscriptionManager(context, state, currentCard);
-                          },
-                        ),
-                        _buildSwitchTile(
-                          context: context,
-                          isDark: isDark,
-                          icon: Icons.shopping_basket_outlined,
-                          color: Colors.teal,
-                          title: l10n.onlinePayments,
-                          value: currentCard.allowOnline,
-                          onChanged: (v) {
-                            state.updateCard(state.selectedCardIndex, currentCard.copyWith(allowOnline: v));
-                          },
-                        ),
-                        _buildSwitchTile(
-                          context: context,
-                          isDark: isDark,
-                          icon: Icons.public_rounded,
-                          color: Colors.orange,
-                          title: l10n.internationalUsage,
-                          value: currentCard.allowInternational,
-                          onChanged: (v) {
-                            state.updateCard(state.selectedCardIndex, currentCard.copyWith(allowInternational: v));
-                          },
-                        ),
-                        _buildSwitchTile(
-                          context: context,
-                          isDark: isDark,
-                          icon: Icons.contactless_rounded,
-                          color: Colors.purple,
-                          title: l10n.contactlessPayments,
-                          value: currentCard.allowContactless,
-                          onChanged: (v) {
-                            state.updateCard(state.selectedCardIndex, currentCard.copyWith(allowContactless: v));
-                          },
-                        ),
-                        const SizedBox(height: 24),
-                        _buildSectionTitle(context, l10n.spendingLimit, isDark),
-                        _buildSpendingLimitTile(context, state, currentCard, isDark),
-                        const SizedBox(height: 32),
-                        _buildSettingsTile(
-                          context: context,
-                          isDark: isDark,
-                          icon: Icons.delete_forever_rounded,
-                          color: Colors.redAccent,
-                          title: l10n.terminateCard,
-                          subtitle: l10n.permanentlyDeleteCard,
-                          onTap: () {
-                            Navigator.pop(context);
-                            _showTerminateReasons(context, l10n, state);
-                          },
-                          isLast: true,
-                        ),
-                        const SizedBox(height: 40),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -705,51 +913,6 @@ class _CardsScreenState extends State<CardsScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _walletSection(BuildContext context, AppState state, VirtualCard card) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(state.translate("Haraaga Kaadhka", "Card Balance"), style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor)),
-                  const SizedBox(height: 4),
-                  Text("\$${card.balance.toStringAsFixed(2)}", style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                ],
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => DepositCardScreen(
-                    amount: "0", 
-                    currencyCode: state.cards[state.selectedCardIndex].theme == CardThemeType.gold ? "USD" : "SOS", 
-                    cardId: card.id
-                  )));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accentTeal,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  elevation: 0,
-                ),
-                child: Text(state.translate("Ku Shub", "Top Up")),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -825,6 +988,7 @@ class _CardsScreenState extends State<CardsScreen> {
   }
 
   Widget _buildSpendingLimitTile(BuildContext context, AppState state, VirtualCard card, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -840,7 +1004,7 @@ class _CardsScreenState extends State<CardsScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(state.translate("Xadka Bisha", "Monthly Limit"), style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor)),
+                  Text(l10n.monthlyLimit, style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor)),
                   const SizedBox(height: 4),
                   Text("\$2,500.00", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary)),
                 ],
@@ -861,7 +1025,7 @@ class _CardsScreenState extends State<CardsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(state.translate("La isticmaalay: \$1,625.00", "Spent: \$1,625.00"), style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 12 * context.fontSizeFactor)),
+              Text(l10n.spentAmount(r"$1,625.00"), style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 12 * context.fontSizeFactor)),
               Text("65%", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 12 * context.fontSizeFactor)),
             ],
           ),
@@ -937,36 +1101,41 @@ class _CardsScreenState extends State<CardsScreen> {
             ),
             const SizedBox(height: 24),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: reasons.length,
-                itemBuilder: (context, index) {
-                  final reason = reasons[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
-                    ),
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.pop(sheetCtx);
-                        _showTerminationTypeSelection(context, l10n, state);
-                      },
-                      leading: Container(
-                        padding: const EdgeInsets.all(8),
+              child: Center(
+                child: MaxWidthBox(
+                  maxWidth: 800,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: reasons.length,
+                    itemBuilder: (context, index) {
+                      final reason = reasons[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
-                          color: Colors.redAccent.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
+                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
                         ),
-                        child: const Icon(Icons.info_outline, color: Colors.redAccent, size: 20),
-                      ),
-                      title: Text(reason["label"]!, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w600)),
-                      trailing: Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white24 : Colors.black26),
-                    ),
-                  );
-                },
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.pop(sheetCtx);
+                            _showTerminationTypeSelection(context, l10n, state);
+                          },
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.info_outline, color: Colors.redAccent, size: 20),
+                          ),
+                          title: Text(reason["label"]!, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w600)),
+                          trailing: Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white24 : Colors.black26),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ],
@@ -1032,8 +1201,24 @@ class _CardsScreenState extends State<CardsScreen> {
                 Navigator.pop(sheetCtx);
                 Future.delayed(Duration.zero, () {
                   if (mounted) {
-                    // Use the captured navigator context which is stable
-                    _showNewPinVerification(navigator.context, l10n, isTerminate: false);
+                    showDialog(
+                      context: navigator.context,
+                      builder: (context) => PinEntryDialog(
+                        title: l10n.pinVerification,
+                        description: l10n.enterPinConfirmAction,
+                        isCardPin: true,
+                        cardId: currentCard.id,
+                        onValidate: (pin) async {
+                          if (pin == "BIOMETRIC_SUCCESS" || state.verifyCardPin(pin, cardId: currentCard.id)) {
+                            return true;
+                          }
+                          return false;
+                        },
+                        onConfirm: (pin) {
+                          _processTransaction(navigator.context, l10n, isTerminate: false);
+                        },
+                      ),
+                    );
                   }
                 });
               },
@@ -1050,7 +1235,6 @@ class _CardsScreenState extends State<CardsScreen> {
                 Navigator.pop(sheetCtx);
                 Future.delayed(Duration.zero, () {
                   if (mounted) {
-                    // Use the captured navigator context which is stable
                     _showTerminationConfirmationDialog(navigator.context, l10n, state, isDark);
                   }
                 });
@@ -1061,7 +1245,8 @@ class _CardsScreenState extends State<CardsScreen> {
               padding: const EdgeInsets.all(24.0),
               child: TextButton(
                 onPressed: () => Navigator.pop(sheetCtx),
-                child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
+                style: context.textButtonStyle(height: 40, fullWidth: false, fontSize: 16),
+                child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 16 * fSizeFactor)),
               ),
             ),
           ],
@@ -1116,6 +1301,7 @@ class _CardsScreenState extends State<CardsScreen> {
   }
 
   void _showTerminationConfirmationDialog(BuildContext context, AppLocalizations l10n, AppState state, bool isDark) {
+    final currentCard = state.cards[_currentIndex];
     showDialog(
       context: context,
       builder: (ctx) => BackdropFilter(
@@ -1138,17 +1324,39 @@ class _CardsScreenState extends State<CardsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
+              style: context.textButtonStyle(height: 40, fontSize: 14, fullWidth: false),
               child: Text(l10n.cancel, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(ctx);
-                _showNewPinVerification(context, l10n, isTerminate: true);
+                showDialog(
+                  context: context,
+                  builder: (context) => PinEntryDialog(
+                    title: l10n.pinVerification,
+                    description: l10n.enterPinConfirmAction,
+                    isCardPin: true,
+                    cardId: currentCard.id,
+                    onValidate: (pin) async {
+                      if (pin == "BIOMETRIC_SUCCESS" || state.verifyCardPin(pin, cardId: currentCard.id)) {
+                        return true;
+                      }
+                      return false;
+                    },
+                    onConfirm: (pin) {
+                      _processTransaction(context, l10n, isTerminate: true);
+                    },
+                  ),
+                );
               },
-              style: ElevatedButton.styleFrom(
+              style: context.elevatedButtonStyle(
                 backgroundColor: Colors.redAccent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
-                padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
+                borderRadius: 12,
+                height: 40,
+                fullWidth: false,
+              ).copyWith(
+                minimumSize: WidgetStateProperty.all(Size(120 * context.fontSizeFactor, 40 * context.fontSizeFactor)),
+                padding: WidgetStateProperty.all(EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor)),
               ),
               child: Text(l10n.yesTerminate, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
             ),
@@ -1158,242 +1366,29 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  void _showNewPinVerification(BuildContext context, AppLocalizations l10n, {required bool isTerminate, VoidCallback? customAction, bool isChangePin = false}) {
-    if (!context.mounted) return;
+  void _showSetupNewPin(BuildContext context, String cardId) {
+    final state = Provider.of<AppState>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
     
-    final TextEditingController pinController = TextEditingController();
-    final state = Provider.of<AppState>(context, listen: false);
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final fontSizeFactor = context.fontSizeFactor;
-
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetCtx) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(sheetCtx).viewInsets.bottom),
-        child: GlassmorphicContainer(
-          width: double.infinity,
-          height: 400 * fontSizeFactor,
-          borderRadius: 24 * fontSizeFactor,
-          blur: 30,
-          alignment: Alignment.topCenter,
-          border: 2,
-          linearGradient: LinearGradient(
-            colors: isDark 
-                ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
-                : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
-          ),
-          borderGradient: LinearGradient(
-            colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)],
-          ),
-          child: Column(
-            children: [
-              SizedBox(height: 12 * fontSizeFactor),
-              Container(width: 40 * fontSizeFactor, height: 4 * fontSizeFactor, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10 * fontSizeFactor))),
-              SizedBox(height: 24 * fontSizeFactor),
-              Icon(
-                isChangePin ? Icons.security_rounded : (isTerminate ? Icons.delete_sweep_rounded : Icons.lock_outline_rounded), 
-                color: isChangePin ? Colors.blueAccent : (isTerminate ? Colors.redAccent : Colors.orange), 
-                size: 48 * fontSizeFactor
-              ),
-              SizedBox(height: 16 * fontSizeFactor),
-              Text(
-                isChangePin 
-                  ? l10n.enterCurrentPin
-                  : l10n.enterCardPin,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
-              ),
-              SizedBox(height: 8 * fontSizeFactor),
-              Text(
-                isChangePin 
-                  ? l10n.enterCurrentPinDesc
-                  : l10n.enterPinConfirmAction,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * fontSizeFactor),
-              ),
-              SizedBox(height: 32 * fontSizeFactor),
-              SizedBox(
-                width: 220 * fontSizeFactor,
-                child: TextField(
-                  controller: pinController,
-                  obscureText: true,
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  style: TextStyle(fontSize: 28 * fontSizeFactor, letterSpacing: 20 * fontSizeFactor, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    hintText: "****",
-                    hintStyle: TextStyle(letterSpacing: 20 * fontSizeFactor, fontSize: 28 * fontSizeFactor, color: isDark ? Colors.white24 : Colors.black12),
-                    filled: true,
-                    fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * fontSizeFactor), borderSide: BorderSide.none),
-                  ),
-                  onChanged: (value) {
-                    if (value.length == 4) {
-                      final currentCardId = state.cards[state.selectedCardIndex].id;
-                      final isValid = isTerminate || isChangePin || customAction != null 
-                          ? state.verifyCardPin(value, cardId: currentCardId) 
-                          : state.verifyPin(value);
-
-                      if (isValid) {
-                        Navigator.pop(sheetCtx);
-                        if (isChangePin) {
-                          _showSetupNewPin(context, l10n, isChange: true);
-                        } else if (customAction != null) {
-                          customAction();
-                        } else {
-                          _processTransaction(context, l10n, isTerminate: isTerminate);
-                        }
-                      } else {
-                        HapticFeedback.vibrate();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.incorrectPin),
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                        pinController.clear();
-                      }
-                    }
-                  },
-                ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: TextButton(
-                  onPressed: () => Navigator.pop(sheetCtx),
-                  child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showSetupNewPin(BuildContext context, AppLocalizations l10n, {bool isChange = false}) {
-    final TextEditingController pinController = TextEditingController();
-    final state = Provider.of<AppState>(context, listen: false);
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetCtx) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(sheetCtx).viewInsets.bottom),
-        child: GlassmorphicContainer(
-          width: double.infinity,
-          height: 400 * context.fontSizeFactor,
-          borderRadius: 24,
-          blur: 30,
-          alignment: Alignment.topCenter,
-          border: 2,
-          linearGradient: LinearGradient(
-            colors: isDark 
-                ? [AppColors.primaryDark.withValues(alpha: 0.95), AppColors.primaryDark.withValues(alpha: 0.85)]
-                : [Colors.white.withValues(alpha: 0.95), Colors.white.withValues(alpha: 0.9)],
-          ),
-          borderGradient: LinearGradient(
-            colors: [Colors.white.withValues(alpha: 0.2), Colors.white.withValues(alpha: 0.05)],
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 24),
-              Icon(isChange ? Icons.lock_outline_rounded : Icons.lock_reset_rounded, color: AppColors.accentTeal, size: 48 * context.fontSizeFactor),
-              const SizedBox(height: 16),
-              Text(
-                isChange 
-                  ? state.translate("Beddel PIN-ka", "Change PIN")
-                  : state.translate("Samee PIN Cusub", "Set New PIN"),
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                isChange
-                  ? state.translate("Fadlan geli 4 god oo PIN cusub ah.", "Please enter a new 4-digit PIN.")
-                  : state.translate("U samee PIN gaar ah kaadhkaaga virtual-ka ah.", "Set a unique PIN for your virtual card."),
-                textAlign: TextAlign.center,
-                style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: 220 * context.fontSizeFactor,
-                child: TextField(
-                  controller: pinController,
-                  obscureText: true,
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  style: TextStyle(fontSize: 28 * context.fontSizeFactor, letterSpacing: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    hintText: "****",
-                    hintStyle: TextStyle(letterSpacing: 20 * context.fontSizeFactor, fontSize: 28 * context.fontSizeFactor, color: isDark ? Colors.white24 : Colors.black12),
-                    filled: true,
-                    fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                  ),
-                  onChanged: (value) {
-                    if (value.length == 4) {
-                      if (isChange) {
-                        final currentCard = state.cards[state.selectedCardIndex];
-                        if (state.verifyCardPin(value, cardId: currentCard.id)) {
-                          HapticFeedback.vibrate();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.translate(
-                                "PIN-kani waa kii hadda. Fadlan dooro PIN cusub.", 
-                                "This is your current PIN. Please choose a new PIN."
-                              )),
-                            ),
-                          );
-                          pinController.clear();
-                        } else {
-                          state.updateCardPin(value, cardId: currentCard.id);
-                          Navigator.pop(sheetCtx);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.translate("PIN-ka si guul leh ayaa loo beddelay!", "PIN changed successfully!")),
-                              backgroundColor: AppColors.accentTeal,
-                            ),
-                          );
-                        }
-                      } else {
-                        final currentCard = state.cards[state.selectedCardIndex];
-                        state.updateCardPin(value, cardId: currentCard.id);
-                        Navigator.pop(sheetCtx);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.translate("PIN-ka waa la keydiyay!", "PIN saved successfully!")),
-                            backgroundColor: AppColors.accentTeal,
-                          ),
-                        );
-                      }
-                    }
-                  },
-                ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: TextButton(
-                  onPressed: () => Navigator.pop(sheetCtx),
-                  child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ],
-          ),
-        ),
+      builder: (context) => PinEntryDialog(
+        title: l10n.setNewPin,
+        description: l10n.setUniquePinDesc,
+        confirmationTitle: l10n.confirmPin,
+        confirmationDescription: l10n.reEnterNewPin,
+        isSetup: true,
+        isCardPin: true,
+        cardId: cardId,
+        onConfirm: (pin) {
+          state.updateCardPin(pin, cardId: cardId);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.pinCreatedSuccessfully),
+              backgroundColor: AppColors.accentTeal,
+            ),
+          );
+        },
       ),
     );
   }
@@ -1473,7 +1468,7 @@ class _CardsScreenState extends State<CardsScreen> {
       final now = DateTime.now();
       final tx = Transaction(
         id: "TX-REF-${now.millisecondsSinceEpoch}",
-        title: appState.translate("Refund: Kaadhka la tirtiray", "Refund: Card Terminated"),
+        title: l10n.refundCardTerminated,
         date: "${now.day}/${now.month}/${now.year}",
         timestamp: now,
         amount: "+\$${refundAmount.toStringAsFixed(2)}",
@@ -1498,6 +1493,7 @@ class _CardsScreenState extends State<CardsScreen> {
           } else if (appState.cards.isEmpty) {
             _currentIndex = 0;
           }
+          _verifiedIndex = _currentIndex;
         });
       }
       
@@ -1505,15 +1501,9 @@ class _CardsScreenState extends State<CardsScreen> {
         context,
         MaterialPageRoute(
           builder: (_) => SuccessScreen(
-            title: appState.translate("Kaadhka waa la tirtiray", "Card Terminated"),
-            message: appState.translate(
-              "Kaadhkaaga si joogto ah ayaa loo tirtiray.", 
-              "Your card has been permanently terminated."
-            ),
-            subMessage: appState.translate(
-              "Haraagii kaadhka oo ahaa \$${refundAmount.toStringAsFixed(2)} waxaa si guul leh loogu wareejiyay Wallet-kaaga.",
-              "The card balance of \$${refundAmount.toStringAsFixed(2)} has been successfully transferred to your wallet."
-            ),
+            title: l10n.cardTerminated,
+            message: l10n.cardTerminatedPermanently,
+            subMessage: l10n.refundSuccessMessage(refundAmount.toStringAsFixed(2)),
             buttonText: l10n.backToHome,
             onPressed: () {
               appState.setNavIndex(3); // 3 is Cards
@@ -1534,8 +1524,8 @@ class _CardsScreenState extends State<CardsScreen> {
         context,
         MaterialPageRoute(
           builder: (_) => SuccessScreen(
-            title: appState.translate("Waa la Demiya", "Card Deactivated"),
-            message: appState.translate("Kaadhkaaga si guul leh ayaa loo demiyay.", "Your card has been successfully deactivated."),
+            title: l10n.cardDeactivated,
+            message: l10n.cardDeactivatedSuccess,
             buttonText: l10n.backToHome,
             onPressed: () {
               appState.setNavIndex(3); // 3 is Cards
@@ -1557,23 +1547,100 @@ class _CardsScreenState extends State<CardsScreen> {
 
   Widget _buildBalanceDisplay(BuildContext context, AppState state, ThemeData theme) {
     final currencyFormatter = NumberFormat.simpleCurrency(name: state.currencyCode);
-    final currentCardIndex = state.selectedCardIndex;
-    if (state.cards.isEmpty || currentCardIndex >= state.cards.length) return const SizedBox.shrink();
-
+    final l10n = AppLocalizations.of(context)!;
+    
+    double displayBalance = state.balance;
+    String label = l10n.walletBalance;
+    
+    if (state.cards.isNotEmpty && _verifiedIndex < state.cards.length) {
+      displayBalance = state.cards[_verifiedIndex].balance;
+      label = l10n.cardBalance;
+    }
+    
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
       ),
-      child: Text(
-        currencyFormatter.format(state.cards[currentCardIndex].balance),
-        style: theme.textTheme.titleMedium?.copyWith(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.bold,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 9 * context.fontSizeFactor,
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.primary.withValues(alpha: 0.6),
+            ),
+          ),
+          Text(
+            currencyFormatter.format(displayBalance),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: 16 * context.fontSizeFactor,
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  Future<void> _unlockCard(int index) async {
+    if (index == _verifiedIndex || _isUnlocking) return;
+    
+    final state = Provider.of<AppState>(context, listen: false);
+    if (state.cards.isEmpty) return;
+
+    setState(() => _isUnlocking = true);
+
+    final l10n = AppLocalizations.of(context)!;
+    
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => PinEntryDialog(
+        title: l10n.pinVerification,
+        description: l10n.enterCardPin,
+        isCardPin: true,
+        cardId: state.cards[index].id,
+        onValidate: (pin) async {
+          final cardId = state.cards[index].id;
+          if (pin == "BIOMETRIC_SUCCESS" || state.verifyCardPin(pin, cardId: cardId)) {
+            return true;
+          }
+          return false;
+        },
+        onConfirm: (pin) {
+          Navigator.pop(context, true);
+        },
+      ),
+    );
+
+    if (mounted) {
+      if (result == true) {
+        setState(() {
+          _verifiedIndex = index;
+          _isUnlocking = false;
+        });
+        state.setSelectedCardIndex(index);
+      } else {
+        // Return to the previously verified card
+        _pageController.animateToPage(
+          _verifiedIndex,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        setState(() {
+          _currentIndex = _verifiedIndex;
+          _isUnlocking = false;
+        });
+      }
+    }
   }
 
   void _showNewCardDialog(BuildContext context, AppState state) {
@@ -1589,19 +1656,15 @@ class _CardsScreenState extends State<CardsScreen> {
             children: [
               const Icon(Icons.info_outline_rounded, color: Colors.orange),
               const SizedBox(width: 12),
-              Text(state.translate("Card Limit Reach", "Xadka Kaadhka")),
+              Text(l10n.cardLimitReached),
             ],
           ),
-          content: Text(
-            state.translate(
-              "You can only have a maximum of 2 virtual cards at a time. Please terminate an existing card to order a new one.",
-              "Waxa aad yeelan kartaa ugu badnaan 2 kaadh oo keliya. Fadlan tirtir mid ka mid ah kuwa hadda kuu furan si aad u dalbato mid cusub."
-            ),
-          ),
+          content: Text(l10n.cardLimitReachedDesc),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(state.translate("Understood", "Waan fahmay")),
+              style: context.textButtonStyle(height: 40, fontSize: 14, fullWidth: false),
+              child: Text(l10n.understood, style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
             ),
           ],
         ),
@@ -1649,8 +1712,8 @@ class _CardsScreenState extends State<CardsScreen> {
                       context: context,
                       icon: Icons.restore_rounded,
                       color: Colors.orange,
-                      title: state.translate("Soo cesho Kaadh", "Restore Card"),
-                      subtitle: state.translate("Ka soo cesho kaadhka tirtiran", "Recover recently terminated card"),
+                      title: l10n.restoreCard,
+                      subtitle: l10n.restoreCardDesc,
                       onTap: () {
                         Navigator.pop(sheetCtx);
                         _showRestoreCardDialog(context, state);
@@ -1669,6 +1732,7 @@ class _CardsScreenState extends State<CardsScreen> {
 
   void _showSubscriptionManager(BuildContext context, AppState state, VirtualCard card) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     showModalBottomSheet(
       context: context,
@@ -1704,12 +1768,12 @@ class _CardsScreenState extends State<CardsScreen> {
                 Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
                 const SizedBox(height: 24),
                 Text(
-                  state.translate("Maareeyaha Is-qorista", "Subscription Manager"),
+                  l10n.subscriptionManager,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  state.translate("Adeegyada ku xidhan kaadhkan", "Services linked to this card"),
+                  l10n.linkedServices,
                   style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
                 ),
                 const SizedBox(height: 24),
@@ -1722,7 +1786,7 @@ class _CardsScreenState extends State<CardsScreen> {
                           Icon(Icons.subscriptions_outlined, size: 64, color: isDark ? Colors.white10 : Colors.black12),
                           const SizedBox(height: 16),
                           Text(
-                            state.translate("Ma jiraan is-qoris ku xidhan kaadhkan", "No subscriptions linked to this card"),
+                            l10n.noLinkedSubscriptions,
                             style: TextStyle(color: AppColors.grey),
                           ),
                         ],
@@ -1731,37 +1795,42 @@ class _CardsScreenState extends State<CardsScreen> {
                   )
                 else
                   Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: subscriptions.length,
-                      itemBuilder: (context, index) {
-                        final sub = subscriptions[index];
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: ListTile(
-                            leading: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(color: Colors.purple.withOpacity(0.1), shape: BoxShape.circle),
-                              child: const Icon(Icons.subscriptions, color: Colors.purple),
-                            ),
-                            title: Text(sub.title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontWeight: FontWeight.bold)),
-                            subtitle: Text("\$${sub.amount.toStringAsFixed(2)} / ${sub.frequency}", style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary)),
-                            trailing: Switch(
-                              value: sub.status == RecurringStatus.active,
-                              onChanged: (v) {
-                                state.toggleRecurringPayment(sub.id);
-                                setModalState(() {});
-                              },
-                              activeColor: AppColors.accentTeal,
-                            ),
-                          ),
-                        );
-                      },
+                    child: Center(
+                      child: MaxWidthBox(
+                        maxWidth: 800,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: subscriptions.length,
+                          itemBuilder: (context, index) {
+                            final sub = subscriptions[index];
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: ListTile(
+                                leading: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(color: Colors.purple.withValues(alpha: 0.1), shape: BoxShape.circle),
+                                  child: const Icon(Icons.subscriptions, color: Colors.purple),
+                                ),
+                                title: Text(sub.title, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                                subtitle: Text("\$${sub.amount.toStringAsFixed(2)} / ${sub.frequency}", style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 12 * context.fontSizeFactor)),
+                                trailing: Switch(
+                                  value: sub.status == RecurringStatus.active,
+                                  onChanged: (v) {
+                                    state.toggleRecurringPayment(sub.id);
+                                    setModalState(() {});
+                                  },
+                                  activeColor: AppColors.accentTeal,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ),
                 const SizedBox(height: 24),
@@ -1780,7 +1849,7 @@ class _CardsScreenState extends State<CardsScreen> {
     if (state.cards.length >= 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(state.translate("Ma abuuri kartid wax ka badan laba kaadh oo virtual ah.", "You cannot create more than two virtual cards.")),
+          content: Text(l10n.maxTwoCardsError),
           backgroundColor: Colors.red,
         ),
       );
@@ -1790,7 +1859,7 @@ class _CardsScreenState extends State<CardsScreen> {
     // Check if user has enough balance for a new card ($5 fee)
     if (state.balance < 5.0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.translate("Dhibka: Baaqigaagu kuma filna (\$5 fee).", "Error: Insufficient balance (\$5 fee).")), backgroundColor: Colors.red),
+        SnackBar(content: Text(l10n.insufficientBalanceFee("5.00")), backgroundColor: Colors.red),
       );
       return;
     }
@@ -1830,8 +1899,8 @@ class _CardsScreenState extends State<CardsScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => SuccessScreen(
-          title: state.translate("Kaadhka waa la sameeyay", "Card Created"),
-          message: state.translate("Kaadhkaaga cusub hadda waa diyaar.", "Your new virtual card is now ready."),
+          title: l10n.cardCreated,
+          message: l10n.newCardReady,
           buttonText: l10n.backToHome,
           onPressed: () {
             state.setNavIndex(3); // 3 is Cards
@@ -1847,6 +1916,7 @@ class _CardsScreenState extends State<CardsScreen> {
 
   void _showRestoreCardDialog(BuildContext context, AppState state) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     
     showModalBottomSheet(
       context: context,
@@ -1878,79 +1948,94 @@ class _CardsScreenState extends State<CardsScreen> {
             Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
             const SizedBox(height: 24),
             Text(
-              state.translate("Soo cesho Kaadhka", "Restore Card"),
+              l10n.restoreCard,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: isDark ? Colors.white : AppColors.textPrimary),
             ),
             const SizedBox(height: 8),
             Text(
-              state.translate("Dooro kaadhka aad rabto inaad soo celiso", "Select the card you want to restore"),
+              l10n.selectCardToRestore,
               style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 13 * context.fontSizeFactor),
             ),
             const SizedBox(height: 24),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: state.terminatedCards.length,
-                itemBuilder: (context, index) {
-                  final card = state.terminatedCards[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
-                    ),
-                    child: ListTile(
-                      leading: Container(
-                        padding: const EdgeInsets.all(8),
+              child: Center(
+                child: MaxWidthBox(
+                  maxWidth: 800,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: state.terminatedCards.length,
+                    itemBuilder: (context, index) {
+                      final card = state.terminatedCards[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
-                          color: AppColors.accentTeal.withOpacity(0.1),
-                          shape: BoxShape.circle,
+                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
                         ),
-                        child: const Icon(Icons.credit_card, color: AppColors.accentTeal),
-                      ),
-                      title: Text(
-                        "Visa • ${card.cardNumber.substring(card.cardNumber.length - 4)}",
-                        style: TextStyle(
-                          color: isDark ? Colors.white : AppColors.textPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Text(
-                        "Expired: ${card.expiryDate}",
-                        style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary),
-                      ),
-                      trailing: ElevatedButton(
-                        onPressed: () async {
-                          if (state.cards.length >= 2) {
-                             ScaffoldMessenger.of(context).showSnackBar(
-                               SnackBar(content: Text(state.translate("Ma abuuri kartid wax ka badan laba kaadh.", "You cannot have more than two active cards.")))
-                             );
-                             return;
-                          }
-                          
-                          final success = await _showSecurityPinDialog(context);
-                          if (success) {
-                            await state.restoreCard(card.id);
-                            if (context.mounted) {
-                              Navigator.pop(sheetCtx);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(state.translate("Kaadhka waa la soo celiyay!", "Card restored successfully!")))
+                        child: ListTile(
+                          title: Text(
+                            "Visa • ${card.cardNumber.substring(card.cardNumber.length - 4)}",
+                            style: TextStyle(
+                              color: isDark ? Colors.white : AppColors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14 * context.fontSizeFactor,
+                            ),
+                          ),
+                          subtitle: Text(
+                            "Expired: ${card.expiryDate}",
+                            style: TextStyle(color: isDark ? Colors.white60 : AppColors.textSecondary, fontSize: 12 * context.fontSizeFactor),
+                          ),
+                          trailing: ElevatedButton(
+                            onPressed: () async {
+                              if (state.cards.length >= 2) {
+                                 ScaffoldMessenger.of(context).showSnackBar(
+                                   SnackBar(content: Text(l10n.maxTwoCardsError))
+                                 );
+                                 return;
+                              }
+                              
+                              showDialog(
+                                context: context,
+                                builder: (context) => PinEntryDialog(
+                                  title: l10n.enterPin,
+                                  description: l10n.enterPinToContinue,
+                                  onValidate: (pin) async {
+                                    if (pin == "BIOMETRIC_SUCCESS" || state.verifyPin(pin)) {
+                                      return true;
+                                    }
+                                    return false;
+                                  },
+                                  onConfirm: (pin) {
+                                    state.restoreCard(card.id).then((_) {
+                                      if (context.mounted) {
+                                        Navigator.pop(sheetCtx);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text(l10n.cardRestoredSuccess))
+                                        );
+                                      }
+                                    });
+                                  },
+                                ),
                               );
-                            }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accentTeal,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                          visualDensity: VisualDensity.compact,
+                            },
+                            style: context.elevatedButtonStyle(
+                              backgroundColor: AppColors.accentTeal,
+                              foregroundColor: Colors.white,
+                              height: 32,
+                              fullWidth: false,
+                            ).copyWith(
+                              minimumSize: WidgetStateProperty.all(Size(80 * context.fontSizeFactor, 32 * context.fontSizeFactor)),
+                              padding: WidgetStateProperty.all(EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor)),
+                              visualDensity: VisualDensity.compact,
+                            ),
+                            child: Text(l10n.restore, style: TextStyle(fontSize: 12 * context.fontSizeFactor)),
+                          ),
                         ),
-                        child: Text(state.translate("Soo celi", "Restore")),
-                      ),
-                    ),
-                  );
-                },
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ],
@@ -1959,18 +2044,57 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
-  Future<bool> _showSecurityPinDialog(BuildContext context) async {
+  Widget _buildAddCardPlaceholder(BuildContext context, ThemeData theme) {
     final state = Provider.of<AppState>(context, listen: false);
-    final pin = await showDialog<String>(
-      context: context,
-      builder: (context) => PinEntryDialog(
-        title: state.translate("Geli PIN", "Enter PIN"),
-        description: state.translate("Fadlan geli PIN-kaaga si aad u sii wadato.", "Please enter your PIN to continue."),
-        onConfirm: (pin) {
-          // Handled by Navigator.pop in dialog
-        },
+    final l10n = AppLocalizations.of(context)!;
+    return GestureDetector(
+      onTap: () => _showNewCardDialog(context, state),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+          border: Border.all(
+            color: theme.colorScheme.primary.withValues(alpha: 0.3),
+            width: 2,
+            style: BorderStyle.solid,
+          ),
+          color: theme.colorScheme.primary.withValues(alpha: 0.05),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(16 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.add_rounded,
+                size: 48 * context.fontSizeFactor,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            SizedBox(height: 16 * context.fontSizeFactor),
+            Text(
+              l10n.addNewCard,
+              style: TextStyle(
+                fontSize: 18 * context.fontSizeFactor,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            SizedBox(height: 8 * context.fontSizeFactor),
+            Text(
+              l10n.instantlyIssueNewCard,
+              style: TextStyle(
+                fontSize: 14 * context.fontSizeFactor,
+                color: AppColors.grey,
+              ),
+            ),
+          ],
+        ),
       ),
     );
-    return pin != null && state.verifyPin(pin);
   }
 }

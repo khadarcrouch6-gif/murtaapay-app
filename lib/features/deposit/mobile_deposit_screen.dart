@@ -7,11 +7,12 @@ import 'dart:ui' as ui;
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/app_state.dart';
-import '../../core/models/transaction.dart';
+import '../../core/models/transaction.dart' as model;
 import '../../core/widgets/success_screen.dart';
 import '../navigation/main_navigation.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import '../../core/widgets/pin_entry_dialog.dart';
 
 class MobileDepositScreen extends StatefulWidget {
   final double amount;
@@ -88,6 +89,7 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
@@ -100,50 +102,55 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
       ),
       body: Center(
         child: MaxWidthBox(
-          maxWidth: 600,
+          maxWidth: 800,
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(24 * context.fontSizeFactor),
+            padding: EdgeInsets.all(context.horizontalPadding),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FadeInDown(
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: AppColors.accentTeal.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: AppColors.accentTeal.withOpacity(0.1)),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(l10n.amountToDeposit, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
-                          const SizedBox(height: 8),
-                          Text(
-                            "\$${widget.amount.toStringAsFixed(2)}",
-                            style: TextStyle(fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.accentTeal),
+                    child: Center(
+                      child: MaxWidthBox(
+                        maxWidth: 500,
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                          decoration: BoxDecoration(
+                            color: AppColors.accentTeal.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+                            border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.1)),
                           ),
-                        ],
+                          child: Column(
+                            children: [
+                              Text(l10n.amountToDeposit, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+                              SizedBox(height: 8 * context.fontSizeFactor),
+                              Text(
+                                "\$${widget.amount.toStringAsFixed(2)}",
+                                style: TextStyle(fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.accentTeal),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32 * context.fontSizeFactor),
                   FadeInUp(
                     child: Text(
                       l10n.selectProvider,
                       style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16 * context.fontSizeFactor),
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: context.isMobile ? 2 : 4,
+                      crossAxisSpacing: 16 * context.fontSizeFactor,
+                      mainAxisSpacing: 16 * context.fontSizeFactor,
                       childAspectRatio: 2.5,
                     ),
                     itemCount: _providers.length,
@@ -157,11 +164,11 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             decoration: BoxDecoration(
-                              color: isSelected ? (provider['color'] as Color).withOpacity(0.1) : theme.colorScheme.surface,
-                              borderRadius: BorderRadius.circular(16),
+                              color: isSelected ? (provider['color'] as Color).withValues(alpha: 0.1) : theme.colorScheme.surface,
+                              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
                               border: Border.all(
-                                color: isSelected ? (provider['color'] as Color) : theme.dividerColor.withOpacity(0.1),
-                                width: 2,
+                                color: isSelected ? (provider['color'] as Color) : theme.dividerColor.withValues(alpha: 0.1),
+                                width: 2 * context.fontSizeFactor,
                               ),
                             ),
                             child: Center(
@@ -169,6 +176,7 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
                                 provider['id'],
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 14 * context.fontSizeFactor,
                                   color: isSelected ? (provider['color'] as Color) : theme.textTheme.bodyLarge?.color,
                                 ),
                               ),
@@ -178,7 +186,7 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
                       );
                     },
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32 * context.fontSizeFactor),
                   FadeInUp(
                     delay: const Duration(milliseconds: 200),
                     child: Column(
@@ -188,7 +196,7 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
                           l10n.phoneNumber,
                           style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12 * context.fontSizeFactor),
                         TextFormField(
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
@@ -203,40 +211,48 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
                             filled: true,
                             fillColor: theme.colorScheme.surface,
                             counterText: "",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.1))),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
+                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: selectedProviderData?['color'] ?? AppColors.accentTeal, width: 2),
+                              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                              borderSide: BorderSide(color: selectedProviderData?['color'] ?? AppColors.accentTeal, width: 2 * context.fontSizeFactor),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 18 * context.fontSizeFactor),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 48),
-                  FadeInUp(
-                    delay: const Duration(milliseconds: 300),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 56 * context.fontSizeFactor,
-                      child: ElevatedButton(
-                        onPressed: _selectedProvider != null ? _showReviewSheet : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: selectedProviderData?['color'] ?? AppColors.primaryDark,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          l10n.continueLabel,
-                          style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ),
+                  SizedBox(height: 120 * context.fontSizeFactor),
                 ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 12 * context.fontSizeFactor),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: MaxWidthBox(
+            maxWidth: 800,
+            child: ElevatedButton(
+              onPressed: _selectedProvider != null ? _showReviewSheet : null,
+              style: context.elevatedButtonStyle(
+                backgroundColor: selectedProviderData?['color'] ?? AppColors.primaryDark,
+                foregroundColor: Colors.white,
+              ),
+              child: Text(
+                l10n.continueLabel,
               ),
             ),
           ),
@@ -258,45 +274,74 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            color: theme.scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 24),
-              Text(l10n.reviewDeposit, style: TextStyle(fontSize: 22 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 32),
-              _reviewRow(l10n.amount, "\$${widget.amount.toStringAsFixed(2)}"),
-              const Divider(height: 32),
-              _reviewRow(l10n.provider, _selectedProvider!),
-              const Divider(height: 32),
-              _reviewRow(l10n.phoneNumber, "+252 ${_phoneController.text}"),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                height: 56 * context.fontSizeFactor,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _simulateSTKPush();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: provider['color'],
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  child: Text(l10n.confirmAndDeposit, style: const TextStyle(fontWeight: FontWeight.bold)),
+        child: DraggableScrollableSheet(
+          initialChildSize: 0.55,
+          minChildSize: 0.4,
+          maxChildSize: 0.85,
+          expand: false,
+          builder: (context, scrollController) => Center(
+            child: MaxWidthBox(
+              maxWidth: 500,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: theme.scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(36 * context.fontSizeFactor)),
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(height: 12 * context.fontSizeFactor),
+                    Container(width: 40 * context.fontSizeFactor, height: 5 * context.fontSizeFactor, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10 * context.fontSizeFactor))),
+                    Expanded(
+                      child: ListView(
+                        controller: scrollController,
+                        padding: EdgeInsets.all(32 * context.fontSizeFactor),
+                        children: [
+                          Center(child: Text(l10n.reviewDeposit, style: TextStyle(fontSize: 22 * context.fontSizeFactor, fontWeight: FontWeight.bold))),
+                          SizedBox(height: 32 * context.fontSizeFactor),
+                          _reviewRow(l10n.amount, "\$${widget.amount.toStringAsFixed(2)}"),
+                          Divider(height: 32 * context.fontSizeFactor),
+                          _reviewRow(l10n.provider, _selectedProvider!),
+                          Divider(height: 32 * context.fontSizeFactor),
+                          _reviewRow(l10n.phoneNumber, "+252 ${_phoneController.text}"),
+                        ],
+                      ),
+                    ),
+                    SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _showPinDialog();
+                          },
+                          style: context.elevatedButtonStyle(
+                            backgroundColor: provider['color'],
+                            foregroundColor: Colors.white,
+                          ),
+                          child: Text(l10n.confirmAndDeposit),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-            ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showPinDialog() {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => PinEntryDialog(
+        title: l10n.enterPin,
+        description: l10n.enterPinToContinue,
+        onConfirm: (pin) {
+          _simulateSTKPush();
+        },
       ),
     );
   }
@@ -355,7 +400,7 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
     state.addBalance(widget.amount);
     
     // Record the transaction
-    state.addTransaction(Transaction(
+    state.addTransaction(model.Transaction(
       id: "DEP-MOB-${DateTime.now().millisecondsSinceEpoch}",
       title: l10n.mobileMoney,
       date: DateFormat('MMM dd').format(DateTime.now()),

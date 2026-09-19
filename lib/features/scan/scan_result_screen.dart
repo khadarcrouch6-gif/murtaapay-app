@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'dart:ui';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/shimmer_loading.dart';
 import '../../core/widgets/detail_row.dart';
@@ -116,7 +116,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.accentTeal.withOpacity(0.1),
+                      color: AppColors.accentTeal.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 64),
@@ -290,3 +290,4 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
   // _buildInfoRow removed as it's replaced by DetailRow
 }
+

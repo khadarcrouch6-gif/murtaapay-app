@@ -12,7 +12,7 @@ import '../../core/widgets/step_indicator.dart';
 import '../../core/widgets/success_screen.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_state.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'credit_card_screen.dart';
 
 class StripeScreen extends StatefulWidget {
@@ -335,24 +335,19 @@ class _StripeScreenState extends State<StripeScreen> {
                       // Pay Button
                       FadeInUp(
                         delay: const Duration(milliseconds: 300),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: _processPayment,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: stripeColor,
-                              foregroundColor: Colors.white,
-                              disabledBackgroundColor: Colors.grey[300],
-                              padding: EdgeInsets.symmetric(vertical: 16 * scale),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * scale)),
-                              elevation: 0,
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                "Pay ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Stripe"))}",
-                                style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-                              ),
+                        child: ElevatedButton(
+                          onPressed: _processPayment,
+                          style: context.elevatedButtonStyle(
+                            backgroundColor: stripeColor,
+                            foregroundColor: Colors.white,
+                            borderRadius: 12,
+                            elevation: 0,
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              "Pay ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Stripe"))}",
+                              style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                             ),
                           ),
                         ),

@@ -20,7 +20,7 @@ const iconMap: Record<string, any> = {
   "exchange": <TrendingUp className="text-blue-500" size={48} />,
   "savings": <PiggyBank className="text-indigo-500" size={48} />,
   "investments": <Briefcase className="text-teal-500" size={48} />,
-  "sadaqah": <HeartHandshake className="text-rose-500" size={48} />,
+  "fundraiser": <HeartHandshake className="text-rose-500" size={48} />,
   "giftcards": <Gift className="text-amber-500" size={48} />,
   "refer": <Users className="text-cyan-500" size={48} />,
   "vouchers": <Ticket className="text-purple-500" size={48} />,

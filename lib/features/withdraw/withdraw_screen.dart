@@ -9,7 +9,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'unified_bank_withdraw_screen.dart';
 import 'unified_mobile_withdraw_screen.dart';
 
@@ -77,6 +77,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       appBar: widget.isTab ? null : AppBar(
         title: Text(l10n.withdrawMoney, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor)),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Center(
         child: MaxWidthBox(

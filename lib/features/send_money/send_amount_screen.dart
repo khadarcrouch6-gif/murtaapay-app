@@ -6,7 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import '../../core/api_service.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -335,7 +335,6 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     }
 
     double amount = double.tryParse(_sendController.text.replaceAll(',', '')) ?? 0;
-    double receiveAmount = double.tryParse(_receiveController.text.replaceAll(',', '')) ?? 0;
     
     Widget nextScreen;
     if (_selectedMethod == "Bank Transfer") {
@@ -345,6 +344,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         senderSource: _selectedSource,
         cardId: _selectedCardId,
         method: _selectedMethod,
+        isFeeIncluded: _isFeeIncluded,
       );
     } else if (_selectedMethod == "Murtaax Wallet") {
       nextScreen = WalletReceiverScreen(
@@ -353,6 +353,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         senderSource: _selectedSource,
         cardId: _selectedCardId,
         method: _selectedMethod,
+        isFeeIncluded: _isFeeIncluded,
       );
     } else {
       nextScreen = ReceiverScreen(
@@ -361,6 +362,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         method: _selectedMethod,
         senderSource: _selectedSource,
         cardId: _selectedCardId,
+        isFeeIncluded: _isFeeIncluded,
       );
     }
 
@@ -478,7 +480,17 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                   decoration: BoxDecoration(color: theme.colorScheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12 * factor)),
                   child: Row(
                     children: [
-                      ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.network("https://flagcdn.com/w40/${_getFlagCode(currency)}.png", width: 24 * factor, height: 16 * factor, fit: BoxFit.cover)),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/images/logo.png',
+                          image: "https://flagcdn.com/w40/${_getFlagCode(currency)}.png",
+                          width: 24 * factor,
+                          height: 16 * factor,
+                          fit: BoxFit.cover,
+                          imageErrorBuilder: (context, error, stackTrace) => Icon(Icons.flag_rounded, size: 12 * factor),
+                        ),
+                      ),
                       SizedBox(width: 6 * factor),
                       Text(currency, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14 * factor)),
                       Icon(Icons.keyboard_arrow_down_rounded, size: 18 * factor),
@@ -902,25 +914,22 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                           ShakeX(
                             duration: const Duration(milliseconds: 500),
                             animate: _showShakeError,
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 52 * factor,
-                              child: ElevatedButton(
+                            child: ElevatedButton(
                                 onPressed: () => _handleContinue(l10n, state),
-                                style: ElevatedButton.styleFrom(
+                                style: context.elevatedButtonStyle(
                                   backgroundColor: canProceed ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300]),
                                   foregroundColor: canProceed ? theme.colorScheme.onSecondary : Colors.white70,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * factor)),
+                                  height: 52,
+                                  borderRadius: 16,
                                   elevation: canProceed ? 4 : 0,
                                 ),
                                 child: Text(
                                   _selectedMethod == "Bank Transfer" 
                                     ? l10n.continueToBank 
                                     : (_selectedMethod == "Murtaax Wallet" ? l10n.continueToWallet : l10n.continueToReceiver), 
-                                  style: TextStyle(fontSize: 16 * factor, fontWeight: FontWeight.w900, letterSpacing: 0.5)
+                                  style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5)
                                 ),
                               ),
-                            ),
                           ),
                           SizedBox(height: 20 * factor),
                         ],
@@ -1039,12 +1048,13 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                   contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(6),
-                    child: Image.network(
-                      "https://flagcdn.com/w40/${c['flag']}.png",
+                    child: FadeInImage.assetNetwork(
+                      placeholder: 'assets/images/logo.png',
+                      image: "https://flagcdn.com/w40/${c['flag']}.png",
                       width: 40,
                       height: 28,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
+                      imageErrorBuilder: (context, error, stackTrace) => Container(
                         width: 40,
                         height: 28,
                         color: isDark ? Colors.white10 : Colors.grey[200],

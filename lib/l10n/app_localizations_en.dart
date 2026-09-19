@@ -134,7 +134,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bills => 'Bills';
 
   @override
-  String get fundraiser => 'Fundraisers';
+  String get fundraiser => 'Sadaqah & Zakat';
 
   @override
   String get exchange => 'Exchange';
@@ -370,6 +370,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
+  String get orUseBiometrics => 'Or use Biometrics';
+
+  @override
   String get moneyOnWay => 'Your money is on its way.';
 
   @override
@@ -458,13 +461,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feeInfoContent =>
-      'Transaction fees depend on the payout method: Wallet (\$1.0/100), Bank (\$2.5/100), Mobile Money (\$2.5/100).';
+      'Transaction fees depend on the payout method: Wallet (\$1.0/100), Bank (\$1.5/100), Cards (\$2.0/100), Mobile Money (\$2.5/100).';
 
   @override
-  String get bankFeeInfo => 'The fee for bank transfers is \$2.50 per \$100.';
+  String get bankFeeInfo => 'The fee for bank transfers is \$1.50 per \$100.';
 
   @override
-  String get cardFeeInfo => 'The fee for card transfers is \$2.50 per \$100.';
+  String get cardFeeInfo => 'The fee for card transfers is \$2.00 per \$100.';
 
   @override
   String get walletFeeInfo =>
@@ -511,6 +514,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please enter your 4-digit PIN to authorize this payment.';
 
   @override
+  String get statement => 'Statement';
+
+  @override
+  String get unfreeze => 'Unfreeze';
+
+  @override
+  String get freeze => 'Freeze';
+
+  @override
+  String get pinVerification => 'PIN Verification';
+
+  @override
+  String get enterPinToContinue => 'Please enter your PIN to continue.';
+
+  @override
   String get authorizing => 'Authorizing...';
 
   @override
@@ -527,6 +545,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get active => 'Active';
+
+  @override
+  String get cardBalance => 'Card Balance';
 
   @override
   String get availableBalance => 'AVAILABLE BALANCE';
@@ -623,6 +644,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enterSecurityPin => 'Enter Security PIN';
+
+  @override
+  String get restoreCard => 'Restore Card';
+
+  @override
+  String get restoreCardDesc => 'Recover recently terminated card';
+
+  @override
+  String get selectCardToRestore => 'Select the card you want to restore';
+
+  @override
+  String get cardRestoredSuccess => 'Card restored successfully!';
+
+  @override
+  String get restore => 'Restore';
 
   @override
   String get cardInformation => 'Card Information';
@@ -964,6 +1000,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get enterPinConfirmAction =>
       'Please enter your PIN to confirm this action.';
+
+  @override
+  String get cardLimit => 'Card Limit';
+
+  @override
+  String get cardLimitDesc =>
+      'You can only have a maximum of 2 virtual cards at a time. Please terminate an existing card to order a new one.';
+
+  @override
+  String spentAmount(String amount) {
+    return 'Spent: $amount';
+  }
 
   @override
   String get setNewPin => 'Set New PIN';
@@ -1331,6 +1379,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noActiveCards => 'No active cards';
 
   @override
+  String get noActiveCardsDesc =>
+      'You don\'t have any active cards yet. Please create one to get started.';
+
+  @override
+  String get createFirstCard => 'Create Your First Card';
+
+  @override
+  String get restorePreviousCard => 'Restore previous card';
+
+  @override
   String get orderVirtualCard => 'Order Virtual Card';
 
   @override
@@ -1415,6 +1473,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get useFaceIdFingerprint => 'Use FaceID / Fingerprint';
+
+  @override
+  String get biometricAuth => 'Biometric Authentication';
 
   @override
   String get virtualCardBalance => 'VIRTUAL CARD BALANCE';
@@ -1667,7 +1728,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whatsApp => 'WhatsApp';
 
   @override
-  String get fundraiserCommunity => 'Fundraisers & Community';
+  String get fundraiserCommunity => 'Sadaqah & Community';
 
   @override
   String get medicalEmergency => 'Medical Emergency';
@@ -1706,7 +1767,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goal => 'Goal';
 
   @override
-  String get startAFundraiser => 'Start a Fundraiser';
+  String get startAFundraiser => 'Start Sadaqah Campaign';
 
   @override
   String get totalInvestment => 'Total Investment';
@@ -2538,28 +2599,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fundraiserDonations => 'donations';
 
   @override
-  String get fundraiserHistory => 'Donation History';
+  String get fundraiserHistory => 'Sadaqah History';
 
   @override
   String get fundraiserTotal => 'Total';
 
   @override
-  String get fundraiserSearchHint => 'Search fundraisers or creators...';
+  String get fundraiserSearchHint => 'Search Sadaqah or Zakat campaigns...';
 
   @override
-  String get fundraiserDonateTo => 'Donate to';
+  String get fundraiserDonateTo => 'Donate Sadaqah to';
 
   @override
   String get fundraiserThankYou => 'Thank you! Your donation was successful.';
 
   @override
-  String get fundraiserConfirmDonation => 'Confirm Donation';
+  String get fundraiserConfirmDonation => 'Confirm Sadaqah';
 
   @override
-  String get fundraiserDonate => 'Donate';
+  String get fundraiserDonate => 'Donate Sadaqah';
 
   @override
-  String get fundraiserDonateNow => 'Donate Now';
+  String get fundraiserDonateNow => 'Donate Sadaqah Now';
 
   @override
   String get fundraiserBixiHadda => 'Bixi Hadda';
@@ -2572,7 +2633,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fundraiserZakatCalcDesc =>
-      'Calculate and pay your contribution accurately';
+      'Calculate and pay your Zakat accurately';
 
   @override
   String get fundraiserTrending => 'TRENDING';
@@ -2701,6 +2762,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareThisCampaign => 'Share this Campaign';
 
   @override
+  String get supportCampaign => 'Support this campaign';
+
+  @override
+  String get linkCopied => 'Link copied to clipboard';
+
+  @override
   String get link => 'Link';
 
   @override
@@ -2739,17 +2806,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get insufficientBalanceFundraiser =>
-      'Insufficient balance in your MurtaaxPay wallet.';
+      'Insufficient balance for Sadaqah.';
 
   @override
-  String get startFundraiser => 'Start Fundraiser';
+  String get startFundraiser => 'Start Sadaqah';
 
   @override
-  String get createCampaign => 'Create a Campaign';
+  String get createCampaign => 'Create Sadaqah Campaign';
 
   @override
   String get createCampaignDesc =>
-      'Raise funds for a cause you care about. We\'ll verify your campaign to build trust.';
+      'Raise Sadaqah for a cause you care about. We\'ll verify your campaign to build trust.';
 
   @override
   String get campaignDetails => 'Campaign Details';
@@ -2818,6 +2885,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get zakatCalculator => 'Zakat Calculator';
+
+  @override
+  String get zakatPayment => 'Zakat Payment';
+
+  @override
+  String zakatSuccessMessage(String amount) {
+    return 'Your Zakat of $amount has been paid.';
+  }
 
   @override
   String get totalZakatToPay => 'Total Zakat to Pay';
@@ -3023,6 +3098,96 @@ class AppLocalizationsEn extends AppLocalizations {
   String belowNisabWarning(String threshold) {
     return 'Your assets are below the Nisab threshold ($threshold). Zakat is only mandatory if your wealth exceeds this.';
   }
+
+  @override
+  String get value => 'Value';
+
+  @override
+  String get grams => 'Grams';
+
+  @override
+  String get currentNisab => 'Current Nisab';
+
+  @override
+  String get estValue => 'Est. Value:';
+
+  @override
+  String get whoIsEntitledToZakat => 'Who is entitled to Zakat?';
+
+  @override
+  String get eightCategoriesOfZakat => '8 Categories of Zakat';
+
+  @override
+  String get evidenceFromQuran => 'Evidence from Quran';
+
+  @override
+  String get evidenceFromHadith => 'Evidence from Hadith';
+
+  @override
+  String get hadithReference =>
+      'Sahih Bukhari - Prophet (PBUH) to Mu\'adh (RA)';
+
+  @override
+  String get fuqaraTitle => 'Al-Fuqara\' (The Poor)';
+
+  @override
+  String get fuqaraDesc =>
+      'Those who have no income or property and cannot meet their basic needs.';
+
+  @override
+  String get masakinTitle => 'Al-Masakin (The Needy)';
+
+  @override
+  String get masakinDesc =>
+      'Those who have some income but it is not enough to cover their basic necessities.';
+
+  @override
+  String get amilinaTitle => 'Al-Amilina \'Alayha (Zakat Collectors)';
+
+  @override
+  String get amilinaDesc =>
+      'Those appointed to collect, manage and distribute Zakat funds.';
+
+  @override
+  String get muallafatiTitle => 'Al-Mu\'allafati Qulubuhum';
+
+  @override
+  String get muallafatiDesc =>
+      'New Muslims or those who are close to Islam to strengthen their faith.';
+
+  @override
+  String get riqabTitle => 'Fir-Riqab (Freeing Captives)';
+
+  @override
+  String get riqabDesc => 'Used to free slaves or captives from bondage.';
+
+  @override
+  String get ghariminTitle => 'Al-Gharimin (Debtors)';
+
+  @override
+  String get ghariminDesc =>
+      'Those overwhelmed by debt incurred for basic needs or social harmony.';
+
+  @override
+  String get fisabilillahTitle => 'Fi Sabilillah (Path of Allah)';
+
+  @override
+  String get fisabilillahDesc =>
+      'Those striving for the cause of Allah, including education and community welfare.';
+
+  @override
+  String get ibnusSabilTitle => 'Ibnus-Sabil (The Wayfarer)';
+
+  @override
+  String get ibnusSabilDesc =>
+      'Travelers who are stranded and need financial assistance to reach home.';
+
+  @override
+  String get fatwaTitle => 'Fatwa & Madhahib';
+
+  @override
+  String get fatwaDesc =>
+      'According to the majority of scholars (Shafi\'i, Maliki, Hanbali, and Hanafi), Zakat must be distributed to these 8 categories specifically. Some Madhahib allow giving to one category if the need is greater there.';
 
   @override
   String get makeRecurringDonation => 'Make this a recurring donation';

@@ -347,7 +347,7 @@ abstract class AppLocalizations {
   /// No description provided for @fundraiser.
   ///
   /// In en, this message translates to:
-  /// **'Fundraisers'**
+  /// **'Sadaqah & Zakat'**
   String get fundraiser;
 
   /// No description provided for @exchange.
@@ -806,6 +806,12 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
+  /// No description provided for @orUseBiometrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Or use Biometrics'**
+  String get orUseBiometrics;
+
   /// No description provided for @moneyOnWay.
   ///
   /// In en, this message translates to:
@@ -977,19 +983,19 @@ abstract class AppLocalizations {
   /// No description provided for @feeInfoContent.
   ///
   /// In en, this message translates to:
-  /// **'Transaction fees depend on the payout method: Wallet (\$1.0/100), Bank (\$2.5/100), Mobile Money (\$2.5/100).'**
+  /// **'Transaction fees depend on the payout method: Wallet (\$1.0/100), Bank (\$1.5/100), Cards (\$2.0/100), Mobile Money (\$2.5/100).'**
   String get feeInfoContent;
 
   /// No description provided for @bankFeeInfo.
   ///
   /// In en, this message translates to:
-  /// **'The fee for bank transfers is \$2.50 per \$100.'**
+  /// **'The fee for bank transfers is \$1.50 per \$100.'**
   String get bankFeeInfo;
 
   /// No description provided for @cardFeeInfo.
   ///
   /// In en, this message translates to:
-  /// **'The fee for card transfers is \$2.50 per \$100.'**
+  /// **'The fee for card transfers is \$2.00 per \$100.'**
   String get cardFeeInfo;
 
   /// No description provided for @walletFeeInfo.
@@ -1070,6 +1076,36 @@ abstract class AppLocalizations {
   /// **'Please enter your 4-digit PIN to authorize this payment.'**
   String get enterTransactionPin;
 
+  /// No description provided for @statement.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement'**
+  String get statement;
+
+  /// No description provided for @unfreeze.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfreeze'**
+  String get unfreeze;
+
+  /// No description provided for @freeze.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze'**
+  String get freeze;
+
+  /// No description provided for @pinVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN Verification'**
+  String get pinVerification;
+
+  /// No description provided for @enterPinToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your PIN to continue.'**
+  String get enterPinToContinue;
+
   /// No description provided for @authorizing.
   ///
   /// In en, this message translates to:
@@ -1099,6 +1135,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Active'**
   String get active;
+
+  /// No description provided for @cardBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Balance'**
+  String get cardBalance;
 
   /// No description provided for @availableBalance.
   ///
@@ -1291,6 +1333,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter Security PIN'**
   String get enterSecurityPin;
+
+  /// No description provided for @restoreCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Card'**
+  String get restoreCard;
+
+  /// No description provided for @restoreCardDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover recently terminated card'**
+  String get restoreCardDesc;
+
+  /// No description provided for @selectCardToRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the card you want to restore'**
+  String get selectCardToRestore;
+
+  /// No description provided for @cardRestoredSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Card restored successfully!'**
+  String get cardRestoredSuccess;
+
+  /// No description provided for @restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get restore;
 
   /// No description provided for @cardInformation.
   ///
@@ -1927,6 +1999,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter your PIN to confirm this action.'**
   String get enterPinConfirmAction;
+
+  /// No description provided for @cardLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Limit'**
+  String get cardLimit;
+
+  /// No description provided for @cardLimitDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You can only have a maximum of 2 virtual cards at a time. Please terminate an existing card to order a new one.'**
+  String get cardLimitDesc;
+
+  /// No description provided for @spentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent: {amount}'**
+  String spentAmount(String amount);
 
   /// No description provided for @setNewPin.
   ///
@@ -2594,6 +2684,24 @@ abstract class AppLocalizations {
   /// **'No active cards'**
   String get noActiveCards;
 
+  /// No description provided for @noActiveCardsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any active cards yet. Please create one to get started.'**
+  String get noActiveCardsDesc;
+
+  /// No description provided for @createFirstCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Your First Card'**
+  String get createFirstCard;
+
+  /// No description provided for @restorePreviousCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore previous card'**
+  String get restorePreviousCard;
+
   /// No description provided for @orderVirtualCard.
   ///
   /// In en, this message translates to:
@@ -2755,6 +2863,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use FaceID / Fingerprint'**
   String get useFaceIdFingerprint;
+
+  /// No description provided for @biometricAuth.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric Authentication'**
+  String get biometricAuth;
 
   /// No description provided for @virtualCardBalance.
   ///
@@ -3239,7 +3353,7 @@ abstract class AppLocalizations {
   /// No description provided for @fundraiserCommunity.
   ///
   /// In en, this message translates to:
-  /// **'Fundraisers & Community'**
+  /// **'Sadaqah & Community'**
   String get fundraiserCommunity;
 
   /// No description provided for @medicalEmergency.
@@ -3311,7 +3425,7 @@ abstract class AppLocalizations {
   /// No description provided for @startAFundraiser.
   ///
   /// In en, this message translates to:
-  /// **'Start a Fundraiser'**
+  /// **'Start Sadaqah Campaign'**
   String get startAFundraiser;
 
   /// No description provided for @totalInvestment.
@@ -4835,7 +4949,7 @@ abstract class AppLocalizations {
   /// No description provided for @fundraiserHistory.
   ///
   /// In en, this message translates to:
-  /// **'Donation History'**
+  /// **'Sadaqah History'**
   String get fundraiserHistory;
 
   /// No description provided for @fundraiserTotal.
@@ -4847,13 +4961,13 @@ abstract class AppLocalizations {
   /// No description provided for @fundraiserSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search fundraisers or creators...'**
+  /// **'Search Sadaqah or Zakat campaigns...'**
   String get fundraiserSearchHint;
 
   /// No description provided for @fundraiserDonateTo.
   ///
   /// In en, this message translates to:
-  /// **'Donate to'**
+  /// **'Donate Sadaqah to'**
   String get fundraiserDonateTo;
 
   /// No description provided for @fundraiserThankYou.
@@ -4865,19 +4979,19 @@ abstract class AppLocalizations {
   /// No description provided for @fundraiserConfirmDonation.
   ///
   /// In en, this message translates to:
-  /// **'Confirm Donation'**
+  /// **'Confirm Sadaqah'**
   String get fundraiserConfirmDonation;
 
   /// No description provided for @fundraiserDonate.
   ///
   /// In en, this message translates to:
-  /// **'Donate'**
+  /// **'Donate Sadaqah'**
   String get fundraiserDonate;
 
   /// No description provided for @fundraiserDonateNow.
   ///
   /// In en, this message translates to:
-  /// **'Donate Now'**
+  /// **'Donate Sadaqah Now'**
   String get fundraiserDonateNow;
 
   /// No description provided for @fundraiserBixiHadda.
@@ -4901,7 +5015,7 @@ abstract class AppLocalizations {
   /// No description provided for @fundraiserZakatCalcDesc.
   ///
   /// In en, this message translates to:
-  /// **'Calculate and pay your contribution accurately'**
+  /// **'Calculate and pay your Zakat accurately'**
   String get fundraiserZakatCalcDesc;
 
   /// No description provided for @fundraiserTrending.
@@ -5132,6 +5246,18 @@ abstract class AppLocalizations {
   /// **'Share this Campaign'**
   String get shareThisCampaign;
 
+  /// No description provided for @supportCampaign.
+  ///
+  /// In en, this message translates to:
+  /// **'Support this campaign'**
+  String get supportCampaign;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied to clipboard'**
+  String get linkCopied;
+
   /// No description provided for @link.
   ///
   /// In en, this message translates to:
@@ -5207,25 +5333,25 @@ abstract class AppLocalizations {
   /// No description provided for @insufficientBalanceFundraiser.
   ///
   /// In en, this message translates to:
-  /// **'Insufficient balance in your MurtaaxPay wallet.'**
+  /// **'Insufficient balance for Sadaqah.'**
   String get insufficientBalanceFundraiser;
 
   /// No description provided for @startFundraiser.
   ///
   /// In en, this message translates to:
-  /// **'Start Fundraiser'**
+  /// **'Start Sadaqah'**
   String get startFundraiser;
 
   /// No description provided for @createCampaign.
   ///
   /// In en, this message translates to:
-  /// **'Create a Campaign'**
+  /// **'Create Sadaqah Campaign'**
   String get createCampaign;
 
   /// No description provided for @createCampaignDesc.
   ///
   /// In en, this message translates to:
-  /// **'Raise funds for a cause you care about. We\'ll verify your campaign to build trust.'**
+  /// **'Raise Sadaqah for a cause you care about. We\'ll verify your campaign to build trust.'**
   String get createCampaignDesc;
 
   /// No description provided for @campaignDetails.
@@ -5353,6 +5479,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Zakat Calculator'**
   String get zakatCalculator;
+
+  /// No description provided for @zakatPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat Payment'**
+  String get zakatPayment;
+
+  /// No description provided for @zakatSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Zakat of {amount} has been paid.'**
+  String zakatSuccessMessage(String amount);
 
   /// No description provided for @totalZakatToPay.
   ///
@@ -5719,6 +5857,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your assets are below the Nisab threshold ({threshold}). Zakat is only mandatory if your wealth exceeds this.'**
   String belowNisabWarning(String threshold);
+
+  /// No description provided for @value.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get value;
+
+  /// No description provided for @grams.
+  ///
+  /// In en, this message translates to:
+  /// **'Grams'**
+  String get grams;
+
+  /// No description provided for @currentNisab.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Nisab'**
+  String get currentNisab;
+
+  /// No description provided for @estValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Est. Value:'**
+  String get estValue;
+
+  /// No description provided for @whoIsEntitledToZakat.
+  ///
+  /// In en, this message translates to:
+  /// **'Who is entitled to Zakat?'**
+  String get whoIsEntitledToZakat;
+
+  /// No description provided for @eightCategoriesOfZakat.
+  ///
+  /// In en, this message translates to:
+  /// **'8 Categories of Zakat'**
+  String get eightCategoriesOfZakat;
+
+  /// No description provided for @evidenceFromQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence from Quran'**
+  String get evidenceFromQuran;
+
+  /// No description provided for @evidenceFromHadith.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence from Hadith'**
+  String get evidenceFromHadith;
+
+  /// No description provided for @hadithReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Sahih Bukhari - Prophet (PBUH) to Mu\'adh (RA)'**
+  String get hadithReference;
+
+  /// No description provided for @fuqaraTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Al-Fuqara\' (The Poor)'**
+  String get fuqaraTitle;
+
+  /// No description provided for @fuqaraDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Those who have no income or property and cannot meet their basic needs.'**
+  String get fuqaraDesc;
+
+  /// No description provided for @masakinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Al-Masakin (The Needy)'**
+  String get masakinTitle;
+
+  /// No description provided for @masakinDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Those who have some income but it is not enough to cover their basic necessities.'**
+  String get masakinDesc;
+
+  /// No description provided for @amilinaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Al-Amilina \'Alayha (Zakat Collectors)'**
+  String get amilinaTitle;
+
+  /// No description provided for @amilinaDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Those appointed to collect, manage and distribute Zakat funds.'**
+  String get amilinaDesc;
+
+  /// No description provided for @muallafatiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Al-Mu\'allafati Qulubuhum'**
+  String get muallafatiTitle;
+
+  /// No description provided for @muallafatiDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'New Muslims or those who are close to Islam to strengthen their faith.'**
+  String get muallafatiDesc;
+
+  /// No description provided for @riqabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fir-Riqab (Freeing Captives)'**
+  String get riqabTitle;
+
+  /// No description provided for @riqabDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Used to free slaves or captives from bondage.'**
+  String get riqabDesc;
+
+  /// No description provided for @ghariminTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Al-Gharimin (Debtors)'**
+  String get ghariminTitle;
+
+  /// No description provided for @ghariminDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Those overwhelmed by debt incurred for basic needs or social harmony.'**
+  String get ghariminDesc;
+
+  /// No description provided for @fisabilillahTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fi Sabilillah (Path of Allah)'**
+  String get fisabilillahTitle;
+
+  /// No description provided for @fisabilillahDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Those striving for the cause of Allah, including education and community welfare.'**
+  String get fisabilillahDesc;
+
+  /// No description provided for @ibnusSabilTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ibnus-Sabil (The Wayfarer)'**
+  String get ibnusSabilTitle;
+
+  /// No description provided for @ibnusSabilDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Travelers who are stranded and need financial assistance to reach home.'**
+  String get ibnusSabilDesc;
+
+  /// No description provided for @fatwaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fatwa & Madhahib'**
+  String get fatwaTitle;
+
+  /// No description provided for @fatwaDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'According to the majority of scholars (Shafi\'i, Maliki, Hanbali, and Hanafi), Zakat must be distributed to these 8 categories specifically. Some Madhahib allow giving to one category if the need is greater there.'**
+  String get fatwaDesc;
 
   /// No description provided for @makeRecurringDonation.
   ///

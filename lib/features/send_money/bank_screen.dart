@@ -5,7 +5,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/models/bank_account.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/widgets/step_indicator.dart';
 import 'payment_screen.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +20,7 @@ class BankScreen extends StatefulWidget {
   final String? cardId;
   final String? prefilledName;
   final String? prefilledAccount;
+  final bool isFeeIncluded;
 
   const BankScreen({
     super.key, 
@@ -30,6 +31,7 @@ class BankScreen extends StatefulWidget {
     this.cardId,
     this.prefilledName,
     this.prefilledAccount,
+    this.isFeeIncluded = false,
   });
 
   @override
@@ -242,6 +244,7 @@ class _BankScreenState extends State<BankScreen> {
           city: _isInternational ? _cityController.text : null,
           country: _isInternational ? _countryController.text : null,
           swiftCode: _isInternational ? _swiftController.text : null,
+          isFeeIncluded: widget.isFeeIncluded,
         ),
       ),
     );
@@ -786,26 +789,20 @@ class _BankScreenState extends State<BankScreen> {
                         SizedBox(height: 32 * context.fontSizeFactor),
                         
                         // --- CONTINUE BUTTON ---
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56 * context.fontSizeFactor,
-                          child: ElevatedButton(
-                            onPressed: (_accountController.text.length >= 8 && _nameController.text.isNotEmpty) 
-                                ? () => _handleContinue(l10n) : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.secondary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-                              elevation: 4,
-                              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
-                            ),
-                            child: Text(
-                              l10n.continueToReview,
-                              style: TextStyle(
-                                fontSize: 18 * context.fontSizeFactor, 
-                                fontWeight: FontWeight.w900, 
-                                letterSpacing: 0.5
-                              ),
+                        ElevatedButton(
+                          onPressed: (_accountController.text.length >= 8 && _nameController.text.isNotEmpty) 
+                              ? () => _handleContinue(l10n) : null,
+                          style: context.elevatedButtonStyle(
+                            backgroundColor: theme.colorScheme.secondary,
+                            foregroundColor: Colors.white,
+                            borderRadius: 16,
+                            elevation: 4,
+                          ),
+                          child: Text(
+                            l10n.continueToReview,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w900, 
+                              letterSpacing: 0.5
                             ),
                           ),
                         ),

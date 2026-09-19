@@ -4,7 +4,7 @@ import 'package:animate_do/animate_do.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/app_state.dart';
 import '../../../core/models/crypto_asset.dart';
-import '../../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
@@ -163,7 +163,7 @@ class _CryptoBuySellSheetState extends State<CryptoBuySellSheet> {
               width: 40 * context.fontSizeFactor,
               height: 4 * context.fontSizeFactor,
               margin: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
-              decoration: BoxDecoration(color: theme.dividerColor.withOpacity(0.2), borderRadius: BorderRadius.circular(2 * context.fontSizeFactor)),
+              decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(2 * context.fontSizeFactor)),
             ),
             Text(
               widget.isBuy ? "${l10n.buy} ${widget.asset.name}" : "${l10n.sell} ${widget.asset.name}",
@@ -221,7 +221,7 @@ class _CryptoBuySellSheetState extends State<CryptoBuySellSheet> {
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
                   elevation: 0,
-                  disabledBackgroundColor: theme.dividerColor.withOpacity(0.1),
+                  disabledBackgroundColor: theme.dividerColor.withValues(alpha: 0.1),
                 ),
                 child: _isProcessing
                     ? SizedBox(height: 24 * context.fontSizeFactor, width: 24 * context.fontSizeFactor, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
@@ -270,3 +270,4 @@ class _CryptoBuySellSheetState extends State<CryptoBuySellSheet> {
     );
   }
 }
+

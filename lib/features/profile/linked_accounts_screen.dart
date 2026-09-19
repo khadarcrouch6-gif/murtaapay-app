@@ -58,7 +58,7 @@ class _LinkedAccountsScreenState extends State<LinkedAccountsScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.account_balance_wallet_outlined, size: 80, color: AppColors.grey.withOpacity(0.3)),
+        Icon(Icons.account_balance_wallet_outlined, size: 80, color: AppColors.grey.withValues(alpha: 0.3)),
         const SizedBox(height: 24),
         const Text("No linked accounts yet", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
@@ -75,14 +75,14 @@ class _LinkedAccountsScreenState extends State<LinkedAccountsScreen> {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: theme.dividerColor.withOpacity(0.05)),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.accentTeal.withOpacity(0.1),
+              color: AppColors.accentTeal.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.account_balance_rounded, color: AppColors.accentTeal),
@@ -131,3 +131,4 @@ class _LinkedAccountsScreenState extends State<LinkedAccountsScreen> {
 extension on List<BankAccount> {
   int get itemCount => length;
 }
+

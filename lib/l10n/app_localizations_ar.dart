@@ -134,7 +134,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bills => 'فواتير';
 
   @override
-  String get fundraiser => 'صدقة';
+  String get fundraiser => 'الصدقة والزكاة';
 
   @override
   String get exchange => 'تبديل';
@@ -370,6 +370,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cancel => 'إلغاء';
 
   @override
+  String get orUseBiometrics => 'Or use Biometrics';
+
+  @override
   String get moneyOnWay => 'أموالك في طريقها إليك';
 
   @override
@@ -461,10 +464,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'الرسوم هي 2.5%. على سبيل المثال: إرسال 100 دولار سيكلف 2.5 دولار فقط كرسوم.';
 
   @override
-  String get bankFeeInfo => 'The fee for bank transfers is \$2.50 per \$100.';
+  String get bankFeeInfo => 'The fee for bank transfers is \$1.50 per \$100.';
 
   @override
-  String get cardFeeInfo => 'The fee for card transfers is \$2.50 per \$100.';
+  String get cardFeeInfo => 'The fee for card transfers is \$2.00 per \$100.';
 
   @override
   String get walletFeeInfo =>
@@ -511,6 +514,21 @@ class AppLocalizationsAr extends AppLocalizations {
       'يرجى إدخال رمز PIN المكون من 4 أرقام لتفويض هذا الدفع.';
 
   @override
+  String get statement => 'Statement';
+
+  @override
+  String get unfreeze => 'Unfreeze';
+
+  @override
+  String get freeze => 'Freeze';
+
+  @override
+  String get pinVerification => 'PIN Verification';
+
+  @override
+  String get enterPinToContinue => 'Please enter your PIN to continue.';
+
+  @override
   String get authorizing => 'جاري التفويض...';
 
   @override
@@ -526,6 +544,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get active => 'نشط';
+
+  @override
+  String get cardBalance => 'Card Balance';
 
   @override
   String get availableBalance => 'الرصيد المتاح';
@@ -622,6 +643,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get enterSecurityPin => 'يرجى إدخال رمز PIN السري المكون من 4 أرقام';
+
+  @override
+  String get restoreCard => 'Restore Card';
+
+  @override
+  String get restoreCardDesc => 'Recover recently terminated card';
+
+  @override
+  String get selectCardToRestore => 'Select the card you want to restore';
+
+  @override
+  String get cardRestoredSuccess => 'Card restored successfully!';
+
+  @override
+  String get restore => 'Restore';
 
   @override
   String get cardInformation => 'Card Information';
@@ -963,6 +999,18 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get enterPinConfirmAction =>
       'Please enter your PIN to confirm this action.';
+
+  @override
+  String get cardLimit => 'Card Limit';
+
+  @override
+  String get cardLimitDesc =>
+      'You can only have a maximum of 2 virtual cards at a time. Please terminate an existing card to order a new one.';
+
+  @override
+  String spentAmount(String amount) {
+    return 'Spent: $amount';
+  }
 
   @override
   String get setNewPin => 'Set New PIN';
@@ -1330,6 +1378,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noActiveCards => 'لا توجد بطاقات نشطة';
 
   @override
+  String get noActiveCardsDesc =>
+      'You don\'t have any active cards yet. Please create one to get started.';
+
+  @override
+  String get createFirstCard => 'Create Your First Card';
+
+  @override
+  String get restorePreviousCard => 'Restore previous card';
+
+  @override
   String get orderVirtualCard => 'طلب بطاقة افتراضية';
 
   @override
@@ -1412,6 +1470,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get useFaceIdFingerprint => 'استخدم بصمة الوجه / بصمة الإصبع';
+
+  @override
+  String get biometricAuth => 'Biometric Authentication';
 
   @override
   String get virtualCardBalance => 'رصيد البطاقة الافتراضية';
@@ -1701,7 +1762,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get goal => 'الهدف';
 
   @override
-  String get startAFundraiser => 'بدء جمع تبرعات';
+  String get startAFundraiser => 'بدء حملة صدقة';
 
   @override
   String get totalInvestment => 'إجمالي الاستثمار';
@@ -2043,331 +2104,330 @@ class AppLocalizationsAr extends AppLocalizations {
   String get yearly => 'سنوي';
 
   @override
-  String get hagbadCreatedSuccess => 'Hagbad Group Created Successfully!';
+  String get hagbadCreatedSuccess => 'تم إنشاء مجموعة هغبد بنجاح!';
 
   @override
-  String get enterWalletOrPhoneHint => 'Enter Wallet ID or Phone Number';
+  String get enterWalletOrPhoneHint => 'أدخل معرف المحفظة أو رقم الهاتف';
 
   @override
-  String get memberAlreadyAdded => 'Member already added';
+  String get memberAlreadyAdded => 'العضو مضاف بالفعل';
 
   @override
-  String get walletIdNotFound => 'Wallet ID not found';
+  String get walletIdNotFound => 'معرف المحفظة غير موجود';
 
   @override
-  String get createAndInvite => 'Create & Invite';
+  String get createAndInvite => 'إنشاء ودعوة';
 
   @override
   String get allMembersMustConfirm =>
-      'All members must confirm their invitation before Qori-tuur.';
+      'يجب على جميع الأعضاء تأكيد دعوتهم قبل بدء القرعة (قوري تور).';
 
   @override
-  String get qoriTuurStart => 'Qori-tuur (Start Group)';
+  String get qoriTuurStart => 'قوري تور (بدء المجموعة)';
 
   @override
-  String get qoriTuurRandomize => 'Qori-tuur (Randomize Turns)';
+  String get qoriTuurRandomize => 'قوري تور (عشوائية الأدوار)';
 
   @override
   String inviteToGroup(String groupName) {
-    return 'Invite to $groupName';
+    return 'دعوة إلى $groupName';
   }
 
   @override
-  String get memberAlreadyInGroup => 'Member already in group';
+  String get memberAlreadyInGroup => 'العضو موجود بالفعل في المجموعة';
 
   @override
-  String get walletOrPhoneNotFound => 'Wallet ID or Phone not found';
+  String get walletOrPhoneNotFound => 'معرف المحفظة أو الهاتف غير موجود';
 
   @override
   String memberInvitedSuccess(String name) {
-    return '$name invited to group';
+    return 'تمت دعوة $name للمجموعة';
   }
 
   @override
-  String get drawing => 'Drawing...';
+  String get drawing => 'جاري السحب...';
 
   @override
-  String get qoriTuur => 'Qori-tuur';
+  String get qoriTuur => 'قوري تور';
 
   @override
-  String get noHagbadGroups => 'No groups yet. Create one to start saving!';
+  String get noHagbadGroups => 'لا توجد مجموعات بعد. أنشئ واحدة لبدء الادخار!';
 
   @override
-  String get progress => 'Progress';
+  String get progress => 'التقدم';
 
   @override
-  String get members => 'Members';
+  String get members => 'الأعضاء';
 
   @override
-  String get you => 'You';
+  String get you => 'أنت';
 
   @override
-  String get youAdmin => 'You (Admin)';
+  String get youAdmin => 'أنت (المسؤول)';
 
   @override
   String payoutAfterFee(String fee) {
-    return 'Payout after $fee fee';
+    return 'الدفعة بعد رسوم $fee';
   }
 
   @override
   String yourTurnInDays(int days) {
-    return 'Your turn in $days days';
+    return 'دورك بعد $days أيام';
   }
 
   @override
   String dayWithNumber(int number) {
-    return 'Day $number';
+    return 'اليوم $number';
   }
 
   @override
   String weekWithNumber(int number) {
-    return 'Week $number';
+    return 'الأسبوع $number';
   }
 
   @override
   String monthWithNumber(int number) {
-    return 'Month $number';
+    return 'الشهر $number';
   }
 
   @override
   String turnWithNumber(int number) {
-    return 'Turn $number';
+    return 'الدور $number';
   }
 
   @override
   String get cannotSwapReceived =>
-      'Cannot swap with members who already received their payout.';
+      'لا يمكن التبديل مع الأعضاء الذين استلموا دفعتهم بالفعل.';
 
   @override
-  String get swapTurn => 'Swap Turn';
+  String get swapTurn => 'تبديل الدور';
 
   @override
   String swapWith(String name) {
-    return 'Swap with $name';
+    return 'تبديل مع $name';
   }
 
   @override
-  String get trustedMember => 'Trusted Member';
+  String get trustedMember => 'عضو موثوق';
 
   @override
-  String get yourTurnToday => 'It\'s your turn today!';
+  String get yourTurnToday => 'إنه دورك اليوم!';
 
   @override
-  String get yourTurnTomorrow => 'Your turn is tomorrow!';
+  String get yourTurnTomorrow => 'دورك غداً!';
 
   @override
-  String get serviceFee => 'Service Fee';
+  String get serviceFee => 'رسوم الخدمة';
 
   @override
-  String get payoutReady => 'Payout Ready';
+  String get payoutReady => 'الدفعة جاهزة';
 
   @override
-  String get totalPot => 'Total Fund';
+  String get totalPot => 'إجمالي الصندوق';
 
   @override
-  String get hagbadPot => 'Hagbad Pot (Escrow)';
+  String get hagbadPot => 'صندوق هغبد (ضمان)';
 
   @override
-  String get amountToReceive => 'Amount to Receive';
+  String get amountToReceive => 'المبلغ المراد استلامه';
 
   @override
-  String get claimPayout => 'Claim Payout';
+  String get claimPayout => 'طلب استلام الدفعة';
 
   @override
-  String get guarantor => 'Guarantor (Uul)';
+  String get guarantor => 'الضامن (عول)';
 
   @override
-  String get guarantorNameLabel => 'Guarantor Name';
+  String get guarantorNameLabel => 'اسم الضامن';
 
   @override
-  String get guarantorIdLabel => 'Guarantor Wallet ID';
+  String get guarantorIdLabel => 'معرف محفظة الضامن';
 
   @override
-  String get requireGuarantor => 'This member requires a guarantor (Uul)';
+  String get requireGuarantor => 'هذا العضو يحتاج إلى ضامن (عول)';
 
   @override
-  String get guarantorDetails => 'Guarantor Details';
+  String get guarantorDetails => 'تفاصيل الضامن';
 
   @override
-  String get debtor => 'Debtor';
+  String get debtor => 'المدين';
 
   @override
-  String get payout => 'Payout';
+  String get payout => 'الدفعة';
 
   @override
-  String get cycle => 'Cycle';
+  String get cycle => 'الدورة';
 
   @override
   String nextPayoutWithMember(String name, int turn) {
-    return 'Next Payout: $name (Turn $turn)';
+    return 'الدفعة القادمة: $name (الدور $turn)';
   }
 
   @override
   String payoutSuccessfulFor(String name) {
-    return 'Payout successful for $name';
+    return 'نجحت عملية الدفع لـ $name';
   }
 
   @override
   String payContributionConfirm(String amount) {
-    return 'Do you want to pay $amount for this cycle\'s Hagbad?';
+    return 'هل تريد دفع $amount لمساهمة هغبد لهذه الدورة؟';
   }
 
   @override
   String get fullOathText =>
-      'I swear by the name of Almighty Allah that I will pay the Hagbad contribution on time, and if I am late I will pay the agreed penalty.';
+      'أقسم بالله العظيم أنني سأدفع مساهمة هغبد في وقتها، وإذا تأخرت سأدفع الغرامة المتفق عليها.';
 
   @override
   String joinedGroup(String name) {
-    return 'You have joined $name!';
+    return 'لقد انضممت إلى $name!';
   }
 
   @override
   String memberSignedOath(String name) {
-    return '$name has signed the oath.';
+    return 'لقد وقع $name على القسم.';
   }
 
   @override
-  String get noSavingGroups => 'No saving groups yet';
+  String get noSavingGroups => 'لا توجد مجموعات ادخار بعد';
 
   @override
-  String get createFirstGroup => 'Create First Group';
+  String get createFirstGroup => 'إنشاء أول مجموعة';
 
   @override
   String penalty(String amount) {
-    return 'Penalty: $amount';
+    return 'الغرامة: $amount';
   }
 
   @override
   String processPayoutError(String error) {
-    return 'Error processing payout: $error';
+    return 'خطأ في معالجة الدفعة: $error';
   }
 
   @override
-  String get remaining => 'Remaining';
+  String get remaining => 'المتبقي';
 
   @override
-  String get hagbadTerms => '6. Hagbad Social Trust';
+  String get hagbadTerms => '6. أمانة هغبد الاجتماعية';
 
   @override
   String get hagbadTermsDesc =>
-      'Hagbad is based on mutual trust (Aaminaad). By joining, you agree to make timely contributions. If a member fails to pay, the Guarantor (Uul) is responsible for covering the debt.';
+      'هغبد مبني على الثقة المتبادلة (أمانة). بانضمامك، فإنك توافق على تقديم المساهمات في وقتها. في حال فشل العضو في الدفع، يكون الضامن (العول) مسؤولاً عن تغطية الدين.';
 
   @override
   String get iAgreeToHagbadTerms =>
-      'I agree to the Hagbad Social Trust terms and conditions.';
+      'أوافق على شروط وأحكام أمانة هغبد الاجتماعية.';
 
   @override
-  String get hagbadOath => 'Religious Oath (Dhaar)';
+  String get hagbadOath => 'القسم الشرعي (الضار)';
 
   @override
   String get hagbadOathDesc =>
-      'Do you swear by Allah that you will be honest and fulfill your contributions on time?';
+      'هل تقسم بالله أن تكون صادقاً وتؤدي مساهماتك في وقتها؟';
 
   @override
-  String get iConfirmOath => 'I swear by Allah to be honest.';
+  String get iConfirmOath => 'أقسم بالله أن أكون صادقاً.';
 
   @override
-  String get remindAll => 'Remind All';
+  String get remindAll => 'تذكير الجميع';
 
   @override
-  String get remindMember => 'Remind Member';
+  String get remindMember => 'تذكير العضو';
 
   @override
   String reminderSent(Object name) {
-    return 'Reminder sent to $name';
+    return 'تم إرسال التذكير لـ $name';
   }
 
   @override
-  String get allRemindersSent => 'Reminders sent to all pending members';
+  String get allRemindersSent => 'تم إرسال التذكيرات لجميع الأعضاء المنتظرين';
 
   @override
-  String get replaceMember => 'Replace Member';
+  String get replaceMember => 'استبدال العضو';
 
   @override
-  String get substituteMember => 'Substitute Member';
+  String get substituteMember => 'عضو بديل';
 
   @override
-  String get enterNewMemberDetails => 'Enter new member details';
+  String get enterNewMemberDetails => 'أدخل تفاصيل العضو الجديد';
 
   @override
-  String get memberReplaced => 'Member has been successfully replaced';
+  String get memberReplaced => 'تم استبدال العضو بنجاح';
 
   @override
-  String get cannotReplaceReceived =>
-      'Cannot replace a member who has already received a payout';
+  String get cannotReplaceReceived => 'لا يمكن استبدال عضو استلم دفعته بالفعل';
 
   @override
-  String get paymentHistory => 'Payment History';
+  String get paymentHistory => 'سجل المدفوعات';
 
   @override
   String paidOn(Object date) {
-    return 'Paid on $date';
+    return 'تم الدفع في $date';
   }
 
   @override
-  String get noPaymentsYet => 'No payments recorded yet';
+  String get noPaymentsYet => 'لم يتم تسجيل أي مدفوعات بعد';
 
   @override
-  String get lateFee => 'Late Fee';
+  String get lateFee => 'رسوم تأخير';
 
   @override
-  String get applyPenalty => 'Apply Penalty';
+  String get applyPenalty => 'تطبيق غرامة';
 
   @override
-  String get penaltyAmount => 'Penalty Amount (\$)';
+  String get penaltyAmount => 'مبلغ الغرامة (\$)';
 
   @override
   String penaltyApplied(Object amount, Object name) {
-    return 'Penalty of \$$amount applied to $name';
+    return 'تم تطبيق غرامة قدرها \$$amount على $name';
   }
 
   @override
-  String get invitationReceived => 'Invitation Received';
+  String get invitationReceived => 'تم استلام دعوة';
 
   @override
   String invitationDesc(String admin, String amount) {
-    return '$admin invited you to join a \$$amount Hagbad group.';
+    return 'دعاك $admin للانضمام إلى مجموعة هغبد بقيمة \$$amount.';
   }
 
   @override
-  String get acceptInvite => 'Accept Invitation';
+  String get acceptInvite => 'قبول الدعوة';
 
   @override
-  String get religiousOathRequired => 'Religious Oath Required';
+  String get religiousOathRequired => 'القسم الشرعي مطلوب';
 
   @override
   String get oathRequirementDesc =>
-      'To join the group officially, you must sign the religious oath (Dhaar).';
+      'للانضمام إلى المجموعة رسمياً، يجب عليك التوقيع على القسم الشرعي (الضار).';
 
   @override
-  String get signOathNow => 'Sign Oath Now';
+  String get signOathNow => 'وقع القسم الآن';
 
   @override
-  String get apr2026 => 'Apr 2026';
+  String get apr2026 => 'أبريل 2026';
 
   @override
-  String get transactionLimits => 'Transaction Limits';
+  String get transactionLimits => 'حدود المعاملات';
 
   @override
-  String get scanQR => 'Scan QR Code';
+  String get scanQR => 'مسح رمز QR';
 
   @override
-  String get alignQRCode => 'Align the QR code within the frame to scan';
+  String get alignQRCode => 'حاذِ رمز QR داخل الإطار للمسح';
 
   @override
-  String get myQrCode => 'My QR Code';
+  String get myQrCode => 'رمز QR الخاص بي';
 
   @override
-  String get shareMyQrCode => 'Share my QR code to receive payments instantly.';
+  String get shareMyQrCode => 'شارك رمز QR الخاص بك لاستلام المدفوعات فوراً.';
 
   @override
-  String get quickSend => 'Quick Send';
+  String get quickSend => 'إرسال سريع';
 
   @override
-  String get invalidWalletId => 'Invalid Wallet ID';
+  String get invalidWalletId => 'معرف محفظة غير صالح';
 
   @override
-  String get cannotSendToSelf => 'You cannot send money to yourself';
+  String get cannotSendToSelf => 'لا يمكنك إرسال الأموال لنفسك';
 
   @override
   String get evcPlus => 'EVC Plus';
@@ -2385,31 +2445,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sahal => 'Sahal';
 
   @override
-  String get payViaSalaam => 'Pay via Salaam Waafi';
+  String get payViaSalaam => 'دفع عبر سلام Waafi';
 
   @override
-  String get purposeOfRemittance => 'Purpose of Remittance';
+  String get purposeOfRemittance => 'غرض الحوالة';
 
   @override
-  String get familySupport => 'Family Support';
+  String get familySupport => 'دعم عائلي';
 
   @override
-  String get educationTuition => 'Education/Tuition';
+  String get educationTuition => 'تعليم/رسوم دراسية';
 
   @override
-  String get medicalExpenses => 'Medical Expenses';
+  String get medicalExpenses => 'مصاريف طبية';
 
   @override
-  String get businessTransaction => 'Business Transaction';
+  String get businessTransaction => 'معاملة تجارية';
 
   @override
-  String get propertyRent => 'Property/Rent';
+  String get propertyRent => 'عقار/إيجار';
 
   @override
-  String get gift => 'Gift';
+  String get gift => 'هدية';
 
   @override
-  String get other => 'Other';
+  String get other => 'أخرى';
 
   @override
   String get contactPermissionRequired =>
@@ -2431,62 +2491,63 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noActivityYet => 'لا يوجد نشاط بعد';
 
   @override
-  String get totalCycles => 'Total Cycles';
+  String get totalCycles => 'إجمالي الدورات';
 
   @override
-  String get selectFromContacts => 'Select from Contacts';
+  String get selectFromContacts => 'اختر من جهات الاتصال';
 
   @override
-  String get fromContacts => 'From Contacts';
+  String get fromContacts => 'من جهات الاتصال';
 
   @override
-  String get payOut => 'Pay Out';
+  String get payOut => 'صرف الدفعة';
 
   @override
   String confirmPayoutDesc(String name) {
-    return 'Are you sure you want to process the payout for $name?';
+    return 'هل أنت متأكد أنك تريد معالجة الدفعة لـ $name؟';
   }
 
   @override
-  String get payoutNote => 'Note: This will move the group to the next cycle.';
+  String get payoutNote =>
+      'ملاحظة: سيؤدي هذا إلى نقل المجموعة إلى الدورة التالية.';
 
   @override
-  String get processPayout => 'Process Payout';
+  String get processPayout => 'معالجة الدفعة';
 
   @override
-  String get invitationPending => 'Invitation Pending';
+  String get invitationPending => 'الدعوة قيد الانتظار';
 
   @override
-  String get signOathDhaar => 'Sign Oath (Dhaar)';
+  String get signOathDhaar => 'توقيع القسم (الضار)';
 
   @override
   String enterPenaltyAmount(String name) {
-    return 'Enter penalty amount for $name';
+    return 'أدخل مبلغ الغرامة لـ $name';
   }
 
   @override
   String get qoriTuurDesc =>
-      'This will randomize the payout order for all members who haven\'t received their payout yet. Proceed?';
+      'سيؤدي هذا إلى جعل ترتيب الدفع عشوائياً لجميع الأعضاء الذين لم يستلموا دفعتهم بعد. هل تود المتابعة؟';
 
   @override
-  String get randomize => 'Randomize';
+  String get randomize => 'عشوائي';
 
   @override
-  String get inviteToApp => 'Invite to MurtaaxPay';
+  String get inviteToApp => 'دعوة للتطبيق';
 
   @override
   String inviteToAppDesc(String name) {
-    return '$name is not on MurtaaxPay yet. Would you like to invite them to the app first?';
+    return '$name ليس على مرتاح باي بعد. هل تود دعوته للتطبيق أولاً؟';
   }
 
   @override
-  String get inviteViaSms => 'Invite via SMS';
+  String get inviteViaSms => 'دعوة عبر SMS';
 
   @override
-  String get selfTransferError => 'You cannot invite yourself';
+  String get selfTransferError => 'لا يمكنك دعوة نفسك';
 
   @override
-  String get invalidWalletFormat => 'Invalid Wallet ID format';
+  String get invalidWalletFormat => 'تنسيق معرف المحفظة غير صالح';
 
   @override
   String get searching => 'جاري البحث...';
@@ -2495,67 +2556,67 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invite => 'Invite';
 
   @override
-  String get admin => 'Admin';
+  String get admin => 'مسؤول';
 
   @override
-  String get deleteGroup => 'Delete Group';
+  String get deleteGroup => 'حذف المجموعة';
 
   @override
   String get deleteGroupConfirm =>
-      'Are you sure you want to delete this group? All history will be lost.';
+      'هل أنت متأكد أنك تريد حذف هذه المجموعة؟ سيتم فقدان كل السجل.';
 
   @override
-  String get removeMember => 'Remove Member';
+  String get removeMember => 'إزالة عضو';
 
   @override
   String removeMemberConfirm(String name) {
-    return 'Are you sure you want to remove $name from the group?';
+    return 'هل أنت متأكد أنك تريد إزالة $name من المجموعة؟';
   }
 
   @override
-  String get history => 'History';
+  String get history => 'السجل';
 
   @override
-  String get confirmPayout => 'Confirm Payout';
+  String get confirmPayout => 'تأكيد الدفعة';
 
   @override
-  String get payoutAmount => 'Payout Amount';
+  String get payoutAmount => 'مبلغ الدفعة';
 
   @override
-  String get fundraiserUrgent => 'URGENT';
+  String get fundraiserUrgent => 'عاجل';
 
   @override
-  String get fundraiserRaised => 'raised';
+  String get fundraiserRaised => 'تم جمعها';
 
   @override
-  String get fundraiserRaisedOf => 'raised of';
+  String get fundraiserRaisedOf => 'تم جمعها من أصل';
 
   @override
-  String get fundraiserDonations => 'donations';
+  String get fundraiserDonations => 'تبرعات';
 
   @override
-  String get fundraiserHistory => 'Donation History';
+  String get fundraiserHistory => 'سجل الصدقات';
 
   @override
-  String get fundraiserTotal => 'Total';
+  String get fundraiserTotal => 'الإجمالي';
 
   @override
-  String get fundraiserSearchHint => 'Search fundraisers or creators...';
+  String get fundraiserSearchHint => 'ابحث عن حملات الصدقة أو الزكاة...';
 
   @override
-  String get fundraiserDonateTo => 'Donate to';
+  String get fundraiserDonateTo => 'تبرع بالصدقة لـ';
 
   @override
-  String get fundraiserThankYou => 'Thank you! Your donation was successful.';
+  String get fundraiserThankYou => 'شكراً لك! تم التبرع بنجاح.';
 
   @override
-  String get fundraiserConfirmDonation => 'Confirm Donation';
+  String get fundraiserConfirmDonation => 'تأكيد الصدقة';
 
   @override
-  String get fundraiserDonate => 'Donate';
+  String get fundraiserDonate => 'تبرع بالصدقة';
 
   @override
-  String get fundraiserDonateNow => 'Donate Now';
+  String get fundraiserDonateNow => 'تبرع بالصدقة الآن';
 
   @override
   String get fundraiserBixiHadda => 'Bixi Hadda';
@@ -2567,76 +2628,73 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fundraiserXaqiiji => 'Xaqiiji';
 
   @override
-  String get fundraiserZakatCalcDesc =>
-      'Calculate and pay your contribution accurately';
+  String get fundraiserZakatCalcDesc => 'احسب وادفع زكاتك بدقة';
 
   @override
-  String get fundraiserTrending => 'TRENDING';
+  String get fundraiserTrending => 'رائج';
 
   @override
-  String get fundraiserNew => 'NEW';
+  String get fundraiserNew => 'جديد';
 
   @override
-  String get fundraiserEndingSoon => 'ENDING SOON';
+  String get fundraiserEndingSoon => 'تنتهي قريباً';
 
   @override
-  String get fundraiserCompleted => 'COMPLETED';
+  String get fundraiserCompleted => 'مكتملة';
 
   @override
   String fundraiserDonorsCount(int count) {
-    return '+$count donors';
+    return '+$count متبرع';
   }
 
   @override
   String fundraiserSharingCampaign(String title) {
-    return 'Sharing $title...';
+    return 'مشاركة $title...';
   }
 
   @override
-  String get fundraiserAgo => 'ago';
+  String get fundraiserAgo => 'منذ';
 
   @override
-  String get catAll => 'All';
+  String get catAll => 'الكل';
 
   @override
-  String get catMedical => 'Medical';
+  String get catMedical => 'طبي';
 
   @override
-  String get catWater => 'Water';
+  String get catWater => 'مياه';
 
   @override
-  String get catEducation => 'Education';
+  String get catEducation => 'تعليم';
 
   @override
-  String get catEmergency => 'Emergency';
+  String get catEmergency => 'طوارئ';
 
   @override
-  String get campaignMedicalTitle => 'Medical Emergency';
+  String get campaignMedicalTitle => 'حالة طبية طارئة';
 
   @override
   String get campaignMedicalDesc =>
-      'Help Ahmed cover his heart surgery expenses in Turkey.';
+      'ساعد أحمد في تغطية تكاليف جراحة القلب في تركيا.';
 
   @override
-  String get campaignWaterTitle => 'Village Water Well';
+  String get campaignWaterTitle => 'بئر مياه للقرية';
 
   @override
-  String get campaignWaterDesc =>
-      'Building a permanent water source for a village in Gedo.';
+  String get campaignWaterDesc => 'بناء مصدر مياه دائم لقرية في غيدو.';
 
   @override
-  String get campaignEducationTitle => 'Education Support';
+  String get campaignEducationTitle => 'دعم التعليم';
 
   @override
-  String get campaignEducationDesc =>
-      'Scholarships for 10 orphans in Mogadishu.';
+  String get campaignEducationDesc => 'منح دراسية لـ 10 أيتام في مقديشو.';
 
   @override
-  String get campaignEmergencyTitle => 'Food Relief';
+  String get campaignEmergencyTitle => 'إغاثة غذائية';
 
   @override
   String get campaignEmergencyDesc =>
-      'Providing essential food supplies to families affected by drought.';
+      'توفير الإمدادات الغذائية الأساسية للعائلات المتضررة من الجفاف.';
 
   @override
   String get exchangeRates => 'Exchange Rates';
@@ -2658,64 +2716,67 @@ class AppLocalizationsAr extends AppLocalizations {
   String get selectCurrency => 'Select Currency';
 
   @override
-  String get verifiedOrganizer => 'Verified Organizer';
+  String get verifiedOrganizer => 'منظم موثق';
 
   @override
-  String get organizedBy => 'Organized by';
+  String get organizedBy => 'من تنظيم';
 
   @override
-  String get about => 'About';
+  String get about => 'حول';
 
   @override
-  String get donateNow => 'Donate Now';
+  String get donateNow => 'تبرع الآن';
 
   @override
-  String get peopleDonated => 'people donated';
+  String get peopleDonated => 'شخص تبرعوا';
 
   @override
-  String get secureProtected => 'Secure & Protected';
+  String get secureProtected => 'آمن ومحمي';
 
   @override
-  String get secureProtectedDesc =>
-      'Bank-level encryption for every transaction.';
+  String get secureProtectedDesc => 'تشفير بمستوى بنكي لكل معاملة.';
 
   @override
-  String get zeroPlatformFees => '0% Platform Fees';
+  String get zeroPlatformFees => '0% رسوم منصة';
 
   @override
-  String get zeroPlatformFeesDesc =>
-      'We don\'t take a cut. 100% goes to the cause.';
+  String get zeroPlatformFeesDesc => 'نحن لا نأخذ عمولة. 100% يذهب للقضية.';
 
   @override
-  String get freeWithdrawals => 'Free Withdrawals';
+  String get freeWithdrawals => 'سحب مجاني';
 
   @override
-  String get freeWithdrawalsDesc =>
-      'Organizers pay \$0 to withdraw their funds.';
+  String get freeWithdrawalsDesc => 'المنظمون يدفعون 0 دولار لسحب أموالهم.';
 
   @override
-  String get shareThisCampaign => 'Share this Campaign';
+  String get shareThisCampaign => 'شارك هذه الحملة';
 
   @override
-  String get link => 'Link';
+  String get supportCampaign => 'ادعم هذه الحملة';
 
   @override
-  String get recentDonations => 'Recent Donations';
+  String get linkCopied => 'تم نسخ الرابط إلى الحافظة';
 
   @override
-  String get selectAmount => 'Select Amount';
+  String get link => 'رابط';
 
   @override
-  String get finalizeDonation => 'Finalize Donation';
+  String get recentDonations => 'التبرعات الأخيرة';
 
   @override
-  String get total => 'Total';
+  String get selectAmount => 'اختر المبلغ';
 
   @override
-  String get securedByMurtaaxPay => 'Secured by MurtaaxPay';
+  String get finalizeDonation => 'إنهاء التبرع';
 
   @override
-  String get customAmount => 'Custom Amount';
+  String get total => 'الإجمالي';
+
+  @override
+  String get securedByMurtaaxPay => 'مؤمن بواسطة مرتاح باي';
+
+  @override
+  String get customAmount => 'مبلغ مخصص';
 
   @override
   String get enterPhoneNumber => 'Enter Phone Number';
@@ -2735,54 +2796,54 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get insufficientBalanceFundraiser =>
-      'Insufficient balance in your MurtaaxPay wallet.';
+      'Insufficient balance for Sadaqah.';
 
   @override
-  String get startFundraiser => 'Start Fundraiser';
+  String get startFundraiser => 'ابدأ صدقة';
 
   @override
-  String get createCampaign => 'Create a Campaign';
+  String get createCampaign => 'إنشاء حملة صدقة';
 
   @override
   String get createCampaignDesc =>
-      'Raise funds for a cause you care about. We\'ll verify your campaign to build trust.';
+      'اجمع الصدقات لقضية تهمك. سنقوم بتوثيق حملتك لبناء الثقة.';
 
   @override
-  String get campaignDetails => 'Campaign Details';
+  String get campaignDetails => 'تفاصيل الحملة';
 
   @override
-  String get campaignTitle => 'Campaign Title';
+  String get campaignTitle => 'عنوان الحملة';
 
   @override
-  String get campaignTitleHint => 'E.g. Help build a water well in Gedo';
+  String get campaignTitleHint => 'مثال: ساعد في بناء بئر ماء في غيدو';
 
   @override
-  String get goalAmountUsd => 'Goal Amount (USD)';
+  String get goalAmountUsd => 'المبلغ المستهدف (USD)';
 
   @override
-  String get goalAmountHint => 'E.g. 5000';
+  String get goalAmountHint => 'مثال: 5000';
 
   @override
-  String get description => 'Description';
+  String get description => 'الوصف';
 
   @override
   String get descriptionHint =>
-      'Describe why you need help and how the funds will be used...';
+      'صف لماذا تحتاج للمساعدة وكيف سيتم استخدام الأموال...';
 
   @override
-  String get coverPhoto => 'Cover Photo';
+  String get coverPhoto => 'صورة الغلاف';
 
   @override
-  String get tapToUpload => 'Tap to upload photo';
+  String get tapToUpload => 'اضغط لرفع صورة';
 
   @override
-  String get uploadLimits => 'JPG, PNG up to 5MB';
+  String get uploadLimits => 'JPG, PNG حتى 5 ميجابايت';
 
   @override
-  String get campaignSubmitted => 'Campaign submitted for review!';
+  String get campaignSubmitted => 'تم تقديم الحملة للمراجعة!';
 
   @override
-  String get submitForReview => 'Submit for Review';
+  String get submitForReview => 'إرسال للمراجعة';
 
   @override
   String get past24h => 'Past 24h';
@@ -2813,36 +2874,44 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cryptoSold => 'Crypto sold successfully!';
 
   @override
-  String get zakatCalculator => 'Zakat Calculator';
+  String get zakatCalculator => 'حاسبة الزكاة';
 
   @override
-  String get totalZakatToPay => 'Total Zakat to Pay';
+  String get zakatPayment => 'دفع الزكاة';
 
   @override
-  String get enterYourAssets => 'Enter Your Assets';
+  String zakatSuccessMessage(String amount) {
+    return 'تم دفع زكاتك البالغة $amount بنجاح.';
+  }
 
   @override
-  String get cashAndSavings => 'Cash & Savings';
+  String get totalZakatToPay => 'إجمالي الزكاة الواجبة';
 
   @override
-  String get goldValue => 'Gold Value';
+  String get enterYourAssets => 'أدخل أصولك';
 
   @override
-  String get silverValue => 'Silver Value';
+  String get cashAndSavings => 'النقد والمدخرات';
 
   @override
-  String get otherInvestments => 'Other Investments';
+  String get goldValue => 'قيمة الذهب';
+
+  @override
+  String get silverValue => 'قيمة الفضة';
+
+  @override
+  String get otherInvestments => 'استثمارات أخرى';
 
   @override
   String get zakatInfo =>
-      'Zakatable amount is calculated as 2.5% of your total wealth if it exceeds the Nisab threshold.';
+      'يتم احتساب مبلغ الزكاة بنسبة 2.5% من إجمالي ثروتك إذا تجاوزت حد النصاب.';
 
   @override
-  String get donateYourZakat => 'Donate Your Zakat';
+  String get donateYourZakat => 'تبرع بزكاتك';
 
   @override
   String proceedingToDonate(String amount) {
-    return 'Proceeding to donate $amount';
+    return 'جاري التبرع بـ $amount';
   }
 
   @override
@@ -3013,12 +3082,101 @@ class AppLocalizationsAr extends AppLocalizations {
   String get approachingLimitWarning => 'You are approaching your daily limit.';
 
   @override
-  String get nisabThreshold => 'Nisab Threshold';
+  String get nisabThreshold => 'حد النصاب';
 
   @override
   String belowNisabWarning(String threshold) {
-    return 'Your assets are below the Nisab threshold ($threshold). Zakat is only mandatory if your wealth exceeds this.';
+    return 'أصولك أقل من حد النصاب ($threshold). الزكاة واجبة فقط إذا تجاوزت ثروتك هذا الحد.';
   }
+
+  @override
+  String get value => 'القيمة';
+
+  @override
+  String get grams => 'جرامات';
+
+  @override
+  String get currentNisab => 'النصاب الحالي';
+
+  @override
+  String get estValue => 'القيمة التقديرية:';
+
+  @override
+  String get whoIsEntitledToZakat => 'من يستحق الزكاة؟';
+
+  @override
+  String get eightCategoriesOfZakat => 'الأصناف الثمانية للزكاة';
+
+  @override
+  String get evidenceFromQuran => 'الدليل من القرآن';
+
+  @override
+  String get evidenceFromHadith => 'الدليل من السنة';
+
+  @override
+  String get hadithReference =>
+      'صحيح البخاري - وصية النبي ﷺ لمعاذ رضي الله عنه';
+
+  @override
+  String get fuqaraTitle => 'الفقراء';
+
+  @override
+  String get fuqaraDesc =>
+      'الذين لا دخل لهم ولا ممتلكات ولا يستطيعون تلبية احتياجاتهم الأساسية.';
+
+  @override
+  String get masakinTitle => 'المساكين';
+
+  @override
+  String get masakinDesc =>
+      'الذين لديهم بعض الدخل ولكن لا يكفي لتغطية ضروريات حياتهم.';
+
+  @override
+  String get amilinaTitle => 'العاملين عليها';
+
+  @override
+  String get amilinaDesc => 'المعينون لجمع وإدارة وتوزيع أموال الزكاة.';
+
+  @override
+  String get muallafatiTitle => 'المؤلفة قلوبهم';
+
+  @override
+  String get muallafatiDesc =>
+      'المسلمون الجدد أو المقربون من الإسلام لتعزيز إيمانهم.';
+
+  @override
+  String get riqabTitle => 'في الرقاب';
+
+  @override
+  String get riqabDesc => 'تستخدم لتحرير الأرقاء أو فك الأسرى.';
+
+  @override
+  String get ghariminTitle => 'الغارمين';
+
+  @override
+  String get ghariminDesc =>
+      'الذين أثقلتهم الديون التي استدانوا للضرورة أو للإصلاح.';
+
+  @override
+  String get fisabilillahTitle => 'في سبيل الله';
+
+  @override
+  String get fisabilillahDesc =>
+      'المجاهدون والمتطوعون في أعمال الخير والدعوة والتعليم.';
+
+  @override
+  String get ibnusSabilTitle => 'ابن السبيل';
+
+  @override
+  String get ibnusSabilDesc =>
+      'المسافر المنقطع الذي يحتاج إلى مساعدة مالية للوصول إلى بلده.';
+
+  @override
+  String get fatwaTitle => 'الفتاوى والمذاهب';
+
+  @override
+  String get fatwaDesc =>
+      'وفقاً لجمهور العلماء (الشافعية والمالكية والحنابلة والحنفية)، يجب توزيع الزكاة على هذه الأصناف الثمانية تحديداً. وتجيز بعض المذاهب صرفها لصنف واحد إذا كانت الحاجة فيه أشد.';
 
   @override
   String get makeRecurringDonation => 'اجعل هذا تبرعًا متكررًا';

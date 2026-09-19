@@ -5,7 +5,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/widgets/step_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +19,7 @@ class SenderBankScreen extends StatefulWidget {
   final String payoutMethod;
   final String currencyCode;
   final String purpose;
+  final bool isFeeIncluded;
 
   const SenderBankScreen({
     super.key,
@@ -28,6 +29,7 @@ class SenderBankScreen extends StatefulWidget {
     required this.payoutMethod,
     required this.currencyCode,
     required this.purpose,
+    this.isFeeIncluded = false,
   });
 
   @override
@@ -49,8 +51,8 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
   bool _isBankLinked = false;
 
   final List<Map<String, dynamic>> _banks = [
-    {"name": "IBS Bank", "image": "assets/images/bank.png", "length": 8},
-    {"name": "Premier Bank", "image": "assets/images/bank.png", "length": 12},
+    {"name": "IBS Bank", "image": "assets/images/bank.png", "length": 12},
+    {"name": "Premier Bank", "image": "assets/images/bank.png", "length": 10},
     {"name": "Salaam Bank", "image": "assets/images/bank.png", "length": 10},
     {"name": "Amal Bank", "image": "assets/images/bank.png", "length": 10},
     {"name": "Dahabshil Bank", "image": "assets/images/bank.png", "length": 9},
@@ -193,6 +195,7 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
           currencyCode: widget.currencyCode,
           purpose: widget.purpose,
           sourceOfFunds: "$bankName ($accountNumber)",
+          isFeeIncluded: widget.isFeeIncluded,
         ),
       ),
     );
@@ -337,7 +340,6 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                                 children: [
                                   SizedBox(
                                     width: double.infinity,
-                                    height: 52 * scale,
                                     child: OutlinedButton.icon(
                                       onPressed: _isVerifying ? null : _linkBankAccount,
                                       icon: _isVerifying 
@@ -345,12 +347,13 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                                           : Icon(Icons.link_rounded, size: 20 * scale),
                                       label: Text(
                                         _isVerifying ? "Verifying Ownership..." : "Verify & Link Account",
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * scale),
+                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * scale),
                                       ),
                                       style: OutlinedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(vertical: 12 * scale),
-                                        side: BorderSide(color: theme.colorScheme.secondary, width: 1.5),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * scale)),
+                                        foregroundColor: theme.colorScheme.secondary,
+                                        side: BorderSide(color: theme.colorScheme.secondary, width: 2),
+                                        padding: EdgeInsets.symmetric(vertical: 16 * scale),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * scale)),
                                       ),
                                     ),
                                   ),
@@ -362,7 +365,7 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                                       SizedBox(width: 8 * scale),
                                       Text(
                                         "Secure OAuth verification via MurtaaxShield",
-                                        style: TextStyle(fontSize: 11 * scale, color: AppColors.grey, fontWeight: FontWeight.bold),
+                                        style: TextStyle(fontSize: 12 * scale, color: AppColors.grey, fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
@@ -446,33 +449,6 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
                               ],
                             ),
                           ),
-
-                          SizedBox(height: 32 * scale),
-                          
-                          SizedBox(
-                            width: double.infinity,
-                            height: 56 * scale,
-                            child: ElevatedButton(
-                              onPressed: (_isBankLinked && (_selectedBank != "Add Bank" || _bankNameController.text.isNotEmpty))
-                                  ? () => _handleContinue(l10n) : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: theme.colorScheme.secondary,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * scale)),
-                                elevation: 4,
-                                shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
-                                disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
-                              ),
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Bank Transfer"))),
-                                  style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 30 * scale),
                         ],
                       ),
                     ),
@@ -481,6 +457,43 @@ class _SenderBankScreenState extends State<SenderBankScreen> {
               ),
             ),
           ],
+        ),
+      ),
+      // Sticky Bottom Button
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20 * scale, vertical: 10 * scale),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: MaxWidthBox(
+            maxWidth: 500,
+            child: ElevatedButton(
+              onPressed: (_isBankLinked && (_selectedBank != "Add Bank" || _bankNameController.text.isNotEmpty))
+                  ? () => _handleContinue(l10n) : null,
+              style: context.elevatedButtonStyle(
+                backgroundColor: theme.colorScheme.secondary,
+                foregroundColor: Colors.white,
+                elevation: 4,
+              ).copyWith(
+                shadowColor: WidgetStateProperty.all(theme.colorScheme.secondary.withValues(alpha: 0.3)),
+              ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Bank Transfer"))),
+                  style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

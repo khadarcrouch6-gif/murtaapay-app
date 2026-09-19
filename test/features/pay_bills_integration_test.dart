@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:murtaaxpay_app/core/app_state.dart';
-import 'package:murtaaxpay_app/core/models/transaction.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:murtaaxpay_app/core/app_state.dart';
+import '../test_helper.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -10,6 +10,7 @@ void main() {
     late AppState appState;
 
     setUp(() async {
+      setupMockSecureStorage();
       SharedPreferences.setMockInitialValues({});
       appState = AppState();
       await appState.init();
@@ -63,7 +64,7 @@ void main() {
 
     test('Bill Payment from Savings Account should be blocked', () async {
       expect(
-        () => appState.processBillPayment(
+        () async => await appState.processBillPayment(
           category: "Water",
           accountId: "W-101",
           amount: 20.0,
@@ -79,7 +80,7 @@ void main() {
       final initialBalance = appState.balance;
 
       expect(
-        () => appState.processBillPayment(
+        () async => await appState.processBillPayment(
           category: "Big Bill",
           accountId: "B-1",
           amount: amount,

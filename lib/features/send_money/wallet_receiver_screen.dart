@@ -10,7 +10,7 @@ import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/contact_sync_list.dart';
 import '../../core/widgets/step_indicator.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'payment_screen.dart';
 
 class WalletReceiverScreen extends StatefulWidget {
@@ -21,6 +21,7 @@ class WalletReceiverScreen extends StatefulWidget {
   final String? cardId;
   final String? prefilledName;
   final String? prefilledPhone;
+  final bool isFeeIncluded;
 
   const WalletReceiverScreen({
     super.key, 
@@ -31,6 +32,7 @@ class WalletReceiverScreen extends StatefulWidget {
     this.cardId,
     this.prefilledName,
     this.prefilledPhone,
+    this.isFeeIncluded = false,
   });
 
   @override
@@ -85,6 +87,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
             _isSearching = false;
             if (name != null) {
               _verifiedReceiverName = name;
+              appState.addToSearchHistory(value, 'p2p');
             } else {
               _errorMessage = l10n.invalidWalletId;
             }
@@ -125,6 +128,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
           cardId: widget.cardId,
           currencyCode: widget.currencyCode,
           purpose: _selectedPurpose ?? _getPurposes(l10n).first,
+          isFeeIncluded: widget.isFeeIncluded,
         ),
       ),
     );
@@ -159,6 +163,7 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                       if (murtaaxName != null) {
                         _verifiedReceiverName = murtaaxName;
                         _errorMessage = null;
+                        Provider.of<AppState>(context, listen: false).addToSearchHistory(phone, 'p2p');
                       } else {
                         _lookupWalletId(phone);
                       }
@@ -381,38 +386,50 @@ class _WalletReceiverScreenState extends State<WalletReceiverScreen> {
                         SizedBox(height: 8 * scale),
 
                         // Horizontal Recents (Bigger)
-                        SizedBox(
-                          height: 110 * scale,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              _buildRecentUser(theme, "AR", "Ayaanle", "102234", scale),
-                              _buildRecentUser(theme, "MA", "Mohamed", "204456", scale),
-                              _buildRecentUser(theme, "SH", "Sahra", "309987", scale),
-                              _buildRecentUser(theme, "HM", "Hassan", "401122", scale),
-                            ],
-                          ),
+                        Consumer<AppState>(
+                          builder: (context, state, child) {
+                            if (state.contactSearchHistory.isEmpty) {
+                              return SizedBox(
+                                height: 110 * scale,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: [
+                                    _buildRecentUser(theme, "AR", "Ayaanle", "102234", scale),
+                                    _buildRecentUser(theme, "MA", "Mohamed", "204456", scale),
+                                    _buildRecentUser(theme, "SH", "Sahra", "309987", scale),
+                                    _buildRecentUser(theme, "HM", "Hassan", "401122", scale),
+                                  ],
+                                ),
+                              );
+                            }
+                            return SizedBox(
+                              height: 110 * scale,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: state.contactSearchHistory.length,
+                                itemBuilder: (context, index) {
+                                  final id = state.contactSearchHistory[index];
+                                  final name = state.mockUsers[id] ?? "User";
+                                  final initials = name.split(' ').map((e) => e[0]).take(2).join().toUpperCase();
+                                  return _buildRecentUser(theme, initials, name, id, scale);
+                                },
+                              ),
+                            );
+                          },
                         ),
 
                         SizedBox(height: 30 * scale),
 
                         // Action Button moved back to body
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56 * scale,
-                          child: ElevatedButton(
-                            onPressed: _verifiedReceiverName.isNotEmpty ? () => _handleContinue(l10n) : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.secondary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * scale)),
-                              elevation: 4,
-                              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
-                              disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
-                              disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
-                            ),
-                            child: Text(l10n.continueToReview, style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                        ElevatedButton(
+                          onPressed: _verifiedReceiverName.isNotEmpty ? () => _handleContinue(l10n) : null,
+                          style: context.elevatedButtonStyle(
+                            backgroundColor: theme.colorScheme.secondary,
+                            foregroundColor: Colors.white,
+                            borderRadius: 16,
+                            elevation: 4,
                           ),
+                          child: Text(l10n.continueToReview, style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5)),
                         ),
                         SizedBox(height: 24 * scale),
                       ],

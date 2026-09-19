@@ -34,44 +34,49 @@ class HagbadHistoryScreen extends StatelessWidget {
             ),
         ],
       ),
-      body: transactions.isEmpty
-          ? Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.history,
-                      size: 64 * context.fontSizeFactor,
-                      color: AppColors.grey.withOpacity(0.5),
-                    ),
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    Text(
-                      "No payout history yet",
-                      style: TextStyle(fontSize: 16 * context.fontSizeFactor),
-                    ),
-                  ],
+      body: context.responsiveBody(
+        child: transactions.isEmpty
+            ? Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.history,
+                        size: 64 * context.fontSizeFactor,
+                        color: AppColors.grey.withValues(alpha: 0.5),
+                      ),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      Text(
+                        "No payout history yet",
+                        style: TextStyle(fontSize: 16 * context.fontSizeFactor),
+                      ),
+                    ],
+                  ),
                 ),
+              )
+            : ListView.builder(
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.horizontalPadding / 2,
+                  vertical: 16 * context.fontSizeFactor,
+                ),
+                itemCount: transactions.length,
+                itemBuilder: (context, index) {
+                  final tx = transactions[index];
+                  final isEvent = tx.status == "Info" && tx.type == "event";
+                  
+                  return TransactionItem(
+                    title: tx.title,
+                    subtitle: isEvent ? "Group Event" : tx.type,
+                    amount: tx.amount,
+                    status: tx.status,
+                    date: tx.date,
+                    isSent: isEvent ? null : tx.isNegative,
+                    icon: isEvent ? Icons.info_outline : null,
+                  );
+                },
               ),
-            )
-          : ListView.builder(
-              padding: EdgeInsets.all(16 * context.fontSizeFactor),
-              itemCount: transactions.length,
-              itemBuilder: (context, index) {
-                final tx = transactions[index];
-                final isEvent = tx.status == "Info" && tx.type == "event";
-                
-                return TransactionItem(
-                  title: tx.title,
-                  subtitle: isEvent ? "Group Event" : tx.type,
-                  amount: tx.amount,
-                  status: tx.status,
-                  date: tx.date,
-                  isSent: isEvent ? null : tx.isNegative,
-                  icon: isEvent ? Icons.info_outline : null,
-                );
-              },
-            ),
+      ),
     );
   }
 
@@ -99,7 +104,7 @@ class HagbadHistoryScreen extends StatelessWidget {
               height: 4 * context.fontSizeFactor,
               margin: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
               decoration: BoxDecoration(
-                color: AppColors.grey.withOpacity(0.3),
+                color: AppColors.grey.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2 * context.fontSizeFactor),
               ),
             ),
@@ -140,3 +145,4 @@ class HagbadHistoryScreen extends StatelessWidget {
     );
   }
 }
+

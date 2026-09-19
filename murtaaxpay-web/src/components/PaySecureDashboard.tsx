@@ -137,7 +137,7 @@ export default function PaySecureDashboard() {
 
           <div className="bg-[#f0f4f8] dark:bg-slate-800/40 rounded-[2.5rem] p-10 hover:shadow-lg transition-all border border-transparent hover:border-gray-100 dark:hover:border-white/10 group">
             <HandHeart className="text-[#064e3b] dark:text-emerald-400 w-8 h-8 mb-6 group-hover:scale-110 transition-transform" />
-            <h3 className="font-bold text-[#0f172a] dark:text-white text-lg mb-3">Sadaqah & Zakat</h3>
+            <h3 className="font-bold text-[#0f172a] dark:text-white text-lg mb-3">Fundraiser & Zakat</h3>
             <p className="text-[15px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">Donate directly to verified charities in Somalia with one tap.</p>
           </div>
 

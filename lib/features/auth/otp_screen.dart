@@ -88,7 +88,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppColors.grey, fontSize: 16 * context.fontSizeFactor),
                     ),
                   ),
-                  const SizedBox(height: 48),
+                  SizedBox(height: 48 * context.fontSizeFactor),
                   Row(
                     children: List.generate(4, (index) {
                       return Expanded(
@@ -110,7 +110,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                 counterText: "",
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: AppColors.grey.withOpacity(0.2)),
+                                  borderSide: BorderSide(color: AppColors.grey.withValues(alpha: 0.2)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
@@ -126,7 +126,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       );
                     }),
                   ),
-                  const SizedBox(height: 48),
+                  SizedBox(height: 48 * context.fontSizeFactor),
                   FadeInUp(
                     delay: const Duration(milliseconds: 600),
                     child: Center(
@@ -145,15 +145,13 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 * context.fontSizeFactor),
                   FadeInUp(
                     delay: const Duration(milliseconds: 700),
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
-                      ),
+                      style: context.elevatedButtonStyle(),
                       onPressed: _controllers.every((c) => c.text.isNotEmpty) ? _verifyOtp : null,
-                      child: Text("Verify & Continue", style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
+                      child: const Text("Verify & Continue"),
                     ),
                   ),
                 ],
@@ -165,3 +163,4 @@ class _OtpScreenState extends State<OtpScreen> {
     );
   }
 }
+

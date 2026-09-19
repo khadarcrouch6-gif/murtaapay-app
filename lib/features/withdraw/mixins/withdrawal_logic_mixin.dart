@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../core/app_state.dart';
-import '../../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 
 mixin WithdrawalLogicMixin<T extends StatefulWidget> on State<T> {
   String? getWithdrawPrefixError(String val, String? provider, AppLocalizations l10n) {
@@ -53,6 +53,27 @@ mixin WithdrawalLogicMixin<T extends StatefulWidget> on State<T> {
     l10n.gift,
     l10n.other,
   ];
+
+  int getBankAccountNumberLength(String bankName) {
+    switch (bankName) {
+      case 'IBS Bank':
+        return 12;
+      case 'Premier Bank':
+      case 'Salaam Bank':
+        return 10;
+      case 'Amal Bank':
+      case 'MyBank':
+        return 10;
+      default:
+        return 16; // Default fallback
+    }
+  }
+
+  bool isValidSwiftCode(String code) {
+    // SWIFT/BIC: 8 or 11 characters, alphanumeric
+    final regex = RegExp(r'^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$');
+    return regex.hasMatch(code.toUpperCase());
+  }
 
   void triggerHapticSuccess() {
     HapticFeedback.lightImpact();

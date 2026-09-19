@@ -4,7 +4,7 @@ import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 
 class VouchersScreen extends StatefulWidget {
   const VouchersScreen({super.key});

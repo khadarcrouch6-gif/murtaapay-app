@@ -8,7 +8,7 @@ import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../core/models/crypto_asset.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'crypto_detail_screen.dart';
 import 'widgets/crypto_buy_sell_sheet.dart';
 
@@ -314,63 +314,71 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                 Padding(
                   padding: EdgeInsets.all(16.0 * scale),
                   child: FadeInDown(
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(24 * scale),
-                      decoration: BoxDecoration(
-                        gradient: AppColors.primaryGradient,
-                        borderRadius: BorderRadius.circular(24 * scale),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primaryDark.withValues(alpha: 0.2),
-                            blurRadius: 15 * scale,
-                            offset: Offset(0, 8 * scale),
+                    child: Center(
+                      child: MaxWidthBox(
+                        maxWidth: 600,
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(24 * scale),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                            borderRadius: BorderRadius.circular(24 * scale),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primaryDark.withValues(alpha: 0.2),
+                                blurRadius: 15 * scale,
+                                offset: Offset(0, 8 * scale),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            l10n.totalInvestment,
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.7),
-                              fontSize: 14 * scale,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 8 * scale),
-                          Text(
-                            "\$${totalPortfolio.toStringAsFixed(2)}",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 32 * scale,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 16 * scale),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 6 * scale),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(12 * scale),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.trending_up, color: Colors.greenAccent, size: 16 * scale),
-                                SizedBox(width: 4 * scale),
-                                Text(
-                                  l10n.todayPlus("5.2"),
+                          child: Column(
+                            children: [
+                              Text(
+                                l10n.totalInvestment,
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                  fontSize: 14 * scale,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(height: 8 * scale),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  "\$${totalPortfolio.toStringAsFixed(2)}",
                                   style: TextStyle(
-                                    color: Colors.greenAccent,
+                                    color: Colors.white,
+                                    fontSize: 32 * scale,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 12 * scale,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              SizedBox(height: 16 * scale),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 6 * scale),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(12 * scale),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.trending_up, color: Colors.greenAccent, size: 16 * scale),
+                                    SizedBox(width: 4 * scale),
+                                    Text(
+                                      l10n.todayPlus("5.2"),
+                                      style: TextStyle(
+                                        color: Colors.greenAccent,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12 * scale,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -379,18 +387,23 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                 // 2. Quick Actions
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 8 * scale),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildMurtaaxAction(l10n.buy, Icons.add_circle_outline, AppColors.secondary, () => _showTradeSheet(context, allAssets, isBuy: true)),
-                      _buildMurtaaxAction(l10n.sell, Icons.remove_circle_outline, Colors.orange, () => _showTradeSheet(context, allAssets, isBuy: false)),
-                      _buildMurtaaxAction(l10n.exchange, Icons.swap_horizontal_circle_outlined, AppColors.accentTeal, () {
-                        _showTradeSheet(context, allAssets, isBuy: true);
-                      }),
-                      _buildMurtaaxAction(l10n.more, Icons.more_horiz_rounded, AppColors.grey, () {
-                        _showMoreMenu(context);
-                      }),
-                    ],
+                  child: Center(
+                    child: MaxWidthBox(
+                      maxWidth: 600,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildMurtaaxAction(l10n.buy, Icons.add_circle_outline, AppColors.secondary, () => _showTradeSheet(context, allAssets, isBuy: true)),
+                          _buildMurtaaxAction(l10n.sell, Icons.remove_circle_outline, Colors.orange, () => _showTradeSheet(context, allAssets, isBuy: false)),
+                          _buildMurtaaxAction(l10n.exchange, Icons.swap_horizontal_circle_outlined, AppColors.accentTeal, () {
+                            _showTradeSheet(context, allAssets, isBuy: true);
+                          }),
+                          _buildMurtaaxAction(l10n.more, Icons.more_horiz_rounded, AppColors.grey, () {
+                            _showMoreMenu(context);
+                          }),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
   
@@ -399,43 +412,53 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                 // 3. Custom Tab Switcher
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16 * scale),
-                  child: Row(
-                    children: [
-                      _buildMurtaaxTab(l10n.portfolio, 0, _selectedMainTab == 0),
-                      SizedBox(width: 16 * scale),
-                      _buildMurtaaxTab(l10n.discover, 1, _selectedMainTab == 1),
-                    ],
+                  child: Center(
+                    child: MaxWidthBox(
+                      maxWidth: 800,
+                      child: Row(
+                        children: [
+                          _buildMurtaaxTab(l10n.portfolio, 0, _selectedMainTab == 0),
+                          SizedBox(width: 16 * scale),
+                          _buildMurtaaxTab(l10n.discover, 1, _selectedMainTab == 1),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
   
                 SizedBox(height: 16 * scale),
   
                 // 4. Asset List
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: 16 * scale),
-                  itemCount: _selectedMainTab == 0 
-                    ? (state.cryptoHoldings.isEmpty ? 1 : state.cryptoHoldings.length)
-                    : displayAssets.length,
-                  itemBuilder: (context, index) {
-                    if (_selectedMainTab == 0 && state.cryptoHoldings.isEmpty) {
-                      return _buildEmptyPortfolio(l10n);
-                    }
+                Center(
+                  child: MaxWidthBox(
+                    maxWidth: 800,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(horizontal: 16 * scale),
+                      itemCount: _selectedMainTab == 0 
+                        ? (state.cryptoHoldings.isEmpty ? 1 : state.cryptoHoldings.length)
+                        : displayAssets.length,
+                      itemBuilder: (context, index) {
+                        if (_selectedMainTab == 0 && state.cryptoHoldings.isEmpty) {
+                          return _buildEmptyPortfolio(l10n);
+                        }
   
-                    var asset = _selectedMainTab == 0
-                        ? allAssets.firstWhere(
-                            (a) => a.symbol == state.cryptoHoldings.keys.elementAt(index),
-                            orElse: () => allAssets[0],
-                          )
-                        : displayAssets[index];
-                    
-                    if (state.cryptoHoldings.containsKey(asset.symbol)) {
-                       asset = asset.copyWith(holdings: state.cryptoHoldings[asset.symbol] ?? 0);
-                    }
+                        var asset = _selectedMainTab == 0
+                            ? allAssets.firstWhere(
+                                (a) => a.symbol == state.cryptoHoldings.keys.elementAt(index),
+                                orElse: () => allAssets[0],
+                              )
+                            : displayAssets[index];
+                        
+                        if (state.cryptoHoldings.containsKey(asset.symbol)) {
+                           asset = asset.copyWith(holdings: state.cryptoHoldings[asset.symbol] ?? 0);
+                        }
   
-                    return _buildMurtaaxAssetItem(context, asset);
-                  },
+                        return _buildMurtaaxAssetItem(context, asset);
+                      },
+                    ),
+                  ),
                 ),
                 SizedBox(height: 100 * scale),
               ],

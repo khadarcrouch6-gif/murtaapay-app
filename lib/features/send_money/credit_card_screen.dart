@@ -9,7 +9,7 @@ import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../core/widgets/step_indicator.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'review_screen.dart';
@@ -23,6 +23,7 @@ class CreditCardScreen extends StatefulWidget {
   final String currencyCode;
   final String purpose;
   final String initialCardType;
+  final bool isFeeIncluded;
 
   const CreditCardScreen({
     super.key,
@@ -33,6 +34,7 @@ class CreditCardScreen extends StatefulWidget {
     required this.currencyCode,
     required this.purpose,
     this.initialCardType = "unknown",
+    this.isFeeIncluded = false,
   });
 
   @override
@@ -313,6 +315,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
             paymentMethod: l10n.cardEndingIn(_cardNumberController.text.substring(_cardNumberController.text.length - 4)),
             currencyCode: widget.currencyCode,
             purpose: widget.purpose,
+            isFeeIncluded: widget.isFeeIncluded,
           ),
         ),
       );
@@ -645,25 +648,22 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                         SizedBox(height: 40 * scale),
 
                         // Action Button moved back to body
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56 * scale,
-                          child: ElevatedButton(
-                            onPressed: (!isFormValid) ? null : _processPayment,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.secondary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * scale)),
-                              elevation: 4,
-                              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
-                              disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
-                              disabledForegroundColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.3) : Colors.white70,
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Card"))),
-                                style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                        ElevatedButton(
+                          onPressed: (!isFormValid) ? null : _processPayment,
+                          style: context.elevatedButtonStyle(
+                            backgroundColor: theme.colorScheme.secondary,
+                            borderRadius: 16,
+                            elevation: 4,
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Card"))),
+                              style: TextStyle(
+                                fontSize: 18 * scale,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.5,
+                                color: Colors.white,
                               ),
                             ),
                           ),

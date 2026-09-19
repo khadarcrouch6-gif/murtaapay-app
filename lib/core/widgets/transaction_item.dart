@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../app_colors.dart';
 import '../responsive_utils.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../widgets/adaptive_icon.dart';
 import 'shimmer_loading.dart';
 
@@ -13,6 +13,7 @@ class TransactionItem extends StatelessWidget {
   final String status;
   final String? date;
   final bool? isSent;
+  final String? verificationStatus;
   final dynamic icon;
   final String? avatarUrl;
   final VoidCallback? onTap;
@@ -25,6 +26,7 @@ class TransactionItem extends StatelessWidget {
     required this.status,
     this.date,
     this.isSent,
+    this.verificationStatus,
     this.icon,
     this.avatarUrl,
     this.onTap,
@@ -66,17 +68,11 @@ class TransactionItem extends StatelessWidget {
                 child: avatarUrl != null && avatarUrl!.isNotEmpty
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
-                      child: Image.network(
-                        avatarUrl!,
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/placeholder.png',
+                        image: avatarUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Text(
-                          title.isNotEmpty ? title[0] : "?",
-                          style: TextStyle(
-                            color: _getStatusColor(status),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18 * context.fontSizeFactor,
-                          ),
-                        ),
+                        imageErrorBuilder: (context, error, stackTrace) => _buildInitialsAvatar(context),
                       ),
                     )
                   : (icon != null 
@@ -127,6 +123,7 @@ class TransactionItem extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  _buildVerificationBadge(context),
                 ],
               ),
             ),
@@ -170,6 +167,19 @@ class TransactionItem extends StatelessWidget {
     );
   }
 
+  Widget _buildInitialsAvatar(BuildContext context) {
+    return Center(
+      child: Text(
+        title.isNotEmpty ? title[0] : "?",
+        style: TextStyle(
+          color: _getStatusColor(status),
+          fontWeight: FontWeight.bold,
+          fontSize: 18 * context.fontSizeFactor,
+        ),
+      ),
+    );
+  }
+
   Color _getStatusColor(String status) {
     switch (status) {
       case "Success":
@@ -200,6 +210,55 @@ class TransactionItem extends StatelessWidget {
       default:
         return l10n.pending;
     }
+  }
+
+  Widget _buildVerificationBadge(BuildContext context) {
+    if (verificationStatus == null || verificationStatus == 'none') return const SizedBox.shrink();
+
+    Color badgeColor = Colors.grey;
+    IconData badgeIcon = Icons.help_outline;
+    String label = "";
+
+    if (verificationStatus == 'verified') {
+      badgeColor = AppColors.statusSuccess;
+      badgeIcon = Icons.verified;
+      label = "Verified";
+    } else if (verificationStatus == 'pending') {
+      badgeColor = AppColors.statusPending;
+      badgeIcon = Icons.hourglass_empty;
+      label = "Pending";
+    } else if (verificationStatus == 'failed') {
+      badgeColor = AppColors.statusFailed;
+      badgeIcon = Icons.error_outline;
+      label = "Failed";
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      margin: EdgeInsets.only(top: 4 * context.fontSizeFactor),
+      padding: EdgeInsets.symmetric(horizontal: 6 * context.fontSizeFactor, vertical: 2 * context.fontSizeFactor),
+      decoration: BoxDecoration(
+        color: badgeColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
+        border: Border.all(color: badgeColor.withValues(alpha: 0.3), width: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(badgeIcon, size: 10 * context.fontSizeFactor, color: badgeColor),
+          SizedBox(width: 4 * context.fontSizeFactor),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 9 * context.fontSizeFactor,
+              fontWeight: FontWeight.bold,
+              color: badgeColor,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   static Widget skeleton(BuildContext context) {

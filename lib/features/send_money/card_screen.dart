@@ -6,7 +6,7 @@ import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import 'payment_screen.dart';
 import '../../core/widgets/step_indicator.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 
 
 class CardScreen extends StatefulWidget {
@@ -356,23 +356,19 @@ class _CardScreenState extends State<CardScreen> {
                               
                               SizedBox(height: 40 * context.fontSizeFactor),
                               
-                              SizedBox(
-                                width: double.infinity,
-                                height: 56 * context.fontSizeFactor,
-                                child: ElevatedButton(
-                                  onPressed: _handleContinue,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: theme.colorScheme.secondary,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-                                    elevation: 4,
-                                  ),
-                                  child: Text(
-                                    l10n.continueLabel,
-                                    style: TextStyle(
-                                      fontSize: 18 * context.fontSizeFactor, 
-                                      fontWeight: FontWeight.w900
-                                    ),
+                              ElevatedButton(
+                                onPressed: _handleContinue,
+                                style: context.elevatedButtonStyle(
+                                  backgroundColor: theme.colorScheme.secondary,
+                                  borderRadius: 16,
+                                  elevation: 4,
+                                ),
+                                child: Text(
+                                  l10n.continueLabel,
+                                  style: TextStyle(
+                                    fontSize: 18 * context.fontSizeFactor, 
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),

@@ -7,7 +7,7 @@ import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/app_state.dart';
 import '../../core/widgets/adaptive_icon.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'mobile_deposit_screen.dart';
 import 'bank_deposit_screen.dart';
@@ -23,6 +23,7 @@ class DepositScreen extends StatefulWidget {
 
 class _DepositScreenState extends State<DepositScreen> {
   final TextEditingController _amountController = TextEditingController();
+  String? _selectedMethodId;
 
   @override
   void dispose() {
@@ -73,9 +74,18 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   void _navigateToMethod(String methodId) {
-    final amountText = _amountController.text;
+    final amountText = _amountController.text.replaceAll(',', '.');
     final double amount = double.tryParse(amountText) ?? 0;
-    if (amount <= 0) return;
+    
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.pleaseEnterValidAmount),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
 
     final state = Provider.of<AppState>(context, listen: false);
 
@@ -85,7 +95,7 @@ class _DepositScreenState extends State<DepositScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => WalletCardDepositScreen(
-              amount: amount.toString(),
+              amount: amount,
               currencyCode: state.currencyCode,
             ),
           ),
@@ -114,15 +124,23 @@ class _DepositScreenState extends State<DepositScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final amountText = _amountController.text.replaceAll(',', '.');
+    final double amountValue = double.tryParse(amountText) ?? 0;
+    final bool isAmountEntered = amountValue > 0;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: theme.scaffoldBackgroundColor,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(l10n.addMoney, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor, color: theme.textTheme.titleLarge?.color)),
+        title: Text(l10n.addMoney, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20 * context.fontSizeFactor, color: theme.textTheme.titleLarge?.color)),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20 * context.fontSizeFactor, color: theme.iconTheme.color),
+          icon: Container(
+            padding: EdgeInsets.all(8 * context.fontSizeFactor),
+            decoration: BoxDecoration(color: theme.cardColor, shape: BoxShape.circle),
+            child: Icon(Icons.arrow_back_ios_new_rounded, size: 16 * context.fontSizeFactor, color: theme.iconTheme.color),
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -130,195 +148,212 @@ class _DepositScreenState extends State<DepositScreen> {
         child: MaxWidthBox(
           maxWidth: 800,
           child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(
-              context.horizontalPadding,
-              context.horizontalPadding,
-              context.horizontalPadding,
-              120, // Clear navigation bar
-            ),
+            padding: EdgeInsets.all(context.horizontalPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Hero Amount Card
                 FadeInDown(
-                  child: Center(
-                    child: MaxWidthBox(
-                      maxWidth: 500,
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [AppColors.accentTeal, AppColors.accentTeal.withValues(alpha: 0.8)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryDark.withValues(alpha: 0.3),
+                          blurRadius: 25 * context.fontSizeFactor,
+                          offset: Offset(0, 12 * context.fontSizeFactor),
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.enterAmountToDeposit, 
+                          style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.bold)
+                        ),
+                        SizedBox(height: 16 * context.fontSizeFactor),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
                           ),
-                          borderRadius: BorderRadius.circular(32),
-                          boxShadow: [
+                          child: Row(
+                            children: [
+                              Text("\$", style: TextStyle(color: Colors.white, fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.w900)),
+                              SizedBox(width: 16 * context.fontSizeFactor),
+                              Expanded(
+                                child: TextField(
+                                  controller: _amountController,
+                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+[,.]?\d{0,2}'))],
+                                  style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: -1),
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "0.00",
+                                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                                  ),
+                                  onChanged: (_) => setState(() {}),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20 * context.fontSizeFactor),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [50, 100, 200, 500].map((amt) => GestureDetector(
+                              onTap: () {
+                                setState(() => _amountController.text = amt.toString());
+                                HapticFeedback.lightImpact();
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                margin: EdgeInsets.only(right: 10 * context.fontSizeFactor),
+                                padding: EdgeInsets.symmetric(horizontal: 18 * context.fontSizeFactor, vertical: 10 * context.fontSizeFactor),
+                                decoration: BoxDecoration(
+                                  color: _amountController.text == amt.toString() ? Colors.white : Colors.white.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(14 * context.fontSizeFactor),
+                                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                                ),
+                                child: Text("\$$amt", style: TextStyle(color: _amountController.text == amt.toString() ? AppColors.primaryDark : Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w900)),
+                              ),
+                            )).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 32 * context.fontSizeFactor),
+                FadeInUp(
+                  child: Text(l10n.paymentMethod, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.w900, color: theme.textTheme.titleLarge?.color)),
+                ),
+                SizedBox(height: 16 * context.fontSizeFactor),
+    
+                ...List.generate(_methods.length, (index) {
+                  final method = _methods[index];
+                  final isSelected = _selectedMethodId == method["id"];
+
+                  return FadeInUp(
+                    delay: Duration(milliseconds: index * 80),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() => _selectedMethodId = method["id"]);
+                        HapticFeedback.selectionClick();
+                      },
+                      behavior: HitTestBehavior.opaque,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
+                        margin: EdgeInsets.only(bottom: 16 * context.fontSizeFactor),
+                        width: double.infinity,
+                        padding: EdgeInsets.all(20 * context.fontSizeFactor),
+                        decoration: BoxDecoration(
+                          color: theme.cardColor,
+                          borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+                          border: Border.all(
+                            color: isSelected ? AppColors.accentTeal : theme.dividerColor.withValues(alpha: 0.05),
+                            width: 2,
+                          ),
+                          boxShadow: isSelected ? [
                             BoxShadow(
-                              color: AppColors.accentTeal.withValues(alpha: 0.3),
-                              blurRadius: 30,
-                              offset: const Offset(0, 15),
-                            )
+                              color: AppColors.accentTeal.withValues(alpha: 0.1),
+                              blurRadius: 15 * context.fontSizeFactor,
+                              offset: Offset(0, 8 * context.fontSizeFactor),
+                            ),
+                          ] : [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.01),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
                           ],
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
                           children: [
-                            Text(
-                              l10n.enterAmountToDeposit, 
-                              style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w500)
-                            ),
-                            const SizedBox(height: 12),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                              width: 56 * context.fontSizeFactor,
+                              height: 56 * context.fontSizeFactor,
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.05),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
+                                gradient: LinearGradient(
+                                  colors: (method["gradient"] as List<Color>).map((c) => c.withValues(alpha: 0.9)).toList(),
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
                               ),
-                              child: Row(
+                              child: Center(
+                                child: AdaptiveIcon(
+                                  method["faIcon"] ?? method["icon"],
+                                  color: Colors.white,
+                                  size: 24 * context.fontSizeFactor,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16 * context.fontSizeFactor),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("\$", style: TextStyle(color: AppColors.accentTeal, fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: TextField(
-                                      controller: _amountController,
-                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
-                                      style: TextStyle(color: Colors.white, fontSize: 34 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: -1),
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "0.00",
-                                        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
-                                      ),
-                                      onChanged: (_) => setState(() {}),
-                                    ),
+                                  Text(
+                                    _getMethodTitle(method["titleKey"], l10n),
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
+                                  ),
+                                  SizedBox(height: 2 * context.fontSizeFactor),
+                                  Text(
+                                    _getMethodDesc(method["descKey"], l10n),
+                                    style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 20),
-                            // Quick amounts
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [50, 100, 200, 500].map((amt) => GestureDetector(
-                                  onTap: () => setState(() => _amountController.text = amt.toString()),
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    margin: const EdgeInsets.only(right: 10),
-                                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                                    decoration: BoxDecoration(
-                                      color: _amountController.text == amt.toString() ? AppColors.accentTeal : Colors.white.withValues(alpha: 0.08),
-                                      borderRadius: BorderRadius.circular(14),
-                                      border: Border.all(color: _amountController.text == amt.toString() ? AppColors.accentTeal : Colors.white.withValues(alpha: 0.05)),
-                                    ),
-                                    child: Text("\$$amt", style: TextStyle(color: Colors.white, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                                  ),
-                                )).toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                FadeInUp(
-                  child: Text(l10n.paymentMethod, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
-                ),
-                const SizedBox(height: 16),
-    
-                ...List.generate(_methods.length, (index) {
-                  final method = _methods[index];
-                  final amountText = _amountController.text;
-                  final double amount = double.tryParse(amountText) ?? 0;
-                  final bool isEnabled = amount > 0;
-
-                  return FadeInUp(
-                    delay: Duration(milliseconds: index * 80),
-                    child: Opacity(
-                      opacity: isEnabled ? 1.0 : 0.5,
-                      child: GestureDetector(
-                        onTap: !isEnabled ? null : () => _navigateToMethod(method["id"]),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOutCubic,
-                          margin: const EdgeInsets.only(bottom: 16),
-                          width: double.infinity,
-                          padding: EdgeInsets.all(20 * context.fontSizeFactor),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surface,
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(
-                              color: theme.dividerColor.withValues(alpha: 0.05),
-                              width: 2,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.02),
-                                blurRadius: 20,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 56 * context.fontSizeFactor,
-                                height: 56 * context.fontSizeFactor,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: (method["gradient"] as List<Color>).map((c) => c.withValues(alpha: 0.9)).toList(),
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: (method["gradient"] as List<Color>).first.withValues(alpha: 0.3),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 4),
-                                    )
-                                  ],
-                                ),
-                                child: Center(
-                                  child: AdaptiveIcon(
-                                    method["faIcon"] ?? method["icon"],
-                                    color: Colors.white,
-                                    size: 26 * context.fontSizeFactor,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      _getMethodTitle(method["titleKey"], l10n),
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      _getMethodDesc(method["descKey"], l10n),
-                                      style: TextStyle(color: AppColors.grey.withValues(alpha: 0.7), fontSize: 13 * context.fontSizeFactor),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            if (isSelected)
+                              Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor)
+                            else
                               Icon(Icons.arrow_forward_ios_rounded, color: AppColors.grey.withValues(alpha: 0.3), size: 16 * context.fontSizeFactor),
-                            ],
-                          ),
+                          ],
                         ),
                       ),
                     ),
                   );
                 }),
-                const SizedBox(height: 40),
+                SizedBox(height: 120 * context.fontSizeFactor), // Space for bottom button
               ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 12 * context.fontSizeFactor),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: MaxWidthBox(
+            maxWidth: 800,
+            child: ElevatedButton(
+              onPressed: (isAmountEntered && _selectedMethodId != null) 
+                  ? () => _navigateToMethod(_selectedMethodId!) 
+                  : null,
+              style: context.elevatedButtonStyle(
+                backgroundColor: AppColors.primaryDark,
+                foregroundColor: Colors.white,
+              ),
+              child: Text(l10n.continueLabel),
             ),
           ),
         ),

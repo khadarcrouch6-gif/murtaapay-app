@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 
 class TermsScreen extends StatelessWidget {
   const TermsScreen({super.key});

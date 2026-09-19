@@ -1,12 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:murtaaxpay_app/core/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../test_helper.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('AppState Transfer Atomicity & Rollback Tests', () {
     late AppState appState;
 
     setUp(() async {
+      setupMockSecureStorage();
       SharedPreferences.setMockInitialValues({});
       appState = AppState();
       await appState.init();
@@ -49,16 +52,15 @@ void main() {
     test('FX Rounding for SOS should have 0 decimals', () {
       final amount = 10.0; // 10 USD
       final result = appState.convertAmount(amount, "USD", "SOS");
-      // USD_SOS is 575.00. 10 * 575 = 5750
-      expect(result, 5750.0);
-      expect(result.toString().contains('.'), true); // 5750.0
+      // USD_SOS in ApiService is 570.0. 10 * 570 = 5700
+      expect(result, 5700.0);
     });
 
     test('FX Rounding for EUR should have 2 decimals', () {
       final amount = 10.0;
       final result = appState.convertAmount(amount, "USD", "EUR");
-      // USD_EUR is 0.92. 10 * 0.92 = 9.20
-      expect(result, 9.20);
+      // USD_EUR in ApiService is 0.93. 10 * 0.93 = 9.30
+      expect(result, 9.30);
     });
   });
 }

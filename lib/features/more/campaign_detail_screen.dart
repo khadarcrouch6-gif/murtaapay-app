@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:intl/intl.dart';
@@ -7,20 +8,118 @@ import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/widgets/success_screen.dart';
+import '../../core/widgets/pin_entry_dialog.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../core/widgets/shimmer_loading.dart';
 import 'models/campaign.dart';
 
 class CampaignDetailScreen extends StatefulWidget {
   final Campaign campaign;
-  const CampaignDetailScreen({super.key, required this.campaign});
+  final bool autoOpenDonate;
+  const CampaignDetailScreen({super.key, required this.campaign, this.autoOpenDonate = false});
 
   @override
   State<CampaignDetailScreen> createState() => _CampaignDetailScreenState();
 }
 
 class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
+  bool _isLoading = true;
+  late ScrollController _scrollController;
+  bool _showStickyButton = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+    _loadData();
+    if (widget.autoOpenDonate) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final l10n = AppLocalizations.of(context)!;
+        final state = Provider.of<AppState>(context, listen: false);
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
+        _showDonateDialog(context, state, l10n, theme, isDark);
+      });
+    }
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+      if (_showStickyButton) {
+        setState(() {
+          _showStickyButton = false;
+        });
+      }
+    } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+      if (!_showStickyButton) {
+        setState(() {
+          _showStickyButton = true;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadData() async {
+    // Simulate network delay for shimmer effect
+    await Future.delayed(const Duration(milliseconds: 200));
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Widget _buildShimmerLoading(BuildContext context, ThemeData theme, bool isDark) {
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: ShimmerLoading(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const ShimmerPlaceholder(width: double.infinity, height: 250, borderRadius: 0),
+              Padding(
+                padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const ShimmerPlaceholder(width: 120, height: 24, borderRadius: 12),
+                    const SizedBox(height: 16),
+                    const ShimmerPlaceholder(width: double.infinity, height: 32, borderRadius: 8),
+                    const SizedBox(height: 8),
+                    const ShimmerPlaceholder(width: 150, height: 16, borderRadius: 4),
+                    const SizedBox(height: 32),
+                    const ShimmerPlaceholder(width: double.infinity, height: 150, borderRadius: 24),
+                    const SizedBox(height: 32),
+                    const ShimmerPlaceholder(width: 80, height: 24, borderRadius: 4),
+                    const SizedBox(height: 16),
+                    const ShimmerPlaceholder(width: double.infinity, height: 20, borderRadius: 4),
+                    const SizedBox(height: 8),
+                    const ShimmerPlaceholder(width: double.infinity, height: 20, borderRadius: 4),
+                    const SizedBox(height: 8),
+                    const ShimmerPlaceholder(width: 200, height: 20, borderRadius: 4),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -29,9 +128,14 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     final isDark = theme.brightness == Brightness.dark;
     double progress = widget.campaign.raisedAmount / widget.campaign.goalAmount;
     
+    if (_isLoading) {
+      return _buildShimmerLoading(context, theme, isDark);
+    }
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           SliverAppBar(
             expandedHeight: 250,
@@ -41,10 +145,11 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(
-                      widget.campaign.imageUrl,
+                    FadeInImage.assetNetwork(
+                      placeholder: 'assets/images/logo.png',
+                      image: widget.campaign.imageUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(color: AppColors.primaryDark),
+                      imageErrorBuilder: (context, error, stackTrace) => Container(color: AppColors.primaryDark),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -89,7 +194,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FadeInUp(
-                          child: Container(
+                          child: widget.campaign.isVerified ? Container(
                             padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
                             decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20 * context.fontSizeFactor)),
                             child: Row(
@@ -100,34 +205,143 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                                 Text(l10n.verifiedOrganizer, style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 12 * context.fontSizeFactor)),
                               ],
                             ),
-                          ),
+                          ) : const SizedBox.shrink(),
                         ),
                         SizedBox(height: 16 * context.fontSizeFactor),
                         FadeInUp(
                           delay: const Duration(milliseconds: 100),
-                          child: Text(widget.campaign.title, style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  widget.campaign.title, 
+                                  style: TextStyle(
+                                    fontSize: 26 * context.fontSizeFactor, 
+                                    fontWeight: FontWeight.w800, 
+                                    letterSpacing: -0.5,
+                                    height: 1.2,
+                                    color: theme.textTheme.titleLarge?.color
+                                  )
+                                ),
+                              ),
+                              if (widget.campaign.endDate != null)
+                                Padding(
+                                  padding: EdgeInsets.only(left: 12 * context.fontSizeFactor, top: 4 * context.fontSizeFactor),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10 * context.fontSizeFactor, vertical: 5 * context.fontSizeFactor),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(8 * context.fontSizeFactor),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.timer_outlined, color: Colors.orange, size: 14 * context.fontSizeFactor),
+                                        SizedBox(width: 4 * context.fontSizeFactor),
+                                        Text(
+                                          "${widget.campaign.daysLeft}d left",
+                                          style: TextStyle(color: Colors.orange, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 8 * context.fontSizeFactor),
+                        SizedBox(height: 12 * context.fontSizeFactor),
                         FadeInUp(
                           delay: const Duration(milliseconds: 200),
-                          child: Text("${l10n.organizedBy} ${widget.campaign.creator}", style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
+                          child: Row(
+                            children: [
+                              Icon(Icons.person_outline_rounded, size: 16 * context.fontSizeFactor, color: theme.textTheme.bodySmall?.color ?? AppColors.grey),
+                              SizedBox(width: 6 * context.fontSizeFactor),
+                              Text(
+                                widget.campaign.creator, 
+                                style: TextStyle(
+                                  color: theme.textTheme.bodyLarge?.color, 
+                                  fontSize: 14 * context.fontSizeFactor,
+                                  fontWeight: FontWeight.w600
+                                )
+                              ),
+                              Text(
+                                " ${l10n.organizedBy.toLowerCase()}", 
+                                style: TextStyle(
+                                  color: theme.textTheme.bodySmall?.color ?? AppColors.grey, 
+                                  fontSize: 14 * context.fontSizeFactor
+                                )
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 32 * context.fontSizeFactor),
+                        SizedBox(height: 40 * context.fontSizeFactor),
                         FadeInUp(
                           delay: const Duration(milliseconds: 300),
                           child: RepaintBoundary(child: _buildProgressCard(state, l10n, progress, theme, isDark)),
                         ),
+                        SizedBox(height: 24 * context.fontSizeFactor),
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 310),
+                          child: ElevatedButton(
+                            onPressed: () => _showDonateDialog(context, state, l10n, theme, isDark),
+                            style: context.elevatedButtonStyle(
+                              backgroundColor: AppColors.accentTeal,
+                              foregroundColor: Colors.white,
+                              height: 54,
+                              borderRadius: 16,
+                            ),
+                            child: Text(l10n.donateNow, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+                          ),
+                        ),
                         SizedBox(height: 32 * context.fontSizeFactor),
                         FadeInUp(
+                          delay: const Duration(milliseconds: 350),
+                          child: _buildOrganizerSection(context, state, l10n),
+                        ),
+                        SizedBox(height: 32 * context.fontSizeFactor),
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 360),
+                          child: _buildTrustSection(context, state, l10n),
+                        ),
+                        SizedBox(height: 32 * context.fontSizeFactor),
+                        if (widget.campaign.galleryUrls.isNotEmpty) ...[
+                          FadeInUp(
+                            delay: const Duration(milliseconds: 380),
+                            child: _buildGallery(context),
+                          ),
+                          SizedBox(height: 32 * context.fontSizeFactor),
+                        ],
+                        if (widget.campaign.category == "Zakat / Agoomo") ...[
+                          FadeInUp(
+                            delay: const Duration(milliseconds: 390),
+                            child: _buildZakatGuide(context, l10n),
+                          ),
+                          SizedBox(height: 32 * context.fontSizeFactor),
+                        ],
+                        FadeInUp(
                           delay: const Duration(milliseconds: 400),
-                          child: Text(l10n.about, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.titleMedium?.color)),
+                          child: Text(
+                            l10n.about, 
+                            style: TextStyle(
+                              fontSize: 20 * context.fontSizeFactor, 
+                              fontWeight: FontWeight.w800, 
+                              letterSpacing: -0.3,
+                              color: theme.textTheme.titleMedium?.color
+                            )
+                          ),
                         ),
                         SizedBox(height: 16 * context.fontSizeFactor),
                         FadeInUp(
                           delay: const Duration(milliseconds: 500),
                           child: Text(
-                            "${widget.campaign.description}\n\n${l10n.campaignDescriptionExtra}",
-                            style: TextStyle(fontSize: 15 * context.fontSizeFactor, height: 1.6, color: theme.textTheme.bodyMedium?.color ?? AppColors.textPrimary),
+                            widget.campaign.description,
+                            style: TextStyle(
+                              fontSize: 16 * context.fontSizeFactor, 
+                              height: 1.7, 
+                              color: theme.textTheme.bodyMedium?.color ?? AppColors.textPrimary,
+                              letterSpacing: 0.1
+                            ),
                           ),
                         ),
                         SizedBox(height: 32 * context.fontSizeFactor),
@@ -135,19 +349,21 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                         SizedBox(height: 32 * context.fontSizeFactor),
                         FadeInUp(
                           delay: const Duration(milliseconds: 600),
-                          child: _buildTrustSection(context, state, l10n),
-                        ),
-                        SizedBox(height: 32 * context.fontSizeFactor),
-                        FadeInUp(
-                          delay: const Duration(milliseconds: 700),
                           child: _buildUpdatesTimeline(context, state, l10n),
                         ),
                         SizedBox(height: 32 * context.fontSizeFactor),
                         FadeInUp(
-                          delay: const Duration(milliseconds: 800),
+                          delay: const Duration(milliseconds: 700),
                           child: _buildDonorsList(context, state, l10n),
                         ),
-                        const SizedBox(height: 24), 
+                        if (widget.campaign.isVerified) ...[
+                          SizedBox(height: 32 * context.fontSizeFactor),
+                          FadeInUp(
+                            delay: const Duration(milliseconds: 800),
+                            child: _buildSecurityVerification(context, l10n),
+                          ),
+                        ],
+                        SizedBox(height: 40 * context.fontSizeFactor),
                       ],
                     ),
                   ),
@@ -155,54 +371,89 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
               ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: _buildBottomAction(),
-          ),
-          SliverToBoxAdapter(
-            child: SizedBox(height: 32 * context.fontSizeFactor),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildBottomAction() {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Center(
-      child: MaxWidthBox(
-        maxWidth: 800,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor),
-          child: ElevatedButton(
-            onPressed: () => _showDonateDialog(context, Provider.of<AppState>(context, listen: false), l10n, theme, isDark),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.accentTeal,
-              minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+  Widget _buildStickyDonateAction(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme, bool isDark) {
+    return AnimatedSlide(
+      duration: const Duration(milliseconds: 300),
+      offset: _showStickyButton ? Offset.zero : const Offset(0, 1),
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 300),
+        opacity: _showStickyButton ? 1.0 : 0.0,
+        child: Container(
+          padding: EdgeInsets.fromLTRB(
+            context.horizontalPadding,
+            16 * context.fontSizeFactor,
+            context.horizontalPadding,
+            (16 + MediaQuery.of(context).padding.bottom) * context.fontSizeFactor,
+          ),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+                blurRadius: 20 * context.fontSizeFactor,
+                offset: Offset(0, -5 * context.fontSizeFactor),
+              )
+            ],
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24 * context.fontSizeFactor)),
+          ),
+          child: MaxWidthBox(
+            maxWidth: 800,
+            child: ElevatedButton(
+              onPressed: () => _showDonateDialog(context, state, l10n, theme, isDark),
+              style: context.elevatedButtonStyle(
+                backgroundColor: AppColors.accentTeal,
+                foregroundColor: Colors.white,
+                height: 56,
+                borderRadius: 16,
+              ),
+              child: Text(
+                l10n.donateNow,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
+              ),
             ),
-            child: Text(l10n.donateNow, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: Colors.white)),
           ),
         ),
       ),
     );
   }
 
+  Widget _buildSecurityVerification(BuildContext context, AppLocalizations l10n) {
+    return Container(
+      padding: EdgeInsets.all(20 * context.fontSizeFactor),
+      decoration: BoxDecoration(
+        color: AppColors.accentTeal.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+        border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.1)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(10 * context.fontSizeFactor),
+            decoration: const BoxDecoration(color: AppColors.accentTeal, shape: BoxShape.circle),
+            child: Icon(Icons.verified_user_rounded, color: Colors.white, size: 20 * context.fontSizeFactor),
+          ),
+          SizedBox(width: 16 * context.fontSizeFactor),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.secureProtected, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                Text(l10n.secureProtectedDesc, style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildProgressCard(AppState state, AppLocalizations l10n, double progress, ThemeData theme, bool isDark) {
-    String milestoneText = "";
-    if (progress >= 1.0) {
-      milestoneText = "Goal Reached! 🎉";
-    } else if (progress >= 0.9) {
-      milestoneText = "Almost There! 🔥";
-    } else if (progress >= 0.75) {
-      milestoneText = "75% Completed 🚀";
-    } else if (progress >= 0.5) {
-      milestoneText = "Halfway There! 🙌";
-    } else if (progress >= 0.25) {
-      milestoneText = "Gaining Momentum ✨";
-    }
+    final milestoneText = widget.campaign.milestoneText;
 
     return Container(
       padding: EdgeInsets.all(24 * context.fontSizeFactor),
@@ -216,24 +467,43 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Text("\$${widget.campaign.raisedAmount.toInt()}", style: TextStyle(fontSize: 28 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
-                  SizedBox(width: 8 * context.fontSizeFactor),
-                  Text(l10n.fundraiserRaisedOf, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
-                ],
+              Flexible(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        "\$${widget.campaign.raisedAmount.toInt()}", 
+                        style: TextStyle(
+                          fontSize: 32 * context.fontSizeFactor, 
+                          fontWeight: FontWeight.w800, 
+                          color: theme.colorScheme.primary, 
+                          letterSpacing: -1
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(width: 8 * context.fontSizeFactor),
+                    Text(l10n.fundraiserRaisedOf, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w500)),
+                  ],
+                ),
               ),
               if (milestoneText.isNotEmpty)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
-                  decoration: BoxDecoration(
-                    color: AppColors.accentTeal.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8 * context.fontSizeFactor),
-                  ),
-                  child: Text(
-                    milestoneText,
-                    style: TextStyle(color: AppColors.accentTeal, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                Padding(
+                  padding: EdgeInsets.only(left: 8 * context.fontSizeFactor),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentTeal.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8 * context.fontSizeFactor),
+                    ),
+                    child: Text(
+                      milestoneText,
+                      style: TextStyle(color: AppColors.accentTeal, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
             ],
@@ -328,57 +598,264 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     );
   }
 
+  Widget _buildOrganizerSection(BuildContext context, AppState state, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: EdgeInsets.all(20 * context.fontSizeFactor),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(2 * context.fontSizeFactor),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.accentTeal, width: 2),
+            ),
+            child: CircleAvatar(
+              radius: 26 * context.fontSizeFactor,
+              backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+              child: Icon(Icons.person_rounded, color: AppColors.accentTeal, size: 30 * context.fontSizeFactor),
+            ),
+          ),
+          SizedBox(width: 16 * context.fontSizeFactor),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.campaign.organizerTitle ?? l10n.verifiedOrganizer,
+                  style: TextStyle(color: AppColors.accentTeal, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 4 * context.fontSizeFactor),
+                Text(
+                  widget.campaign.organizerSubtitle ?? widget.campaign.creator,
+                  style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 2 * context.fontSizeFactor),
+                Text(
+                  l10n.secureProtectedDesc,
+                  style: TextStyle(color: AppColors.grey, fontSize: 11 * context.fontSizeFactor),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGallery(BuildContext context) {
+    if (widget.campaign.galleryUrls.isEmpty) return const SizedBox.shrink();
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.gallery,
+          style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 16 * context.fontSizeFactor),
+        SizedBox(
+          height: 180 * context.fontSizeFactor,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: widget.campaign.galleryUrls.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.only(right: 16 * context.fontSizeFactor),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                  child: FadeInImage.assetNetwork(
+                    placeholder: 'assets/images/logo.png',
+                    image: widget.campaign.galleryUrls[index],
+                    width: 280 * context.fontSizeFactor,
+                    fit: BoxFit.cover,
+                    imageErrorBuilder: (context, error, stackTrace) => Container(
+                      width: 280 * context.fontSizeFactor,
+                      color: AppColors.grey.withValues(alpha: 0.1),
+                      child: Icon(Icons.image_not_supported_rounded, color: AppColors.grey, size: 40 * context.fontSizeFactor),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildZakatGuide(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: EdgeInsets.all(24 * context.fontSizeFactor),
+      decoration: BoxDecoration(
+        color: AppColors.accentTeal.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+        border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.auto_stories_rounded, color: AppColors.accentTeal, size: 22 * context.fontSizeFactor),
+              SizedBox(width: 12 * context.fontSizeFactor),
+              Expanded(
+                child: Text(
+                  l10n.eightCategoriesOfZakat,
+                  style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.accentTeal),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20 * context.fontSizeFactor),
+          _buildZakatCategoryItem(l10n.fuqaraTitle, l10n.fuqaraDesc),
+          _buildZakatCategoryItem(l10n.masakinTitle, l10n.masakinDesc),
+          _buildZakatCategoryItem(l10n.amilinaTitle, l10n.amilinaDesc),
+          _buildZakatCategoryItem(l10n.muallafatiTitle, l10n.muallafatiDesc),
+          _buildZakatCategoryItem(l10n.riqabTitle, l10n.riqabDesc),
+          _buildZakatCategoryItem(l10n.ghariminTitle, l10n.ghariminDesc),
+          _buildZakatCategoryItem(l10n.fisabilillahTitle, l10n.fisabilillahDesc),
+          _buildZakatCategoryItem(l10n.ibnusSabilTitle, l10n.ibnusSabilDesc),
+          SizedBox(height: 16 * context.fontSizeFactor),
+          Container(
+            padding: EdgeInsets.all(16 * context.fontSizeFactor),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: theme.brightness == Brightness.dark ? 0.05 : 0.5),
+              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.evidenceFromQuran, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor)),
+                SizedBox(height: 8 * context.fontSizeFactor),
+                Text(
+                  "\"Innama as-sadaqatu lil fuqara'i wal masakeeni wal 'amilina 'alayha...\" (9:60)",
+                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12 * context.fontSizeFactor, color: AppColors.grey),
+                  softWrap: true,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildZakatCategoryItem(String title, String desc) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 4),
+            width: 8,
+            height: 8,
+            decoration: const BoxDecoration(color: AppColors.accentTeal, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor), softWrap: true),
+                SizedBox(height: 2 * context.fontSizeFactor),
+                Text(desc, style: TextStyle(fontSize: 12 * context.fontSizeFactor, color: AppColors.grey, height: 1.4), softWrap: true),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showShareSheet(BuildContext context, AppState state, AppLocalizations l10n) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(32 * context.fontSizeFactor))),
       builder: (context) => MaxWidthBox(
         maxWidth: 600,
         child: Container(
-          padding: EdgeInsets.all(32 * context.fontSizeFactor),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(l10n.shareThisCampaign, style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-              SizedBox(height: 24 * context.fontSizeFactor),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildShareOption(Icons.message_rounded, "WhatsApp", Colors.green),
-                  _buildShareOption(Icons.facebook_rounded, l10n.facebook, Colors.blue),
-                  _buildShareOption(Icons.link_rounded, l10n.link, AppColors.primaryDark),
-                ],
-              ),
-              SizedBox(height: 24 * context.fontSizeFactor),
-              Container(
-                padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                decoration: BoxDecoration(color: AppColors.grey.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-                child: Row(
+          padding: EdgeInsets.all(24 * context.fontSizeFactor),
+          child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(l10n.shareThisCampaign, style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                SizedBox(height: 24 * context.fontSizeFactor),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Expanded(child: Text("https://murtaaxpay.app/donate/ahmed-surgery", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor), overflow: TextOverflow.ellipsis)),
-                    SizedBox(width: 8 * context.fontSizeFactor),
-                    Icon(Icons.copy_rounded, color: AppColors.primaryDark, size: 20 * context.fontSizeFactor),
+                    _buildShareOption(context, Icons.message_rounded, "WhatsApp", Colors.green, () {
+                      Share.share("${l10n.supportCampaign}: ${widget.campaign.title}\nhttps://murtaaxpay.app/donate/${widget.campaign.id}");
+                    }),
+                    _buildShareOption(context, Icons.facebook_rounded, l10n.facebook, Colors.blue, () {
+                      Share.share("${l10n.supportCampaign}: ${widget.campaign.title}\nhttps://murtaaxpay.app/donate/${widget.campaign.id}");
+                    }),
+                    _buildShareOption(context, Icons.link_rounded, l10n.link, AppColors.primaryDark, () {
+                      Clipboard.setData(ClipboardData(text: "https://murtaaxpay.app/donate/${widget.campaign.id}"));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.linkCopied)));
+                      Navigator.pop(context);
+                    }),
                   ],
                 ),
-              ),
-            ],
+                SizedBox(height: 24 * context.fontSizeFactor),
+                InkWell(
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(text: "https://murtaaxpay.app/donate/${widget.campaign.id}"));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.linkCopied)));
+                    Navigator.pop(context);
+                  },
+                  borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                  child: Container(
+                    padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                    decoration: BoxDecoration(color: AppColors.grey.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                    child: Row(
+                      children: [
+                        Expanded(child: Text("https://murtaaxpay.app/donate/${widget.campaign.id}", style: TextStyle(color: AppColors.grey, fontSize: 12 * context.fontSizeFactor), overflow: TextOverflow.ellipsis)),
+                        SizedBox(width: 8 * context.fontSizeFactor),
+                        Icon(Icons.copy_rounded, color: AppColors.primaryDark, size: 20 * context.fontSizeFactor),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildShareOption(IconData icon, String label, Color color) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(16 * context.fontSizeFactor),
-          decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-          child: Icon(icon, color: color, size: 30 * context.fontSizeFactor),
+  Widget _buildShareOption(BuildContext context, IconData icon, String label, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
+      child: Padding(
+        padding: EdgeInsets.all(8 * context.fontSizeFactor),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(16 * context.fontSizeFactor),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+              child: Icon(icon, color: color, size: 30 * context.fontSizeFactor),
+            ),
+            SizedBox(height: 8 * context.fontSizeFactor),
+            Text(label, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+          ],
         ),
-        SizedBox(height: 8 * context.fontSizeFactor),
-        Text(label, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-      ],
+      ),
     );
   }
 
@@ -415,21 +892,41 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
+                  radius: 20 * context.fontSizeFactor,
                   backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
-                  backgroundImage: (donor.isAnonymous || donor.avatarUrl == null) ? null : NetworkImage(donor.avatarUrl!),
                   child: (donor.isAnonymous || donor.avatarUrl == null)
-                    ? Text(donor.isAnonymous ? "?" : donor.name.substring(0, 1), style: const TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold))
-                    : null,
+                    ? Text(
+                        donor.isAnonymous ? "?" : donor.name.substring(0, 1), 
+                        style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
+                      )
+                    : ClipOval(
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/images/logo.png',
+                          image: donor.avatarUrl!,
+                          fit: BoxFit.cover,
+                          width: 40 * context.fontSizeFactor,
+                          height: 40 * context.fontSizeFactor,
+                          imageErrorBuilder: (context, error, stackTrace) => Text(
+                            donor.name.substring(0, 1), 
+                            style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
+                          ),
+                        ),
+                      ),
                 ),
                 SizedBox(width: 16 * context.fontSizeFactor),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(donor.isAnonymous ? l10n.anonymous : donor.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        donor.isAnonymous ? l10n.anonymous : donor.name, 
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       if (donor.message != null && donor.message!.isNotEmpty) ...[
                         SizedBox(height: 4 * context.fontSizeFactor),
                         Container(
+                          width: double.infinity,
                           padding: EdgeInsets.all(12 * context.fontSizeFactor),
                           decoration: BoxDecoration(
                             color: Theme.of(context).dividerColor.withValues(alpha: 0.05),
@@ -449,13 +946,32 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                     ],
                   ),
                 ),
-                Text(
-                  NumberFormat.simpleCurrency(name: "USD", decimalDigits: 0).format(donor.amount), 
-                  style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor)
+                Padding(
+                  padding: EdgeInsets.only(left: 8 * context.fontSizeFactor),
+                  child: Text(
+                    NumberFormat.simpleCurrency(name: "USD", decimalDigits: 0).format(donor.amount), 
+                    style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor)
+                  ),
                 ),
               ],
             ),
-          )).toList(),
+          )),
+        if (widget.campaign.recentDonors.length > 5)
+          Padding(
+            padding: EdgeInsets.only(top: 8 * context.fontSizeFactor),
+            child: SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {},
+                style: context.outlinedButtonStyle(
+                  foregroundColor: AppColors.accentTeal,
+                  borderRadius: 12,
+                  height: 48,
+                ),
+                child: Text(l10n.viewAll),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -514,7 +1030,16 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                           SizedBox(height: 16 * context.fontSizeFactor),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-                            child: Image.network(update.imageUrl!, fit: BoxFit.cover),
+                            child: FadeInImage.assetNetwork(
+                              placeholder: 'assets/images/logo.png',
+                              image: update.imageUrl!,
+                              fit: BoxFit.cover,
+                              imageErrorBuilder: (context, error, stackTrace) => Container(
+                                height: 200,
+                                color: AppColors.grey.withValues(alpha: 0.1),
+                                child: const Icon(Icons.broken_image_rounded, color: AppColors.grey),
+                              ),
+                            ),
                           ),
                         ],
                       ],
@@ -524,7 +1049,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -536,13 +1061,11 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     String? selectedCardId = state.cards.isNotEmpty ? state.cards[0].id : null;
     String selectedMobileProvider = "EVC Plus";
     
-    bool isPinStage = false;
     bool isAnonymous = false;
     bool isRecurring = false;
     
     final TextEditingController amountController = TextEditingController(text: "50");
     final TextEditingController messageController = TextEditingController();
-    final TextEditingController pinController = TextEditingController();
     final TextEditingController phoneController = TextEditingController();
 
     final isZakat = widget.campaign.category == "Zakat / Agoomo";
@@ -584,23 +1107,22 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (!isPinStage) ...[
-                          Center(
-                            child: Column(
-                              children: [
-                                Text(
-                                  l10n.fundraiserDonateTo,
-                                  style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w500),
-                                ),
-                                SizedBox(height: 4 * context.fontSizeFactor),
-                                Text(
-                                  widget.campaign.title,
-                                  style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
+                        Center(
+                          child: Column(
+                            children: [
+                              Text(
+                                l10n.fundraiserDonateTo,
+                                style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w500),
+                              ),
+                              SizedBox(height: 4 * context.fontSizeFactor),
+                              Text(
+                                widget.campaign.title,
+                                style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
+                        ),
                           
                           if (isZakat) ...[
                             SizedBox(height: 16 * context.fontSizeFactor),
@@ -633,7 +1155,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                           GridView.count(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: 3,
+                            crossAxisCount: context.responsiveValue(mobile: 3, tablet: 4, desktop: 6),
                             mainAxisSpacing: 10,
                             crossAxisSpacing: 10,
                             childAspectRatio: 2.2,
@@ -819,7 +1341,27 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                                 }
                               }
                               
-                              setModalState(() => isPinStage = true);
+                              showDialog(
+                                context: context,
+                                builder: (context) => PinEntryDialog(
+                                  title: l10n.securityVerification,
+                                  description: selectedCategory == "Mobile" 
+                                    ? state.translate("Enter your Mobile Money PIN", "Geli PIN-ka Mobile-kaaga")
+                                    : selectedCategory == "Card" ? state.translate("Enter Card PIN", "Geli PIN-ka Kaadhka") : l10n.enterTransactionPin,
+                                  isCardPin: selectedCategory == "Card",
+                                  cardId: selectedCardId,
+                                  onValidate: (pin) async {
+                                    if (pin == "BIOMETRIC_SUCCESS") return true;
+                                    if (selectedCategory == "Card") {
+                                      return state.verifyCardPin(pin, cardId: selectedCardId);
+                                    }
+                                    return state.verifyPin(pin);
+                                  },
+                                  onConfirm: (pin) {
+                                    _processDonation(context, state, l10n, amount, pin, getEffectiveMethod(), selectedCardId, isAnonymous: isAnonymous, message: messageController.text, isRecurring: isRecurring);
+                                  },
+                                ),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.accentTeal,
@@ -827,79 +1369,8 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                               elevation: 0,
                             ),
-                            child: Text(l10n.donateNow, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                            child: Text(l10n.donateNow, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                           ),
-                        ] else ...[
-                          // PIN Stage
-                          Column(
-                            children: [
-                              SizedBox(height: 20 * context.fontSizeFactor),
-                              Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.1), shape: BoxShape.circle),
-                                child: Icon(Icons.lock_rounded, color: AppColors.accentTeal, size: 40 * context.fontSizeFactor),
-                              ),
-                              SizedBox(height: 24 * context.fontSizeFactor),
-                              Text(l10n.securityVerification, style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                              SizedBox(height: 8 * context.fontSizeFactor),
-                              Text(
-                                selectedCategory == "Mobile" 
-                                  ? state.translate("Enter your Mobile Money PIN", "Geli PIN-ka Mobile-kaaga")
-                                  : selectedCategory == "Card" ? state.translate("Enter Card PIN", "Geli PIN-ka Kaadhka") : l10n.enterTransactionPin,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
-                              ),
-                              SizedBox(height: 32 * context.fontSizeFactor),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 40),
-                                child: TextField(
-                                  controller: pinController,
-                                  obscureText: true,
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
-                                  autofocus: true,
-                                  style: TextStyle(fontSize: 28 * context.fontSizeFactor, letterSpacing: 20, fontWeight: FontWeight.bold),
-                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
-                                  decoration: InputDecoration(
-                                    hintText: "****",
-                                    hintStyle: TextStyle(letterSpacing: 20, fontSize: 28 * context.fontSizeFactor, color: theme.dividerColor.withValues(alpha: 0.2)),
-                                    border: UnderlineInputBorder(borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.2))),
-                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.2))),
-                                    focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.accentTeal, width: 2)),
-                                  ),
-                                  onChanged: (val) {
-                                    if (val.length == 4) {
-                                      _processDonation(context, state, l10n, amount, val, getEffectiveMethod(), selectedCardId, isAnonymous: isAnonymous, message: messageController.text, isRecurring: isRecurring);
-                                    }
-                                  },
-                                ),
-                              ),
-                              SizedBox(height: 48 * context.fontSizeFactor),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TextButton(
-                                      onPressed: () => setModalState(() => isPinStage = false),
-                                      child: Text(l10n.cancel, style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                                    ),
-                                  ),
-                                  SizedBox(width: 16 * context.fontSizeFactor),
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () => _processDonation(context, state, l10n, amount, pinController.text, getEffectiveMethod(), selectedCardId, isAnonymous: isAnonymous, message: messageController.text, isRecurring: isRecurring),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.accentTeal,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                        minimumSize: const Size(double.infinity, 50),
-                                      ),
-                                      child: Text(l10n.confirm, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
                       ],
                     ),
                   ),
@@ -1035,7 +1506,9 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                 ],
               ),
             ),
-            if (trailing != null) trailing,
+            if (trailing != null) ...[
+              trailing,
+            ],
           ],
         ),
       ),
@@ -1048,7 +1521,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
       onChanged: onChanged,
       title: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
       subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.grey)),
-      activeColor: AppColors.accentTeal,
+      activeThumbColor: AppColors.accentTeal,
       contentPadding: EdgeInsets.zero,
     );
   }
@@ -1057,23 +1530,6 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   void _processDonation(BuildContext context, AppState state, AppLocalizations l10n, double amount, String pin, String method, String? cardId, {bool isAnonymous = false, String? message, bool isRecurring = false}) async {
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.pleaseEnterValidAmount)));
-      return;
-    }
-
-    if (pin.length < 4) return;
-
-    bool isPinValid = false;
-    if (method.startsWith("card_")) {
-      isPinValid = state.verifyCardPin(pin, cardId: cardId);
-    } else {
-      isPinValid = state.verifyPin(pin);
-    }
-
-    if (!isPinValid) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(state.translate("Incorrect PIN. Please try again.", "PIN-kaagu waa khalad. Fadlan isku day markale.")),
-        backgroundColor: Colors.redAccent,
-      ));
       return;
     }
 
@@ -1133,6 +1589,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
             subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
             buttonText: l10n.backToHome,
             transactionData: transactionData,
+            subtitle: isRecurring ? l10n.makeRecurringDonation : null,
             onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
           ),
         ),

@@ -6,7 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../app_state.dart';
-import '../../l10n/app_localizations.dart';
+import '../responsive_utils.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 
 typedef ContactSelectedCallback = void Function(Contact contact, String? murtaaxName, String? verifiedId);
 
@@ -92,7 +93,6 @@ class _ContactSyncListState extends State<ContactSyncList> {
   }
 
   void _inviteContact(Contact contact) {
-    final phone = contact.phones.isNotEmpty ? contact.phones.first.number : "";
     final name = contact.displayName;
     final message = "Hi $name, I'm using MurtaaxPay to send money and manage my savings. Join me! https://murtaaxpay.com/download";
     
@@ -110,9 +110,9 @@ class _ContactSyncListState extends State<ContactSyncList> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.contact_page_outlined, size: 64, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            const Text("Contact sync is not supported on web", style: TextStyle(color: Colors.grey)),
+            Icon(Icons.contact_page_outlined, size: 64 * context.fontSizeFactor, color: Colors.grey[300]),
+            SizedBox(height: 16 * context.fontSizeFactor),
+            Text("Contact sync is not supported on web", style: TextStyle(color: Colors.grey, fontSize: 14 * context.fontSizeFactor)),
           ],
         ),
       );
@@ -169,11 +169,11 @@ class _ContactSyncListState extends State<ContactSyncList> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.person_search_rounded, size: 64, color: Colors.grey[300]),
-              const SizedBox(height: 16),
+              Icon(Icons.person_search_rounded, size: 64 * context.fontSizeFactor, color: Colors.grey[300]),
+              SizedBox(height: 16 * context.fontSizeFactor),
               Text(
                 effectiveSearchQuery.isEmpty ? l10n.noTransactionsFound : "No results for \"$effectiveSearchQuery\"",
-                style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w500),
+                style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w500, fontSize: 14 * context.fontSizeFactor),
               ),
             ],
           ),
@@ -188,13 +188,15 @@ class _ContactSyncListState extends State<ContactSyncList> {
           children: [
             if (widget.searchQuery.isEmpty)
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0 * context.fontSizeFactor),
                 child: TextField(
                   onChanged: (v) => setState(() => _searchQuery = v),
+                  style: TextStyle(fontSize: 16 * context.fontSizeFactor),
                   decoration: InputDecoration(
                     hintText: "Search contacts...",
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    hintStyle: TextStyle(fontSize: 16 * context.fontSizeFactor),
+                    prefixIcon: Icon(Icons.search, size: 24 * context.fontSizeFactor),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                     contentPadding: const EdgeInsets.symmetric(vertical: 0),
                   ),
                 ),
@@ -204,12 +206,12 @@ class _ContactSyncListState extends State<ContactSyncList> {
                 children: [
                   if (onMurtaax.isNotEmpty) ...[
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
                       child: Text(
                         "CONTACTS ON MURTAAX",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: 12 * context.fontSizeFactor,
                           color: theme.colorScheme.secondary,
                           letterSpacing: 1.2,
                         ),
@@ -226,12 +228,12 @@ class _ContactSyncListState extends State<ContactSyncList> {
                     const Divider(),
                   ],
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
                     child: Text(
                       "ALL CONTACTS",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 12,
+                        fontSize: 12 * context.fontSizeFactor,
                         color: Colors.grey[600],
                         letterSpacing: 1.2,
                       ),
@@ -255,32 +257,32 @@ class _ContactSyncListState extends State<ContactSyncList> {
 
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: isMurtaax ? theme.colorScheme.secondary.withOpacity(0.1) : Colors.grey[200],
+        backgroundColor: isMurtaax ? theme.colorScheme.secondary.withValues(alpha: 0.1) : Colors.grey[200],
         backgroundImage: photoBytes != null ? MemoryImage(photoBytes) : null,
         child: photoBytes == null 
           ? Text((contact.displayName ?? "").isNotEmpty ? contact.displayName![0] : "?", 
               style: TextStyle(color: isMurtaax ? theme.colorScheme.secondary : Colors.grey[700], fontWeight: FontWeight.bold)) 
           : null,
       ),
-      title: Text(contact.displayName ?? "No Name", style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(contact.phones.isNotEmpty ? contact.phones.first.number : "No phone"),
+      title: Text(contact.displayName ?? "No Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+      subtitle: Text(contact.phones.isNotEmpty ? contact.phones.first.number : "No phone", style: TextStyle(fontSize: 14 * context.fontSizeFactor)),
       trailing: isMurtaax 
         ? Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
             decoration: BoxDecoration(
               color: theme.colorScheme.secondary,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
             ),
-            child: const Text("PAY", style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+            child: Text("PAY", style: TextStyle(color: Colors.white, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           )
         : OutlinedButton(
             onPressed: () => _inviteContact(contact),
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: theme.colorScheme.secondary),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
+              padding: EdgeInsets.symmetric(horizontal: 8 * context.fontSizeFactor),
             ),
-            child: Text("INVITE", style: TextStyle(color: theme.colorScheme.secondary, fontSize: 10, fontWeight: FontWeight.bold)),
+            child: Text("INVITE", style: TextStyle(color: theme.colorScheme.secondary, fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
           ),
       onTap: () => widget.onContactSelected(contact, murtaaxName, verifiedId),
     );
@@ -292,35 +294,35 @@ class _ContactSyncListState extends State<ContactSyncList> {
         child: MaxWidthBox(
           maxWidth: 500,
           child: Padding(
-            padding: const EdgeInsets.all(32.0),
+            padding: EdgeInsets.all(32.0 * context.fontSizeFactor),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.contacts_rounded, size: 64, color: theme.colorScheme.secondary.withOpacity(0.5)),
-                const SizedBox(height: 24),
+                Icon(Icons.contacts_rounded, size: 64 * context.fontSizeFactor, color: theme.colorScheme.secondary.withValues(alpha: 0.5)),
+                SizedBox(height: 24 * context.fontSizeFactor),
                 Text(
                   "Sync your contacts",
-                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor),
                 ),
-                const SizedBox(height: 12),
-                const Text(
+                SizedBox(height: 12 * context.fontSizeFactor),
+                Text(
                   "Find your friends and family on MurtaaxPay instantly. We'll only use your contacts to help you find people you know.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.grey, fontSize: 14 * context.fontSizeFactor),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32 * context.fontSizeFactor),
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: 50 * context.fontSizeFactor,
                   child: ElevatedButton(
                     onPressed: _requestPermission,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.secondary,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                     ),
-                    child: const Text("Sync Contacts", style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text("Sync Contacts", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                   ),
                 ),
               ],
@@ -335,35 +337,35 @@ class _ContactSyncListState extends State<ContactSyncList> {
     return Center(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(32.0),
+          padding: EdgeInsets.all(32.0 * context.fontSizeFactor),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.settings_rounded, size: 64, color: Colors.grey),
-              const SizedBox(height: 24),
+              Icon(Icons.settings_rounded, size: 64 * context.fontSizeFactor, color: Colors.grey),
+              SizedBox(height: 24 * context.fontSizeFactor),
               Text(
                 "Permission Required",
-                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, fontSize: 20 * context.fontSizeFactor),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12 * context.fontSizeFactor),
               Text(
                 l10n.contactPermissionRequired,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.grey),
+                style: TextStyle(color: Colors.grey, fontSize: 14 * context.fontSizeFactor),
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32 * context.fontSizeFactor),
               SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: 50 * context.fontSizeFactor,
                 child: ElevatedButton(
                   onPressed: () => ph.openAppSettings(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.secondary,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                   ),
-                  child: Text(l10n.openSettings, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text(l10n.openSettings, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
                 ),
               ),
             ],

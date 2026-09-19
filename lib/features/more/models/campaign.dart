@@ -13,11 +13,16 @@ class Campaign {
   final int donorCount;
   final String lastDonationAgo;
   final bool isUrgent;
+  final bool isVerified;
   final List<String> donorAvatars;
   final List<String> partnerLogos;
   final List<Donor> recentDonors;
   final List<CampaignUpdate> updates;
   final String status; // 'new', 'trending', 'ending_soon', 'completed'
+  final DateTime? endDate;
+  final String? organizerTitle; // e.g., "Sheikh", "Imam", "Organization"
+  final String? organizerSubtitle; // e.g., "Sheikh Umal", "Al-Nuor Foundation"
+  final List<String> galleryUrls;
 
   Campaign({
     required this.id,
@@ -32,14 +37,34 @@ class Campaign {
     required this.donorCount,
     required this.lastDonationAgo,
     this.isUrgent = false,
+    this.isVerified = true,
     this.donorAvatars = const [],
     this.partnerLogos = const [],
     this.recentDonors = const [],
     this.updates = const [],
     this.status = 'active',
+    this.endDate,
+    this.organizerTitle,
+    this.organizerSubtitle,
+    this.galleryUrls = const [],
   });
 
   double get progress => (raisedAmount / goalAmount).clamp(0.0, 1.0);
+
+  String get milestoneText {
+    if (progress >= 1.0) return "Goal Reached! 🎉";
+    if (progress >= 0.9) return "Almost There! 🔥";
+    if (progress >= 0.75) return "75% Completed 🚀";
+    if (progress >= 0.5) return "Halfway There! 🙌";
+    if (progress >= 0.25) return "Gaining Momentum ✨";
+    return "";
+  }
+
+  int get daysLeft {
+    if (endDate == null) return 0;
+    final difference = endDate!.difference(DateTime.now()).inDays;
+    return difference > 0 ? difference : 0;
+  }
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -48,17 +73,23 @@ class Campaign {
     'goalAmount': goalAmount,
     'raisedAmount': raisedAmount,
     'creator': creator,
-    'icon': icon.codePoint,
+    'iconCodePoint': icon.codePoint,
+    'iconFontFamily': icon.fontFamily,
     'imageUrl': imageUrl,
     'category': category,
     'donorCount': donorCount,
     'lastDonationAgo': lastDonationAgo,
     'isUrgent': isUrgent,
+    'isVerified': isVerified,
     'donorAvatars': donorAvatars,
     'partnerLogos': partnerLogos,
     'recentDonors': recentDonors.map((e) => e.toJson()).toList(),
     'updates': updates.map((e) => e.toJson()).toList(),
     'status': status,
+    'endDate': endDate?.toIso8601String(),
+    'organizerTitle': organizerTitle,
+    'organizerSubtitle': organizerSubtitle,
+    'galleryUrls': galleryUrls,
   };
 
   factory Campaign.fromJson(Map<String, dynamic> json) => Campaign(
@@ -68,12 +99,16 @@ class Campaign {
     goalAmount: (json['goalAmount'] as num).toDouble(),
     raisedAmount: (json['raisedAmount'] as num).toDouble(),
     creator: json['creator'],
-    icon: IconData(json['icon'], fontFamily: 'MaterialIcons'),
+    icon: IconData(
+      json['iconCodePoint'] ?? json['icon'],
+      fontFamily: json['iconFontFamily'] ?? 'MaterialIcons',
+    ),
     imageUrl: json['imageUrl'],
     category: json['category'],
     donorCount: json['donorCount'],
     lastDonationAgo: json['lastDonationAgo'],
     isUrgent: json['isUrgent'] ?? false,
+    isVerified: json['isVerified'] ?? true,
     donorAvatars: List<String>.from(json['donorAvatars'] ?? []),
     partnerLogos: List<String>.from(json['partnerLogos'] ?? []),
     recentDonors: (json['recentDonors'] as List? ?? [])
@@ -83,16 +118,26 @@ class Campaign {
         .map((e) => CampaignUpdate.fromJson(e as Map<String, dynamic>))
         .toList(),
     status: json['status'] ?? 'active',
+    endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+    organizerTitle: json['organizerTitle'],
+    organizerSubtitle: json['organizerSubtitle'],
+    galleryUrls: List<String>.from(json['galleryUrls'] ?? []),
   );
 
   Campaign copyWith({
     double? raisedAmount,
     int? donorCount,
     String? lastDonationAgo,
+    bool? isVerified,
     List<String>? donorAvatars,
     List<Donor>? recentDonors,
     List<CampaignUpdate>? updates,
     String? status,
+    DateTime? endDate,
+    IconData? icon,
+    String? organizerTitle,
+    String? organizerSubtitle,
+    List<String>? galleryUrls,
   }) {
     return Campaign(
       id: id,
@@ -101,17 +146,22 @@ class Campaign {
       goalAmount: goalAmount,
       raisedAmount: raisedAmount ?? this.raisedAmount,
       creator: creator,
-      icon: icon,
+      icon: icon ?? this.icon,
       imageUrl: imageUrl,
       category: category,
       donorCount: donorCount ?? this.donorCount,
       lastDonationAgo: lastDonationAgo ?? this.lastDonationAgo,
       isUrgent: isUrgent,
+      isVerified: isVerified ?? this.isVerified,
       donorAvatars: donorAvatars ?? this.donorAvatars,
       partnerLogos: partnerLogos,
       recentDonors: recentDonors ?? this.recentDonors,
       updates: updates ?? this.updates,
       status: status ?? this.status,
+      endDate: endDate ?? this.endDate,
+      organizerTitle: organizerTitle ?? this.organizerTitle,
+      organizerSubtitle: organizerSubtitle ?? this.organizerSubtitle,
+      galleryUrls: galleryUrls ?? this.galleryUrls,
     );
   }
 }

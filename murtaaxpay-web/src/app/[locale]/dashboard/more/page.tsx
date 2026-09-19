@@ -15,7 +15,7 @@ export default function MoreServicesPage() {
   ];
 
   const lifestyleServices = [
-    { title: "Sadaqah", icon: Heart, color: "text-red-500", bg: "bg-red-100", border: "hover:border-red-500" },
+    { title: "Fundraiser", icon: Heart, color: "text-red-500", bg: "bg-red-100", border: "hover:border-red-500" },
     { title: "Gift Cards", icon: Gift, color: "text-cyan-500", bg: "bg-cyan-100", border: "hover:border-cyan-500" },
     { title: "Refer & Earn", icon: Users, color: "text-indigo-500", bg: "bg-indigo-100", border: "hover:border-indigo-500" },
     { title: "Vouchers", icon: Ticket, color: "text-yellow-500", bg: "bg-yellow-100", border: "hover:border-yellow-500" },
@@ -27,7 +27,7 @@ export default function MoreServicesPage() {
       "Exchange Rates": "exchange",
       "Savings": "savings",
       "Investments": "investments",
-      "Sadaqah": "sadaqah",
+      "Fundraiser": "fundraiser",
       "Gift Cards": "gift-cards",
       "Refer & Earn": "refer",
       "Vouchers": "vouchers",

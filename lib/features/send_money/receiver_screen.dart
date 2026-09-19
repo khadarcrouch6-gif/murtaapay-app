@@ -5,12 +5,13 @@ import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../core/models/quick_profile.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/contact_sync_list.dart';
 import '../../core/widgets/step_indicator.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'payment_screen.dart';
 
 class ReceiverScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class ReceiverScreen extends StatefulWidget {
   final String? cardId;
   final String? prefilledName;
   final String? prefilledPhone;
+  final bool isFeeIncluded;
 
   const ReceiverScreen({
     super.key, 
@@ -31,6 +33,7 @@ class ReceiverScreen extends StatefulWidget {
     this.cardId,
     this.prefilledName,
     this.prefilledPhone,
+    this.isFeeIncluded = false,
   });
 
   @override
@@ -51,12 +54,15 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
   String? _selectedPurpose;
   bool _isVerifying = false;
   bool _isFavorite = false;
+  String? _currentProfileId;
 
-  // Mock Recent Items
-  final List<Map<String, String>> _recentItems = [
-    {"name": "Mohamed Ali", "detail": "615 123 456"},
-    {"name": "Ahmed Hersi", "detail": "634 987 654"},
-  ];
+  // Real-time Service Status
+  final Map<String, String?> _serviceStatus = {
+    "EVC Plus": null, // null means Healthy
+    "ZAAD Service": "Experiencing delays",
+    "e-Dahab": null,
+    "Sahal": null,
+  };
 
   @override
   void initState() {
@@ -151,14 +157,20 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
     await Future.delayed(const Duration(milliseconds: 1000));
 
     if (mounted) {
-      final name = await state.resolveAccountName(rawId, type: 'mobile');
+      final details = await state.resolveAccountDetails(rawId, type: 'mobile');
       setState(() {
         _isVerifying = false;
-        if (name != null) {
-          _nameController.text = name;
-        } else {
-          // If not found in mocks, we can leave it or set a placeholder
-          // _nameController.text = "Unknown Receiver";
+        if (details != null) {
+          _nameController.text = details['name']!;
+          // Sync favorite status if already in quick profiles
+          final profile = state.quickProfiles.where((p) => p.walletId == rawId).firstOrNull;
+          if (profile != null) {
+            _isFavorite = profile.isFavorite;
+            _currentProfileId = profile.id;
+          } else {
+            _isFavorite = false;
+            _currentProfileId = null;
+          }
         }
       });
       HapticFeedback.lightImpact();
@@ -325,6 +337,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                   currencyCode: widget.currencyCode,
                   purpose: _selectedPurpose ?? _getPurposes(l10n).first,
                   scrollController: scrollController,
+                  isFeeIncluded: widget.isFeeIncluded,
                 ),
               ),
             ],
@@ -332,6 +345,31 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
         ),
       ),
     );
+  }
+
+  void _toggleFavorite() {
+    final state = Provider.of<AppState>(context, listen: false);
+    if (_currentProfileId != null) {
+      state.toggleFavorite(_currentProfileId!);
+      setState(() => _isFavorite = !_isFavorite);
+    } else if (_idController.text.isNotEmpty && _nameController.text.isNotEmpty) {
+      // Create a profile first if it doesn't exist to allow favoriting
+      final rawId = _idController.text.replaceAll(' ', '');
+      final newProfile = QuickProfile(
+        id: "BEN-${DateTime.now().millisecondsSinceEpoch}",
+        name: _nameController.text,
+        walletId: rawId,
+        payoutMethod: _detectedProvider ?? widget.method,
+        isFavorite: true,
+        initials: _nameController.text.split(' ').map((e) => e.isNotEmpty ? e[0] : '').take(2).join(),
+      );
+      state.saveQuickProfile(newProfile);
+      setState(() {
+        _isFavorite = true;
+        _currentProfileId = newProfile.id;
+      });
+    }
+    HapticFeedback.mediumImpact();
   }
 
   @override
@@ -504,6 +542,28 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                                   _detectedProvider!,
                                   style: TextStyle(color: theme.colorScheme.secondary, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                                 ),
+                                if (_serviceStatus[_detectedProvider!] != null) ...[
+                                  const SizedBox(width: 12),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.amber.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: Colors.amber.withOpacity(0.5)),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 12),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          _serviceStatus[_detectedProvider!]!,
+                                          style: const TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -570,7 +630,7 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                               IconButton(
                                 icon: Icon(_isFavorite ? Icons.star_rounded : Icons.star_outline_rounded, 
                                   color: _isFavorite ? Colors.amber : Colors.grey, size: 24 * context.fontSizeFactor),
-                                onPressed: () => setState(() => _isFavorite = !_isFavorite),
+                                onPressed: _toggleFavorite,
                               ),
                           ],
                         ),
@@ -589,34 +649,28 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                         SizedBox(height: 12 * context.fontSizeFactor),
                         _buildPurposeDropdown(theme, l10n),
 
-                        if (_recentItems.isNotEmpty) ...[
+                        if (Provider.of<AppState>(context).quickProfiles.isNotEmpty) ...[
                           SizedBox(height: 24 * context.fontSizeFactor),
                           Text(l10n.recent, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 17 * context.fontSizeFactor)),
                           SizedBox(height: 10 * context.fontSizeFactor),
-                          ..._recentItems.map((item) => _buildRecentItem(theme, item["name"]!, item["detail"]!)),
+                          ...Provider.of<AppState>(context).quickProfiles.take(3).map((profile) => _buildRecentItem(theme, profile.name, profile.walletId, profile.isFavorite)),
                         ],
                         
                         SizedBox(height: 30 * context.fontSizeFactor),
                         
                         // Action Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56 * context.fontSizeFactor,
-                          child: ElevatedButton(
-                            onPressed: (_idController.text.isNotEmpty && _nameController.text.isNotEmpty && _idController.text.length >= 7)
-                                ? () => _handleContinue(l10n) : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.secondary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-                              elevation: 4,
-                              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
-                              disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
-                            ),
-                            child: Text(
-                              l10n.continueToReview,
-                              style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-                            ),
+                        ElevatedButton(
+                          onPressed: (_idController.text.isNotEmpty && _nameController.text.isNotEmpty && _idController.text.length >= 7)
+                              ? () => _handleContinue(l10n) : null,
+                          style: context.elevatedButtonStyle(
+                            backgroundColor: theme.colorScheme.secondary,
+                            foregroundColor: Colors.white,
+                            borderRadius: 16,
+                            elevation: 4,
+                          ),
+                          child: Text(
+                            l10n.continueToReview,
+                            style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5),
                           ),
                         ),
                         SizedBox(height: 30 * context.fontSizeFactor),
@@ -741,24 +795,42 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
     );
   }
 
-  Widget _buildRecentItem(ThemeData theme, String name, String detail) {
+  Widget _buildRecentItem(ThemeData theme, String name, String detail, [bool isFav = false]) {
     return Container(
       margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
       decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20 * context.fontSizeFactor), border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1), width: 1.5 * context.fontSizeFactor)),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
-        leading: CircleAvatar(
-          backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
-          child: Text(name[0], style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.w900, fontSize: 16 * context.fontSizeFactor)),
+        leading: Stack(
+          children: [
+            CircleAvatar(
+              backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
+              child: Text(name[0], style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.w900, fontSize: 16 * context.fontSizeFactor)),
+            ),
+            if (isFav)
+              Positioned(
+                right: -2,
+                bottom: -2,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                  child: const Icon(Icons.star_rounded, color: Colors.amber, size: 12),
+                ),
+              ),
+          ],
         ),
         title: Text(name, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16 * context.fontSizeFactor)),
         subtitle: Text(detail, style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.grey[600])),
         trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16 * context.fontSizeFactor, color: Colors.grey),
         onTap: () {
           setState(() {
-            _idController.text = detail;
+            _idController.text = _applyMask(detail);
             _nameController.text = name;
+            _isFavorite = isFav;
+            final profile = Provider.of<AppState>(context, listen: false).quickProfiles.where((p) => p.walletId == detail).firstOrNull;
+            _currentProfileId = profile?.id;
           });
+          if (detail.length >= 7) _verifyReceiver();
         },
       ),
     );

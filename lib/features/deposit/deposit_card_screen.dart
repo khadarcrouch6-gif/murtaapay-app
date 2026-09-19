@@ -13,10 +13,11 @@ import 'dart:ui' as ui;
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
 import '../navigation/main_navigation.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/models/transaction.dart' as model;
 import 'wallet_card_deposit_screen.dart';
 import '../../core/widgets/adaptive_icon.dart';
+import '../../core/widgets/pin_entry_dialog.dart';
 
 class DepositCardScreen extends StatefulWidget {
   final String amount;
@@ -156,7 +157,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -272,8 +273,6 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
     final appState = Provider.of<AppState>(context, listen: false);
     final amount = double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0;
     
-    _pinController.clear();
-
     if (appState.balance < amount) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -288,76 +287,16 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
     showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: AppColors.accentTeal.withOpacity(0.1), shape: BoxShape.circle),
-                child: Icon(Icons.lock_outline_rounded, color: AppColors.accentTeal, size: 28 * context.fontSizeFactor),
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.topUpFromWallet, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                appState.translate("Gali PIN-ka Wallet-ka si aad u bixiso \$${amount.toStringAsFixed(2)}", "Enter Wallet PIN to pay \$${amount.toStringAsFixed(2)}"),
-                style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 20 * context.fontSizeFactor),
-              TextField(
-                controller: _pinController,
-                obscureText: true,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                maxLength: 4,
-                autofocus: true,
-                style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 12),
-                decoration: InputDecoration(
-                  counterText: "",
-                  filled: true,
-                  fillColor: AppColors.accentTeal.withOpacity(0.05),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                  hintText: "••••",
-                  hintStyle: TextStyle(color: AppColors.grey.withOpacity(0.3), letterSpacing: 8),
-                ),
-                onChanged: (value) {
-                  if (value.length == 4) {
-                    if (appState.verifyPin(value)) {
-                      Navigator.pop(context);
-                      _processTransaction(this.context, l10n, isWalletDeduction: true);
-                    } else {
-                      _pinController.clear();
-                      HapticFeedback.heavyImpact();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(appState.translate("PIN-ku waa khaldan yahay", "Incorrect PIN entered")),
-                          backgroundColor: Colors.redAccent,
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
-                      setDialogState(() {});
-                    }
-                  }
-                },
-              ),
-            ],
-          ),
-          actions: [
-            Center(
-              child: TextButton(
-                onPressed: () => Navigator.pop(context), 
-                child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold))
-              ),
-            ),
-          ],
+      builder: (context) => PinEntryDialog(
+        title: l10n.topUpFromWallet,
+        description: appState.translate(
+          "Gali PIN-ka Wallet-ka si aad u bixiso \$${amount.toStringAsFixed(2)}", 
+          "Enter Wallet PIN to pay \$${amount.toStringAsFixed(2)}"
         ),
+        onValidate: (pin) async => appState.verifyPin(pin),
+        onConfirm: (pin) {
+          _processTransaction(this.context, l10n, isWalletDeduction: true);
+        },
       ),
     );
   }
@@ -439,12 +378,12 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.dividerColor.withOpacity(0.1),
+          color: theme.dividerColor.withValues(alpha: 0.1),
           width: 2,
         ),
       ),
       child: DropdownButtonFormField<String>(
-        initialValue: _selectedBank,
+        value: _selectedBank,
         dropdownColor: theme.colorScheme.surface,
         style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
         decoration: InputDecoration(
@@ -474,13 +413,38 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
 
   Widget _dialogInputField(BuildContext context, String label, IconData icon, TextEditingController controller, {bool isNumber = false, bool isObscure = false, List<TextInputFormatter>? formatters, int? maxLength, Function(String)? onChanged}) {
     final theme = Theme.of(context);
+    final state = Provider.of<AppState>(context, listen: false);
+
+    // Dynamic length validation based on selected bank
+    int? dynamicMaxLength = maxLength;
+    List<TextInputFormatter> finalFormatters = formatters ?? [];
+
+    if (isNumber && label == AppLocalizations.of(context)!.accountNumber) {
+      if (_selectedBank == 'Salaam Bank') {
+        dynamicMaxLength = 10;
+      } else if (_selectedBank == 'Premier Bank') {
+        dynamicMaxLength = 10;
+      } else if (_selectedBank == 'IBS Bank') {
+        dynamicMaxLength = 12;
+      }
+      
+      if (dynamicMaxLength != null) {
+        finalFormatters = [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(dynamicMaxLength),
+        ];
+      }
+    }
+
     return TextField(
       controller: controller,
       obscureText: isObscure,
-      onChanged: onChanged,
+      onChanged: (val) {
+        if (onChanged != null) onChanged(val);
+      },
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-      inputFormatters: formatters,
-      maxLength: maxLength,
+      inputFormatters: finalFormatters,
+      maxLength: dynamicMaxLength,
       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor),
       decoration: InputDecoration(
         labelText: label,
@@ -499,7 +463,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final state = AppState();
+    final state = context.watch<AppState>();
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -534,7 +498,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                       Text(
                         l10n.currentCardBalance,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
+                          color: Colors.white.withValues(alpha: 0.6),
                           fontSize: 11 * context.fontSizeFactor,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
@@ -555,7 +519,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                               const SizedBox(height: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(20)),
+                                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20)),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -575,15 +539,15 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                       SizedBox(height: 24 * context.fontSizeFactor),
                       Text(
                         l10n.enterAmountToTopUp,
-                        style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w500),
+                        style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.w500),
                       ),
                       SizedBox(height: 12 * context.fontSizeFactor),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.white.withOpacity(0.2)),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -599,7 +563,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "0.00",
-                                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                                 ),
                                 onChanged: (_) => setState(() {}),
                               ),
@@ -620,7 +584,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                               margin: const EdgeInsets.symmetric(horizontal: 6),
                               padding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 10 * context.fontSizeFactor),
                               decoration: BoxDecoration(
-                                color: _amountController.text == amt.toString() ? Colors.white : Colors.white.withOpacity(0.15),
+                                color: _amountController.text == amt.toString() ? Colors.white : Colors.white.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Text(
@@ -658,7 +622,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => WalletCardDepositScreen(
-                                    amount: _amountController.text,
+                                    amount: double.tryParse(_amountController.text) ?? 0.0,
                                     currencyCode: widget.currencyCode,
                                   ),
                                 ),
@@ -672,16 +636,16 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                               color: theme.colorScheme.surface,
                               borderRadius: BorderRadius.circular(24),
                               boxShadow: [
-                                BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 10))
+                                BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, 10))
                               ],
-                              border: Border.all(color: theme.dividerColor.withOpacity(0.05)),
+                              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
                             ),
                             child: Row(
                               children: [
                                 Container(
                                   padding: EdgeInsets.all(16 * context.fontSizeFactor),
                                   decoration: BoxDecoration(
-                                    color: method["color"].withOpacity(0.1),
+                                    color: method["color"].withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: AdaptiveIcon(method["icon"], color: method["color"], size: 28 * context.fontSizeFactor),
@@ -703,7 +667,7 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
                                     ],
                                   ),
                                 ),
-                                Icon(Icons.arrow_forward_ios_rounded, size: 18 * context.fontSizeFactor, color: AppColors.grey.withOpacity(0.5)),
+                                Icon(Icons.arrow_forward_ios_rounded, size: 18 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.5)),
                               ],
                             ),
                           ),

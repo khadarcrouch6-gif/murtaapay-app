@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:murtaaxpay_app/features/send_money/review_screen.dart';
+import 'package:murtaaxpay_app/core/widgets/success_screen.dart';
 import 'package:murtaaxpay_app/core/app_state.dart';
 import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../test_helper.dart';
 
 void main() {
   group('ReviewScreen Widget Tests', () {
     late AppState appState;
 
     setUp(() async {
+      setupMockSecureStorage();
       SharedPreferences.setMockInitialValues({});
       appState = AppState();
       await appState.init();
@@ -103,11 +106,10 @@ void main() {
       await tester.enterText(find.byType(TextField), '0000');
       await tester.pump(); // TextField onChanged triggers verification if length is 4
 
-      // Wait for any snackbar - pump more to let it show
+      // Wait for the error message in the dialog
       await tester.pump(const Duration(milliseconds: 500));
-      // The code uses state.translate("Invalid PIN", "PIN-ku waa khalad")
-      // In tests with 'en' locale, it should return "Invalid PIN"
-      expect(find.text('Invalid PIN'), findsOneWidget);
+      // PinEntryDialog uses l10n.incorrectPin which is "Incorrect PIN" in English
+      expect(find.text('Incorrect PIN'), findsOneWidget);
     });
 
     testWidgets('Successful transfer simulation on ReviewScreen', (WidgetTester tester) async {
@@ -125,15 +127,16 @@ void main() {
       await tester.tap(confirmButton);
       await tester.pumpAndSettle();
 
+      // Enter correct PIN
       final pinField = find.byType(TextField);
-      await tester.enterText(pinField, '1234');
+      await tester.enterText(pinField, '0011');
       await tester.pump(); 
 
       // Wait for the simulated API delay (2s) + processing animation
       await tester.pump(const Duration(seconds: 3));
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 1));
 
-      expect(find.text('Transfer Successful!'), findsOneWidget);
+      expect(find.byType(SuccessScreen), findsOneWidget);
     });
   });
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:murtaaxpay_app/core/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:murtaaxpay_app/core/app_state.dart';
+import '../test_helper.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -8,6 +9,7 @@ void main() {
     late AppState appState;
 
     setUp(() async {
+      setupMockSecureStorage();
       SharedPreferences.setMockInitialValues({});
       appState = AppState();
       await appState.init();
@@ -99,12 +101,12 @@ void main() {
 
       expect(appState.cards.first.balance, initialCardBalance - amount);
     });
-    test('Bank Transfer fee should be 2.5%', () async {
+    test('Bank Transfer fee should be 1.5%', () async {
       const receiverId = '204456';
       const amount = 200.0;
       const paymentMethod = 'Bank Transfer';
       
-      final expectedFee = amount * 0.025; // 2.5%
+      final expectedFee = amount * 0.015; // 1.5%
       final initialBalance = appState.balance;
 
       await appState.processP2PTransfer(
@@ -113,6 +115,7 @@ void main() {
         currencyCode: 'USD',
         purpose: 'Bank payment',
         paymentMethod: paymentMethod,
+        payoutMethod: 'Bank Transfer',
       );
 
       // Note: In AppState.processP2PTransfer, if it's NOT a card/savings/wallet source, 

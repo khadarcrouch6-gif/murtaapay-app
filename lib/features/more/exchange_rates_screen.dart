@@ -6,7 +6,7 @@ import '../../core/api_service.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class ExchangeRatesScreen extends StatefulWidget {
@@ -67,11 +67,12 @@ class _ExchangeRatesScreenState extends State<ExchangeRatesScreen> {
     final code = flagMap[currency] ?? "un";
     return ClipRRect(
       borderRadius: BorderRadius.circular(3),
-      child: Image.network(
-        "https://flagcdn.com/w40/$code.png",
+      child: FadeInImage.assetNetwork(
+        placeholder: 'assets/images/logo.png',
+        image: "https://flagcdn.com/w40/$code.png",
         width: w, height: h,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => Icon(Icons.flag_rounded, size: 18 * context.fontSizeFactor, color: Colors.white),
+        imageErrorBuilder: (_, _, _) => Icon(Icons.flag_rounded, size: 18 * context.fontSizeFactor, color: Colors.white),
       ),
     );
   }

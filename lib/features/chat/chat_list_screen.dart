@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../core/app_colors.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/adaptive_icon.dart';
@@ -192,13 +192,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
                           borderSide: BorderSide(
-                            color: AppColors.grey.withOpacity(0.2),
+                            color: AppColors.grey.withValues(alpha: 0.2),
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
                           borderSide: BorderSide(
-                            color: AppColors.grey.withOpacity(0.2),
+                            color: AppColors.grey.withValues(alpha: 0.2),
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -258,14 +258,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.grey.withOpacity(0.1),
+            color: AppColors.grey.withValues(alpha: 0.1),
           ),
         ),
         child: Row(
           children: [
             CircleAvatar(
               radius: 28 * context.fontSizeFactor,
-              backgroundColor: AppColors.accentTeal.withOpacity(0.1),
+              backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
               child: AdaptiveIcon(
                 FontAwesomeIcons.user,
                 size: 20 * context.fontSizeFactor,
@@ -367,4 +367,5 @@ class _ChatListScreenState extends State<ChatListScreen> {
     }
   }
 }
+
 

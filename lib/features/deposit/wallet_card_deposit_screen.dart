@@ -11,12 +11,13 @@ import 'dart:ui' as ui;
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/success_screen.dart';
 import '../navigation/main_navigation.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/widgets/adaptive_icon.dart';
+import '../../core/models/transaction.dart' as model;
 import 'package:intl/intl.dart';
 
 class WalletCardDepositScreen extends StatefulWidget {
-  final String amount;
+  final double amount;
   final String currencyCode;
 
   const WalletCardDepositScreen({
@@ -111,7 +112,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: cardGradient[0].withOpacity(0.4),
+            color: cardGradient[0].withValues(alpha: 0.4),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -196,6 +197,8 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
 
   void _processTransaction(BuildContext context, AppLocalizations l10n) async {
     final theme = Theme.of(context);
+    final amount = widget.amount;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -213,7 +216,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -271,6 +274,25 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
     await Future.delayed(const Duration(seconds: 1));
 
     if (!context.mounted) return;
+    final appState = Provider.of<AppState>(context, listen: false);
+    
+    // Add to balance and add transaction
+    // In this screen, it seems it's "Add Money" to the app/wallet via Card
+    appState.addTransaction(model.Transaction(
+      id: "DEP-CRD-${DateTime.now().millisecondsSinceEpoch}",
+      title: "Card Deposit",
+      date: DateFormat('MMM dd').format(DateTime.now()),
+      amount: "+${NumberFormat.simpleCurrency(name: widget.currencyCode).format(amount)}",
+      numericAmount: amount,
+      isNegative: false,
+      category: "Deposit",
+      status: "Success",
+      type: "deposit",
+      method: _cardType.toUpperCase(),
+    ));
+    
+    appState.addBalance(amount);
+
     Navigator.of(context, rootNavigator: true).pop();
     if (!context.mounted) return;
     _showSuccess(context, l10n);
@@ -283,7 +305,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: l10n.cardTopUpSuccessful,
-          message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)),
+          message: l10n.cardTopUpSuccessMessage(NumberFormat.simpleCurrency(name: widget.currencyCode).format(widget.amount)),
           subMessage: l10n.newBalance(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.balance)),
           buttonText: l10n.backToHome,
           onPressed: () {
@@ -313,6 +335,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppColors.accentTeal,
         elevation: 0,
@@ -329,49 +352,71 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
       body: Center(
         child: MaxWidthBox(
           maxWidth: 800,
-          child: SafeArea(
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: AppColors.accentTeal,
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
-                  ),
-                  padding: EdgeInsets.only(bottom: 20 * context.fontSizeFactor, left: 24 * context.fontSizeFactor, right: 24 * context.fontSizeFactor),
-                  child: Column(
-                    children: [
-                       Text(
-                        l10n.amount,
-                        style: TextStyle(color: Colors.white70, fontSize: 14 * context.fontSizeFactor),
-                      ),
-                      SizedBox(height: 4 * context.fontSizeFactor),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: AppColors.accentTeal,
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                ),
+                padding: EdgeInsets.only(bottom: 20 * context.fontSizeFactor, left: 24 * context.fontSizeFactor, right: 24 * context.fontSizeFactor),
+                child: Column(
+                  children: [
                       Text(
-                        NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0),
-                        style: TextStyle(color: Colors.white, fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                      l10n.amount,
+                      style: TextStyle(color: Colors.white70, fontSize: 14 * context.fontSizeFactor),
+                    ),
+                    SizedBox(height: 4 * context.fontSizeFactor),
+                    Text(
+                      NumberFormat.simpleCurrency(name: widget.currencyCode).format(widget.amount),
+                      style: TextStyle(color: Colors.white, fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FadeInUp(
+                          child: _buildLiveCard(),
                       ),
+                      SizedBox(height: 32 * context.fontSizeFactor),
+                      _buildForm(l10n, theme),
+                      SizedBox(height: 120 * context.fontSizeFactor), // Added space for bottom button
                     ],
                   ),
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        FadeInUp(
-                           child: _buildLiveCard(),
-                        ),
-                        SizedBox(height: 32 * context.fontSizeFactor),
-                        _buildForm(l10n, theme),
-                        SizedBox(height: 40 * context.fontSizeFactor),
-                        _buildButton(l10n, theme, isFormValid),
-                        SizedBox(height: 24 * context.fontSizeFactor),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 24 * context.fontSizeFactor, vertical: 12 * context.fontSizeFactor),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: MaxWidthBox(
+            maxWidth: 800,
+            child: ElevatedButton(
+              onPressed: isFormValid ? _processPayment : null,
+              style: context.elevatedButtonStyle(
+                backgroundColor: AppColors.accentTeal,
+                foregroundColor: Colors.white,
+              ),
+              child: Text(l10n.confirmTopUp),
             ),
           ),
         ),
@@ -427,7 +472,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
             filled: true,
             fillColor: theme.colorScheme.surface,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.withOpacity(0.1))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1))),
             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.accentTeal, width: 2)),
             contentPadding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 14 * context.fontSizeFactor),
           ),
@@ -491,3 +536,4 @@ class ExpiryDateFormatter extends TextInputFormatter {
     return TextEditingValue(text: formattedString, selection: TextSelection.collapsed(offset: formattedString.length));
   }
 }
+

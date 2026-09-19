@@ -21,7 +21,7 @@ class ServicesSettings extends BaseSettingsPage {
             'enable_investments'     => '0',
             'enable_refer_earn'      => '1',
             'enable_gift_cards'      => '0',
-            'enable_sadaqah'         => '1',
+            'enable_fundraiser'      => '1',
             'enable_voucher'         => '1',
         ];
     }

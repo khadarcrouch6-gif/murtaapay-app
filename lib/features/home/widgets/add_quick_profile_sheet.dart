@@ -5,7 +5,9 @@ import 'package:uuid/uuid.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/app_state.dart';
 import '../../../core/models/quick_profile.dart';
-import '../../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
+import '../../profile/account_limits_screen.dart';
+import '../../profile/premium_upgrade_screen.dart';
 
 class AddQuickProfileSheet extends StatefulWidget {
   final String? initialPhone;
@@ -69,43 +71,47 @@ class _AddQuickProfileSheetState extends State<AddQuickProfileSheet> {
   }
 
   Future<void> _verifyAccount() async {
-    if (_idController.text.trim().isEmpty) return;
+    final id = _idController.text.trim();
+    if (id.isEmpty) return;
 
     setState(() {
       _isVerifying = true;
       _isVerified = false;
       _verifiedName = null;
+      _selectedBank = null;
+      _selectedProvider = null;
     });
 
     final state = Provider.of<AppState>(context, listen: false);
-    
-    // Determine type for resolution
-    String type = 'wallet';
+
+    // Part One Logic: Auto-detection and Verification via AppState
+    String? type;
     if (_payoutMethod == 'Bank') type = 'bank';
     if (_payoutMethod == 'Mobile') type = 'mobile';
+    if (_payoutMethod == 'Wallet') type = 'wallet';
 
-    // Skip auto-verification for "Other" bank as it's not in the system
-    if (type == 'bank' && _selectedBank == 'Other') {
-      await Future.delayed(const Duration(milliseconds: 500));
-      setState(() {
-        _isVerifying = false;
-        _isVerified = true; // Allow manual entry
-      });
-      return;
-    }
-
-    final name = await state.resolveAccountName(
-      _idController.text.trim(), 
-      type: type, 
-      bankName: type == 'bank' ? _selectedBank : _selectedProvider
-    );
+    final details = await state.resolveAccountDetails(id, type: type);
 
     setState(() {
       _isVerifying = false;
-      if (name != null && name.isNotEmpty) {
+      if (details != null) {
         _isVerified = true;
-        _verifiedName = name;
-        _nameController.text = name; // Auto-fill and lock if verified? User said "magacana clear garee" if number deleted, implying it fills.
+        _verifiedName = details['name'];
+        if (details['type'] == 'bank') {
+          _selectedBank = details['bank'];
+        } else if (details['type'] == 'mobile') {
+          // Map to provider name if available, otherwise generic
+          _selectedProvider = details['bank'] ?? 'Mobile Provider'; 
+          if (_selectedProvider == 'Mobile Provider') {
+            // Auto-detect provider if not returned by backend mock
+            if (id.startsWith('61')) _selectedProvider = 'Hormuud (EVC Plus)';
+            else if (id.startsWith('62')) _selectedProvider = 'Somnet';
+            else if (id.startsWith('63')) _selectedProvider = 'Telesom (Zaad)';
+            else if (id.startsWith('65')) _selectedProvider = 'Golis (Sahal)';
+            else if (id.startsWith('77')) _selectedProvider = 'Somtel (e-Dahab)';
+          }
+        }
+        _nameController.text = details['name']!;
       } else {
         _isVerified = false;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -172,7 +178,10 @@ class _AddQuickProfileSheetState extends State<AddQuickProfileSheet> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              // Navigate to subscription/upgrade screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PremiumUpgradeScreen()),
+              );
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark),
             child: const Text('Upgrade'),
@@ -207,7 +216,7 @@ class _AddQuickProfileSheetState extends State<AddQuickProfileSheet> {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 24),
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -246,114 +255,101 @@ class _AddQuickProfileSheetState extends State<AddQuickProfileSheet> {
               ),
               const SizedBox(height: 20),
 
-              if (_payoutMethod == 'Bank') ...[
-                DropdownButtonFormField<String>(
-                  value: _selectedBank,
-                  decoration: const InputDecoration(
-                    labelText: 'Select Bank',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: _banks.map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
-                onChanged: (val) => setState(() {
-                  _selectedBank = val;
-                  _isVerified = false;
-                  _verifiedName = null;
-                  _idController.clear();
-                  _nameController.clear();
-                }),
-                  validator: (val) => val == null ? 'Please select a bank' : null,
-                ),
-                const SizedBox(height: 8),
-                const Row(
-                  children: [
-                    Icon(Icons.info_outline, size: 14, color: Colors.orange),
-                    SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        'Bank transfers may take up to 24 hours to reflect.',
-                        style: TextStyle(fontSize: 12, color: Colors.orange, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-              ],
-
-              if (_payoutMethod == 'Mobile') ...[
-                DropdownButtonFormField<String>(
-                  value: _selectedProvider,
-                  decoration: const InputDecoration(
-                    labelText: 'Select Provider',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: _mobileProviders.map((p) => DropdownMenuItem(value: p, child: Text(p))).toList(),
-                  onChanged: (val) => setState(() {
-                    _selectedProvider = val;
-                    _isVerified = false;
-                    _verifiedName = null;
-                    _idController.clear();
-                    _nameController.clear();
-                  }),
-                  validator: (val) => val == null ? 'Please select a provider' : null,
-                ),
-                const SizedBox(height: 16),
-              ],
-
               TextFormField(
                 controller: _idController,
                 keyboardType: _payoutMethod == 'Mobile' ? TextInputType.phone : TextInputType.number,
-                maxLength: _payoutMethod == 'Bank' ? (_selectedBank == 'IBS Bank' ? 12 : 10) : null,
                 inputFormatters: [
-                  if (_payoutMethod == 'Bank' || _payoutMethod == 'Mobile')
-                    FilteringTextInputFormatter.digitsOnly,
+                  FilteringTextInputFormatter.digitsOnly,
                 ],
                 decoration: InputDecoration(
-                  labelText: _payoutMethod == 'Wallet' ? 'Wallet ID' : (_payoutMethod == 'Bank' ? 'Account Number' : 'Phone Number'),
+                  labelText: _payoutMethod == 'Wallet' ? 'Receiver Wallet ID' : (_payoutMethod == 'Bank' ? 'Receiver Bank Account Number' : 'Receiver Phone Number'),
+                  hintText: _payoutMethod == 'Bank' ? 'Enter account number' : null,
                   border: const OutlineInputBorder(),
-                  counterText: '',
-                  helperText: _isVerified ? 'Account verified' : 'Click the icon to verify',
-                  helperStyle: TextStyle(color: _isVerified ? Colors.green : Colors.grey),
-                  suffixIcon: IconButton(
-                    icon: _isVerifying 
-                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                      : Icon(_isVerified ? Icons.check_circle : Icons.verified_user, color: _isVerified ? Colors.green : AppColors.primaryDark),
-                    onPressed: _isVerifying ? null : _verifyAccount,
-                  ),
+                  prefixIcon: Icon(_payoutMethod == 'Wallet' ? Icons.account_balance_wallet : (_payoutMethod == 'Bank' ? Icons.account_balance : Icons.phone_android)),
+                  suffixIcon: _isVerifying 
+                    ? const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                      )
+                    : IconButton(
+                        icon: Icon(_isVerified ? Icons.check_circle : Icons.verified_user, color: _isVerified ? Colors.green : AppColors.primaryDark),
+                        onPressed: _verifyAccount,
+                      ),
                 ),
-                onChanged: (_) => setState(() {
-                  _isVerified = false;
-                  _verifiedName = null;
-                  _nameController.clear(); // Clear name on change to force re-verification
-                }),
-                validator: (val) {
-                  if (val == null || val.isEmpty) return 'This field is required';
-                  if (_payoutMethod == 'Bank') {
-                    final requiredLen = _selectedBank == 'IBS Bank' ? 12 : 10;
-                    if (_selectedBank != 'Other' && val.length != requiredLen) {
-                      return 'Account number must be $requiredLen digits';
-                    }
+                onChanged: (_) {
+                  if (_isVerified) {
+                    setState(() {
+                      _isVerified = false;
+                      _verifiedName = null;
+                      _selectedBank = null;
+                      _selectedProvider = null;
+                    });
                   }
-                  return null;
                 },
               ),
               
-              if (_verifiedName != null) ...[
-                const SizedBox(height: 8),
-                Text('Verified Name: $_verifiedName', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+              if (_isVerified) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.verified, color: Colors.green, size: 24),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _verifiedName ?? '',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.green),
+                                ),
+                                Text(
+                                  _payoutMethod == 'Bank' ? '$_selectedBank Account' : (_payoutMethod == 'Mobile' ? '$_selectedProvider Number' : 'MurtaaxPay Wallet'),
+                                  style: TextStyle(fontSize: 13, color: Colors.green.withValues(alpha: 0.8)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (_payoutMethod == 'Bank') ...[
+                        const Divider(height: 24),
+                        const Row(
+                          children: [
+                            Icon(Icons.info_outline, size: 16, color: Colors.orange),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Transaction Pending: Bank transfers require 24 hours for final verification.',
+                                style: TextStyle(fontSize: 12, color: Colors.orange, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ],
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _nameController,
-                readOnly: _selectedBank != 'Other',
-                decoration: InputDecoration(
-                  labelText: 'Account Name',
-                  hintText: (_selectedBank == 'Other') ? 'Enter name manually' : 'Verified automatically',
-                  border: const OutlineInputBorder(),
-                  fillColor: (_selectedBank == 'Other') ? Colors.transparent : const Color(0xFFF5F5F5),
-                  filled: true,
+                decoration: const InputDecoration(
+                  labelText: 'Profile Nickname (e.g. My Brother)',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.label_outline),
                 ),
-                validator: (val) => val!.isEmpty ? (_selectedBank == 'Other' ? 'Please enter a name' : 'Please verify to get name') : null,
+                validator: (val) => val!.isEmpty ? 'Please enter a name for this profile' : null,
               ),
 
               const SizedBox(height: 32),
@@ -378,3 +374,4 @@ class _AddQuickProfileSheetState extends State<AddQuickProfileSheet> {
     );
   }
 }
+

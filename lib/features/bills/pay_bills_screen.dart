@@ -8,9 +8,11 @@ import '../../core/responsive_utils.dart';
 import '../../core/widgets/detail_row.dart';
 import '../../core/widgets/success_screen.dart';
 import '../navigation/main_navigation.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/models/transaction.dart';
+import '../../core/widgets/pin_entry_dialog.dart';
 
 class PayBillsScreen extends StatefulWidget {
   const PayBillsScreen({super.key});
@@ -44,81 +46,89 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 120,
-            floating: false,
-            pinned: true,
-            elevation: 0,
-            backgroundColor: theme.scaffoldBackgroundColor,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(l10n.payBills, style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold)),
-              centerTitle: false,
-              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.billsLabel, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.85,
-                    ),
-                    itemCount: _categories.length,
-                    itemBuilder: (context, index) {
-                      final cat = _categories[index];
-                      return _buildBillCategory(context, cat['title'], cat['l10nKey'], cat['icon'], cat['color']);
-                    },
-                  ),
-                  const SizedBox(height: 32),
-                  Text(l10n.recentBills, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                ],
-              ),
-            ),
-          ),
-          Consumer<AppState>(
-            builder: (context, state, _) {
-              final billTransactions = state.transactions.where((t) => t.category == "Bills").toList();
-              if (billTransactions.isEmpty) {
-                return SliverList(
-                  delegate: SliverChildListDelegate([
-                    Center(child: Text(l10n.noTransactions, style: TextStyle(color: AppColors.grey))),
-                    const SizedBox(height: 100),
-                  ]),
-                );
-              }
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final tx = billTransactions[index];
-                    final l10nKey = _deriveL10nKey(tx.title, l10n);
-                    return _buildRecentBill(
-                      context, 
-                      tx.title, 
-                      DateFormat('MMM dd, yyyy').format(tx.timestamp), 
-                      NumberFormat.simpleCurrency(name: state.currencyCode).format(tx.numericAmount.abs()),
-                      l10nKey,
-                      tx.referenceId ?? tx.id
-                    );
-                  },
-                  childCount: billTransactions.length,
+      body: Center(
+        child: MaxWidthBox(
+          maxWidth: 1200,
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 120,
+                floating: false,
+                pinned: true,
+                elevation: 0,
+                backgroundColor: theme.scaffoldBackgroundColor,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(l10n.payBills, style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.bold)),
+                  centerTitle: false,
+                  titlePadding: EdgeInsets.only(left: context.horizontalPadding, bottom: 16),
                 ),
-              );
-            },
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.billsLabel, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 16),
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 0.85,
+                        ),
+                        itemCount: _categories.length,
+                        itemBuilder: (context, index) {
+                          final cat = _categories[index];
+                          return _buildBillCategory(context, cat['title'], cat['l10nKey'], cat['icon'], cat['color']);
+                        },
+                      ),
+                      const SizedBox(height: 32),
+                      Text(l10n.recentBills, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              ),
+              Consumer<AppState>(
+                builder: (context, state, _) {
+                  final billTransactions = state.transactions.where((t) => t.category == "Bills").toList();
+                  if (billTransactions.isEmpty) {
+                    return SliverList(
+                      delegate: SliverChildListDelegate([
+                        Center(child: Text(l10n.noTransactions, style: TextStyle(color: AppColors.grey))),
+                        const SizedBox(height: 100),
+                      ]),
+                    );
+                  }
+                  return SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final tx = billTransactions[index];
+                          final l10nKey = _deriveL10nKey(tx.title, l10n);
+                          return _buildRecentBill(
+                            context, 
+                            tx.title, 
+                            DateFormat('MMM dd, yyyy').format(tx.timestamp), 
+                            NumberFormat.simpleCurrency(name: state.currencyCode).format(tx.numericAmount.abs()),
+                            l10nKey,
+                            tx.referenceId ?? tx.id
+                          );
+                        },
+                        childCount: billTransactions.length,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -187,272 +197,242 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => BackdropFilter(
-          filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: Container(
-              padding: EdgeInsets.all(32 * context.fontSizeFactor),
-              decoration: BoxDecoration(
-                color: theme.scaffoldBackgroundColor,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (!isPinStage) ...[
-                      Center(
-                        child: Container(
-                          width: 40,
-                          height: 5,
-                          decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(10 * context.fontSizeFactor),
-                            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-                            child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
+        builder: (context, setModalState) => MaxWidthBox(
+          maxWidth: 800,
+          child: BackdropFilter(
+            filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                padding: EdgeInsets.all(32 * context.fontSizeFactor),
+                decoration: BoxDecoration(
+                  color: theme.scaffoldBackgroundColor,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (!isPinStage) ...[
+                        Center(
+                          child: Container(
+                            width: 40,
+                            height: 5,
+                            decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              translatedCategory, 
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color)
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                    
-                    // Provider Selector
-                    Text(
-                      l10n.selectProvider,
-                      style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.grey),
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: theme.dividerColor.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: selectedProvider,
-                          isExpanded: true,
-                          dropdownColor: theme.scaffoldBackgroundColor,
-                          icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                          items: _providers[l10nKey]?.map((String provider) {
-                            return DropdownMenuItem<String>(
-                              value: provider,
-                              child: Text(provider, style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color)),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setModalState(() => selectedProvider = newValue);
-                          },
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Source Selector
-                    Text(
-                      l10n.selectPaymentMethod,
-                      style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.grey),
-                    ),
-                    const SizedBox(height: 12),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildSourceOption(context, "Main Wallet", l10n.walletBalance, state.balance, selectedMethod == "Main Wallet", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state),
-                          ...state.cards.map((card) => _buildSourceOption(context, "card_${card.id}", card.cardHolder, card.balance, selectedMethod == "card_${card.id}", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state, cardId: card.id, isCard: true)),
-                          _buildSourceOption(context, "EVC Plus", "EVC Plus", 0, selectedMethod == "EVC Plus", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state, icon: Icons.phone_android_rounded),
-                          _buildSourceOption(context, "Somnet", "Somnet", 0, selectedMethod == "Somnet", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state, icon: Icons.signal_cellular_alt_rounded),
-                          if (state.savingsBalance > 0)
-                            _buildSourceOption(context, "Savings Account", l10n.savingsBalance, state.savingsBalance, selectedMethod == "Savings Account", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    TextField(
-                      controller: idController,
-                      style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * context.fontSizeFactor),
-                      decoration: InputDecoration(
-                        labelText: "$translatedCategory ID / ${l10n.accountNumber}",
-                        labelStyle: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
-                        ),
-                        prefixIcon: Icon(Icons.tag, color: AppColors.grey, size: 20 * context.fontSizeFactor),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: amountController,
-                      style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * context.fontSizeFactor),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      onChanged: (val) => setModalState(() => amount = double.tryParse(val) ?? 0.0),
-                      decoration: InputDecoration(
-                        labelText: l10n.amountToPay,
-                        labelStyle: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
-                        ),
-                        prefixIcon: Icon(Icons.attach_money, color: AppColors.grey, size: 20 * context.fontSizeFactor),
-                      ),
-                    ),
-                    
-                    if (amount > 0) ...[
-                      const SizedBox(height: 24),
-                      Container(
-                        padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                        decoration: BoxDecoration(
-                          color: theme.dividerColor.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-                          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
-                        ),
-                        child: Column(
+                        const SizedBox(height: 24),
+                        Row(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(l10n.amount, style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
-                                Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(amount), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
-                              ],
+                            Container(
+                              padding: EdgeInsets.all(10 * context.fontSizeFactor),
+                              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                              child: Icon(icon, color: color, size: 24 * context.fontSizeFactor),
                             ),
-                            SizedBox(height: 8 * context.fontSizeFactor),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(l10n.fee, style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
-                                Text(
-                                  "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateFeeForSource(amount, selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod))}",
-                                  style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
-                              child: Divider(height: 1, color: theme.dividerColor.withValues(alpha: 0.1)),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(l10n.total, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
-                                Text(
-                                  NumberFormat.simpleCurrency(name: state.currencyCode).format(amount + state.calculateFeeForSource(amount, selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod)),
-                                  style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
-                                ),
-                              ],
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                translatedCategory, 
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color)
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-
-                    const SizedBox(height: 32),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56 * context.fontSizeFactor,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (idController.text.isNotEmpty && amount > 0) {
-                            setModalState(() => isPinStage = true);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accentTeal,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          elevation: 0,
+                        const SizedBox(height: 24),
+                      
+                        // Provider Selector
+                        Text(
+                          l10n.selectProvider,
+                          style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.grey),
                         ),
-                        child: Text(
-                          l10n.confirmPayment, 
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ] else ...[
-                    // PIN Stage
-                    Text(l10n.enterSecurityPin, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text(l10n.enterTransactionPin, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
-                    const SizedBox(height: 24),
-                    TextField(
-                      controller: pinController,
-                      keyboardType: TextInputType.number,
-                      obscureText: true,
-                      maxLength: 4,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 10),
-                      decoration: InputDecoration(
-                        counterText: "",
-                        filled: true,
-                        fillColor: theme.dividerColor.withValues(alpha: 0.05),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () => setModalState(() => isPinStage = false),
-                            child: Text(l10n.back),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: theme.dividerColor.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                           ),
-                        ),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              if (state.verifyPin(pinController.text)) {
-                                Navigator.pop(context);
-                                _processTransaction(
-                                  context, 
-                                  l10nKey, 
-                                  amount.toString(), 
-                                  idController.text,
-                                  provider: selectedProvider,
-                                  paymentMethod: selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod,
-                                  cardId: selectedCardId
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedProvider,
+                              isExpanded: true,
+                              dropdownColor: theme.scaffoldBackgroundColor,
+                              icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                              items: _providers[l10nKey]?.map((String provider) {
+                                return DropdownMenuItem<String>(
+                                  value: provider,
+                                  child: Text(provider, style: TextStyle(fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color)),
                                 );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.invalidPin)));
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.accentTeal,
-                              padding: EdgeInsets.symmetric(vertical: 16 * context.fontSizeFactor),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setModalState(() => selectedProvider = newValue);
+                              },
                             ),
-                            child: Text(l10n.confirm, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           ),
                         ),
+                        const SizedBox(height: 24),
+
+                        // Source Selector
+                        Text(
+                          l10n.selectPaymentMethod,
+                          style: TextStyle(fontSize: 14 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.grey),
+                        ),
+                        const SizedBox(height: 12),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              _buildSourceOption(context, "Main Wallet", l10n.walletBalance, state.balance, selectedMethod == "Main Wallet", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state),
+                              ...state.cards.map((card) => _buildSourceOption(context, "card_${card.id}", card.cardHolder, card.balance, selectedMethod == "card_${card.id}", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state, cardId: card.id, isCard: true)),
+                              _buildSourceOption(context, "EVC Plus", "EVC Plus", 0, selectedMethod == "EVC Plus", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state, icon: Icons.phone_android_rounded),
+                              _buildSourceOption(context, "Somnet", "Somnet", 0, selectedMethod == "Somnet", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state, icon: Icons.signal_cellular_alt_rounded),
+                              if (state.savingsBalance > 0)
+                                _buildSourceOption(context, "Savings Account", l10n.savingsBalance, state.savingsBalance, selectedMethod == "Savings Account", (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }), state),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        TextField(
+                          controller: idController,
+                          style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * context.fontSizeFactor),
+                          decoration: InputDecoration(
+                            labelText: "$translatedCategory ID / ${l10n.accountNumber}",
+                            labelStyle: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
+                            ),
+                            prefixIcon: Icon(Icons.tag, color: AppColors.grey, size: 20 * context.fontSizeFactor),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: amountController,
+                          style: TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16 * context.fontSizeFactor),
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          onChanged: (val) => setModalState(() => amount = double.tryParse(val) ?? 0.0),
+                          decoration: InputDecoration(
+                            labelText: l10n.amountToPay,
+                            labelStyle: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
+                            ),
+                            prefixIcon: Icon(Icons.attach_money, color: AppColors.grey, size: 20 * context.fontSizeFactor),
+                          ),
+                        ),
+                        
+                        if (amount > 0) ...[
+                          const SizedBox(height: 24),
+                          Container(
+                            padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                            decoration: BoxDecoration(
+                              color: theme.dividerColor.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(l10n.amount, style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
+                                    Text(NumberFormat.simpleCurrency(name: state.currencyCode).format(amount), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                                  ],
+                                ),
+                                SizedBox(height: 8 * context.fontSizeFactor),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(l10n.fee, style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
+                                    Text(
+                                      "+${NumberFormat.simpleCurrency(name: state.currencyCode).format(state.calculateFeeForSource(amount, selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod))}",
+                                      style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor),
+                                  child: Divider(height: 1, color: theme.dividerColor.withValues(alpha: 0.1)),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(l10n.total, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                                    Text(
+                                      NumberFormat.simpleCurrency(name: state.currencyCode).format(amount + state.calculateFeeForSource(amount, selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod)),
+                                      style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+
+                        const SizedBox(height: 32),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (idController.text.isNotEmpty && amount > 0) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => PinEntryDialog(
+                                  title: l10n.enterSecurityPin,
+                                  description: l10n.enterTransactionPin,
+                                  isCardPin: selectedMethod.startsWith("card_"),
+                                  cardId: selectedCardId,
+                                  onValidate: (pin) async {
+                                    if (pin == "BIOMETRIC_SUCCESS") return true;
+                                    if (selectedMethod.startsWith("card_")) {
+                                      return state.verifyCardPin(pin, cardId: selectedCardId);
+                                    } else {
+                                      return state.verifyPin(pin);
+                                    }
+                                  },
+                                  onConfirm: (pin) {
+                                    Navigator.pop(context); // Close the BottomSheet
+                                    _processTransaction(
+                                      context, 
+                                      l10nKey, 
+                                      amount.toString(), 
+                                      idController.text,
+                                      provider: selectedProvider,
+                                      paymentMethod: selectedMethod.startsWith("card_") ? "Debit Card" : selectedMethod,
+                                      cardId: selectedCardId
+                                    );
+                                  },
+                                ),
+                              );
+                            }
+                          },
+                          style: context.elevatedButtonStyle(
+                            backgroundColor: AppColors.accentTeal,
+                            borderRadius: 16,
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            l10n.confirmPayment, 
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+                          ),
+                        ),
+                        const SizedBox(height: 16),
                       ],
-                    ),
-                  ],
-                  const SizedBox(height: 12),
-                ],
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildSourceOption(BuildContext context, String id, String title, double balance, bool isSelected, Function(String, String?) onTap, AppState state, {String? cardId, bool isCard = false, IconData? icon}) {
     final theme = Theme.of(context);
@@ -699,59 +679,61 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Container(
-            padding: EdgeInsets.fromLTRB(32 * context.fontSizeFactor, 20 * context.fontSizeFactor, 32 * context.fontSizeFactor, 32 * context.fontSizeFactor),
-            decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(width: 40, height: 5, decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10))),
-                const SizedBox(height: 24),
-                Text(
-                  l10n.billDetails, 
-                  style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)
-                ),
-                const SizedBox(height: 24),
-                DetailRow(label: l10n.serviceProvider, value: title),
-                DetailRow(label: l10n.category, value: _getTranslatedCategory(l10n, l10nKey)),
-                DetailRow(label: l10n.accountId, value: id),
-                DetailRow(label: l10n.amountPaid, value: amount),
-                DetailRow(label: l10n.paymentDate, value: date),
-                DetailRow(label: l10n.status, value: l10n.completed, valueColor: AppColors.accentTeal),
-                const SizedBox(height: 32),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56 * context.fontSizeFactor,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => MaxWidthBox(
+          maxWidth: 800,
+          child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(32 * context.fontSizeFactor, 20 * context.fontSizeFactor, 32 * context.fontSizeFactor, 32 * context.fontSizeFactor),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(width: 40, height: 5, decoration: BoxDecoration(color: theme.dividerColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10))),
+                  const SizedBox(height: 24),
+                  Text(
+                    l10n.billDetails, 
+                    style: TextStyle(fontSize: 20 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)
+                  ),
+                  const SizedBox(height: 24),
+                  DetailRow(label: l10n.serviceProvider, value: title),
+                  DetailRow(label: l10n.category, value: _getTranslatedCategory(l10n, l10nKey)),
+                  DetailRow(label: l10n.accountId, value: id),
+                  DetailRow(label: l10n.amountPaid, value: amount),
+                  DetailRow(label: l10n.paymentDate, value: date),
+                  DetailRow(label: l10n.status, value: l10n.completed, valueColor: AppColors.accentTeal),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    style: context.elevatedButtonStyle(
                       backgroundColor: AppColors.accentTeal,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      borderRadius: 16,
                       elevation: 0,
                     ),
                     onPressed: () => Navigator.pop(context),
                     child: Text(
                       l10n.downloadReceipt, 
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    l10n.close, 
-                    style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: context.textButtonStyle(),
+                    child: Text(
+                      l10n.close, 
+                      style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ),
           ),
         ),
       ),
@@ -781,59 +763,5 @@ class _PayBillsScreenState extends State<PayBillsScreen> {
     if (title == l10n.education) return "education";
     if (title == l10n.govServices) return "govServices";
     return "electricity";
-  }
-
-  Future<bool> _showSecurityPinDialog(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
-    final state = Provider.of<AppState>(context, listen: false);
-    final TextEditingController pinController = TextEditingController();
-    
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        scrollable: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(l10n.enterSecurityPin, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l10n.enterTransactionPin, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.grey, fontSize: 14)),
-            const SizedBox(height: 20),
-            TextField(
-              controller: pinController,
-              keyboardType: TextInputType.number,
-              obscureText: true,
-              maxLength: 4,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 10),
-              decoration: InputDecoration(
-                counterText: "",
-                filled: true,
-                fillColor: Colors.grey.withValues(alpha: 0.1),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
-          TextButton(
-            onPressed: () {
-              if (state.verifyPin(pinController.text)) {
-                if (context.mounted) Navigator.pop(context, true);
-              } else {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.invalidPin), duration: const Duration(seconds: 2)),
-                  );
-                }
-              }
-            },
-            child: Text(l10n.confirm, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
-          ),
-        ],
-      ),
-    );
-    return result ?? false;
   }
 }

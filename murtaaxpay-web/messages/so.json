@@ -147,8 +147,8 @@
         "Aaladaha maareynta khatarta"
       ]
     },
-    "sadaqah": {
-      "title": "Sadaqo",
+    "fundraiser": {
+      "title": "Fundraiser",
       "description": "Socod xasiloon oo wanaag ah.",
       "content": "Ka dhigaysa bixinta sadaqada mid sahlan oo hufan. U hag deeqahaaga sababo la xaqiijiyay.",
       "features": [
@@ -218,8 +218,8 @@
         "title": "Maalgashiga",
         "desc": "Ku kori raasamaalkaaga ujeedo."
       },
-      "sadaqah": {
-        "title": "Sadaqo",
+      "fundraiser": {
+        "title": "Fundraiser",
         "desc": "Socod xasiloon oo wanaag ah."
       },
       "giftcards": {

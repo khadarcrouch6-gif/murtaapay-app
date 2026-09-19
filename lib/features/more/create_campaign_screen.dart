@@ -5,7 +5,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'models/campaign.dart';
 
 class CreateCampaignScreen extends StatefulWidget {
@@ -75,7 +75,7 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          l10n.startFundraiser,
+          state.translate("Start Sadaqah", "Bilow Sadaqada"),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
@@ -91,187 +91,221 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Center(
-        child: MaxWidthBox(
-          maxWidth: 800,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(context.horizontalPadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FadeInDown(
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentTeal.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.volunteer_activism_rounded, color: AppColors.accentTeal, size: 32),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.createCampaign,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16 * context.fontSizeFactor,
-                                  color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
-                                ),
+      body: Stack(
+        children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: MaxWidthBox(
+              maxWidth: 800,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(
+                  context.horizontalPadding, 
+                  context.horizontalPadding, 
+                  context.horizontalPadding, 
+                  140 * context.fontSizeFactor
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FadeInDown(
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: AppColors.accentTeal.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.volunteer_activism_rounded, color: AppColors.accentTeal, size: 32),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    state.translate("Create a Campaign", "Abuur Ololaha"),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16 * context.fontSizeFactor,
+                                      color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    state.translate("Fill in the details to start your charitable cause", "Buuxi faahfaahinta si aad u bilaawdo hawshaada samafalka"),
+                                    style: TextStyle(
+                                      color: theme.textTheme.bodyMedium?.color ?? AppColors.textPrimary,
+                                      fontSize: 13 * context.fontSizeFactor,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                l10n.createCampaignDesc,
-                                style: TextStyle(
-                                  color: theme.textTheme.bodyMedium?.color ?? AppColors.textPrimary,
-                                  fontSize: 13 * context.fontSizeFactor,
-                                ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 100),
+                      child: Text(
+                        l10n.campaignDetails,
+                        style: TextStyle(
+                          fontSize: 18 * context.fontSizeFactor,
+                          fontWeight: FontWeight.bold,
+                          color: theme.textTheme.titleMedium?.color,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 200),
+                      child: _buildTextField(
+                        l10n.campaignTitle,
+                        l10n.campaignTitleHint,
+                        Icons.title_rounded,
+                        theme,
+                        isDark,
+                        controller: _titleController,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 300),
+                      child: _buildTextField(
+                        l10n.goalAmountUsd,
+                        l10n.goalAmountHint,
+                        Icons.attach_money_rounded,
+                        theme,
+                        isDark,
+                        isNumber: true,
+                        controller: _goalController,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 400),
+                      child: _buildTextField(
+                        l10n.description,
+                        l10n.descriptionHint,
+                        Icons.description_rounded,
+                        theme,
+                        isDark,
+                        maxLines: 5,
+                        controller: _descriptionController,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 500),
+                      child: Text(
+                        l10n.coverPhoto,
+                        style: TextStyle(
+                          fontSize: 16 * context.fontSizeFactor,
+                          fontWeight: FontWeight.bold,
+                          color: theme.textTheme.titleMedium?.color,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 600),
+                      child: Container(
+                        height: 160,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: isDark ? theme.dividerColor.withValues(alpha: 0.1) : AppColors.primaryDark.withValues(alpha: 0.1), width: 2),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(color: (isDark ? theme.colorScheme.onSurface : AppColors.primaryDark).withValues(alpha: 0.05), shape: BoxShape.circle),
+                              child: Icon(Icons.cloud_upload_rounded, size: 32, color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              l10n.tapToUpload,
+                              style: TextStyle(
+                                color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              l10n.uploadLimits,
+                              style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 12 * context.fontSizeFactor),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 32),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 100),
-                  child: Text(
-                    l10n.campaignDetails,
-                    style: TextStyle(
-                      fontSize: 18 * context.fontSizeFactor,
-                      fontWeight: FontWeight.bold,
-                      color: theme.textTheme.titleMedium?.color,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 200),
-                  child: _buildTextField(
-                    l10n.campaignTitle,
-                    l10n.campaignTitleHint,
-                    Icons.title_rounded,
-                    theme,
-                    isDark,
-                    controller: _titleController,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 300),
-                  child: _buildTextField(
-                    l10n.goalAmountUsd,
-                    l10n.goalAmountHint,
-                    Icons.attach_money_rounded,
-                    theme,
-                    isDark,
-                    isNumber: true,
-                    controller: _goalController,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 400),
-                  child: _buildTextField(
-                    l10n.description,
-                    l10n.descriptionHint,
-                    Icons.description_rounded,
-                    theme,
-                    isDark,
-                    maxLines: 5,
-                    controller: _descriptionController,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 500),
-                  child: Text(
-                    l10n.coverPhoto,
-                    style: TextStyle(
-                      fontSize: 16 * context.fontSizeFactor,
-                      fontWeight: FontWeight.bold,
-                      color: theme.textTheme.titleMedium?.color,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 600),
-                  child: Container(
-                    height: 160,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surface,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: isDark ? theme.dividerColor.withValues(alpha: 0.1) : AppColors.primaryDark.withValues(alpha: 0.1), width: 2),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(color: (isDark ? theme.colorScheme.onSurface : AppColors.primaryDark).withValues(alpha: 0.05), shape: BoxShape.circle),
-                          child: Icon(Icons.cloud_upload_rounded, size: 32, color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          l10n.tapToUpload,
-                          style: TextStyle(
-                            color: isDark ? theme.colorScheme.onSurface : AppColors.primaryDark,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          l10n.uploadLimits,
-                          style: TextStyle(color: theme.textTheme.bodySmall?.color ?? AppColors.grey, fontSize: 12 * context.fontSizeFactor),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
-              ],
+              ),
             ),
           ),
-        ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _buildStickyBottomButton(context, state, l10n, theme, isDark),
+          ),
+        ],
       ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.fromLTRB(context.horizontalPadding, 12, context.horizontalPadding, 12 + MediaQuery.of(context).padding.bottom),
-        decoration: BoxDecoration(
-          color: theme.scaffoldBackgroundColor,
-          boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -4))],
-        ),
-        child: Center(
-          child: MaxWidthBox(
-            maxWidth: 800,
-            child: FadeInUp(
-              delay: const Duration(milliseconds: 700),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : () => _submitCampaign(state, l10n),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentTeal,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  child: _isSubmitting 
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : Text(
-                        l10n.submitForReview,
-                        style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
+    );
+  }
+
+  Widget _buildStickyBottomButton(BuildContext context, AppState state, AppLocalizations l10n, ThemeData theme, bool isDark) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        context.horizontalPadding, 
+        20 * context.fontSizeFactor, 
+        context.horizontalPadding, 
+        (20 + MediaQuery.of(context).padding.bottom) * context.fontSizeFactor
+      ),
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30 * context.fontSizeFactor)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+            blurRadius: 20 * context.fontSizeFactor,
+            offset: Offset(0, -5 * context.fontSizeFactor),
+          )
+        ],
+      ),
+      child: Center(
+        child: MaxWidthBox(
+          maxWidth: 800,
+          child: FadeInUp(
+            delay: const Duration(milliseconds: 700),
+            child: SizedBox(
+              width: double.infinity,
+              height: 60 * context.fontSizeFactor,
+              child: ElevatedButton(
+                onPressed: _isSubmitting ? null : () => _submitCampaign(state, l10n),
+                style: context.elevatedButtonStyle(
+                  backgroundColor: AppColors.accentTeal,
+                  foregroundColor: Colors.white,
+                  height: 60,
+                  borderRadius: 20,
+                  elevation: 8,
                 ),
+                child: _isSubmitting 
+                  ? const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                    )
+                  : Text(
+                      l10n.submitForReview,
+                      style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                    ),
               ),
             ),
           ),

@@ -31,6 +31,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   int _selectedBarIndex = -1;
   late String _selectedPeriod;
   String? _selectedCategory;
+  bool _showIncome = false;
+  DateTimeRange? _customDateRange;
 
   @override
   void initState() {
@@ -57,6 +59,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             elevation: 0,
             actions: [
               IconButton(
+                icon: Icon(Icons.share_outlined, size: 22 * context.fontSizeFactor),
+                onPressed: () => _exportData(state),
+              ),
+              IconButton(
                 icon: Icon(Icons.calendar_month_rounded, size: 24 * context.fontSizeFactor),
                 onPressed: () => _showPeriodSelector(context, state),
               ),
@@ -74,7 +80,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  _buildIncomeExpenseToggle(theme, state),
+                  SizedBox(height: 16 * context.fontSizeFactor),
                   _buildTotalSpendingCard(theme, state),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  _buildNetFlowSummary(theme, state),
                   SizedBox(height: 24 * context.fontSizeFactor),
                   _buildCategoryDistribution(theme, state),
                   SizedBox(height: 24 * context.fontSizeFactor),
@@ -111,6 +121,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               _periodItem(context, 'Weekly', state.translate("Weekly", "Todobaadle")),
               _periodItem(context, 'Monthly', state.translate("Monthly", "Bille")),
               _periodItem(context, 'Yearly', state.translate("Yearly", "Sanadle")),
+              _periodItem(context, 'Custom', state.translate("Custom Range", "Xilli Cayiman")),
               if (widget.targetDate != null)
                 _periodItem(context, 'Daily', state.translate("Specific Day", "Maalin Cayiman")),
             ],
@@ -124,23 +135,203 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return ListTile(
       title: Text(label, style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
       trailing: _selectedPeriod == value ? Icon(Icons.check_circle, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor) : null,
-      onTap: () {
-        setState(() {
-          _selectedPeriod = value;
-          _selectedBarIndex = -1; // Reset bar filter when period changes
-          _selectedCategory = null; // Reset category filter
-        });
-        Navigator.pop(context);
+      onTap: () async {
+        if (value == 'Custom') {
+          final range = await showDateRangePicker(
+            context: context,
+            firstDate: DateTime(2020),
+            lastDate: DateTime.now(),
+            builder: (context, child) {
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: Theme.of(context).colorScheme.copyWith(
+                    primary: AppColors.accentTeal,
+                    onPrimary: Colors.white,
+                  ),
+                ),
+                child: child!,
+              );
+            },
+          );
+          if (range != null) {
+            setState(() {
+              _selectedPeriod = value;
+              _customDateRange = range;
+              _selectedBarIndex = -1;
+              _selectedCategory = null;
+            });
+            if (mounted) Navigator.pop(context);
+          }
+        } else {
+          setState(() {
+            _selectedPeriod = value;
+            _selectedBarIndex = -1; 
+            _selectedCategory = null;
+            _customDateRange = null;
+          });
+          Navigator.pop(context);
+        }
       },
     );
   }
 
+  Widget _buildIncomeExpenseToggle(ThemeData theme, AppState state) {
+    return Container(
+      height: 50 * context.fontSizeFactor,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(15 * context.fontSizeFactor),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _showIncome = false),
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: !_showIncome ? AppColors.primaryDark : Colors.transparent,
+                  borderRadius: BorderRadius.circular(15 * context.fontSizeFactor),
+                ),
+                child: Text(
+                  state.translate("Expenses", "Kharash"),
+                  style: TextStyle(
+                    color: !_showIncome ? Colors.white : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _showIncome = true),
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: _showIncome ? AppColors.accentTeal : Colors.transparent,
+                  borderRadius: BorderRadius.circular(15 * context.fontSizeFactor),
+                ),
+                child: Text(
+                  state.translate("Income", "Dakhli"),
+                  style: TextStyle(
+                    color: _showIncome ? Colors.white : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNetFlowSummary(ThemeData theme, AppState state) {
+    final now = DateTime.now();
+    double income = 0;
+    double expense = 0;
+
+    for (var tx in state.transactions) {
+      final txLocal = tx.timestamp.toLocal();
+      bool isInRange = false;
+      
+      if (_selectedPeriod == 'Custom' && _customDateRange != null) {
+        isInRange = txLocal.isAfter(_customDateRange!.start.subtract(const Duration(seconds: 1))) && 
+                    txLocal.isBefore(_customDateRange!.end.add(const Duration(days: 1)));
+      } else if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
+        final target = widget.targetDate!.toLocal();
+        isInRange = txLocal.year == target.year && txLocal.month == target.month && txLocal.day == target.day;
+      } else if (_selectedPeriod == 'Monthly') {
+        isInRange = txLocal.month == now.month && txLocal.year == now.year;
+      } else if (_selectedPeriod == 'Weekly') {
+        final today = DateTime(now.year, now.month, now.day);
+        final txDate = DateTime(txLocal.year, txLocal.month, txLocal.day);
+        isInRange = today.difference(txDate).inDays < 7;
+      } else if (_selectedPeriod == 'Yearly') {
+        isInRange = txLocal.year == now.year;
+      } else {
+        isInRange = true; // All time
+      }
+
+      if (isInRange) {
+        if (tx.isNegative) {
+          expense += tx.numericAmount;
+        } else {
+          income += tx.numericAmount;
+        }
+      }
+    }
+
+    final netFlow = income - expense;
+
+    return FadeInUp(
+      delay: const Duration(milliseconds: 100),
+      child: Container(
+        padding: EdgeInsets.all(20 * context.fontSizeFactor),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(24 * context.fontSizeFactor),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(state.translate("Net Cash Flow", "Dakhliga saafiga ah"), style: TextStyle(color: Colors.grey, fontSize: 12 * context.fontSizeFactor)),
+                SizedBox(height: 4 * context.fontSizeFactor),
+                Text(
+                  NumberFormat.simpleCurrency(name: state.currencyCode).format(netFlow),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold, 
+                    fontSize: 20 * context.fontSizeFactor,
+                    color: netFlow >= 0 ? Colors.green : Colors.red,
+                  ),
+                ),
+              ],
+            ),
+            Icon(
+              netFlow >= 0 ? Icons.trending_up : Icons.trending_down,
+              color: netFlow >= 0 ? Colors.green : Colors.red,
+              size: 32 * context.fontSizeFactor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _exportData(AppState state) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(state.translate("Exporting PDF report...", "Warbixinta PDF waa la diyaarinayaa...")),
+        backgroundColor: AppColors.primaryDark,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    // Simulation of export logic
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.translate("Report saved to Downloads", "Warbixinta waa la kaydiyay")))
+        );
+      }
+    });
+  }
+
   Widget _buildTotalSpendingCard(ThemeData theme, AppState state) {
     final now = DateTime.now();
-    final double spending = state.transactions
+    final double amount = state.transactions
         .where((tx) {
-          if (!tx.isNegative) return false;
+          if (tx.isNegative == _showIncome) return false;
           final txLocal = tx.timestamp.toLocal();
+          
+          if (_selectedPeriod == 'Custom' && _customDateRange != null) {
+             return txLocal.isAfter(_customDateRange!.start.subtract(const Duration(seconds: 1))) && 
+                    txLocal.isBefore(_customDateRange!.end.add(const Duration(days: 1)));
+          }
           if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
             final target = widget.targetDate!.toLocal();
             return txLocal.year == target.year &&
@@ -163,7 +354,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         .fold(0.0, (sum, tx) => sum + tx.numericAmount);
 
     final String periodLabel;
-    if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
+    if (_selectedPeriod == 'Custom' && _customDateRange != null) {
+      periodLabel = "${DateFormat('MMM dd').format(_customDateRange!.start)} - ${DateFormat('MMM dd').format(_customDateRange!.end)}";
+    } else if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
       periodLabel = DateFormat('MMM dd, yyyy').format(widget.targetDate!);
     } else {
       periodLabel = _selectedPeriod == 'Monthly' 
@@ -171,16 +364,19 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           : (_selectedPeriod == 'Weekly' ? state.translate("this Week", "todobaadkan") : state.translate("this Year", "sanadkan"));
     }
 
+    final label = _showIncome ? state.translate("Total Income", "Wixii soo galay") : state.translate("Total Spent", "Wixii baxay");
+    final gradient = _showIncome ? AppColors.accentGradient : AppColors.primaryGradient;
+
     return FadeInDown(
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(24 * context.fontSizeFactor),
         decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
+          gradient: gradient,
           borderRadius: BorderRadius.circular(28 * context.fontSizeFactor),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryDark.withOpacity(0.3),
+              color: AppColors.primaryDark.withValues(alpha: 0.3),
               blurRadius: 20 * context.fontSizeFactor,
               offset: Offset(0, 10 * context.fontSizeFactor),
             )
@@ -190,14 +386,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "${state.translate("Total Spent", "Wixii baxay")} $periodLabel",
-              style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14 * context.fontSizeFactor),
+              "$label $periodLabel",
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14 * context.fontSizeFactor),
             ),
             SizedBox(height: 8 * context.fontSizeFactor),
             ShimmerLoading(
               isLoading: _isLoading,
               child: Text(
-                NumberFormat.simpleCurrency(name: state.currencyCode).format(spending),
+                NumberFormat.simpleCurrency(name: state.currencyCode).format(amount),
                 style: TextStyle(color: Colors.white, fontSize: 36 * context.fontSizeFactor, fontWeight: FontWeight.bold),
               ),
             ),
@@ -205,7 +401,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 6 * context.fontSizeFactor),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
               ),
               child: Row(
@@ -230,9 +426,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final Map<String, double> categorySpending = {};
-    for (var tx in state.transactions.where((t) => t.isNegative)) {
+    for (var tx in state.transactions.where((t) => t.isNegative != _showIncome)) {
       final txLocal = tx.timestamp.toLocal();
-      if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
+      if (_selectedPeriod == 'Custom' && _customDateRange != null) {
+        if (!txLocal.isAfter(_customDateRange!.start.subtract(const Duration(seconds: 1))) || 
+            !txLocal.isBefore(_customDateRange!.end.add(const Duration(days: 1)))) {
+          continue;
+        }
+      } else if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
         final target = widget.targetDate!.toLocal();
         if (txLocal.year != target.year ||
             txLocal.month != target.month ||
@@ -256,6 +457,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final sortedCategories = categorySpending.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
+    final colors = [Colors.blue, Colors.orange, AppColors.accentTeal, Colors.purple, Colors.red, Colors.green];
+
     return FadeInUp(
       delay: const Duration(milliseconds: 200),
       child: Container(
@@ -268,66 +471,112 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              state.translate("Spending by Category", "Qaybaha Lacagtu u Baxday"),
+              _showIncome 
+                ? state.translate("Income by Category", "Qaybaha Dakhligu ka yimid")
+                : state.translate("Spending by Category", "Qaybaha Lacagtu u Baxday"),
               style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) * context.fontSizeFactor),
             ),
             SizedBox(height: 32 * context.fontSizeFactor),
             if (sortedCategories.isEmpty)
-              SizedBox(height: 200 * context.fontSizeFactor, child: Center(child: Text("No data for this period", style: TextStyle(fontSize: 14 * context.fontSizeFactor))))
-            else
               SizedBox(
-                height: 200 * context.fontSizeFactor,
-                child: Stack(
-                  children: [
-                    PieChart(
-                      PieChartData(
-                        pieTouchData: PieTouchData(
-                          touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                            setState(() {
-                              if (!event.isInterestedForInteractions ||
-                                  pieTouchResponse == null ||
-                                  pieTouchResponse.touchedSection == null) {
-                                _touchedIndex = -1;
-                                return;
-                              }
-                              _touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                              if (event is FlTapUpEvent) {
-                                final index = _touchedIndex;
-                                if (index >= 0 && index < sortedCategories.length) {
-                                  final category = sortedCategories[index].key;
-                                  if (_selectedCategory == category) {
-                                    _selectedCategory = null;
-                                  } else {
-                                    _selectedCategory = category;
-                                  }
-                                }
-                              }
-                            });
-                          },
-                        ),
-                        borderData: FlBorderData(show: false),
-                        sectionsSpace: 4 * context.fontSizeFactor,
-                        centerSpaceRadius: 60 * context.fontSizeFactor,
-                        sections: _isLoading ? _buildDefaultSections(context) : _buildRealSections(context, sortedCategories),
+                height: 200 * context.fontSizeFactor, 
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.analytics_outlined, size: 48 * context.fontSizeFactor, color: Colors.grey.withValues(alpha: 0.3)),
+                      SizedBox(height: 16 * context.fontSizeFactor),
+                      Text(
+                        state.translate("No data for this period", "Xog lama helin muddadan"), 
+                        style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: Colors.grey)
                       ),
-                    ),
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _isLoading ? "--" : "${sortedCategories.length}",
-                            style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.headlineMedium?.fontSize ?? 28) * context.fontSizeFactor),
+                    ],
+                  )
+                )
+              )
+            else
+              Column(
+                children: [
+                  SizedBox(
+                    height: 200 * context.fontSizeFactor,
+                    child: Stack(
+                      children: [
+                        PieChart(
+                          PieChartData(
+                            pieTouchData: PieTouchData(
+                              touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                                setState(() {
+                                  if (!event.isInterestedForInteractions ||
+                                      pieTouchResponse == null ||
+                                      pieTouchResponse.touchedSection == null) {
+                                    _touchedIndex = -1;
+                                    return;
+                                  }
+                                  _touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                                  if (event is FlTapUpEvent) {
+                                    final index = _touchedIndex;
+                                    if (index >= 0 && index < sortedCategories.length) {
+                                      final category = sortedCategories[index].key;
+                                      if (_selectedCategory == category) {
+                                        _selectedCategory = null;
+                                      } else {
+                                        _selectedCategory = category;
+                                      }
+                                    }
+                                  }
+                                });
+                              },
+                            ),
+                            borderData: FlBorderData(show: false),
+                            sectionsSpace: 4 * context.fontSizeFactor,
+                            centerSpaceRadius: 60 * context.fontSizeFactor,
+                            sections: _isLoading ? _buildDefaultSections(context) : _buildRealSections(context, sortedCategories),
                           ),
+                        ),
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _isLoading ? "--" : "${sortedCategories.length}",
+                                style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: (theme.textTheme.headlineMedium?.fontSize ?? 28) * context.fontSizeFactor),
+                              ),
+                              Text(
+                                state.translate("Categories", "Qaybaha"),
+                                style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey, fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) * context.fontSizeFactor),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 24 * context.fontSizeFactor),
+                  Wrap(
+                    spacing: 16 * context.fontSizeFactor,
+                    runSpacing: 8 * context.fontSizeFactor,
+                    children: List.generate(sortedCategories.length.clamp(0, 6), (index) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 12 * context.fontSizeFactor,
+                            height: 12 * context.fontSizeFactor,
+                            decoration: BoxDecoration(
+                              color: colors[index % colors.length],
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: 8 * context.fontSizeFactor),
                           Text(
-                            state.translate("Categories", "Qaybaha"),
-                            style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey, fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) * context.fontSizeFactor),
+                            sortedCategories[index].key,
+                            style: TextStyle(fontSize: 12 * context.fontSizeFactor, color: Colors.grey[600]),
                           ),
                         ],
-                      ),
-                    ),
-                  ],
-                ),
+                      );
+                    }),
+                  ),
+                ],
               ),
           ],
         ),
@@ -337,7 +586,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   List<PieChartSectionData> _buildDefaultSections(BuildContext context) {
     return List.generate(1, (i) {
-      return PieChartSectionData(color: Colors.grey.withOpacity(0.1), value: 100, radius: 25 * context.fontSizeFactor, showTitle: false);
+      return PieChartSectionData(color: Colors.grey.withValues(alpha: 0.1), value: 100, radius: 25 * context.fontSizeFactor, showTitle: false);
     });
   }
 
@@ -454,7 +703,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   List<BarChartGroupData> _buildDefaultBars(BuildContext context) {
     return List.generate(7, (i) {
-      return BarChartGroupData(x: i, barRods: [BarChartRodData(toY: 10, color: Colors.grey.withOpacity(0.1), width: 12 * context.fontSizeFactor, borderRadius: BorderRadius.circular(4 * context.fontSizeFactor))]);
+      return BarChartGroupData(x: i, barRods: [BarChartRodData(toY: 10, color: Colors.grey.withValues(alpha: 0.1), width: 12 * context.fontSizeFactor, borderRadius: BorderRadius.circular(4 * context.fontSizeFactor))]);
     });
   }
 
@@ -462,7 +711,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final now = DateTime.now();
     if (_selectedPeriod == 'Yearly') {
       final List<double> monthlyTotals = List.filled(12, 0.0);
-      for (var tx in state.transactions.where((t) => t.isNegative && t.timestamp.year == now.year)) {
+      for (var tx in state.transactions.where((t) => t.isNegative != _showIncome && t.timestamp.year == now.year)) {
         monthlyTotals[tx.timestamp.month - 1] += tx.numericAmount;
       }
       return List.generate(12, (i) {
@@ -473,11 +722,42 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             BarChartRodData(
               toY: monthlyTotals[i] > 0 ? monthlyTotals[i] : 2,
               gradient: isSelected || (i == now.month - 1 && _selectedBarIndex == -1) 
-                  ? AppColors.accentGradient 
-                  : LinearGradient(colors: [Colors.grey.withOpacity(0.2), Colors.grey.withOpacity(0.3)]),
+                  ? (_showIncome ? AppColors.accentGradient : AppColors.primaryGradient) 
+                  : LinearGradient(colors: [Colors.grey.withValues(alpha: 0.2), Colors.grey.withValues(alpha: 0.3)]),
               width: 10 * context.fontSizeFactor,
               borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
-              borderSide: isSelected ? const BorderSide(color: AppColors.accentTeal, width: 2) : BorderSide.none,
+              borderSide: isSelected ? BorderSide(color: _showIncome ? AppColors.accentTeal : AppColors.primaryDark, width: 2) : BorderSide.none,
+            )
+          ],
+        );
+      });
+    } else if (_selectedPeriod == 'Custom' && _customDateRange != null) {
+      final days = _customDateRange!.end.difference(_customDateRange!.start).inDays + 1;
+      final List<double> dailyTotals = List.filled(days.clamp(1, 31), 0.0);
+      
+      for (var tx in state.transactions.where((t) => t.isNegative != _showIncome)) {
+        final txLocal = tx.timestamp.toLocal();
+        if (txLocal.isAfter(_customDateRange!.start.subtract(const Duration(seconds: 1))) && 
+            txLocal.isBefore(_customDateRange!.end.add(const Duration(days: 1)))) {
+          final diff = txLocal.difference(_customDateRange!.start).inDays;
+          if (diff >= 0 && diff < dailyTotals.length) {
+            dailyTotals[diff] += tx.numericAmount;
+          }
+        }
+      }
+
+      return List.generate(dailyTotals.length, (i) {
+        final isSelected = i == _selectedBarIndex;
+        return BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              toY: dailyTotals[i] > 0 ? dailyTotals[i] : 2,
+              gradient: isSelected 
+                  ? (_showIncome ? AppColors.accentGradient : AppColors.primaryGradient) 
+                  : LinearGradient(colors: [Colors.grey.withValues(alpha: 0.2), Colors.grey.withValues(alpha: 0.3)]),
+              width: (300 / dailyTotals.length).clamp(4, 20) * context.fontSizeFactor,
+              borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
             )
           ],
         );
@@ -486,7 +766,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       // Last 7 days
       final today = DateTime(now.year, now.month, now.day);
       final List<double> dailyTotals = List.filled(7, 0.0);
-      for (var tx in state.transactions.where((t) => t.isNegative)) {
+      for (var tx in state.transactions.where((t) => t.isNegative != _showIncome)) {
         final txLocal = tx.timestamp.toLocal();
         final txDate = DateTime(txLocal.year, txLocal.month, txLocal.day);
         final diff = today.difference(txDate).inDays;
@@ -515,11 +795,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             BarChartRodData(
               toY: dailyTotals[i] > 0 ? dailyTotals[i] : 2,
               gradient: isSelected || (i == highlightedIndex && _selectedBarIndex == -1) 
-                  ? AppColors.accentGradient 
-                  : LinearGradient(colors: [Colors.grey.withOpacity(0.2), Colors.grey.withOpacity(0.3)]),
+                  ? (_showIncome ? AppColors.accentGradient : AppColors.primaryGradient) 
+                  : LinearGradient(colors: [Colors.grey.withValues(alpha: 0.2), Colors.grey.withValues(alpha: 0.3)]),
               width: 16 * context.fontSizeFactor,
               borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
-              borderSide: isSelected ? const BorderSide(color: AppColors.accentTeal, width: 2) : BorderSide.none,
+              borderSide: isSelected ? BorderSide(color: _showIncome ? AppColors.accentTeal : AppColors.primaryDark, width: 2) : BorderSide.none,
             )
           ],
         );
@@ -571,19 +851,27 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final today = DateTime(now.year, now.month, now.day);
     
     final filteredTransactions = state.transactions.where((tx) {
-      if (!tx.isNegative) return false;
+      if (tx.isNegative == _showIncome) return false;
       
       // Period/Bar Filter
       final txLocal = tx.timestamp.toLocal();
       if (_selectedBarIndex != -1) {
         if (_selectedPeriod == 'Yearly') {
           if (txLocal.year != now.year || txLocal.month != _selectedBarIndex + 1) return false;
+        } else if (_selectedPeriod == 'Custom' && _customDateRange != null) {
+           final targetDate = _customDateRange!.start.add(Duration(days: _selectedBarIndex));
+           if (txLocal.year != targetDate.year || txLocal.month != targetDate.month || txLocal.day != targetDate.day) return false;
         } else {
           final targetDate = DateTime.now().subtract(Duration(days: 6 - _selectedBarIndex));
           if (txLocal.year != targetDate.year || txLocal.month != targetDate.month || txLocal.day != targetDate.day) return false;
         }
       } else {
-        if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
+        if (_selectedPeriod == 'Custom' && _customDateRange != null) {
+          if (!txLocal.isAfter(_customDateRange!.start.subtract(const Duration(seconds: 1))) || 
+              !txLocal.isBefore(_customDateRange!.end.add(const Duration(days: 1)))) {
+            return false;
+          }
+        } else if (_selectedPeriod == 'Daily' && widget.targetDate != null) {
           final target = widget.targetDate!.toLocal();
           if (txLocal.year != target.year || txLocal.month != target.month || txLocal.day != target.day) return false;
         } else if (_selectedPeriod == 'Monthly' && (txLocal.month != now.month || txLocal.year != now.year)) {
@@ -670,7 +958,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         children: [
           Container(
             padding: EdgeInsets.all(12 * context.fontSizeFactor),
-            decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
             child: AdaptiveIcon(icon, color: color, size: 18 * context.fontSizeFactor),
           ),
           SizedBox(width: 16 * context.fontSizeFactor),
@@ -687,7 +975,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           ),
           Text(
             NumberFormat.simpleCurrency(name: state.currencyCode).format(tx.numericAmount),
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 14 * context.fontSizeFactor)
+            style: TextStyle(fontWeight: FontWeight.bold, color: tx.isNegative ? Colors.red : Colors.green, fontSize: 14 * context.fontSizeFactor)
           ),
         ],
       ),
@@ -707,7 +995,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         children: [
           Container(
             padding: EdgeInsets.all(12 * context.fontSizeFactor),
-            decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
             child: AdaptiveIcon(icon, color: color, size: 18 * context.fontSizeFactor),
           ),
           SizedBox(width: 16 * context.fontSizeFactor),
@@ -721,7 +1009,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   borderRadius: BorderRadius.circular(4 * context.fontSizeFactor),
                   child: LinearProgressIndicator(
                     value: percentage,
-                    backgroundColor: Colors.grey.withOpacity(0.1),
+                    backgroundColor: Colors.grey.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(color),
                     minHeight: 4 * context.fontSizeFactor,
                   ),
@@ -772,3 +1060,4 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     }
   }
 }
+

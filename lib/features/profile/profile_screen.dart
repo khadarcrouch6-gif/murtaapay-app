@@ -1,11 +1,12 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'dart:typed_data';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -20,6 +21,7 @@ import '../chat/chat_screen.dart';
 import 'terms_screen.dart';
 import 'security_center_screen.dart';
 import 'linked_accounts_screen.dart';
+import 'premium_upgrade_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -29,15 +31,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String _userDob = "1990-01-01";
-  String _userNationality = "Somali";
-  String _userIdNumber = "ABC123456";
-  String _userOccupation = "Software Engineer";
-  String _userStreet = "Maka Al-Mukarama Road";
-  String _userCity = "Mogadishu";
-  String _userPostalCode = "10001";
-  String _userCountry = "Somalia";
-
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
@@ -74,6 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icons.star_outline_rounded,
                         state.translate("Premium Subscription", "Rukunka Premium", ar: "اشتراك بريميوم", de: "Premium-Abonnement", et: "Premium tellimus"),
                         state.translate("Unlock all features & limits", "Fur dhammaan sifooyinka & xadka", ar: "فتح جميع الميزات والحدود", de: "Alle Funktionen & Limits freischalten", et: "Ava kõik funktsioonid ja piirangud"),
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PremiumUpgradeScreen())),
                         trailing: Transform.scale(
                           scale: 0.8 * context.fontSizeFactor,
                           child: Switch(
@@ -107,6 +101,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icons.notifications_none_rounded,
                         state.translate("Notifications", "Ogeysiisyada", ar: "الإشعارات", de: "Benachrichtigungen", et: "Teavitused"),
                         state.translate("Alerts & messaging", "Ogeysiisyada & farriimaha", ar: "التنبيهات والرسائل", de: "Warnungen & Nachrichten", et: "Hoiatused ja sõnumid"),
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.translate("Notification settings coming soon", "Habaynta ogeysiisyada dhawaan ayay imaan doontaa")))
+                          );
+                        },
                       ),
                       _buildSettingsTile(
                         context,
@@ -129,6 +128,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       ),
+                    ], isDark, context),
+                    SizedBox(height: 32 * context.fontSizeFactor),
+                    _buildSectionHeader(state.translate("Personal Details", "Faahfaahinta Shakhsiga", ar: "تفاصيل شخصية", de: "Persönliche Details", et: "Isikuandmed"), context),
+                    SizedBox(height: 12 * context.fontSizeFactor),
+                    _buildSettingsCard([
+                      _buildInfoTile(context, Icons.badge_outlined, state.translate("ID Number", "Lambarka Aqoonsiga"), state.userIdNumber),
+                      _buildInfoTile(context, Icons.calendar_today_outlined, state.translate("Date of Birth", "Taariikhda Dhalashada"), state.userDob),
+                      _buildInfoTile(context, Icons.flag_outlined, state.translate("Nationality", "Dhalashada"), state.userNationality),
+                      _buildInfoTile(context, Icons.work_outline, state.translate("Occupation", "Shaqada"), state.userOccupation),
+                      _buildInfoTile(context, Icons.location_on_outlined, state.translate("Address", "Cinwaanka"), "${state.userStreet}, ${state.userCity}, ${state.userCountry}"),
                     ], isDark, context),
                     SizedBox(height: 32 * context.fontSizeFactor),
                     _buildSectionHeader(state.translate("Support", "Taageero", ar: "الدعم", de: "Support", et: "Tugi"), context),
@@ -216,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(height: 24 * context.fontSizeFactor),
           Row(
             children: [
-              Stack(
+                  Stack(
                 children: [
                   Container(
                     width: 80 * context.fontSizeFactor,
@@ -226,20 +235,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       border: Border.all(color: AppColors.accentTeal, width: 2 * context.fontSizeFactor),
                     ),
                     child: ClipOval(
-                      child: Image.network(
-                        'https://ui-avatars.com/api/?name=${state.userName.replaceAll(' ', '+')}&background=0D47A1&color=fff',
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/user.png',
+                        image: 'https://ui-avatars.com/api/?name=${state.userName.replaceAll(' ', '+')}&background=0D47A1&color=fff',
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Image.asset('assets/images/user.png', fit: BoxFit.cover),
+                        imageErrorBuilder: (context, error, stackTrace) => Image.asset('assets/images/user.png', fit: BoxFit.cover),
                       ),
                     ),
                   ),
                   PositionedDirectional(
                     bottom: 0,
                     end: 0,
-                    child: Container(
-                      padding: EdgeInsets.all(4 * context.fontSizeFactor),
-                      decoration: const BoxDecoration(color: AppColors.accentTeal, shape: BoxShape.circle),
-                      child: Icon(Icons.camera_alt_rounded, color: Colors.white, size: 14 * context.fontSizeFactor),
+                    child: InkWell(
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.translate("Profile photo update coming soon", "Beddelidda sawirka profile-ka dhawaan ayay imaan doontaa")))
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(6 * context.fontSizeFactor),
+                        decoration: const BoxDecoration(color: AppColors.accentTeal, shape: BoxShape.circle),
+                        child: Icon(Icons.camera_alt_rounded, color: Colors.white, size: 14 * context.fontSizeFactor),
+                      ),
                     ),
                   ),
                 ],
@@ -378,19 +395,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildInfoTile(BuildContext context, IconData icon, String title, String value) {
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 20 * context.fontSizeFactor, vertical: 4 * context.fontSizeFactor),
+      leading: Icon(icon, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
+      title: Text(title, style: TextStyle(color: Colors.grey, fontSize: 12 * context.fontSizeFactor)),
+      subtitle: Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor)),
+    );
+  }
+
   void _showEditProfile(BuildContext context, AppState state) {
     final nameCtrl = TextEditingController(text: state.userName);
     final emailCtrl = TextEditingController(text: state.userEmail);
     final phoneCtrl = TextEditingController(text: state.userPhone);
-    final dobCtrl = TextEditingController(text: _userDob);
-    final nationalityCtrl = TextEditingController(text: _userNationality);
-    final idNumberCtrl = TextEditingController(text: _userIdNumber);
-    final occupationCtrl = TextEditingController(text: _userOccupation);
+    final dobCtrl = TextEditingController(text: state.userDob);
+    final nationalityCtrl = TextEditingController(text: state.userNationality);
+    final idNumberCtrl = TextEditingController(text: state.userIdNumber);
+    final occupationCtrl = TextEditingController(text: state.userOccupation);
     
-    final streetCtrl = TextEditingController(text: _userStreet);
-    final cityCtrl = TextEditingController(text: _userCity);
-    final postalCtrl = TextEditingController(text: _userPostalCode);
-    final countryCtrl = TextEditingController(text: _userCountry);
+    final streetCtrl = TextEditingController(text: state.userStreet);
+    final cityCtrl = TextEditingController(text: state.userCity);
+    final postalCtrl = TextEditingController(text: state.userPostalCode);
+    final countryCtrl = TextEditingController(text: state.userCountry);
 
     showModalBottomSheet(
       context: context,
@@ -475,17 +501,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 name: nameCtrl.text,
                                 email: emailCtrl.text,
                                 phone: phoneCtrl.text,
+                                dob: dobCtrl.text,
+                                nationality: nationalityCtrl.text,
+                                idNumber: idNumberCtrl.text,
+                                occupation: occupationCtrl.text,
+                                street: streetCtrl.text,
+                                city: cityCtrl.text,
+                                postalCode: postalCtrl.text,
+                                country: countryCtrl.text,
                               );
-                              setState(() {
-                                _userDob = dobCtrl.text;
-                                _userNationality = nationalityCtrl.text;
-                                _userIdNumber = idNumberCtrl.text;
-                                _userOccupation = occupationCtrl.text;
-                                _userStreet = streetCtrl.text;
-                                _userCity = cityCtrl.text;
-                                _userPostalCode = postalCtrl.text;
-                                _userCountry = countryCtrl.text;
-                              });
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
@@ -574,7 +598,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(text: state.userEmail));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(state.translate("Email copied to clipboard", "Email-ka waa la koobiyey")))
+                            );
+                          },
                           icon: Icon(Icons.copy_rounded, size: 18 * context.fontSizeFactor),
                           label: FittedBox(
                             fit: BoxFit.scaleDown,
@@ -584,6 +613,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                             foregroundColor: AppColors.accentTeal,
                             elevation: 0,
+                            minimumSize: const Size(0, 48),
                             padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor, horizontal: 8 * context.fontSizeFactor),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                           ),
@@ -592,7 +622,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(width: 12 * context.fontSizeFactor),
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            Share.share("${state.translate("My MurtaaxPay Profile", "Profile-kayga MurtaaxPay")}: ${state.userName}\nWallet ID: ${state.walletId}\nEmail: ${state.userEmail}");
+                          },
                           icon: Icon(Icons.share_rounded, size: 18 * context.fontSizeFactor),
                           label: FittedBox(
                             fit: BoxFit.scaleDown,
@@ -602,6 +634,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             backgroundColor: AppColors.accentTeal,
                             foregroundColor: Colors.white,
                             elevation: 0,
+                            minimumSize: const Size(0, 48),
                             padding: EdgeInsets.symmetric(vertical: 12 * context.fontSizeFactor, horizontal: 8 * context.fontSizeFactor),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
                           ),

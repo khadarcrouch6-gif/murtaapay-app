@@ -2,10 +2,11 @@ import 'dart:math' show pi;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/app_state.dart';
 import '../../../core/responsive_utils.dart';
-import '../../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../models/card_model.dart';
 
 class EliteVirtualCard extends StatefulWidget {
@@ -51,7 +52,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final state = context.watch<AppState>();
     
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -89,13 +90,19 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
                       alignment: Alignment.center,
                       transform: transform,
                       child: RepaintBoundary(
-                        child: rotation <= 90 
-                          ? _buildCardFront(context, state) 
-                          : Transform(
-                              alignment: Alignment.center, 
-                              transform: Matrix4.identity()..rotateY(pi),
-                              child: _buildCardBack(context, state)
-                            ),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: SizedBox(
+                            width: 380 * context.fontSizeFactor,
+                            child: rotation <= 90 
+                              ? _buildCardFront(context, state) 
+                              : Transform(
+                                  alignment: Alignment.center, 
+                                  transform: Matrix4.identity()..rotateY(pi),
+                                  child: _buildCardBack(context, state)
+                                ),
+                          ),
+                        ),
                       ),
                     );
                   },
@@ -119,7 +126,7 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: themeColors.primaryGlow.withOpacity(0.25),
+            color: themeColors.primaryGlow.withValues(alpha: 0.25),
             blurRadius: 30,
             offset: const Offset(0, 15),
             spreadRadius: -5,
@@ -157,9 +164,9 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
                     end: Alignment.topRight,
                     colors: [
                       Colors.transparent,
-                      themeColors.holographic1.withOpacity(0.08),
-                      Colors.white.withOpacity(0.2),
-                      themeColors.holographic2.withOpacity(0.08),
+                      themeColors.holographic1.withValues(alpha: 0.08),
+                      Colors.white.withValues(alpha: 0.2),
+                      themeColors.holographic2.withValues(alpha: 0.08),
                       Colors.transparent,
                     ],
                     stops: const [0.4, 0.48, 0.5, 0.52, 0.6],
@@ -174,14 +181,14 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withOpacity(0.1), width: 0.8),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.8),
               ),
             ),
           ),
 
           // Content
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(24 * context.fontSizeFactor),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -192,22 +199,23 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _cardIconButton(Icons.copy_all_rounded, widget.onCopyNumber),
-                        const SizedBox(width: 10),
+                        _cardIconButton(context, Icons.copy_all_rounded, widget.onCopyNumber),
+                        SizedBox(width: 10 * context.fontSizeFactor),
                         _cardIconButton(
+                          context,
                           widget.showNumber ? Icons.visibility_off_rounded : Icons.visibility_rounded, 
                           widget.onToggleShowNumber
                         ),
                       ],
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(child: _buildBranding()),
+                    SizedBox(width: 12 * context.fontSizeFactor),
+                    Expanded(child: _buildBranding(context)),
                   ],
                 ),
                 
-                _buildCardNumberArea(),
+                _buildCardNumberArea(context),
                 
-                _buildCardFooter(state),
+                _buildCardFooter(context, state),
               ],
             ),
           ),
@@ -226,14 +234,14 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: RadialGradient(
-            colors: [color.withOpacity(0.15), color.withOpacity(0.05), Colors.transparent],
+            colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.05), Colors.transparent],
             stops: const [0.0, 0.4, 1.0],
           ),
         ),
       ),
     );
   }
-  Widget _buildBranding() {
+  Widget _buildBranding(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
@@ -243,52 +251,57 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const FittedBox(
+              FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text("MurtaaxPay", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: -0.2)),
+                child: Text("MurtaaxPay", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13 * context.fontSizeFactor, letterSpacing: -0.2)),
               ),
+              const SizedBox(height: 2),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                decoration: BoxDecoration(color: AppColors.accentTeal.withOpacity(0.15), borderRadius: BorderRadius.circular(4)),
-                child: const Text("PLATINUM", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w900, fontSize: 7, letterSpacing: 1.5)),
+                padding: EdgeInsets.symmetric(horizontal: 4 * context.fontSizeFactor, vertical: 1 * context.fontSizeFactor),
+                decoration: BoxDecoration(color: AppColors.accentTeal.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4 * context.fontSizeFactor)),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text("PLATINUM", style: TextStyle(color: AppColors.accentTeal, fontWeight: FontWeight.w900, fontSize: 7 * context.fontSizeFactor, letterSpacing: 1.5)),
+                ),
               ),
             ],
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 8 * context.fontSizeFactor),
         Image.asset(
           'assets/images/app_logo.png',
           color: Colors.white,
-          height: 24,
+          height: 24 * context.fontSizeFactor,
+          width: 24 * context.fontSizeFactor,
           fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, color: Colors.white, size: 24),
+          errorBuilder: (context, error, stackTrace) => Icon(Icons.credit_card, color: Colors.white, size: 24 * context.fontSizeFactor),
         ),
       ],
     );
   }
 
 
-  Widget _buildCardNumberArea() {
+  Widget _buildCardNumberArea(BuildContext context) {
     return Row(
       children: [
         Container(
-          width: 46, height: 34,
-          decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))]),
-          child: RepaintBoundary(child: CustomPaint(painter: RealisticCardChipPainter())),
+          width: 46 * context.fontSizeFactor, height: 34 * context.fontSizeFactor,
+          decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))]),
+          child: RepaintBoundary(child: CustomPaint(painter: RealisticCardChipPainter(fontSizeFactor: context.fontSizeFactor))),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: 16 * context.fontSizeFactor),
         Expanded(
           child: FittedBox(
             alignment: AlignmentDirectional.centerStart,
             fit: BoxFit.scaleDown,
-            child: _buildAnimatedNumber(),
+            child: _buildAnimatedNumber(context),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildAnimatedNumber() {
+  Widget _buildAnimatedNumber(BuildContext context) {
     final number = widget.card.cardNumber;
     final masked = "••••  ••••  ••••  ${number.substring(number.length - 4)}";
     final visible = number.replaceAllMapped(RegExp(r".{4}"), (match) => "${match.group(0)} ");
@@ -301,35 +314,36 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
         key: ValueKey<bool>(widget.showNumber),
         style: TextStyle(
           color: Colors.white,
-          letterSpacing: widget.showNumber ? 2.5 : 3.5,
-          fontWeight: FontWeight.w900, fontSize: 22, fontFamily: 'monospace',
-          shadows: [Shadow(color: Colors.black.withOpacity(0.8), offset: const Offset(0, 2), blurRadius: 4)],
+          letterSpacing: (widget.showNumber ? 2.5 : 3.5) * context.fontSizeFactor,
+          fontWeight: FontWeight.w900, fontSize: 22 * context.fontSizeFactor, fontFamily: 'monospace',
+          shadows: [Shadow(color: Colors.black.withValues(alpha: 0.8), offset: const Offset(0, 2), blurRadius: 4)],
         ),
       ),
     );
   }
 
-  Widget _buildCardFooter(AppState state) {
+  Widget _buildCardFooter(BuildContext context, AppState state) {
     final l10n = AppLocalizations.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Expanded(
+          flex: 2,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(l10n.cardHolder.toUpperCase(), style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
+                child: Text(l10n.cardHolder.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7 * context.fontSizeFactor, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
               ),
-              const SizedBox(height: 2),
-              Text(widget.card.cardHolder, style: const TextStyle(color: Colors.white, letterSpacing: 1, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis),
+              SizedBox(height: 2 * context.fontSizeFactor),
+              Text(widget.card.cardHolder, style: TextStyle(color: Colors.white, letterSpacing: 1, fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor), overflow: TextOverflow.ellipsis, maxLines: 1),
             ],
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 8 * context.fontSizeFactor),
         Flexible(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -337,10 +351,10 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
             children: [
               FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(l10n.expires.toUpperCase(), style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 7, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
+                child: Text(l10n.expires.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 7 * context.fontSizeFactor, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
               ),
-              const SizedBox(height: 2),
-              Text(widget.card.expiryDate, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis),
+              SizedBox(height: 2 * context.fontSizeFactor),
+              Text(widget.card.expiryDate, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor), overflow: TextOverflow.ellipsis, maxLines: 1),
             ],
           ),
         ),
@@ -348,14 +362,14 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
     );
   }
 
-  Widget _cardIconButton(IconData icon, VoidCallback onTap) {
+  Widget _cardIconButton(BuildContext context, IconData icon, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(8 * context.fontSizeFactor),
       child: Container(
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-        child: Icon(icon, color: Colors.white.withOpacity(0.8), size: 16),
+        padding: EdgeInsets.all(6 * context.fontSizeFactor),
+        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8 * context.fontSizeFactor)),
+        child: Icon(icon, color: Colors.white.withValues(alpha: 0.8), size: 16 * context.fontSizeFactor),
       ),
     );
   }
@@ -368,14 +382,14 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
         child: BackdropFilter(
           filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
           child: Container(
-            decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(24)),
+            decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(24)),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.lock_rounded, color: Colors.white, size: 40),
-                  const SizedBox(height: 12),
-                  Text(l10n.frozen.toUpperCase(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 3, fontSize: 12)),
+                  Icon(Icons.lock_rounded, color: Colors.white, size: 40 * context.fontSizeFactor),
+                  SizedBox(height: 12 * context.fontSizeFactor),
+                  Text(l10n.frozen.toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 3 * context.fontSizeFactor, fontSize: 12 * context.fontSizeFactor)),
                 ],
               ),
             ),
@@ -389,27 +403,27 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
     return Container(
       width: double.infinity, height: 200 * context.fontSizeFactor,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 30, offset: const Offset(0, 15), spreadRadius: -5)]),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 30, offset: const Offset(0, 15), spreadRadius: -5)]),
       child: Stack(
         children: [
           Positioned.fill(child: Container(decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [Color(0xFF020617), Color(0xFF0F172A)])))),
           
           // Mag Stripe
-          Positioned(top: 28, left: 0, right: 0, child: Container(height: 38, decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF020202), Color(0xFF1A1A1A), Color(0xFF080808)])))),
+          Positioned(top: 28 * context.fontSizeFactor, left: 0, right: 0, child: Container(height: 38 * context.fontSizeFactor, decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF020202), Color(0xFF1A1A1A), Color(0xFF080808)])))),
           
           // Signature Panel
           Positioned(
-            top: 82, left: 20, right: 20,
+            top: 82 * context.fontSizeFactor, left: 20 * context.fontSizeFactor, right: 20 * context.fontSizeFactor,
             child: Container(
-              height: 48, padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.white.withOpacity(0.1))),
+              height: 48 * context.fontSizeFactor, padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(10 * context.fontSizeFactor), border: Border.all(color: Colors.white.withValues(alpha: 0.1))),
               child: Row(
                 children: [
-                  Expanded(child: Text("AUTHORIZED SIGNATURE", style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 6, fontWeight: FontWeight.w900, letterSpacing: 0.5))),
+                  Expanded(child: Text("AUTHORIZED SIGNATURE", style: TextStyle(color: Colors.white.withValues(alpha: 0.2), fontSize: 6 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: 0.5))),
                   Container(
-                    width: 60, height: 32,
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6)),
-                    child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Text("CVV", style: TextStyle(color: Colors.grey, fontSize: 6, fontWeight: FontWeight.bold, height: 1.0)), Text(widget.card.cvv, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 13, height: 1.1))])),
+                    width: 60 * context.fontSizeFactor, height: 32 * context.fontSizeFactor,
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6 * context.fontSizeFactor)),
+                    child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text("CVV", style: TextStyle(color: Colors.grey, fontSize: 6 * context.fontSizeFactor, fontWeight: FontWeight.bold, height: 1.0)), Text(widget.card.cvv, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 13 * context.fontSizeFactor, height: 1.1))])),
                   ),
                 ],
               ),
@@ -418,22 +432,22 @@ class _EliteVirtualCardState extends State<EliteVirtualCard> with SingleTickerPr
           
           // Footer
           Positioned(
-            bottom: 24, left: 20, right: 20,
+            bottom: 24 * context.fontSizeFactor, left: 20 * context.fontSizeFactor, right: 20 * context.fontSizeFactor,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Expanded(
+                Expanded(
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerLeft,
-                    child: Text("MurtaaxPay", style: TextStyle(color: Colors.white30, fontWeight: FontWeight.w900, fontSize: 11)),
+                    child: Text("MurtaaxPay", style: TextStyle(color: Colors.white30, fontWeight: FontWeight.w900, fontSize: 11 * context.fontSizeFactor)),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12 * context.fontSizeFactor),
                 Container(
-                  width: 32, height: 32,
-                  decoration: BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [const Color(0xFF6366F1).withOpacity(0.4), const Color(0xFF2DD4BF).withOpacity(0.4)])),
-                  child: const Center(child: Icon(Icons.verified_user_rounded, color: Colors.white24, size: 16)),
+                  width: 32 * context.fontSizeFactor, height: 32 * context.fontSizeFactor,
+                  decoration: BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [const Color(0xFF6366F1).withValues(alpha: 0.4), const Color(0xFF2DD4BF).withValues(alpha: 0.4)])),
+                  child: Center(child: Icon(Icons.verified_user_rounded, color: Colors.white24, size: 16 * context.fontSizeFactor)),
                 ),
               ],
             ),
@@ -544,6 +558,10 @@ class _CardThemeColors {
 }
 
 class RealisticCardChipPainter extends CustomPainter {
+  final double fontSizeFactor;
+  
+  RealisticCardChipPainter({this.fontSizeFactor = 1.0});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
@@ -555,10 +573,10 @@ class RealisticCardChipPainter extends CustomPainter {
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.fill;
 
-    final RRect rrect = RRect.fromLTRBR(0, 0, size.width, size.height, const Radius.circular(8));
+    final RRect rrect = RRect.fromLTRBR(0, 0, size.width, size.height, Radius.circular(8 * fontSizeFactor));
     canvas.drawRRect(rrect, paint);
     
-    final linePaint = Paint()..color = Colors.black.withOpacity(0.4)..style = PaintingStyle.stroke..strokeWidth = 0.8;
+    final linePaint = Paint()..color = Colors.black.withValues(alpha: 0.4)..style = PaintingStyle.stroke..strokeWidth = 0.8 * fontSizeFactor;
     canvas.drawLine(Offset(0, size.height * 0.25), Offset(size.width * 0.35, size.height * 0.25), linePaint);
     canvas.drawLine(Offset(0, size.height * 0.5), Offset(size.width * 0.35, size.height * 0.5), linePaint);
     canvas.drawLine(Offset(0, size.height * 0.75), Offset(size.width * 0.35, size.height * 0.75), linePaint);
@@ -566,7 +584,7 @@ class RealisticCardChipPainter extends CustomPainter {
     canvas.drawLine(Offset(size.width * 0.65, size.height * 0.5), Offset(size.width, size.height * 0.5), linePaint);
     canvas.drawLine(Offset(size.width * 0.65, size.height * 0.75), Offset(size.width, size.height * 0.75), linePaint);
 
-    final middleRect = RRect.fromLTRBR(size.width * 0.35, size.height * 0.1, size.width * 0.65, size.height * 0.9, const Radius.circular(3));
+    final middleRect = RRect.fromLTRBR(size.width * 0.35, size.height * 0.1, size.width * 0.65, size.height * 0.9, Radius.circular(3 * fontSizeFactor));
     canvas.drawRRect(middleRect, linePaint);
   }
   @override

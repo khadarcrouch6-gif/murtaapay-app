@@ -7,6 +7,7 @@ class HagbadGroup {
   final String name;
   final String adminName;
   final double amount;
+  final double paidAmount;
   final HagbadFrequency frequency;
   final HagbadStatus status;
   final DateTime startDate;
@@ -19,6 +20,7 @@ class HagbadGroup {
     required this.name,
     required this.adminName,
     required this.amount,
+    this.paidAmount = 0.0,
     required this.frequency,
     required this.status,
     required this.startDate,
@@ -29,13 +31,14 @@ class HagbadGroup {
 
   double get totalPayout => amount * (members.isNotEmpty ? members.length : 1);
   double get serviceFee => 1.0;
-  double get currentBalance => members.fold(0.0, (sum, m) => sum + m.paidAmount);
+  double get currentBalance => paidAmount; // Using the field directly now
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'adminName': adminName,
         'amount': amount,
+        'paidAmount': paidAmount,
         'frequency': frequency.index,
         'status': status.index,
         'startDate': startDate.toIso8601String(),
@@ -49,6 +52,7 @@ class HagbadGroup {
         name: json['name'],
         adminName: json['adminName'],
         amount: json['amount'].toDouble(),
+        paidAmount: (json['paidAmount'] ?? 0.0).toDouble(),
         frequency: HagbadFrequency.values[json['frequency']],
         status: HagbadStatus.values[json['status']],
         startDate: DateTime.parse(json['startDate']),
@@ -62,6 +66,7 @@ class HagbadGroup {
     String? name,
     String? adminName,
     double? amount,
+    double? paidAmount,
     HagbadFrequency? frequency,
     HagbadStatus? status,
     DateTime? startDate,
@@ -74,6 +79,7 @@ class HagbadGroup {
       name: name ?? this.name,
       adminName: adminName ?? this.adminName,
       amount: amount ?? this.amount,
+      paidAmount: paidAmount ?? this.paidAmount,
       frequency: frequency ?? this.frequency,
       status: status ?? this.status,
       startDate: startDate ?? this.startDate,

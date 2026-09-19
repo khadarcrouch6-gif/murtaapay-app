@@ -1,8 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2/api'; // Standard Android Emulator localhost
+  static String get baseUrl {
+    if (kIsWeb) {
+      return 'http://localhost:8000/api'; // Assuming local backend for web development
+    }
+    return 'http://10.0.2.2/api'; // Standard Android Emulator localhost
+  }
 
   static Future<Map<String, dynamic>?> getFxRates() async {
     try {
@@ -13,17 +20,13 @@ class ApiService {
         return json.decode(response.body);
       }
     } catch (e) {
-      print('Error fetching FX rates: $e');
+      debugPrint('Error fetching FX rates: $e');
     }
     return null;
   }
 
   // Generic method to fetch all active rates if the API supports it
   static Future<Map<String, double>> fetchAllRates() async {
-    // This is a placeholder for a real API call that returns multiple rates
-    // Since our backend calculateFxConversion only handles EUR/USD, 
-    // we'll return a mix of API data and defaults for now.
-    
     Map<String, double> defaultRates = {
       "USD": 1.0,
       "EUR": 0.93,
@@ -50,15 +53,20 @@ class ApiService {
     };
 
     try {
-      final response = await http.get(Uri.parse('$baseUrl/fx/calculate?amount=1'));
+      final response = await http
+          .get(Uri.parse('$baseUrl/fx/calculate?amount=1'))
+          .timeout(const Duration(seconds: 3));
+      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        // If the API returns 1 EUR = X USD, then 1 USD = 1/X EUR
-        double rate = data['rate'] ?? 1.12; // Example 1.12 USD for 1 EUR
+        double rate = data['rate'] ?? 1.12;
         defaultRates['EUR'] = 1 / rate;
       }
     } catch (e) {
-      print('Using fallback rates due to error: $e');
+      if (e is! http.ClientException) {
+         // Silently fail for connectivity issues, logging only for debugging
+         debugPrint('API Connectivity: Using fallback FX rates');
+      }
     }
 
     return defaultRates;
@@ -80,7 +88,24 @@ class ApiService {
         return data['account_name'];
       }
     } catch (e) {
-      print('Error verifying bank account: $e');
+      debugPrint('Error verifying bank account: $e');
+    }
+    return null;
+  }
+
+  static Future<String?> uploadReceipt(File file) async {
+    try {
+      final request = http.MultipartRequest('POST', Uri.parse('$baseUrl/deposit/upload-receipt'));
+      request.files.add(await http.MultipartFile.fromPath('receipt', file.path));
+      
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        final responseData = await response.stream.bytesToString();
+        final data = json.decode(responseData);
+        return data['url'] as String?;
+      }
+    } catch (e) {
+      debugPrint('Error uploading receipt: $e');
     }
     return null;
   }

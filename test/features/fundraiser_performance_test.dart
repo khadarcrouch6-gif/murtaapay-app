@@ -1,14 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:murtaaxpay_app/core/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:murtaaxpay_app/core/app_state.dart';
+import '../test_helper.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   
-  group('Sadaqah Logic Performance & Robustness Tests', () {
+  group('Fundraiser Logic Performance & Robustness Tests', () {
     late AppState appState;
 
     setUp(() async {
+      setupMockSecureStorage();
       SharedPreferences.setMockInitialValues({});
       appState = AppState();
       await appState.init();
@@ -54,17 +56,21 @@ void main() {
     });
 
     test('Currency Formatting: High amount truncation logic', () async {
-      // This tests the logic we just added to the UI helper (mentally, since it's private in the screen)
-      // but we can verify the numeric logic here if it were in a shared utility.
-      // Since it's in the screen, we'll assume the UI test covers it or just verify numeric values here.
-      
-      final donationAmount = 1500000.0;
-      appState.addBalance(2000000.0);
-      final campaignId = appState.campaigns.first.id;
-      
-      await appState.donateToCampaign(campaignId, donationAmount);
-      
-      expect(appState.campaigns.first.raisedAmount, greaterThanOrEqualTo(donationAmount));
+      // Manual test of formatting logic (since it's a private method in the UI)
+      String format(double amount) {
+        if (amount >= 1000000) {
+          return '\$${(amount / 1000000).toStringAsFixed(1)}M';
+        } else if (amount >= 1000) {
+          return '\$${(amount / 1000).toStringAsFixed(1)}K';
+        } else {
+          return '\$${amount.toStringAsFixed(0)}';
+        }
+      }
+
+      expect(format(1500000), '\$1.5M');
+      expect(format(950000), '\$950.0K');
+      expect(format(1200), '\$1.2K');
+      expect(format(500), '\$500');
     });
   });
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
@@ -17,13 +18,20 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   bool isLastPage = false;
-  late List<OnboardingData> _pages;
 
   @override
-  void initState() {
-    super.initState();
-    final state = AppState();
-    _pages = [
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final pages = [
       OnboardingData(
         title: state.translate("Send Money Home, Instantly", "Lacag u Dir Guriga, Degdeg", ar: "أرسل الأموال إلى المنزل فوراً", de: "Geld sofort nach Hause senden"),
         subtitle: state.translate("Support your family in Somali with the fastest transfer service.", "Ku taageer qoyskaaga Soomaaliya adeegga ugu xawaaraha badan.", ar: "ادعم عائلتك في الصومال بأرسع خدمة تحويل.", de: "Unterstützen Sie Ihre Familie in Somalia mit dem schnellsten Transferservice."),
@@ -43,19 +51,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         color: Colors.cyanAccent,
       ),
     ];
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final state = AppState();
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF010813) : AppColors.background,
@@ -108,12 +103,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: PageView.builder(
                     controller: _controller,
                     onPageChanged: (index) {
-                      setState(() => isLastPage = index == _pages.length - 1);
+                      setState(() => isLastPage = index == pages.length - 1);
                     },
-                    itemCount: _pages.length,
+                    itemCount: pages.length,
                     itemBuilder: (context, index) {
                       return OnboardingPage(
-                        data: _pages[index],
+                        data: pages[index],
                         isSpecial: index == 2,
                       );
                     },
@@ -153,7 +148,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         children: [
                           SmoothPageIndicator(
                             controller: _controller,
-                            count: _pages.length,
+                            count: pages.length,
                             effect: ExpandingDotsEffect(
                               activeDotColor: AppColors.accentTeal,
                               dotColor: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.primaryDark.withValues(alpha: 0.1),
@@ -177,20 +172,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   );
                                 }
                               },
-                              style: ElevatedButton.styleFrom(
+                              style: context.elevatedButtonStyle(
                                 backgroundColor: AppColors.accentTeal,
                                 foregroundColor: Colors.white,
-                                minimumSize: Size(context.responsiveValue(mobile: 100, tablet: 130), 56 * context.fontSizeFactor),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 elevation: 0,
+                              ).copyWith(
+                                minimumSize: WidgetStateProperty.all(
+                                  Size(context.responsiveValue(mobile: 100.0, tablet: 130.0), context.buttonHeight),
+                                ),
                               ),
                               child: Text(
                                 isLastPage ? state.translate("Get Started", "Bilow Hadda", ar: "ابدأ الآن", de: "Loslegen") : state.translate("Next", "Xiga", ar: "التالي", de: "Nächste"),
-                                style: TextStyle(
-                                  fontSize: 16 * context.fontSizeFactor,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
-                                ),
+                                style: const TextStyle(letterSpacing: 0.5),
                               ),
                             ),
                           ),
@@ -275,13 +268,14 @@ class OnboardingPage extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: data.imagePath.startsWith('http')
-                                ? Image.network(
-                                    data.imagePath,
+                                ? FadeInImage.assetNetwork(
+                                    placeholder: 'assets/images/logo.png',
+                                    image: data.imagePath,
                                     fit: BoxFit.contain,
                                     alignment: Alignment.center,
                                     width: double.infinity,
                                     height: double.infinity,
-                                    errorBuilder: (c, e, s) => Icon(Icons.broken_image_rounded, size: 100, color: data.color),
+                                    imageErrorBuilder: (c, e, s) => Icon(Icons.broken_image_rounded, size: 100, color: data.color),
                                   )
                                 : Image.asset(
                                     data.imagePath,

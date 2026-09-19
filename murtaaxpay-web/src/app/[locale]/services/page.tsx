@@ -84,9 +84,9 @@ export default function ServicesPage() {
       hoverBorder: "hover:border-rose-300 dark:hover:border-rose-600/50",
       iconColor: "text-rose-600 dark:text-rose-400",
       glow: "hover:shadow-rose-100 dark:hover:shadow-rose-900/30",
-      title: t("items.sadaqah.title"),
-      desc: t("items.sadaqah.desc"),
-      href: "/services/sadaqah",
+      title: t("items.fundraiser.title"),
+      desc: t("items.fundraiser.desc"),
+      href: "/services/fundraiser",
     },
     {
       icon: Gift,

@@ -8,7 +8,7 @@ import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/step_indicator.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'review_screen.dart';
 
@@ -24,6 +24,7 @@ class WalletPaymentScreen extends StatefulWidget {
   final String? address;
   final String? city;
   final String? country;
+  final bool isFeeIncluded;
 
   const WalletPaymentScreen({
     super.key,
@@ -38,6 +39,7 @@ class WalletPaymentScreen extends StatefulWidget {
     this.address,
     this.city,
     this.country,
+    this.isFeeIncluded = false,
   });
 
   @override
@@ -214,6 +216,7 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
             address: widget.address,
             city: widget.city,
             country: widget.country,
+            isFeeIncluded: widget.isFeeIncluded,
           ),
         ),
       );
@@ -472,23 +475,18 @@ class _WalletPaymentScreenState extends State<WalletPaymentScreen> {
                       // Pay Button
                       FadeInUp(
                         delay: const Duration(milliseconds: 200),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 56 * scale,
-                          child: ElevatedButton(
-                            onPressed: _processWalletPayment,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.secondary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * scale)),
-                              elevation: 4,
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.calculateTotal(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, payoutMethod: widget.payoutMethod))),
-                                style: TextStyle(fontSize: 16 * scale, fontWeight: FontWeight.bold, color: Colors.white),
-                              ),
+                        child: ElevatedButton(
+                          onPressed: _processWalletPayment,
+                          style: context.elevatedButtonStyle(
+                            backgroundColor: theme.colorScheme.secondary,
+                            foregroundColor: Colors.white,
+                            elevation: 4,
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(appState.calculateTotal(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, payoutMethod: widget.payoutMethod))),
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                           ),
                         ),

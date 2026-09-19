@@ -1,6 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_auth_helper.dart';
 import '../../core/responsive_utils.dart';
@@ -28,6 +29,7 @@ class _SecurityPinScreenState extends State<SecurityPinScreen> {
   }
 
   Future<void> _authenticate() async {
+    if (kIsWeb) return;
     bool authenticated = await AppAuthHelper.authenticateWithBiometrics();
     if (authenticated) {
       if (!mounted) return;

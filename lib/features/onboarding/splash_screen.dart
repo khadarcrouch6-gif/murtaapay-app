@@ -5,7 +5,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {

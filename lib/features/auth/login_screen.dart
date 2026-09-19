@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -141,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           errorBuilder: (context, error, stackTrace) => Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryDark.withOpacity(0.1),
+                              color: AppColors.primaryDark.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Icon(Icons.lock_person_rounded, color: AppColors.primaryDark, size: 40 * context.fontSizeFactor),
@@ -149,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40 * context.fontSizeFactor),
                     FadeInDown(
                       delay: const Duration(milliseconds: 200),
                       child: Text(
@@ -157,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 28 * context.fontSizeFactor),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8 * context.fontSizeFactor),
                     FadeInDown(
                       delay: const Duration(milliseconds: 300),
                       child: Text(
@@ -165,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppColors.grey, fontSize: 16 * context.fontSizeFactor),
                       ),
                     ),
-                    const SizedBox(height: 48),
+                    SizedBox(height: 48 * context.fontSizeFactor),
                     FadeInUp(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,13 +215,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 100),
+                    SizedBox(height: context.responsiveValue(mobile: 80.0, tablet: 100.0, desktop: 120.0)),
                     FadeInUp(
                       delay: const Duration(milliseconds: 400),
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
-                        ),
+                        style: context.elevatedButtonStyle(),
                         onPressed: _phoneController.text.length >= 7 ? () {
                           Navigator.pushReplacement(
                             context,
@@ -233,10 +231,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           );
                         } : null,
-                        child: Text(l10n.continueLabel, style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
+                        child: Text(l10n.continueLabel),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24 * context.fontSizeFactor),
                     Center(
                       child: TextButton(
                         onPressed: () {

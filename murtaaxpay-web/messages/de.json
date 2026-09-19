@@ -119,8 +119,8 @@
         "Risikomanagement-Tools"
       ]
     },
-    "sadaqah": {
-      "title": "Sadaqah",
+    "fundraiser": {
+      "title": "Fundraiser",
       "description": "Ein stetiger Fluss des Guten.",
       "content": "Wohltätige Spenden einfacher und transparenter machen. Leiten Sie Ihre Spenden an verifizierte Zwecke weiter.",
       "features": [
@@ -190,8 +190,8 @@
         "title": "Investitionen",
         "desc": "Lassen Sie Ihr Kapital gezielt wachsen."
       },
-      "sadaqah": {
-        "title": "Sadaqah",
+      "fundraiser": {
+        "title": "Fundraiser",
         "desc": "Ein stetiger Fluss des Guten."
       },
       "giftcards": {

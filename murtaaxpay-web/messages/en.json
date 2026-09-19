@@ -147,8 +147,8 @@
         "Risk management tools"
       ]
     },
-    "sadaqah": {
-      "title": "Sadaqah",
+    "fundraiser": {
+      "title": "Fundraiser",
       "description": "A steady flow of good.",
       "content": "Making charitable giving easier and more transparent. Direct your donations to verified causes and track their impact.",
       "features": [
@@ -218,8 +218,8 @@
         "title": "Investments",
         "desc": "Grow your capital with purpose."
       },
-      "sadaqah": {
-        "title": "Sadaqah",
+      "fundraiser": {
+        "title": "Fundraiser",
         "desc": "A continuous flow of goodness."
       },
       "giftcards": {

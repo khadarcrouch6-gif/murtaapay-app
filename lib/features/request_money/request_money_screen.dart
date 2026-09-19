@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/widgets/contact_sync_list.dart';
 import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
@@ -132,8 +132,8 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Auto-Reminder", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            const SizedBox(height: 16),
+            Text("Auto-Reminder", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
+            SizedBox(height: 16 * context.fontSizeFactor),
             _buildReminderOption("None"),
             _buildReminderOption("12h"),
             _buildReminderOption("24h"),
@@ -240,15 +240,15 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
           }
           
           return AlertDialog(
-            title: const Text("Add Person to Split", style: TextStyle(fontWeight: FontWeight.bold)),
+            title: Text("Add Person to Split", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
             contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Enter Wallet ID or Phone", style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 12),
+                Text("Enter Wallet ID or Phone", style: TextStyle(fontSize: 13 * context.fontSizeFactor, color: Colors.grey, fontWeight: FontWeight.w500)),
+                SizedBox(height: 12 * context.fontSizeFactor),
                 TextField(
                   controller: idController,
                   autofocus: true,
@@ -256,12 +256,12 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   decoration: InputDecoration(
                     hintText: "e.g. 102234",
-                    prefixIcon: const Icon(Icons.alternate_email_rounded, color: AppColors.accentTeal, size: 20),
+                    prefixIcon: Icon(Icons.alternate_email_rounded, color: AppColors.accentTeal, size: 20 * context.fontSizeFactor),
                     suffixIcon: isVerifying 
                         ? const Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accentTeal))
                         : (verifiedName != null ? const Icon(Icons.check_circle, color: Colors.green) : null),
                     filled: true,
-                    fillColor: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+                    fillColor: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[100],
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -275,9 +275,9 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                     padding: const EdgeInsets.only(top: 8, left: 4),
                     child: Row(
                       children: [
-                        const Icon(Icons.error_outline, color: Colors.red, size: 14),
+                        Icon(Icons.error_outline, color: Colors.red, size: 14 * context.fontSizeFactor),
                         const SizedBox(width: 4),
-                        Text(error!, style: const TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold)),
+                        Text(error!, style: TextStyle(color: Colors.red, fontSize: 11 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -286,18 +286,18 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                     padding: const EdgeInsets.only(top: 8, left: 4),
                     child: Row(
                       children: [
-                        const Icon(Icons.verified, color: Colors.green, size: 14),
+                        Icon(Icons.verified, color: Colors.green, size: 14 * context.fontSizeFactor),
                         const SizedBox(width: 4),
-                        Text("Verified: $verifiedName", style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
+                        Text("Verified: $verifiedName", style: TextStyle(color: Colors.green, fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
                 
                 // Suggestions List
                 if (suggestions.isNotEmpty && verifiedName == null) ...[
-                  const SizedBox(height: 12),
-                  const Text("Suggestions", style: TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 12 * context.fontSizeFactor),
+                  Text("Suggestions", style: TextStyle(fontSize: 11 * context.fontSizeFactor, color: Colors.grey, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 8 * context.fontSizeFactor),
                   Flexible(
                     child: Container(
                       constraints: const BoxConstraints(maxHeight: 150),
@@ -310,12 +310,12 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                             contentPadding: EdgeInsets.zero,
                             visualDensity: VisualDensity.compact,
                             leading: CircleAvatar(
-                              radius: 12,
-                              backgroundColor: AppColors.accentTeal.withOpacity(0.1),
-                              child: Text(match.value[0], style: const TextStyle(fontSize: 10, color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
+                              radius: 12 * context.fontSizeFactor,
+                              backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+                              child: Text(match.value[0], style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
                             ),
-                            title: Text(match.value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                            subtitle: Text(match.key, style: const TextStyle(fontSize: 11)),
+                            title: Text(match.value, style: TextStyle(fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.w600)),
+                            subtitle: Text(match.key, style: TextStyle(fontSize: 11 * context.fontSizeFactor)),
                             onTap: () {
                               idController.text = match.key;
                               performLookup(match.key);
@@ -334,7 +334,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                   debounceTimer?.cancel();
                   Navigator.pop(context);
                 },
-                child: const Text("Cancel", style: TextStyle(color: Colors.grey))
+                child: Text("Cancel", style: TextStyle(color: Colors.grey, fontSize: 14 * context.fontSizeFactor))
               ),
               ElevatedButton(
                 onPressed: verifiedName == null || _splitParticipants.any((p) => p['walletId'] == idController.text)
@@ -354,7 +354,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                 ),
-                child: const Text("Add", style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Text("Add", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * context.fontSizeFactor)),
               ),
             ],
           );
@@ -380,7 +380,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new, size: 20 * context.fontSizeFactor),
           onPressed: () {
             if (_showAmountInput) {
               setState(() => _showAmountInput = false);
@@ -467,7 +467,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppColors.accentTeal.withOpacity(0.1),
+                    color: AppColors.accentTeal.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Icon(Icons.qr_code_scanner_rounded, color: AppColors.accentTeal),
@@ -486,7 +486,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                 ...globalMatches.map((e) => ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
                   leading: CircleAvatar(
-                    backgroundColor: AppColors.primary.withOpacity(0.1),
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                     child: Text(e.value[0], style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
                   ),
                   title: Text(e.value, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
@@ -521,7 +521,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                                   children: [
                                     CircleAvatar(
                                       radius: 28 * context.fontSizeFactor,
-                                      backgroundColor: AppColors.accentTeal.withOpacity(0.1),
+                                      backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                                       child: Text(profile.name[0], style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 18 * context.fontSizeFactor)),
                                     ),
                                     Positioned(
@@ -600,7 +600,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                     children: [
                       CircleAvatar(
                         radius: 18 * context.fontSizeFactor,
-                        backgroundColor: AppColors.accentTeal.withOpacity(0.1),
+                        backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
                         child: Text(name[0], style: TextStyle(fontSize: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
                       ),
                       const SizedBox(width: 10),
@@ -616,7 +616,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                       ),
                       if (_selectedWalletId != null) ...[
                         const SizedBox(width: 4),
-                        const Icon(Icons.verified_rounded, color: Colors.blue, size: 14),
+                        Icon(Icons.verified_rounded, color: Colors.blue, size: 14 * context.fontSizeFactor),
                       ]
                     ],
                   ),
@@ -630,7 +630,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: _isKeypadVisible ? Colors.transparent : AppColors.accentTeal.withOpacity(0.05),
+                        color: _isKeypadVisible ? Colors.transparent : AppColors.accentTeal.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
@@ -644,7 +644,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                             ),
                           ),
                           if (!_isKeypadVisible)
-                            const Text("Tap to edit amount", style: TextStyle(fontSize: 10, color: Colors.grey)),
+                            Text("Tap to edit amount", style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: Colors.grey)),
                         ],
                       ),
                     ),
@@ -660,7 +660,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                       children: ["5", "10", "20", "50", "100"].map((amount) => Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: ActionChip(
-                          label: Text("\$$amount", style: const TextStyle(fontSize: 11)),
+                          label: Text("\$$amount", style: TextStyle(fontSize: 11 * context.fontSizeFactor)),
                           onPressed: () => setState(() {
                             _amountController.text = amount;
                             _isKeypadVisible = true;
@@ -672,7 +672,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                           ),
                           padding: EdgeInsets.zero,
                           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          side: BorderSide(color: AppColors.accentTeal.withOpacity(0.3)),
+                          side: BorderSide(color: AppColors.accentTeal.withValues(alpha: 0.2)),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                       )).toList(),
@@ -684,10 +684,10 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                   TextField(
                     controller: _noteController,
                     focusNode: _noteFocusNode,
-                    style: const TextStyle(fontSize: 13),
+                    style: TextStyle(fontSize: 13 * context.fontSizeFactor),
                     decoration: InputDecoration(
                       hintText: "Add a note...",
-                      prefixIcon: const Icon(Icons.edit_note_rounded, color: AppColors.accentTeal, size: 18),
+                      prefixIcon: Icon(Icons.edit_note_rounded, color: AppColors.accentTeal, size: 18 * context.fontSizeFactor),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                       filled: true,
                       fillColor: theme.brightness == Brightness.dark ? Colors.grey[900] : Colors.grey[100],
@@ -703,9 +703,9 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.grey[50],
+                        color: theme.brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[50],
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
+                        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                       ),
                       child: Column(
                         children: [
@@ -732,11 +732,11 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                                    child: const Icon(Icons.call_split_rounded, color: Colors.orange, size: 16),
+                                    decoration: BoxDecoration(color: Colors.orange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+                                    child: Icon(Icons.call_split_rounded, color: Colors.orange, size: 16 * context.fontSizeFactor),
                                   ),
                                   const SizedBox(width: 10),
-                                  const Expanded(child: Text("Split bill?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                                  Expanded(child: Text("Split bill?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * context.fontSizeFactor))),
                                   SizedBox(
                                     height: 28,
                                     child: Switch(
@@ -765,12 +765,12 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                                         Row(
                                           children: [
                                             const SizedBox(width: 32),
-                                            Text("Participants (${_splitParticipants.length})", style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                            Text("Participants (${_splitParticipants.length})", style: TextStyle(fontSize: 12 * context.fontSizeFactor, color: Colors.grey)),
                                             const Spacer(),
                                             TextButton.icon(
                                               onPressed: _showAddParticipantDialog,
-                                              icon: const Icon(Icons.person_add_alt_1, size: 16, color: AppColors.accentTeal),
-                                              label: const Text("Add Person", style: TextStyle(fontSize: 12, color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
+                                              icon: Icon(Icons.person_add_alt_1, size: 16 * context.fontSizeFactor, color: AppColors.accentTeal),
+                                              label: Text("Add Person", style: TextStyle(fontSize: 12 * context.fontSizeFactor, color: AppColors.accentTeal, fontWeight: FontWeight.bold)),
                                               style: TextButton.styleFrom(
                                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                                 minimumSize: Size.zero,
@@ -788,17 +788,17 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                                               children: [
                                                 const SizedBox(width: 8),
                                                 CircleAvatar(
-                                                  radius: 12,
-                                                  backgroundColor: AppColors.accentTeal.withOpacity(0.1),
-                                                  child: Text(p['name']![0], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
+                                                  radius: 12 * context.fontSizeFactor,
+                                                  backgroundColor: AppColors.accentTeal.withValues(alpha: 0.1),
+                                                  child: Text(p['name']![0], style: TextStyle(fontSize: 10 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.accentTeal)),
                                                 ),
                                                 const SizedBox(width: 10),
                                                 Expanded(
                                                   child: Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      Text(p['name']!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
-                                                      Text("ID: ${p['walletId']}", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                                      Text(p['name']!, style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+                                                      Text("ID: ${p['walletId']}", style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: Colors.grey)),
                                                     ],
                                                   ),
                                                 ),
@@ -809,16 +809,16 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                                                   decoration: BoxDecoration(
                                                     color: theme.brightness == Brightness.dark ? Colors.black : Colors.white,
                                                     borderRadius: BorderRadius.circular(8),
-                                                    border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
+                                                    border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
                                                   ),
                                                   child: Row(
                                                     children: [
-                                                      const Text("\$", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 11)),
+                                                      Text("\$", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 11 * context.fontSizeFactor)),
                                                       Expanded(
                                                         child: TextField(
                                                           keyboardType: TextInputType.number,
                                                           textAlign: TextAlign.right,
-                                                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                                          style: TextStyle(fontSize: 12 * context.fontSizeFactor, fontWeight: FontWeight.bold),
                                                           decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.zero),
                                                           controller: TextEditingController(text: _individualShares[index].toStringAsFixed(0))..selection = TextSelection.fromPosition(TextPosition(offset: _individualShares[index].toStringAsFixed(0).length)),
                                                           onChanged: (val) {
@@ -836,7 +836,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                                                 ),
                                                 if (_splitParticipants.length > 1)
                                                   IconButton(
-                                                    icon: const Icon(Icons.remove_circle_outline, size: 20, color: Colors.redAccent),
+                                                    icon: Icon(Icons.remove_circle_outline, size: 20 * context.fontSizeFactor, color: Colors.redAccent),
                                                     onPressed: () {
                                                       setState(() {
                                                         _splitParticipants.removeAt(index);
@@ -877,8 +877,8 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                 decoration: BoxDecoration(
                   color: theme.brightness == Brightness.dark ? Colors.black : Colors.white,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
-                  border: Border(top: BorderSide(color: theme.dividerColor.withOpacity(0.05))),
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
+                  border: Border(top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -905,7 +905,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
               color: theme.brightness == Brightness.dark ? Colors.black : Colors.white,
               boxShadow: [
                 if (!showCustomKeypad) 
-                  BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, -2))
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, -2))
               ],
             ),
             child: SizedBox(
@@ -921,7 +921,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                 ),
                 child: Text(
                   _isSplitEnabled ? "Request Split Bill" : "Send Request", 
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)
+                  style: TextStyle(fontSize: 15 * context.fontSizeFactor, fontWeight: FontWeight.bold)
                 ),
               ),
             ),
@@ -966,7 +966,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
         },
         child: Center(
           child: isIcon 
-            ? const Icon(Icons.backspace_outlined, color: Colors.grey, size: 16)
+            ? Icon(Icons.backspace_outlined, color: Colors.grey, size: 16 * context.fontSizeFactor)
             : Text(val, style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
         ),
       ),
@@ -981,7 +981,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: matches ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+        color: matches ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -989,7 +989,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
         children: [
           Icon(
             matches ? Icons.check_circle_outline : Icons.warning_amber_rounded,
-            size: 16,
+            size: 16 * context.fontSizeFactor,
             color: matches ? Colors.green : Colors.red,
           ),
           const SizedBox(width: 8),
@@ -998,7 +998,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                 ? "Total matches: \$$total" 
                 : "Total mismatch: \$$currentSum / \$$total",
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 12 * context.fontSizeFactor,
               fontWeight: FontWeight.bold,
               color: matches ? Colors.green : Colors.red,
             ),
@@ -1015,20 +1015,20 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-            child: Icon(icon, color: color, size: 20),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, color: color, size: 20 * context.fontSizeFactor),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                Text(subtitle, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                Text(subtitle, style: TextStyle(color: Colors.grey[600], fontSize: 12 * context.fontSizeFactor)),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, size: 18, color: Colors.grey),
+          Icon(Icons.chevron_right, size: 18 * context.fontSizeFactor, color: Colors.grey),
         ],
       ),
     );
@@ -1107,13 +1107,13 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
       padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 8),
       child: Row(
         children: [
-          Icon(icon, size: 18 * context.fontSizeFactor, color: theme.colorScheme.primary.withOpacity(0.7)),
+          Icon(icon, size: 18 * context.fontSizeFactor, color: theme.colorScheme.primary.withValues(alpha: 0.2)),
           const SizedBox(width: 8),
           Text(
             title,
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
               letterSpacing: 0.5,
             ),
           ),

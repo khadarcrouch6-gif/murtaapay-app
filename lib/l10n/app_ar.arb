@@ -17,7 +17,7 @@
   "send": "إرسال",
   "add": "إضافة",
   "bills": "فواتير",
-  "fundraiser": "صدقة",
+  "fundraiser": "الصدقة والزكاة",
   "exchange": "تبديل",
   "vouchers": "قسائم",
   "seeAll": "عرض الكل",
@@ -420,6 +420,141 @@
   "copy": "نسخ",
   "whatsApp": "واتساب",
   "fundraiserCommunity": "الصدقة والمجتمع",
+  "fundraiserUrgent": "عاجل",
+  "fundraiserRaised": "تم جمعها",
+  "fundraiserRaisedOf": "تم جمعها من أصل",
+  "fundraiserDonations": "تبرعات",
+  "fundraiserHistory": "سجل الصدقات",
+  "fundraiserTotal": "الإجمالي",
+  "fundraiserSearchHint": "ابحث عن حملات الصدقة أو الزكاة...",
+  "fundraiserDonateTo": "تبرع بالصدقة لـ",
+  "fundraiserThankYou": "شكراً لك! تم التبرع بنجاح.",
+  "fundraiserConfirmDonation": "تأكيد الصدقة",
+  "fundraiserDonate": "تبرع بالصدقة",
+  "fundraiserDonateNow": "تبرع بالصدقة الآن",
+  "fundraiserTrending": "رائج",
+  "fundraiserNew": "جديد",
+  "fundraiserEndingSoon": "تنتهي قريباً",
+  "fundraiserCompleted": "مكتملة",
+  "fundraiserDonorsCount": "+{count} متبرع",
+  "@fundraiserDonorsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "fundraiserSharingCampaign": "مشاركة {title}...",
+  "@fundraiserSharingCampaign": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "fundraiserAgo": "منذ",
+  "catAll": "الكل",
+  "catMedical": "طبي",
+  "catWater": "مياه",
+  "catEducation": "تعليم",
+  "catEmergency": "طوارئ",
+  "fundraiserZakatCalcDesc": "احسب وادفع زكاتك بدقة",
+  "campaignMedicalTitle": "حالة طبية طارئة",
+  "campaignMedicalDesc": "ساعد أحمد في تغطية تكاليف جراحة القلب في تركيا.",
+  "campaignWaterTitle": "بئر مياه للقرية",
+  "campaignWaterDesc": "بناء مصدر مياه دائم لقرية في غيدو.",
+  "campaignEducationTitle": "دعم التعليم",
+  "campaignEducationDesc": "منح دراسية لـ 10 أيتام في مقديشو.",
+  "campaignEmergencyTitle": "إغاثة غذائية",
+  "campaignEmergencyDesc": "توفير الإمدادات الغذائية الأساسية للعائلات المتضررة من الجفاف.",
+  "verifiedOrganizer": "منظم موثق",
+  "organizedBy": "من تنظيم",
+  "about": "حول",
+  "donateNow": "تبرع الآن",
+  "peopleDonated": "شخص تبرعوا",
+  "secureProtected": "آمن ومحمي",
+  "secureProtectedDesc": "تشفير بمستوى بنكي لكل معاملة.",
+  "zeroPlatformFees": "0% رسوم منصة",
+  "zeroPlatformFeesDesc": "نحن لا نأخذ عمولة. 100% يذهب للقضية.",
+  "freeWithdrawals": "سحب مجاني",
+  "freeWithdrawalsDesc": "المنظمون يدفعون 0 دولار لسحب أموالهم.",
+  "shareThisCampaign": "شارك هذه الحملة",
+  "supportCampaign": "ادعم هذه الحملة",
+  "linkCopied": "تم نسخ الرابط إلى الحافظة",
+  "link": "رابط",
+  "recentDonations": "التبرعات الأخيرة",
+  "selectAmount": "اختر المبلغ",
+  "finalizeDonation": "إنهاء التبرع",
+  "total": "الإجمالي",
+  "securedByMurtaaxPay": "مؤمن بواسطة مرتاح باي",
+  "customAmount": "مبلغ مخصص",
+  "startFundraiser": "ابدأ صدقة",
+  "createCampaign": "إنشاء حملة صدقة",
+  "createCampaignDesc": "اجمع الصدقات لقضية تهمك. سنقوم بتوثيق حملتك لبناء الثقة.",
+  "campaignDetails": "تفاصيل الحملة",
+  "campaignTitle": "عنوان الحملة",
+  "campaignTitleHint": "مثال: ساعد في بناء بئر ماء في غيدو",
+  "goalAmountUsd": "المبلغ المستهدف (USD)",
+  "goalAmountHint": "مثال: 5000",
+  "description": "الوصف",
+  "descriptionHint": "صف لماذا تحتاج للمساعدة وكيف سيتم استخدام الأموال...",
+  "coverPhoto": "صورة الغلاف",
+  "tapToUpload": "اضغط لرفع صورة",
+  "uploadLimits": "JPG, PNG حتى 5 ميجابايت",
+  "campaignSubmitted": "تم تقديم الحملة للمراجعة!",
+  "submitForReview": "إرسال للمراجعة",
+  "zakatCalculator": "حاسبة الزكاة",
+  "zakatPayment": "دفع الزكاة",
+  "zakatSuccessMessage": "تم دفع زكاتك البالغة {amount} بنجاح.",
+  "@zakatSuccessMessage": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "totalZakatToPay": "إجمالي الزكاة الواجبة",
+  "enterYourAssets": "أدخل أصولك",
+  "cashAndSavings": "النقد والمدخرات",
+  "goldValue": "قيمة الذهب",
+  "silverValue": "قيمة الفضة",
+  "otherInvestments": "استثمارات أخرى",
+  "zakatInfo": "يتم احتساب مبلغ الزكاة بنسبة 2.5% من إجمالي ثروتك إذا تجاوزت حد النصاب.",
+  "donateYourZakat": "تبرع بزكاتك",
+  "proceedingToDonate": "جاري التبرع بـ {amount}",
+  "@proceedingToDonate": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "nisabThreshold": "حد النصاب",
+  "belowNisabWarning": "أصولك أقل من حد النصاب ({threshold}). الزكاة واجبة فقط إذا تجاوزت ثروتك هذا الحد.",
+  "@belowNisabWarning": {
+    "placeholders": {
+      "threshold": { "type": "String" }
+    }
+  },
+  "value": "القيمة",
+  "grams": "جرامات",
+  "currentNisab": "النصاب الحالي",
+  "estValue": "القيمة التقديرية:",
+  "whoIsEntitledToZakat": "من يستحق الزكاة؟",
+  "eightCategoriesOfZakat": "الأصناف الثمانية للزكاة",
+  "evidenceFromQuran": "الدليل من القرآن",
+  "evidenceFromHadith": "الدليل من السنة",
+  "hadithReference": "صحيح البخاري - وصية النبي ﷺ لمعاذ رضي الله عنه",
+  "fuqaraTitle": "الفقراء",
+  "fuqaraDesc": "الذين لا دخل لهم ولا ممتلكات ولا يستطيعون تلبية احتياجاتهم الأساسية.",
+  "masakinTitle": "المساكين",
+  "masakinDesc": "الذين لديهم بعض الدخل ولكن لا يكفي لتغطية ضروريات حياتهم.",
+  "amilinaTitle": "العاملين عليها",
+  "amilinaDesc": "المعينون لجمع وإدارة وتوزيع أموال الزكاة.",
+  "muallafatiTitle": "المؤلفة قلوبهم",
+  "muallafatiDesc": "المسلمون الجدد أو المقربون من الإسلام لتعزيز إيمانهم.",
+  "riqabTitle": "في الرقاب",
+  "riqabDesc": "تستخدم لتحرير الأرقاء أو فك الأسرى.",
+  "ghariminTitle": "الغارمين",
+  "ghariminDesc": "الذين أثقلتهم الديون التي استدانوا للضرورة أو للإصلاح.",
+  "fisabilillahTitle": "في سبيل الله",
+  "fisabilillahDesc": "المجاهدون والمتطوعون في أعمال الخير والدعوة والتعليم.",
+  "ibnusSabilTitle": "ابن السبيل",
+  "ibnusSabilDesc": "المسافر المنقطع الذي يحتاج إلى مساعدة مالية للوصول إلى بلده.",
+  "fatwaTitle": "الفتاوى والمذاهب",
+  "fatwaDesc": "وفقاً لجمهور العلماء (الشافعية والمالكية والحنابلة والحنفية)، يجب توزيع الزكاة على هذه الأصناف الثمانية تحديداً. وتجيز بعض المذاهب صرفها لصنف واحد إذا كانت الحاجة فيه أشد.",
   "beTheFirstToDonate": "كن أول من يتبرع",
   "medicalEmergency": "حالة طبية طارئة",
   "medicalEmergencyDesc": "ساعد أحمد في تغطية تكاليف جراحة القلب في تركيا.",
@@ -431,7 +566,7 @@
   "by": "بواسطة",
   "raised": "تم جمعها",
   "goal": "الهدف",
-  "startAFundraiser": "بدء جمع تبرعات",
+  "startAFundraiser": "بدء حملة صدقة",
   "totalInvestment": "إجمالي الاستثمار",
   "yourPortfolio": "محفظتك الاستثمارية",
   "bitcoin": "بِتكوين",
@@ -555,6 +690,262 @@
   "tenDays": "10 أيام",
   "monthly": "شهري",
   "yearly": "سنوي",
+  "evcPlus": "EVC Plus",
+  "waafi": "Waafi",
+  "edahab": "e-Dahab",
+  "zaad": "ZAAD",
+  "sahal": "Sahal",
+  "payViaSalaam": "دفع عبر سلام Waafi",
+  "purposeOfRemittance": "غرض الحوالة",
+  "purpose": "الغرض",
+  "familySupport": "دعم عائلي",
+  "educationTuition": "تعليم/رسوم دراسية",
+  "medicalExpenses": "مصاريف طبية",
+  "businessTransaction": "معاملة تجارية",
+  "propertyRent": "عقار/إيجار",
+  "gift": "هدية",
+  "other": "أخرى",
+  "hagbadCreatedSuccess": "تم إنشاء مجموعة هغبد بنجاح!",
+  "enterWalletOrPhoneHint": "أدخل معرف المحفظة أو رقم الهاتف",
+  "memberAlreadyAdded": "العضو مضاف بالفعل",
+  "walletIdNotFound": "معرف المحفظة غير موجود",
+  "createAndInvite": "إنشاء ودعوة",
+  "allMembersMustConfirm": "يجب على جميع الأعضاء تأكيد دعوتهم قبل بدء القرعة (قوري تور).",
+  "qoriTuurStart": "قوري تور (بدء المجموعة)",
+  "qoriTuurRandomize": "قوري تور (عشوائية الأدوار)",
+  "inviteToGroup": "دعوة إلى {groupName}",
+  "@inviteToGroup": {
+    "placeholders": {
+      "groupName": { "type": "String" }
+    }
+  },
+  "memberAlreadyInGroup": "العضو موجود بالفعل في المجموعة",
+  "walletOrPhoneNotFound": "معرف المحفظة أو الهاتف غير موجود",
+  "memberInvitedSuccess": "تمت دعوة {name} للمجموعة",
+  "@memberInvitedSuccess": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "drawing": "جاري السحب...",
+  "qoriTuur": "قوري تور",
+  "noHagbadGroups": "لا توجد مجموعات بعد. أنشئ واحدة لبدء الادخار!",
+  "progress": "التقدم",
+  "members": "الأعضاء",
+  "you": "أنت",
+  "youAdmin": "أنت (المسؤول)",
+  "payoutAfterFee": "الدفعة بعد رسوم {fee}",
+  "@payoutAfterFee": {
+    "placeholders": {
+      "fee": {
+        "type": "String"
+      }
+    }
+  },
+  "yourTurnInDays": "دورك بعد {days} أيام",
+  "@yourTurnInDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "dayWithNumber": "اليوم {number}",
+  "@dayWithNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "weekWithNumber": "الأسبوع {number}",
+  "@weekWithNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "monthWithNumber": "الشهر {number}",
+  "@monthWithNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "turnWithNumber": "الدور {number}",
+  "@turnWithNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "cannotSwapReceived": "لا يمكن التبديل مع الأعضاء الذين استلموا دفعتهم بالفعل.",
+  "swapTurn": "تبديل الدور",
+  "swapWith": "تبديل مع {name}",
+  "@swapWith": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trustedMember": "عضو موثوق",
+  "yourTurnToday": "إنه دورك اليوم!",
+  "yourTurnTomorrow": "دورك غداً!",
+  "serviceFee": "رسوم الخدمة",
+  "payoutReady": "الدفعة جاهزة",
+  "totalPot": "إجمالي الصندوق",
+  "hagbadPot": "صندوق هغبد (ضمان)",
+  "amountToReceive": "المبلغ المراد استلامه",
+  "claimPayout": "طلب استلام الدفعة",
+  "guarantor": "الضامن (عول)",
+  "guarantorNameLabel": "اسم الضامن",
+  "guarantorIdLabel": "معرف محفظة الضامن",
+  "requireGuarantor": "هذا العضو يحتاج إلى ضامن (عول)",
+  "guarantorDetails": "تفاصيل الضامن",
+  "debtor": "المدين",
+  "payout": "الدفعة",
+  "cycle": "الدورة",
+  "nextPayoutWithMember": "الدفعة القادمة: {name} (الدور {turn})",
+  "@nextPayoutWithMember": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "turn": { "type": "int" }
+    }
+  },
+  "payoutSuccessfulFor": "نجحت عملية الدفع لـ {name}",
+  "@payoutSuccessfulFor": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "payContributionConfirm": "هل تريد دفع {amount} لمساهمة هغبد لهذه الدورة؟",
+  "@payContributionConfirm": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "fullOathText": "أقسم بالله العظيم أنني سأدفع مساهمة هغبد في وقتها، وإذا تأخرت سأدفع الغرامة المتفق عليها.",
+  "joinedGroup": "لقد انضممت إلى {name}!",
+  "@joinedGroup": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "memberSignedOath": "لقد وقع {name} على القسم.",
+  "@memberSignedOath": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "noSavingGroups": "لا توجد مجموعات ادخار بعد",
+  "createFirstGroup": "إنشاء أول مجموعة",
+  "penalty": "الغرامة: {amount}",
+  "@penalty": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "processPayoutError": "خطأ في معالجة الدفعة: {error}",
+  "@processPayoutError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "remaining": "المتبقي",
+  "hagbadTerms": "6. أمانة هغبد الاجتماعية",
+  "hagbadTermsDesc": "هغبد مبني على الثقة المتبادلة (أمانة). بانضمامك، فإنك توافق على تقديم المساهمات في وقتها. في حال فشل العضو في الدفع، يكون الضامن (العول) مسؤولاً عن تغطية الدين.",
+  "iAgreeToHagbadTerms": "أوافق على شروط وأحكام أمانة هغبد الاجتماعية.",
+  "hagbadOath": "القسم الشرعي (الضار)",
+  "hagbadOathDesc": "هل تقسم بالله أن تكون صادقاً وتؤدي مساهماتك في وقتها؟",
+  "iConfirmOath": "أقسم بالله أن أكون صادقاً.",
+  "remindAll": "تذكير الجميع",
+  "remindMember": "تذكير العضو",
+  "reminderSent": "تم إرسال التذكير لـ {name}",
+  "allRemindersSent": "تم إرسال التذكيرات لجميع الأعضاء المنتظرين",
+  "replaceMember": "استبدال العضو",
+  "substituteMember": "عضو بديل",
+  "enterNewMemberDetails": "أدخل تفاصيل العضو الجديد",
+  "memberReplaced": "تم استبدال العضو بنجاح",
+  "cannotReplaceReceived": "لا يمكن استبدال عضو استلم دفعته بالفعل",
+  "paymentHistory": "سجل المدفوعات",
+  "paidOn": "تم الدفع في {date}",
+  "noPaymentsYet": "لم يتم تسجيل أي مدفوعات بعد",
+  "lateFee": "رسوم تأخير",
+  "applyPenalty": "تطبيق غرامة",
+  "penaltyAmount": "مبلغ الغرامة ($)",
+  "penaltyApplied": "تم تطبيق غرامة قدرها ${amount} على {name}",
+  "invitationReceived": "تم استلام دعوة",
+  "invitationDesc": "دعاك {admin} للانضمام إلى مجموعة هغبد بقيمة ${amount}.",
+  "@invitationDesc": {
+    "placeholders": {
+      "admin": { "type": "String" },
+      "amount": { "type": "String" }
+    }
+  },
+  "acceptInvite": "قبول الدعوة",
+  "religiousOathRequired": "القسم الشرعي مطلوب",
+  "oathRequirementDesc": "للانضمام إلى المجموعة رسمياً، يجب عليك التوقيع على القسم الشرعي (الضار).",
+  "signOathNow": "وقع القسم الآن",
+  "apr2026": "أبريل 2026",
+  "transactionLimits": "حدود المعاملات",
+  "scanQR": "مسح رمز QR",
+  "alignQRCode": "حاذِ رمز QR داخل الإطار للمسح",
+  "myQrCode": "رمز QR الخاص بي",
+  "shareMyQrCode": "شارك رمز QR الخاص بك لاستلام المدفوعات فوراً.",
+  "quickSend": "إرسال سريع",
+  "invalidWalletId": "معرف محفظة غير صالح",
+  "cannotSendToSelf": "لا يمكنك إرسال الأموال لنفسك",
+  "recentSavingsActivity": "نشاط الادخار الأخير",
+  "noActivityYet": "لا يوجد نشاط بعد",
+  "totalCycles": "إجمالي الدورات",
+  "selectFromContacts": "اختر من جهات الاتصال",
+  "fromContacts": "من جهات الاتصال",
+  "payOut": "صرف الدفعة",
+  "confirmPayoutDesc": "هل أنت متأكد أنك تريد معالجة الدفعة لـ {name}؟",
+  "@confirmPayoutDesc": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "payoutNote": "ملاحظة: سيؤدي هذا إلى نقل المجموعة إلى الدورة التالية.",
+  "processPayout": "معالجة الدفعة",
+  "invitationPending": "الدعوة قيد الانتظار",
+  "signOathDhaar": "توقيع القسم (الضار)",
+  "enterPenaltyAmount": "أدخل مبلغ الغرامة لـ {name}",
+  "@enterPenaltyAmount": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "qoriTuurDesc": "سيؤدي هذا إلى جعل ترتيب الدفع عشوائياً لجميع الأعضاء الذين لم يستلموا دفعتهم بعد. هل تود المتابعة؟",
+  "randomize": "عشوائي",
+  "inviteToApp": "دعوة للتطبيق",
+  "inviteToAppDesc": "{name} ليس على مرتاح باي بعد. هل تود دعوته للتطبيق أولاً؟",
+  "@inviteToAppDesc": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "inviteViaSms": "دعوة عبر SMS",
+  "selfTransferError": "لا يمكنك دعوة نفسك",
+  "invalidWalletFormat": "تنسيق معرف المحفظة غير صالح",
+  "admin": "مسؤول",
+  "deleteGroup": "حذف المجموعة",
+  "deleteGroupConfirm": "هل أنت متأكد أنك تريد حذف هذه المجموعة؟ سيتم فقدان كل السجل.",
+  "removeMember": "إزالة عضو",
+  "removeMemberConfirm": "هل أنت متأكد أنك تريد إزالة {name} من المجموعة؟",
+  "@removeMemberConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "history": "السجل",
+  "confirmPayout": "تأكيد الدفعة",
+  "payoutAmount": "مبلغ الدفعة",
   "evcPlus": "EVC Plus",
   "edahab": "e-Dahab",
   "zaad": "ZAAD",

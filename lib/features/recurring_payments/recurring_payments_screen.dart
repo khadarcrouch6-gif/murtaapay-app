@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
 import '../../core/models/recurring_payment_model.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../core/widgets/contact_sync_list.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -68,7 +68,7 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
-          backgroundColor: AppColors.primaryDark.withOpacity(25 / 255),
+          backgroundColor: AppColors.primaryDark.withValues(alpha: 25 / 255),
           child: const Icon(Icons.repeat, color: AppColors.primaryDark),
         ),
         title: Text(payment.title, style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -94,10 +94,10 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
             PopupMenuButton<String>(
               onSelected: (val) {
                 if (val == 'delete') {
-                  Provider.of<AppState>(context, listen: false).deleteRecurringPayment(index);
+                  Provider.of<AppState>(context, listen: false).deleteRecurringPayment(payment.id);
                 } else if (val == 'pause') {
                   final updated = payment.copyWith(status: payment.status == RecurringStatus.active ? RecurringStatus.paused : RecurringStatus.active);
-                  Provider.of<AppState>(context, listen: false).updateRecurringPayment(index, updated);
+                  Provider.of<AppState>(context, listen: false).updateRecurringPayment(updated);
                 }
               },
               itemBuilder: (ctx) => [
@@ -138,10 +138,12 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
   }
 
   void _showAddRecurringDialog(BuildContext context) {
+    final state = Provider.of<AppState>(context, listen: false);
     final titleController = TextEditingController();
     final amountController = TextEditingController();
     String? selectedReceiver;
     String? selectedReceiverName;
+    String? selectedCardId;
     RecurringFrequency selectedFreq = RecurringFrequency.monthly;
 
     showDialog(
@@ -185,6 +187,19 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
                     }
                   },
                 ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String?>(
+                  value: selectedCardId,
+                  decoration: const InputDecoration(labelText: "Funding Source", border: OutlineInputBorder()),
+                  items: [
+                    const DropdownMenuItem(value: null, child: Text("Main Wallet")),
+                    ...state.cards.map((c) => DropdownMenuItem(
+                          value: c.id,
+                          child: Text("Card • ${c.cardNumber.substring(c.cardNumber.length - 4)}"),
+                        )),
+                  ],
+                  onChanged: (val) => setDialogState(() => selectedCardId = val),
+                ),
               ],
             ),
           ),
@@ -204,6 +219,7 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
                     nextPaymentDate: DateTime.now().add(const Duration(days: 30)),
                     status: RecurringStatus.active,
                     category: "Transfer",
+                    cardId: selectedCardId,
                   );
                   Provider.of<AppState>(context, listen: false).addRecurringPayment(newPayment);
                   Navigator.pop(context);
@@ -258,3 +274,4 @@ class _RecurringPaymentsScreenState extends State<RecurringPaymentsScreen> {
     return selected;
   }
 }
+

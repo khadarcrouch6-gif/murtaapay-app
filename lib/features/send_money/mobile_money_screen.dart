@@ -5,7 +5,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/widgets/step_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +19,7 @@ class MobileMoneyScreen extends StatefulWidget {
   final String payoutMethod;
   final String currencyCode;
   final String purpose;
+  final bool isFeeIncluded;
 
   const MobileMoneyScreen({
     super.key,
@@ -28,6 +29,7 @@ class MobileMoneyScreen extends StatefulWidget {
     required this.payoutMethod,
     required this.currencyCode,
     required this.purpose,
+    this.isFeeIncluded = false,
   });
 
   @override
@@ -92,6 +94,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
           paymentMethod: "Mobile Money ($_selectedProvider - $identifier)",
           currencyCode: widget.currencyCode,
           purpose: widget.purpose,
+          isFeeIncluded: widget.isFeeIncluded,
         ),
       ),
     );
@@ -171,7 +174,7 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 8 * scale),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(12 * scale),
                         ),
                         child: Row(
@@ -439,27 +442,21 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
 
                         SizedBox(height: 40 * scale),
                         
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56 * scale,
-                          child: ElevatedButton(
-                            onPressed: (_selectedProvider != null && 
-                              ((!_isMerchantMode && _phoneController.text.length == 9 && prefixError == null) ||
-                               (_isMerchantMode && _merchantController.text.length >= 5 && _resolvedAccountName != null))) 
-                              ? _handleContinue : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.secondary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * scale)),
-                              elevation: 4,
-                              disabledBackgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Mobile Money"))),
-                                style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900),
-                              ),
+                        ElevatedButton(
+                          onPressed: (_selectedProvider != null && 
+                            ((!_isMerchantMode && _phoneController.text.length == 9 && prefixError == null) ||
+                             (_isMerchantMode && _merchantController.text.length >= 5 && _resolvedAccountName != null))) 
+                            ? _handleContinue : null,
+                          style: context.elevatedButtonStyle(
+                            backgroundColor: theme.colorScheme.secondary,
+                            borderRadius: 16,
+                            elevation: 4,
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Mobile Money"))),
+                              style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, color: Colors.white),
                             ),
                           ),
                         ),
@@ -632,3 +629,4 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
   }
 
 }
+

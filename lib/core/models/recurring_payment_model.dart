@@ -12,8 +12,10 @@ class RecurringPayment {
   final DateTime startDate;
   final DateTime? nextPaymentDate;
   final RecurringStatus status;
+  final bool isActive;
   final String category;
   final String? cardId;
+  final DateTime? lastExecution;
 
   RecurringPayment({
     required this.id,
@@ -25,8 +27,10 @@ class RecurringPayment {
     required this.startDate,
     this.nextPaymentDate,
     required this.status,
+    this.isActive = true,
     required this.category,
     this.cardId,
+    this.lastExecution,
   });
 
   Map<String, dynamic> toJson() => {
@@ -39,8 +43,10 @@ class RecurringPayment {
         'startDate': startDate.toIso8601String(),
         'nextPaymentDate': nextPaymentDate?.toIso8601String(),
         'status': status.index,
+        'isActive': isActive,
         'category': category,
         'cardId': cardId,
+        'lastExecution': lastExecution?.toIso8601String(),
       };
 
   factory RecurringPayment.fromJson(Map<String, dynamic> json) => RecurringPayment(
@@ -53,8 +59,10 @@ class RecurringPayment {
         startDate: DateTime.parse(json['startDate']),
         nextPaymentDate: json['nextPaymentDate'] != null ? DateTime.parse(json['nextPaymentDate']) : null,
         status: RecurringStatus.values[json['status']],
+        isActive: json['isActive'] ?? true,
         category: json['category'],
         cardId: json['cardId'],
+        lastExecution: json['lastExecution'] != null ? DateTime.parse(json['lastExecution']) : null,
       );
 
   RecurringPayment copyWith({
@@ -67,8 +75,10 @@ class RecurringPayment {
     DateTime? startDate,
     DateTime? nextPaymentDate,
     RecurringStatus? status,
+    bool? isActive,
     String? category,
     String? cardId,
+    DateTime? lastExecution,
   }) {
     return RecurringPayment(
       id: id ?? this.id,
@@ -80,8 +90,10 @@ class RecurringPayment {
       startDate: startDate ?? this.startDate,
       nextPaymentDate: nextPaymentDate ?? this.nextPaymentDate,
       status: status ?? this.status,
+      isActive: isActive ?? this.isActive,
       category: category ?? this.category,
       cardId: cardId ?? this.cardId,
+      lastExecution: lastExecution ?? this.lastExecution,
     );
   }
 }

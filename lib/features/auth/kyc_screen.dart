@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:camera/camera.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 
@@ -204,7 +204,13 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
                   _buildIntroStep(Icons.phonelink_ring_outlined, l10n.followInstructions),
                   const Spacer(),
                   const SizedBox(height: 24),
-                  SizedBox(width: double.infinity, height: 56, child: ElevatedButton(onPressed: () => setState(() => _currentStep = 0), style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: Text(l10n.letsGetStarted, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
+                  ElevatedButton(
+                    onPressed: () => setState(() => _currentStep = 0),
+                    style: context.elevatedButtonStyle(
+                      backgroundColor: AppColors.primaryDark,
+                    ),
+                    child: Text(l10n.letsGetStarted, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
                   const SizedBox(height: 20),
                   Text(l10n.encryptedConnection, style: TextStyle(fontSize: 10 * context.fontSizeFactor, letterSpacing: 1, color: Colors.grey, fontWeight: FontWeight.bold)),
                 ],
@@ -252,7 +258,16 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
               ),
               _buildField(_addressController, l10n.residentialAddress, l10n),
               const SizedBox(height: 40),
-              SizedBox(width: double.infinity, height: 56, child: ElevatedButton(onPressed: () { if(_formKey.currentState!.validate()) setState(() => _currentStep = 1); }, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: Text(l10n.continueLabel, style: const TextStyle(fontWeight: FontWeight.bold)))),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) setState(() => _currentStep = 1);
+                },
+                style: context.elevatedButtonStyle(
+                  backgroundColor: AppColors.primaryDark,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(l10n.continueLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
+              ),
             ],
           ),
         ),
@@ -373,7 +388,13 @@ class _KYCScreenState extends State<KYCScreen> with WidgetsBindingObserver {
           _buildResultStatus(Icons.fact_check_outlined, l10n.documentCheck, l10n.scanningForClarity),
           _buildResultStatus(Icons.face_unlock_outlined, l10n.biometricMatch, l10n.comparingSelfie),
           const Spacer(),
-          SizedBox(width: double.infinity, height: 56, child: ElevatedButton(onPressed: () => Navigator.popUntil(context, (r) => r.isFirst), style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryDark, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: Text(l10n.returnToHome, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
+          ElevatedButton(
+            onPressed: () => Navigator.popUntil(context, (r) => r.isFirst),
+            style: context.elevatedButtonStyle(
+              backgroundColor: AppColors.primaryDark,
+            ),
+            child: Text(l10n.returnToHome, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
           const SizedBox(height: 20),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.verified_user, size: 14, color: Colors.grey), const SizedBox(width: 8), Text("Sovereign Institutional-Grade Security", style: TextStyle(fontSize: 10 * context.fontSizeFactor, color: Colors.grey, fontWeight: FontWeight.bold))]),
         ],

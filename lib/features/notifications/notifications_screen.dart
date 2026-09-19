@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
@@ -22,7 +23,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppState();
+    final state = context.watch<AppState>();
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -80,7 +81,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 color: isSelected ? AppColors.primaryDark : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? AppColors.primaryDark : Colors.grey.withOpacity(0.2),
+                  color: isSelected ? AppColors.primaryDark : Colors.grey.withValues(alpha: 0.2),
                 ),
               ),
               alignment: Alignment.center,
@@ -102,42 +103,57 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget _buildNotificationsList(BuildContext context, AppState state, ThemeData theme) {
     final List<NotificationData> staticNotifications = [
       NotificationData(
+        id: 'static_1',
         title: state.translate("Money Request", "Codsi Lacag", ar: "طلب مبلغ", de: "Geldanforderung"),
         subtitle: state.translate("Mustafe Gedi requested \$45.00 for Lunch.", "Mustafe Gedi wuxuu ku waydiistay \$45.00 qadadii.", ar: "طلب مصطفى جيدي مبلغ \$45.00 للغداء.", de: "Mustafe Gedi hat \$45.00 für das Mittagessen angefordert."),
         time: state.translate("Just now", "Hadda", ar: "الآن", de: "Gerade eben"),
+        message: state.translate("Mustafe Gedi requested \$45.00 for Lunch.", "Mustafe Gedi wuxuu ku waydiistay \$45.00 qadadii.", ar: "طلب مصطفى جيدي مبلغ \$45.00 للغداء.", de: "Mustafe Gedi hat \$45.00 für das Mittagessen angefordert."),
+        timestamp: DateTime.now(),
         icon: Icons.payments_outlined,
         iconColor: Colors.blue,
         type: 3,
         extraData: {'sender': 'Mustafe Gedi', 'amount': 45.0},
       ),
       NotificationData(
+        id: 'static_2',
         title: state.translate("Transaction Successful", "Xawaalad Guulaysatay", ar: "تمت العملية بنجاح", de: "Transaktion erfolgreich"),
         subtitle: state.translate("You sent \$2,500 to Ahmed Warsame.", "Waxaad \$2,500 u dirtay Ahmed Warsame.", ar: "لقد أرسلت \$2,500 إلى أحمد ورسمة.", de: "Sie haben \$2.500 an Ahmed Warsame gesendet."),
         time: state.translate("2 mins ago", "2 daqiiqo ka hor", ar: "منذ دقيقتين", de: "vor 2 Min."),
+        message: state.translate("You sent \$2,500 to Ahmed Warsame.", "Waxaad \$2,500 u dirtay Ahmed Warsame.", ar: "لقد أرسلت \$2,500 إلى أحمد ورسمة.", de: "Sie haben \$2.500 an Ahmed Warsame gesendet."),
+        timestamp: DateTime.now().subtract(const Duration(minutes: 2)),
         icon: Icons.check_circle_outline,
         iconColor: AppColors.accentTeal,
         type: 1,
       ),
       NotificationData(
+        id: 'static_3',
         title: state.translate("New Promo!", "Dalab Cusub!", ar: "عرض جديد!", de: "Neues Angebot!"),
-        subtitle: state.translate("Get 5% cashback on your next bill payment.", "Hel 5% lacag celin ah biilkaaga soo socda.", ar: "احصل على استرداد نقدي 5% عند دفع فاتورتك القادمة.", de: "Erhalten Sie 5% Cashback auf Ihre nächste Rechnung."),
+        subtitle: state.translate("Get 5% cashback on your next bill payment.", "Hel 5% lacag celin ah biilkaaga soo socda.", ar: "احصل على استرداد نقدي 5% عند دفع فاتورك القادمة.", de: "Erhalten Sie 5% Cashback auf Ihre nächste Rechnung."),
         time: state.translate("1 hour ago", "1 saac ka hor", ar: "منذ ساعة", de: "vor 1 Std."),
+        message: state.translate("Get 5% cashback on your next bill payment.", "Hel 5% lacag celin ah biilkaaga soo socda.", ar: "احصل على استرداد نقدي 5% عند دفع فاتورك القادمة.", de: "Erhalten Sie 5% Cashback auf Ihre nächste Rechnung."),
+        timestamp: DateTime.now().subtract(const Duration(hours: 1)),
         icon: FontAwesomeIcons.gift,
         iconColor: Colors.purple,
         type: 2,
       ),
       NotificationData(
+        id: 'static_4',
         title: state.translate("Payment Received", "Lacag lagu soo diray", ar: "تم استلام دفعة", de: "Zahlung erhalten"),
         subtitle: state.translate("You received \$150 from Sahra Ali.", "Waxaad \$150 ka heshay Sahra Ali.", ar: "لقد استلمت \$150 من صحراء علي.", de: "Sie haben \$150 von Sahra Ali erhalten."),
         time: state.translate("3 hours ago", "3 saac ka hor", ar: "منذ 3 ساعات", de: "vor 3 Std."),
+        message: state.translate("You received \$150 from Sahra Ali.", "Waxaad \$150 ka heshay Sahra Ali.", ar: "لقد استلمت \$150 من صحراء علي.", de: "Sie haben \$150 von Sahra Ali erhalten."),
+        timestamp: DateTime.now().subtract(const Duration(hours: 3)),
         icon: FontAwesomeIcons.arrowDownLong,
         iconColor: Colors.blue,
         type: 1,
       ),
       NotificationData(
+        id: 'static_5',
         title: state.translate("Security Alert", "Digniin Ammaan", ar: "تنبيه أمني", de: "Sicherheitswarnung"),
         subtitle: state.translate("A new login was detected from a New iPhone.", "Soo galid cusub ayaa laga dareemay iPhone cusub.", ar: "تم اكتشاف تسجيل دخول جديد من هاتف iPhone جديد.", de: "Eine neue Anmeldung wurde von einem neuen iPhone erkannt."),
         time: state.translate("Yesterday", "Shalay", ar: "أمس", de: "Gestern"),
+        message: state.translate("A new login was detected from a New iPhone.", "Soo galid cusub ayaa laga dareemay iPhone cusub.", ar: "تم اكتشاف تسجيل دخول جديد من هاتف iPhone جديد.", de: "Eine neue Anmeldung wurde von einem neuen iPhone erkannt."),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
         icon: FontAwesomeIcons.shieldHalved,
         iconColor: Colors.orange,
         type: 0,
@@ -160,7 +176,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.notifications_off_outlined, size: 80, color: Colors.grey.withOpacity(0.3)),
+            Icon(Icons.notifications_off_outlined, size: 80, color: Colors.grey.withValues(alpha: 0.3)),
             const SizedBox(height: 16),
             Text(
               state.translate("No notifications yet", "Ma jiraan ogeysiisyo wali", ar: "لا توجد إشعارات بعد", de: "Noch keine Benachrichtigungen"),
@@ -192,7 +208,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -204,10 +220,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: notification.iconColor.withOpacity(0.1),
+                          color: (notification.iconColor ?? Colors.blue).withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: AdaptiveIcon(notification.icon, color: notification.iconColor, size: 20),
+                        child: AdaptiveIcon(notification.icon ?? Icons.notifications, color: notification.iconColor ?? Colors.blue, size: 20),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -269,16 +285,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.95),
-            Colors.white.withOpacity(0.9),
+            Colors.white.withValues(alpha: 0.95),
+            Colors.white.withValues(alpha: 0.9),
           ],
         ),
         borderGradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primaryDark.withOpacity(0.2),
-            AppColors.primaryDark.withOpacity(0.05),
+            AppColors.primaryDark.withValues(alpha: 0.2),
+            AppColors.primaryDark.withValues(alpha: 0.05),
           ],
         ),
         child: Padding(
@@ -298,10 +314,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: notification.iconColor.withOpacity(0.1),
+                  color: (notification.iconColor ?? Colors.blue).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: AdaptiveIcon(notification.icon, color: notification.iconColor, size: 40),
+                child: AdaptiveIcon(notification.icon ?? Icons.notifications, color: notification.iconColor ?? Colors.blue, size: 40),
               ),
               const SizedBox(height: 24),
               Text(
@@ -414,9 +430,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       builder: (context) => PinEntryDialog(
         title: state.translate("Confirm Payment", "Hubi Lacag Bixinta", ar: "تأكيد الدفع", de: "Zahlung bestätigen"),
         description: state.translate("Enter PIN to pay ${notification.extraData?['sender'] ?? 'Request'}", "Geli PIN si aad u bixiso", ar: "أدخل PIN للدفع", de: "PIN eingeben, um zu bezahlen"),
+        onValidate: (pin) async {
+          if (pin == "BIOMETRIC_SUCCESS" || state.verifyPin(pin)) {
+            return true;
+          }
+          return false;
+        },
         onConfirm: (pin) async {
           try {
-            await state.approveMoneyRequest(notification.extraData?['requestId'] ?? "", pin);
+            await Provider.of<AppState>(context, listen: false).approveMoneyRequest(notification.extraData?['requestId'] ?? "");
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -444,4 +466,5 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 }
+
 

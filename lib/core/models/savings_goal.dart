@@ -8,12 +8,15 @@ class SavingsGoal {
   final String deTitle;
   final String etTitle;
   final double saved;
+  final double currentAmount;
   final double target;
   final String deadline;
   final IconData icon;
   final Color color;
   final int delay;
   final bool isPaused;
+
+  String get name => title;
 
   SavingsGoal({
     required this.id,
@@ -23,6 +26,7 @@ class SavingsGoal {
     this.deTitle = "",
     this.etTitle = "",
     required this.saved,
+    this.currentAmount = 0.0,
     required this.target,
     required this.deadline,
     required this.icon,
@@ -53,6 +57,7 @@ class SavingsGoal {
     String? deTitle,
     String? etTitle,
     double? saved,
+    double? currentAmount,
     double? target,
     String? deadline,
     IconData? icon,
@@ -68,6 +73,7 @@ class SavingsGoal {
       deTitle: deTitle ?? this.deTitle,
       etTitle: etTitle ?? this.etTitle,
       saved: saved ?? this.saved,
+      currentAmount: currentAmount ?? this.currentAmount,
       target: target ?? this.target,
       deadline: deadline ?? this.deadline,
       icon: icon ?? this.icon,
@@ -86,9 +92,11 @@ class SavingsGoal {
       'deTitle': deTitle,
       'etTitle': etTitle,
       'saved': saved,
+      'currentAmount': currentAmount,
       'target': target,
       'deadline': deadline,
-      'icon': icon.codePoint,
+      'iconCodePoint': icon.codePoint,
+      'iconFontFamily': icon.fontFamily,
       'color': color.value,
       'delay': delay,
       'isPaused': isPaused,
@@ -104,9 +112,13 @@ class SavingsGoal {
       deTitle: json['deTitle'] ?? "",
       etTitle: json['etTitle'] ?? "",
       saved: (json['saved'] as num).toDouble(),
+      currentAmount: (json['currentAmount'] ?? 0.0).toDouble(),
       target: (json['target'] as num).toDouble(),
       deadline: json['deadline'],
-      icon: IconData(json['icon'], fontFamily: 'MaterialIcons'),
+      icon: IconData(
+        json['iconCodePoint'] ?? json['icon'],
+        fontFamily: json['iconFontFamily'] ?? 'MaterialIcons',
+      ),
       color: Color(json['color']),
       delay: json['delay'] ?? 0,
       isPaused: json['isPaused'] ?? false,

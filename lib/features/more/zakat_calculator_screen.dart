@@ -6,11 +6,12 @@ import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import '../../core/widgets/success_screen.dart';
 import 'models/campaign.dart';
+import '../../core/widgets/pin_entry_dialog.dart';
 
 class ZakatCalculatorScreen extends StatefulWidget {
   const ZakatCalculatorScreen({super.key});
@@ -26,6 +27,10 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
   final _investmentsController = TextEditingController();
   double _totalZakat = 0.0;
   bool _isNisabMet = false;
+  
+  // Input mode: 'value' or 'weight'
+  String _goldInputMode = 'value';
+  String _silverInputMode = 'value';
 
   @override
   void initState() {
@@ -44,8 +49,17 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
   void _calculateZakat() {
     final state = Provider.of<AppState>(context, listen: false);
     double cash = double.tryParse(_cashController.text) ?? 0.0;
+    
     double gold = double.tryParse(_goldController.text) ?? 0.0;
+    if (_goldInputMode == 'weight') {
+      gold = gold * state.goldPrice;
+    }
+    
     double silver = double.tryParse(_silverController.text) ?? 0.0;
+    if (_silverInputMode == 'weight') {
+      silver = silver * state.silverPrice;
+    }
+    
     double investments = double.tryParse(_investmentsController.text) ?? 0.0;
 
     double totalAssets = cash + gold + silver + investments;
@@ -110,13 +124,13 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                         decoration: BoxDecoration(
                           gradient: AppColors.primaryGradient,
                           borderRadius: BorderRadius.circular(32 * scale),
-                          boxShadow: [BoxShadow(color: AppColors.primaryDark.withOpacity(0.3), blurRadius: 20 * scale, offset: Offset(0, 10 * scale))],
+                          boxShadow: [BoxShadow(color: AppColors.primaryDark.withValues(alpha: 0.3), blurRadius: 20 * scale, offset: Offset(0, 10 * scale))],
                         ),
                         child: Column(
                           children: [
                             Text(
                               l10n.totalZakatToPay, 
-                              style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 16 * scale)
+                              style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 16 * scale)
                             ),
                             SizedBox(height: 8 * scale),
                             FittedBox(
@@ -128,7 +142,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                                 child: Container(
                                   margin: EdgeInsets.only(top: 12 * scale),
                                   padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 4 * scale),
-                                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12 * scale)),
+                                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12 * scale)),
                                   child: Text(
                                     l10n.belowNisabWarning(NumberFormat.simpleCurrency(name: state.currencyCode).format(state.effectiveNisab)),
                                     textAlign: TextAlign.center,
@@ -148,7 +162,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                     child: Column(
                       children: [
                         Text(
-                          "${state.translate("Current Nisab", "Nisaabka hadda")} (${state.preferredNisab == 'gold' ? l10n.goldValue : l10n.silverValue})",
+                          "${l10n.currentNisab} (${state.preferredNisab == 'gold' ? l10n.goldValue : l10n.silverValue})",
                           style: TextStyle(color: AppColors.grey, fontSize: 12 * scale, fontWeight: FontWeight.w500),
                         ),
                         SizedBox(height: 4 * scale),
@@ -168,7 +182,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                             _calculateZakat();
                           },
                           style: SegmentedButton.styleFrom(
-                            selectedBackgroundColor: AppColors.primary.withOpacity(0.1),
+                            selectedBackgroundColor: AppColors.primary.withValues(alpha: 0.1),
                             selectedForegroundColor: AppColors.primary,
                             visualDensity: VisualDensity.compact,
                           ),
@@ -189,9 +203,37 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                           SizedBox(height: 24 * scale),
                           _buildInputField(l10n.cashAndSavings, _cashController, Icons.account_balance_wallet_rounded, isDark, scale),
                           SizedBox(height: 16 * scale),
-                          _buildInputField(l10n.goldValue, _goldController, Icons.auto_awesome_rounded, isDark, scale),
+                          _buildAssetInputField(
+                            label: l10n.goldValue,
+                            controller: _goldController,
+                            icon: Icons.auto_awesome_rounded,
+                            isDark: isDark,
+                            scale: scale,
+                            mode: _goldInputMode,
+                            onModeChanged: (val) {
+                              setState(() => _goldInputMode = val);
+                              _calculateZakat();
+                            },
+                            pricePerGram: state.goldPrice,
+                            state: state,
+                            l10n: l10n,
+                          ),
                           SizedBox(height: 16 * scale),
-                          _buildInputField(l10n.silverValue, _silverController, Icons.brightness_high_rounded, isDark, scale),
+                          _buildAssetInputField(
+                            label: l10n.silverValue,
+                            controller: _silverController,
+                            icon: Icons.brightness_high_rounded,
+                            isDark: isDark,
+                            scale: scale,
+                            mode: _silverInputMode,
+                            onModeChanged: (val) {
+                              setState(() => _silverInputMode = val);
+                              _calculateZakat();
+                            },
+                            pricePerGram: state.silverPrice,
+                            state: state,
+                            l10n: l10n,
+                          ),
                           SizedBox(height: 16 * scale),
                           _buildInputField(l10n.otherInvestments, _investmentsController, Icons.trending_up_rounded, isDark, scale),
                         ],
@@ -210,9 +252,9 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                           Container(
                             padding: EdgeInsets.all(20 * scale),
                             decoration: BoxDecoration(
-                              color: AppColors.accentTeal.withOpacity(0.1),
+                              color: AppColors.accentTeal.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20 * scale),
-                              border: Border.all(color: AppColors.accentTeal.withOpacity(0.2)),
+                              border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.2)),
                             ),
                             child: Row(
                               children: [
@@ -232,12 +274,12 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                             onPressed: () => _showZakatDistributionDialog(context, scale),
                             icon: Icon(Icons.people_outline_rounded, size: 18 * scale, color: AppColors.primary),
                             label: Text(
-                              state.translate("Who is entitled to Zakat?", "Yaa la siiyaa Zakada? (8-da Qaybood)"),
+                              l10n.whoIsEntitledToZakat,
                               style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 13 * scale),
                             ),
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 8 * scale),
-                              backgroundColor: AppColors.primary.withOpacity(0.05),
+                              backgroundColor: AppColors.primary.withValues(alpha: 0.05),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * scale)),
                             ),
                           ),
@@ -294,8 +336,6 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
     final l10n = AppLocalizations.of(context)!;
     String selectedMethod = "Main Wallet";
     String? selectedCardId;
-    bool isPinStage = false;
-    final TextEditingController pinController = TextEditingController();
 
     showModalBottomSheet(
       context: context,
@@ -316,144 +356,81 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (!isPinStage) ...[
-                Text(
-                  l10n.donateYourZakat,
-                  style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 8 * context.fontSizeFactor),
-                Text(
-                  NumberFormat.simpleCurrency(name: state.currencyCode).format(amount),
-                  style: TextStyle(fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.primaryDark),
-                ),
-                SizedBox(height: 24 * context.fontSizeFactor),
-                
-                // Funding Source Selector
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
+              Text(
+                l10n.donateYourZakat,
+                style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 8 * context.fontSizeFactor),
+              Text(
+                NumberFormat.simpleCurrency(name: state.currencyCode).format(amount),
+                style: TextStyle(fontSize: 32 * context.fontSizeFactor, fontWeight: FontWeight.bold, color: AppColors.primaryDark),
+              ),
+              SizedBox(height: 24 * context.fontSizeFactor),
+              
+              // Funding Source Selector
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildSourceOption(
+                      context, 
+                      "Main Wallet", 
+                      l10n.walletBalance, 
+                      state.balance, 
+                      selectedMethod == "Main Wallet",
+                      (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }),
+                      state
+                    ),
+                    ...state.cards.map((card) => _buildSourceOption(
+                      context, 
+                      "card_${card.id}", 
+                      card.cardHolder, 
+                      card.balance, 
+                      selectedMethod == "card_${card.id}",
+                      (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }),
+                      state,
+                      cardId: card.id,
+                      isCard: true
+                    )),
+                    if (state.savingsBalance > 0)
                       _buildSourceOption(
                         context, 
-                        "Main Wallet", 
-                        l10n.walletBalance, 
-                        state.balance, 
-                        selectedMethod == "Main Wallet",
+                        "Savings Account", 
+                        l10n.savingsBalance, 
+                        state.savingsBalance, 
+                        selectedMethod == "Savings Account",
                         (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }),
                         state
                       ),
-                      ...state.cards.map((card) => _buildSourceOption(
-                        context, 
-                        "card_${card.id}", 
-                        card.cardHolder, 
-                        card.balance, 
-                        selectedMethod == "card_${card.id}",
-                        (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }),
-                        state,
-                        cardId: card.id,
-                        isCard: true
-                      )),
-                      if (state.savingsBalance > 0)
-                        _buildSourceOption(
-                          context, 
-                          "Savings Account", 
-                          l10n.savingsBalance, 
-                          state.savingsBalance, 
-                          selectedMethod == "Savings Account",
-                          (id, cId) => setModalState(() { selectedMethod = id; selectedCardId = cId; }),
-                          state
-                        ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 32 * context.fontSizeFactor),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56 * context.fontSizeFactor,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      String sourceKey = selectedMethod;
-                      if (selectedMethod.startsWith("card_")) sourceKey = "Debit Card";
-                      
-                      if (!state.hasSufficientBalanceForSource(amount, sourceKey, cardId: selectedCardId)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red),
-                        );
-                        return;
-                      }
-                      setModalState(() => isPinStage = true);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryDark,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-                    ),
-                    child: Text(l10n.confirm, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ] else ...[
-                Text(
-                  l10n.securityVerification,
-                  style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8 * context.fontSizeFactor),
-                Text(
-                  selectedCardId != null ? state.translate("Enter Card PIN", "Geli PIN-ka Kaadhka") : l10n.enterTransactionPin,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 24 * context.fontSizeFactor),
-                SizedBox(
-                  width: 200 * context.fontSizeFactor,
-                  child: TextField(
-                    controller: pinController,
-                    obscureText: true,
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.number,
-                    autofocus: true,
-                    style: TextStyle(fontSize: 24 * context.fontSizeFactor, letterSpacing: 16 * context.fontSizeFactor, fontWeight: FontWeight.bold),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(4),
-                    ],
-                    decoration: InputDecoration(
-                      hintText: "****",
-                      hintStyle: TextStyle(letterSpacing: 16 * context.fontSizeFactor, fontSize: 24 * context.fontSizeFactor),
-                      filled: true,
-                      fillColor: theme.dividerColor.withOpacity(0.05),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
-                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2)),
-                    ),
-                    onChanged: (val) {
-                      if (val.length == 4) {
-                        _processDonation(campaign, amount, val, selectedMethod, selectedCardId);
-                      }
-                    },
-                  ),
-                ),
-                SizedBox(height: 32 * context.fontSizeFactor),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () => setModalState(() => isPinStage = false),
-                        child: Text(l10n.cancel, style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                    SizedBox(width: 16 * context.fontSizeFactor),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => _processDonation(campaign, amount, pinController.text, selectedMethod, selectedCardId),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryDark,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-                        ),
-                        child: Text(l10n.confirm, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      ),
-                    ),
                   ],
                 ),
-              ],
+              ),
+              SizedBox(height: 32 * context.fontSizeFactor),
+              SizedBox(
+                width: double.infinity,
+                height: 56 * context.fontSizeFactor,
+                child: ElevatedButton(
+                  onPressed: () {
+                    String sourceKey = selectedMethod;
+                    if (selectedMethod.startsWith("card_")) sourceKey = "Debit Card";
+                    
+                    if (!state.hasSufficientBalanceForSource(amount, sourceKey, cardId: selectedCardId)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red),
+                      );
+                      return;
+                    }
+                    Navigator.pop(context);
+                    _showPinDialog(campaign, amount, selectedMethod, selectedCardId);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryDark,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                  ),
+                  child: Text(l10n.confirm, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ),
               SizedBox(height: 16 * context.fontSizeFactor),
             ],
           ),
@@ -462,28 +439,35 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
     );
   }
 
-  Future<void> _processDonation(Campaign campaign, double amount, String pin, String method, String? cardId) async {
+  void _showPinDialog(Campaign campaign, double amount, String selectedMethod, String? selectedCardId) {
     final state = Provider.of<AppState>(context, listen: false);
     final l10n = AppLocalizations.of(context)!;
 
-    if (pin.length < 4) return;
+    showDialog(
+      context: context,
+      builder: (context) => PinEntryDialog(
+        title: l10n.securityVerification,
+        description: selectedCardId != null ? state.translate("Enter Card PIN", "Geli PIN-ka Kaadhka") : l10n.enterTransactionPin,
+        isBiometricEnabled: state.biometricEnabled,
+        isCardPin: selectedCardId != null,
+        cardId: selectedCardId,
+        onValidate: (pin) async {
+          if (pin == "BIOMETRIC_SUCCESS") return true;
+          if (selectedCardId != null) {
+            return state.verifyCardPin(pin, cardId: selectedCardId);
+          }
+          return state.verifyPin(pin);
+        },
+        onConfirm: (pin) {
+          _processDonation(campaign, amount, pin, selectedMethod, selectedCardId);
+        },
+      ),
+    );
+  }
 
-    bool isPinValid = false;
-    if (cardId != null) {
-      isPinValid = state.verifyCardPin(pin, cardId: cardId);
-    } else {
-      isPinValid = state.verifyPin(pin);
-    }
-
-    if (!isPinValid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(state.translate("Incorrect PIN. Please try again.", "PIN-kaagu waa khalad. Fadlan isku day markale.")),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-      return;
-    }
+  Future<void> _processDonation(Campaign campaign, double amount, String pin, String method, String? cardId) async {
+    final state = Provider.of<AppState>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
 
     // Show loader
     showDialog(
@@ -494,7 +478,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(color: AppColors.primaryDark),
+            const CircularProgressIndicator(color: Colors.white),
             const SizedBox(height: 16),
             Text(l10n.processing, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ],
@@ -507,13 +491,12 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
       
       if (!mounted) return;
       
-      // Pop loader and bottom sheet
+      // Pop loader
       Navigator.of(context, rootNavigator: true).pop();
-      Navigator.of(context).pop();
 
       // Navigate to Success Screen
       final transactionData = {
-        'title': "Zakat Payment",
+        'title': l10n.zakatPayment,
         'amount': "-${NumberFormat.simpleCurrency(name: state.currencyCode).format(amount)}",
         'date': DateFormat('MMM dd, yyyy').format(DateTime.now()),
         'status': 'Success',
@@ -528,7 +511,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
         MaterialPageRoute(
           builder: (context) => SuccessScreen(
             title: l10n.paymentSuccessful,
-            message: "Your Zakat of ${NumberFormat.simpleCurrency(name: state.currencyCode).format(amount)} has been paid.",
+            message: l10n.zakatSuccessMessage(NumberFormat.simpleCurrency(name: state.currencyCode).format(amount)),
             buttonText: l10n.done,
             transactionData: transactionData,
           ),
@@ -560,10 +543,10 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
         margin: EdgeInsets.only(right: 12 * scale),
         padding: EdgeInsets.all(12 * scale),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryDark.withOpacity(0.1) : theme.cardColor,
+          color: isSelected ? AppColors.primaryDark.withValues(alpha: 0.1) : theme.cardColor,
           borderRadius: BorderRadius.circular(16 * scale),
           border: Border.all(
-            color: isSelected ? AppColors.primaryDark : theme.dividerColor.withOpacity(0.1),
+            color: isSelected ? AppColors.primaryDark : theme.dividerColor.withValues(alpha: 0.1),
             width: 2
           ),
         ),
@@ -604,10 +587,10 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
           decoration: InputDecoration(
             prefixIcon: Icon(icon, color: AppColors.primary, size: 20 * scale),
             filled: true,
-            fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.05),
+            fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.05),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16 * scale),
-              borderSide: BorderSide(color: AppColors.primary.withOpacity(0.1), width: 1),
+              borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.1), width: 1),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16 * scale),
@@ -625,8 +608,108 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
     );
   }
 
+  Widget _buildAssetInputField({
+    required String label,
+    required TextEditingController controller,
+    required IconData icon,
+    required bool isDark,
+    required double scale,
+    required String mode,
+    required Function(String) onModeChanged,
+    required double pricePerGram,
+    required AppState state,
+    required AppLocalizations l10n,
+  }) {
+    double inputVal = double.tryParse(controller.text) ?? 0.0;
+    double calculatedValue = mode == 'weight' ? inputVal * pricePerGram : inputVal;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: TextStyle(fontSize: 14 * scale, fontWeight: FontWeight.bold, color: Colors.grey)),
+            Container(
+              height: 32 * scale,
+              padding: EdgeInsets.symmetric(horizontal: 4 * scale),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(8 * scale),
+              ),
+              child: Row(
+                children: [
+                  _buildToggleItem(l10n.value, 'value', mode, onModeChanged, scale, l10n),
+                  _buildToggleItem(l10n.grams, 'weight', mode, onModeChanged, scale, l10n),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8 * scale),
+        TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * scale),
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: AppColors.primary, size: 20 * scale),
+            suffixText: mode == 'weight' ? "g" : "\$",
+            suffixStyle: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+            filled: true,
+            fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.05),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16 * scale),
+              borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.1), width: 1),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16 * scale),
+              borderSide: BorderSide(color: Colors.transparent, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16 * scale),
+              borderSide: BorderSide(color: AppColors.primary, width: 2),
+            ),
+            hintText: "0.00",
+            contentPadding: EdgeInsets.symmetric(vertical: 16 * scale, horizontal: 16 * scale),
+          ),
+        ),
+        if (mode == 'weight' && inputVal > 0)
+          Padding(
+            padding: EdgeInsets.only(top: 4 * scale, left: 4 * scale),
+            child: Text(
+              "${l10n.estValue} \$${calculatedValue.toStringAsFixed(2)} (@\$${pricePerGram.toStringAsFixed(2)}/g)",
+              style: TextStyle(fontSize: 11 * scale, color: AppColors.grey, fontStyle: FontStyle.italic),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildToggleItem(String label, String value, String currentMode, Function(String) onModeChanged, double scale, AppLocalizations l10n) {
+    bool isSelected = currentMode == value;
+    return GestureDetector(
+      onTap: () => onModeChanged(value),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 4 * scale),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(6 * scale),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11 * scale,
+            fontWeight: FontWeight.bold,
+            color: isSelected ? Colors.white : AppColors.primary,
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showZakatDistributionDialog(BuildContext context, double scale) {
     final state = Provider.of<AppState>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -644,7 +727,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      state.translate("8 Categories of Zakat", "8-da Qaybood ee Zakada"),
+                      state.translate("Zakat Eligibility & Evidence", "Qaybinta Sekada & Daliilada"),
                       style: TextStyle(fontSize: 20 * scale, fontWeight: FontWeight.bold, color: AppColors.primaryDark),
                     ),
                     IconButton(
@@ -659,119 +742,28 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        _buildRequirementSection(state, scale),
+                        SizedBox(height: 20 * scale),
                         _buildEvidenceSection(
                           state.translate("Evidence from Quran", "Daliilka Quraanka"),
                           "إِنَّمَا الصَّدَقَاتُ لِلْفُقَرَاءِ وَالْمَسَاكِينِ وَالْعَامِلِينَ عَلَيْهَا وَالْمُؤَلَّفَةِ قُلُوبُهُمْ وَفِي الرِّقَابِ وَالْغَارِمِينَ وَفِي سَبِيلِ اللَّهِ وَابْنِ السَّبِيلِ ۖ فَرِيضَةً مِّنَ اللَّهِ ۗ وَاللَّهُ عَلِيمٌ حَكِيمٌ",
                           "Surah At-Tawbah (9:60)",
                           scale
                         ),
-                        SizedBox(height: 12 * scale),
-                        _buildEvidenceSection(
-                          state.translate("Evidence from Hadith", "Daliilka Xadiiska"),
-                          "تُؤْخَذُ مِنْ أَغْنِيَائِهِمْ فَتُرَدُّ عَلَى فُقَرَائِهِمْ",
-                          state.translate("Sahih Bukhari - Prophet (PBUH) to Mu'adh (RA)", "Saxiixul Bukhaari - Nabiga (CSW) wuxuu ku yiri Mucaad (RC)"),
-                          scale,
-                          isHadith: true
-                        ),
                         SizedBox(height: 20 * scale),
-                        _buildCategoryItem(
-                          "1",
-                          state.translate("Al-Fuqara' (The Poor)", "Fuqarada (Dadka Baahan)"),
-                          state.translate(
-                            "Those who have no income or property and cannot meet their basic needs.",
-                            "Dadka aan haysan wax ay cunaan ama wax ay quutaan, oo aan haysan hanti ku filan."
-                          ),
-                          scale,
+                        Text(
+                          state.translate("The 8 Categories of Recipients", "8-da Qeybood ee Sekada la siiyo"),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * scale),
                         ),
-                        _buildCategoryItem(
-                          "2",
-                          state.translate("Al-Masakin (The Needy)", "Masaakiinta (Dadka Danyarta ah)"),
-                          state.translate(
-                            "Those who have some income but it is not enough to cover their basic necessities.",
-                            "Dadka haysata dakhli yar balse aan ku filnayn baahiyahooda aasaasiga ah."
-                          ),
-                          scale,
-                        ),
-                        _buildCategoryItem(
-                          "3",
-                          state.translate("Al-Amilina 'Alayha (Zakat Collectors)", "Kuwa ka Shaqeeya (Ururiyaasha)"),
-                          state.translate(
-                            "Those appointed to collect, manage and distribute Zakat funds.",
-                            "Dadka loo xilsaaray ururinta, maamulidda iyo qaybinta hantida Zakada."
-                          ),
-                          scale,
-                        ),
-                        _buildCategoryItem(
-                          "4",
-                          state.translate("Al-Mu'allafati Qulubuhum", "Kuwa Quluubtooda la soo dhoweynayo"),
-                          state.translate(
-                            "New Muslims or those who are close to Islam to strengthen their faith.",
-                            "Dadka ku cusub Islaamka ama kuwa loo soo dhoweynayo diinta si loo xoojiyo quluubtooda."
-                          ),
-                          scale,
-                        ),
-                        _buildCategoryItem(
-                          "5",
-                          state.translate("Fir-Riqab (Freeing Captives)", "Addoomada (Xoraynta)"),
-                          state.translate(
-                            "Used to free slaves or captives from bondage.",
-                            "Zaka waxaa loo isticmaali karaa in lagu xoreeyo addoomada ama maxaabiista laga rabo madax-furasho."
-                          ),
-                          scale,
-                        ),
-                        _buildCategoryItem(
-                          "6",
-                          state.translate("Al-Gharimin (Debtors)", "Kuwa lagu leeyahay deynta"),
-                          state.translate(
-                            "Those overwhelmed by debt incurred for basic needs or social harmony.",
-                            "Dadka deyntu ku raagtay ee aan awoodin inay iska bixiyaan, haddii ay u soo deynteen baahi sharci ah."
-                          ),
-                          scale,
-                        ),
-                        _buildCategoryItem(
-                          "7",
-                          state.translate("Fi Sabilillah (Path of Allah)", "Jidka Alle"),
-                          state.translate(
-                            "Those striving for the cause of Allah, including education and community welfare.",
-                            "Kuwa u adeegaya jidka Alle, sida faafinta diinta, waxbarashada, iyo danta guud ee muslimiinta."
-                          ),
-                          scale,
-                        ),
-                        _buildCategoryItem(
-                          "8",
-                          state.translate("Ibnus-Sabil (The Wayfarer)", "Socotada (Musafirka)"),
-                          state.translate(
-                            "Travelers who are stranded and need financial assistance to reach home.",
-                            "Socotada ku go'doontay safarka oo u baahan caawinaad lacageed si ay gurigooda u gaaraan."
-                          ),
-                          scale,
-                        ),
-                        SizedBox(height: 16 * scale),
-                        Container(
-                          padding: EdgeInsets.all(16 * scale),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16 * scale),
-                            border: Border.all(color: Colors.amber.withOpacity(0.3)),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                state.translate("Fatwa & Madhahib", "Fatwada & Madhaahibta"),
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * scale, color: Colors.brown),
-                              ),
-                              SizedBox(height: 8 * scale),
-                              Text(
-                                state.translate(
-                                  "According to the majority of scholars (Shafi'i, Maliki, Hanbali, and Hanafi), Zakat must be distributed to these 8 categories specifically. Some Madhahib allow giving to one category if the need is greater there.",
-                                  "Sida ay qabaan badankood culimada (Shaafici, Maaliki, Xanbali, iyo Xanafi), Zakada waa in la siiyaa 8-dan qaybood. Qaar kamid ah madhaahibta ayaa oggol in la siiyo hal qayb haddii baahidu ku weyn tahay."
-                                ),
-                                style: TextStyle(fontSize: 12 * scale, height: 1.5),
-                              ),
-                            ],
-                          ),
-                        ),
+                        SizedBox(height: 12 * scale),
+                        _buildCategoryItem("1", state.translate("The Poor (Al-Fuqara)", "Fuqarada"), state.translate("Those who have no property or income.", "Dadka aan haysan wax hanti ah ama dakhli."), scale),
+                        _buildCategoryItem("2", state.translate("The Needy (Al-Masakin)", "Miskiiniinta"), state.translate("Those whose property or income is not enough for their basic needs.", "Dadka haysta wax yar laakiin aan ku filnayn baahidooda."), scale),
+                        _buildCategoryItem("3", state.translate("Zakat Administrators", "Shaqaalaha Sekada"), state.translate("Those who collect and distribute Zakat.", "Dadka u xilsaaran ururinta iyo qaybinta sekada."), scale),
+                        _buildCategoryItem("4", state.translate("New Muslims", "Kuwa Quluubtooda la soo jiidanayo"), state.translate("To strengthen their hearts in Islam.", "Dadka cusub ee Islaamka soo galay si loo taageero."), scale),
+                        _buildCategoryItem("5", state.translate("Freeing Captives", "Xoraynta Addoomada"), state.translate("To help free people from bondage.", "In lagu xoreeyo dadka aan xorta ahayn."), scale),
+                        _buildCategoryItem("6", state.translate("Those in Debt", "Dadka lagu leeyahay deynta"), state.translate("Those who cannot pay their debts.", "Dadka deynta culus lagu leeyahay ee aan awoodin inay iska bixiyaan."), scale),
+                        _buildCategoryItem("7", state.translate("In the Cause of Allah", "Jidka Alle"), state.translate("For the struggle in the way of Allah.", "Wixii maslaxo u ah diinta iyo difaaceeda."), scale),
+                        _buildCategoryItem("8", state.translate("The Wayfarer", "Socotada"), state.translate("Travelers who are stranded.", "Musaafiriinta ku go'ay waddada ee aan haysan wax ay ku laabtaan."), scale),
                       ],
                     ),
                   ),
@@ -784,6 +776,35 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
     );
   }
 
+  Widget _buildRequirementSection(AppState state, double scale) {
+    return Container(
+      padding: EdgeInsets.all(16 * scale),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(16 * scale),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            state.translate("Who must pay Zakat?", "Yey ku waajibtay Sekadu?"),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * scale, color: AppColors.primaryDark),
+          ),
+          SizedBox(height: 8 * scale),
+          Text(
+            state.translate(
+              "Zakat is mandatory for every sane, adult Muslim who owns wealth above the Nisab threshold for a full lunar year (Hawl).",
+              "Sekadu waxay ku waajibtay qof kasta oo Muslim ah, qaangaar ah, miyir qaba, oo haysta hanti gaaraysa Nisaabka muddo sannad ah."
+            ),
+            style: TextStyle(fontSize: 13 * scale, height: 1.5),
+          ),
+        ],
+      ),
+    );
+  }
+
+
   Widget _buildEvidenceSection(String title, String arabic, String reference, double scale, {bool isHadith = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -794,9 +815,9 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
           width: double.infinity,
           padding: EdgeInsets.all(16 * scale),
           decoration: BoxDecoration(
-            color: isHadith ? Colors.green.withOpacity(0.05) : AppColors.primary.withOpacity(0.05),
+            color: isHadith ? Colors.green.withValues(alpha: 0.05) : AppColors.primary.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(16 * scale),
-            border: Border.all(color: (isHadith ? Colors.green : AppColors.primary).withOpacity(0.1)),
+            border: Border.all(color: (isHadith ? Colors.green : AppColors.primary).withValues(alpha: 0.1)),
           ),
           child: Column(
             children: [

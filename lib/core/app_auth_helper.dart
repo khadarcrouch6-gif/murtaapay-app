@@ -1,10 +1,13 @@
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 
 class AppAuthHelper {
   static final LocalAuthentication _auth = LocalAuthentication();
 
   static Future<bool> authenticateWithBiometrics() async {
+    if (kIsWeb) return false;
+
     try {
       final bool canAuthenticateWithBiometrics = await _auth.canCheckBiometrics;
       final bool canAuthenticate = canAuthenticateWithBiometrics || await _auth.isDeviceSupported();

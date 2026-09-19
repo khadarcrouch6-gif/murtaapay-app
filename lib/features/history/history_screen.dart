@@ -43,7 +43,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     final query = _searchController.text.toLowerCase();
     final filteredTransactions = state.transactions.where((tx) {
-      if (tx.cardId != null) return false;
       bool matchesSearch = tx.title.toLowerCase().contains(query) || tx.type.toLowerCase().contains(query);
       bool matchesFilter = _selectedFilter == "All" || 
                          (_selectedFilter == "Sent" && tx.isNegative) || 
@@ -51,15 +50,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
       return matchesSearch && matchesFilter;
     }).toList();
     
+    final bool isDesktop = ResponsiveBreakpoints.of(context).largerThan(TABLET);
+    
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: ResponsiveBreakpoints.of(context).equals(TABLET)
+      appBar: !isDesktop
           ? AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              leading: IconButton(
-                onPressed: () => Scaffold.of(context).openDrawer(),
-                icon: Icon(Icons.menu_rounded, color: theme.iconTheme.color),
+              leading: Builder(
+                builder: (innerContext) => IconButton(
+                  onPressed: () {
+                    // Open the root scaffold drawer from MainNavigation
+                    Scaffold.of(context).openDrawer();
+                  },
+                  icon: Icon(Icons.menu_rounded, color: theme.iconTheme.color),
+                ),
               ),
             )
           : null,
@@ -118,6 +124,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 status: tx.status,
                                 date: tx.date,
                                 isSent: tx.isNegative,
+                                verificationStatus: tx.receiverVerificationStatus,
                                 onTap: () => _showTransactionDetails(context, state, theme, tx),
                               );
                             },
@@ -184,7 +191,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
           border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : AppColors.grey.withOpacity(0.2),
+            color: isSelected ? theme.colorScheme.primary : AppColors.grey.withValues(alpha: 0.2),
             width: 1 * context.fontSizeFactor,
           ),
         ),
@@ -238,7 +245,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               height: 4 * context.fontSizeFactor,
               margin: EdgeInsets.only(bottom: 20 * context.fontSizeFactor),
               decoration: BoxDecoration(
-                color: AppColors.grey.withOpacity(0.3),
+                color: AppColors.grey.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2 * context.fontSizeFactor),
               ),
             ),
@@ -288,7 +295,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Icon(
               Icons.search_off_rounded,
               size: 80 * context.fontSizeFactor,
-              color: AppColors.grey.withOpacity(0.5),
+              color: AppColors.grey.withValues(alpha: 0.5),
             ),
             SizedBox(height: 16 * context.fontSizeFactor),
             Text(
@@ -305,3 +312,4 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 }
+

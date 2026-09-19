@@ -30,7 +30,7 @@ export default function GradientIcons() {
           <stop offset="100%" stopColor="#d97706" />
         </linearGradient>
 
-        {/* Rose/Red Gradient - for Sadaqah, Critical, Passion */}
+        {/* Rose/Red Gradient - for Fundraiser, Critical, Passion */}
         <linearGradient id="rose-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#fb7185" />
           <stop offset="100%" stopColor="#e11d48" />

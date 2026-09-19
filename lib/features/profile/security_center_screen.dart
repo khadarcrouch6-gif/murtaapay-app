@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_state.dart';
 import '../../core/responsive_utils.dart';
@@ -26,6 +28,10 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
   }
 
   Future<void> _checkBiometrics() async {
+    if (kIsWeb) {
+      if (mounted) setState(() => _biometricsAvailable = false);
+      return;
+    }
     final isAvailable = await _auth.canCheckBiometrics || await _auth.isDeviceSupported();
     if (mounted) {
       setState(() => _biometricsAvailable = isAvailable);
@@ -33,11 +39,12 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
   }
 
   Future<void> _toggleBiometrics(bool value) async {
-    final state = AppState();
+    if (kIsWeb) return;
+    
+    final state = Provider.of<AppState>(context, listen: false);
     if (value) {
       final authenticated = await _auth.authenticate(
         localizedReason: 'Please authenticate to enable biometric access',
-        biometricOnly: true,
       );
       if (authenticated) {
         await state.setBiometricEnabled(true);
@@ -52,7 +59,7 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final state = AppState();
+    final state = context.watch<AppState>();
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -63,14 +70,14 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.all(context.horizontalPadding),
+        padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: context.verticalPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildShieldHeader(theme, state),
-            const SizedBox(height: 32),
+            _buildShieldHeader(context, theme, state),
+            SizedBox(height: 32 * context.fontSizeFactor),
             _buildSectionTitle(theme, state.translate("Biometrics & Access", "Aqoonsiga & Helitaanka", ar: "المقاييس الحيوية والوصول", de: "Biometrie & Zugriff", et: "Biomeetria ja juurdepääs")),
-            const SizedBox(height: 16),
+            SizedBox(height: 16 * context.fontSizeFactor),
             if (_biometricsAvailable)
               _buildSecurityToggle(
                 context,
@@ -85,9 +92,9 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
               Icons.password_rounded,
               () {},
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32 * context.fontSizeFactor),
             _buildSectionTitle(theme, state.translate("Advanced Security", "Ammaanka Sare", ar: "الأمان المتقدم", de: "Erweiterte Sicherheit", et: "Täpsem turvalisus")),
-            const SizedBox(height: 16),
+            SizedBox(height: 16 * context.fontSizeFactor),
             _buildSecurityTile(
               context,
               state.translate("Account Limits", "Xadka Akooonka", ar: "حدود الحساب", de: "Kontolimits", et: "Konto piirangud"),
@@ -108,51 +115,51 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
               _loginAlertsEnabled,
               (val) => setState(() => _loginAlertsEnabled = val),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32 * context.fontSizeFactor),
             _buildSectionTitle(theme, state.translate("Active Devices", "Aaladaha Shaqaynaya", ar: "الأجهزة النشطة", de: "Aktive Geräte", et: "Aktiivsed seadmed")),
-            const SizedBox(height: 16),
+            SizedBox(height: 16 * context.fontSizeFactor),
             _buildDeviceItem(context, "iPhone 15 Pro", state.translate("Active Now", "Hadda Shaqaynaya", ar: "نشط الآن", de: "Jetzt aktiv", et: "Praegu aktiivne"), true),
             _buildDeviceItem(context, "MacBook Pro M2", "London, UK • 2 hours ago", false),
-            const SizedBox(height: 100),
+            SizedBox(height: 100 * context.fontSizeFactor),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildShieldHeader(ThemeData theme, AppState state) {
+  Widget _buildShieldHeader(BuildContext context, ThemeData theme, AppState state) {
     return FadeInDown(
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+        padding: EdgeInsets.symmetric(vertical: 40 * context.fontSizeFactor, horizontal: 24 * context.fontSizeFactor),
         decoration: BoxDecoration(
           gradient: AppColors.primaryGradient,
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(32 * context.fontSizeFactor),
         ),
         child: Column(
           children: [
             Pulse(
               infinite: true,
               child: Container(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(24 * context.fontSizeFactor),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.accentTeal.withOpacity(0.3), width: 2),
+                  border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.3), width: 2 * context.fontSizeFactor),
                 ),
-                child: const Icon(Icons.shield_rounded, color: AppColors.accentTeal, size: 64),
+                child: Icon(Icons.shield_rounded, color: AppColors.accentTeal, size: 64 * context.fontSizeFactor),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24 * context.fontSizeFactor),
             Text(
               state.translate("Your account is 85% secure", "Akooonkaagu 85% waa ammaan", ar: "حسابك مؤمن بنسبة 85%", de: "Ihr Konto ist zu 85 % sicher", et: "Teie konto on 85% turvatud"),
-              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8 * context.fontSizeFactor),
             Text(
               state.translate("Enable 2FA to achieve 100% security coverage.", "Daar 2FA si aad u hesho 100% ammaan.", ar: "قم بتفعيل 2FA لتحقيق تغطية أمنية بنسبة 100%.", de: "Aktivieren Sie 2FA, um eine 100%ige Sicherheitsabdeckung zu erreichen.", et: "Lülitage sisse 2FA, et saavutada 100% turvalisus."),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 13),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13 * context.fontSizeFactor),
             ),
           ],
         ),
@@ -173,21 +180,21 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
   Widget _buildSecurityToggle(BuildContext context, String title, IconData icon, bool value, Function(bool) onChanged) {
     final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
+      padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 12 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: AppColors.primaryDark.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
-            child: Icon(icon, color: AppColors.primaryDark, size: 20),
+            padding: EdgeInsets.all(10 * context.fontSizeFactor),
+            decoration: BoxDecoration(color: AppColors.primaryDark.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
+            child: Icon(icon, color: AppColors.primaryDark, size: 20 * context.fontSizeFactor),
           ),
-          const SizedBox(width: 16),
-          Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.w600))),
+          SizedBox(width: 16 * context.fontSizeFactor),
+          Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14 * context.fontSizeFactor))),
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
@@ -204,26 +211,27 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
+        padding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 20 * context.fontSizeFactor),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: AppColors.primaryDark.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
-              child: Icon(icon, color: AppColors.primaryDark, size: 20),
+              padding: EdgeInsets.all(10 * context.fontSizeFactor),
+              decoration: BoxDecoration(color: AppColors.primaryDark.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
+              child: Icon(icon, color: AppColors.primaryDark, size: 20 * context.fontSizeFactor),
             ),
-            const SizedBox(width: 16),
-            Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.w600))),
+            SizedBox(width: 16 * context.fontSizeFactor),
+            Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14 * context.fontSizeFactor))),
             Icon(
               Directionality.of(context) == TextDirection.rtl 
                   ? Icons.chevron_left_rounded 
                   : Icons.chevron_right_rounded, 
-              color: Colors.grey
+              color: Colors.grey,
+              size: 20 * context.fontSizeFactor,
             ),
           ],
         ),
@@ -234,32 +242,33 @@ class _SecurityCenterScreenState extends State<SecurityCenterScreen> {
   Widget _buildDeviceItem(BuildContext context, String model, String status, bool isCurrent) {
     final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
+      padding: EdgeInsets.all(16 * context.fontSizeFactor),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: isCurrent ? AppColors.accentTeal.withOpacity(0.1) : Colors.grey.withOpacity(0.1), shape: BoxShape.circle),
-            child: Icon(isCurrent ? Icons.phone_iphone_rounded : Icons.laptop_mac_rounded, color: isCurrent ? AppColors.accentTeal : Colors.grey),
+            padding: EdgeInsets.all(12 * context.fontSizeFactor),
+            decoration: BoxDecoration(color: isCurrent ? AppColors.accentTeal.withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1), shape: BoxShape.circle),
+            child: Icon(isCurrent ? Icons.phone_iphone_rounded : Icons.laptop_mac_rounded, color: isCurrent ? AppColors.accentTeal : Colors.grey, size: 24 * context.fontSizeFactor),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16 * context.fontSizeFactor),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(model, style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text(status, style: TextStyle(color: isCurrent ? AppColors.accentTeal : Colors.grey, fontSize: 12)),
+                Text(model, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
+                Text(status, style: TextStyle(color: isCurrent ? AppColors.accentTeal : Colors.grey, fontSize: 12 * context.fontSizeFactor)),
               ],
             ),
           ),
-          if (!isCurrent) TextButton(onPressed: () {}, child: const Text("Logout", style: TextStyle(color: Colors.redAccent))),
+          if (!isCurrent) TextButton(onPressed: () {}, child: Text("Logout", style: TextStyle(color: Colors.redAccent, fontSize: 14 * context.fontSizeFactor))),
         ],
       ),
     );
   }
 }
+

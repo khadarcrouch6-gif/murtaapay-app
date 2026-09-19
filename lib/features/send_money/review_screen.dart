@@ -5,8 +5,9 @@ import 'package:animate_do/animate_do.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:provider/provider.dart';
+import 'dart:math' as math;
 import '../../core/app_state.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/step_indicator.dart';
@@ -30,6 +31,7 @@ class ReviewScreen extends StatefulWidget {
   final String? country;
 
   final String? cardId;
+  final bool isFeeIncluded;
 
   const ReviewScreen({
     super.key,
@@ -46,6 +48,7 @@ class ReviewScreen extends StatefulWidget {
     this.city,
     this.country,
     this.cardId,
+    this.isFeeIncluded = false,
   });
 
   @override
@@ -82,24 +85,76 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   void _handlePayPress() {
     HapticFeedback.mediumImpact();
-    // If it's mobile money, we trigger STK Push simulation instead of local PIN
-    if (widget.paymentMethod.contains("Mobile Money") || widget.paymentMethod.contains("EVC") || widget.paymentMethod.contains("Sahal")) {
-      _triggerStkPush();
+    // Check for provider delays before proceeding
+    if (widget.paymentMethod.contains("Mobile Money") || 
+        widget.paymentMethod.contains("EVC") || 
+        widget.paymentMethod.contains("ZAAD") || 
+        widget.paymentMethod.contains("Sahal") || 
+        widget.paymentMethod.contains("e-Dahab")) {
+      
+      // Real-world logic: show warning if provider has known issues
+      if (widget.paymentMethod.contains("ZAAD")) {
+        _showProviderWarning();
+      } else {
+        _triggerStkPush();
+      }
     } else {
       _showPinEntry();
     }
   }
 
+  void _showProviderWarning() {
+    final l10n = AppLocalizations.of(context)!;
+    final appState = Provider.of<AppState>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.amber),
+            const SizedBox(width: 8),
+            Text(appState.translate("Service Delay", "Dib u dhac adeegga") ?? "Service Delay"),
+          ],
+        ),
+        content: Text(
+          appState.translate("ZAAD Service is currently experiencing delays. Would you like to proceed or try another method?", "Adeegga ZAAD waxa uu hadda la kulmayaa dib-u-dhac. Ma rabtaa inaad sii waddo mise waxaad isku daydaa hab kale?") ?? 
+          "ZAAD Service is currently experiencing delays. Would you like to proceed or try another method?"
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel ?? "Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _triggerStkPush();
+            },
+            child: Text(appState.translate("Proceed Anyway", "Sii soco si kastaba") ?? "Proceed Anyway"),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showPinEntry() {
     final l10n = AppLocalizations.of(context)!;
+    final state = Provider.of<AppState>(context, listen: false);
     
     showDialog(
       context: context,
       builder: (context) => PinEntryDialog(
         title: l10n.enterSecurityPin,
         description: l10n.enterTransactionPin,
+        isBiometricEnabled: state.biometricEnabled,
         isCardPin: widget.cardId != null,
         cardId: widget.cardId,
+        onValidate: (pin) async {
+          if (pin == "BIOMETRIC_SUCCESS") return true;
+          return widget.cardId != null 
+              ? state.verifyCardPin(pin, cardId: widget.cardId)
+              : state.verifyPin(pin);
+        },
         onConfirm: (pin) {
           _processTransaction(pin: pin);
         },
@@ -136,17 +191,45 @@ class _ReviewScreenState extends State<ReviewScreen> {
     });
 
     // Simulate STK Push delay (waiting for user to enter PIN on their handset)
-    // We'll wait 5 seconds then "complete" it for the demo, 
-    // but the timer shows the user how long they have.
-    await Future.delayed(const Duration(seconds: 8));
-
-    if (mounted && _isStkWaiting) {
-      _timer?.cancel();
-      setState(() {
-        _isStkWaiting = false;
-      });
-      _processTransaction(isStk: true);
+    // Randomize success/fail/timeout for high-fidelity simulation
+    final random = math.Random().nextInt(10);
+    
+    if (random < 7) { // 70% Success
+      await Future.delayed(const Duration(seconds: 8));
+      if (mounted && _isStkWaiting) {
+        _timer?.cancel();
+        setState(() => _isStkWaiting = false);
+        _processTransaction(isStk: true);
+      }
+    } else if (random < 9) { // 20% User Cancel/Fail
+      await Future.delayed(const Duration(seconds: 5));
+      if (mounted && _isStkWaiting) {
+        _timer?.cancel();
+        _handleStkFailure("Transaction cancelled by user.");
+      }
+    } else { // 10% Timeout (let the timer run out)
+      // Do nothing, let timer finish
     }
+  }
+
+  void _handleStkFailure(String reason) {
+    setState(() {
+      _isProcessing = false;
+      _isStkWaiting = false;
+    });
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Transaction Failed", style: TextStyle(fontWeight: FontWeight.bold)),
+        content: Text(reason),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   void _handleStkTimeout() {
@@ -168,20 +251,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
     
     if (!isStk) {
       if (pin == null) return;
-      // Determine which PIN to verify (Wallet PIN or Card PIN)
-      bool isPinValid = false;
-      if (widget.cardId != null) {
-        isPinValid = state.verifyCardPin(pin, cardId: widget.cardId);
-      } else {
-        isPinValid = state.verifyPin(pin);
-      }
-
-      if (!isPinValid) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.invalidPin), backgroundColor: Colors.red),
-        );
-        return;
-      }
     }
 
     setState(() {
@@ -197,11 +266,13 @@ class _ReviewScreenState extends State<ReviewScreen> {
       _sourceKey, 
       payoutMethod: _getCanonicalMethod(widget.method)
     );
-    double total = amountVal + fee;
+    double total = widget.isFeeIncluded ? amountVal : (amountVal + fee);
+    double netAmount = widget.isFeeIncluded ? (amountVal - fee) : amountVal;
     
     try {
+      model.Transaction? resultTx;
       if (widget.paymentMethod == "Main Wallet" || widget.paymentMethod == "Savings Account" || widget.paymentMethod == "Murtaax Wallet" || widget.paymentMethod.contains("Virtual Card")) {
-        await state.processP2PTransfer(
+        resultTx = await state.processP2PTransfer(
           receiverId: widget.receiverPhone,
           receiverName: widget.receiverName,
           amount: amountVal,
@@ -210,15 +281,16 @@ class _ReviewScreenState extends State<ReviewScreen> {
           paymentMethod: widget.paymentMethod,
           payoutMethod: _getCanonicalMethod(widget.method),
           cardId: widget.cardId,
+          isFeeIncluded: widget.isFeeIncluded,
         );
       } else {
         // Mock logic for other sources
-        state.addTransaction(model.Transaction(
+        resultTx = model.Transaction(
           id: "TX-${DateTime.now().millisecondsSinceEpoch}",
           title: widget.receiverName,
           date: DateFormat('MMM dd').format(DateTime.now()),
           amount: "-${NumberFormat.simpleCurrency(name: widget.currencyCode).format(total)}",
-          numericAmount: amountVal,
+          numericAmount: netAmount,
           fee: fee,
           isNegative: true,
           category: "Transfer",
@@ -227,11 +299,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
           method: widget.method,
           paymentMethod: widget.paymentMethod,
           purpose: widget.purpose,
-        ));
+          receiverVerificationStatus: state.quickProfiles.where((p) => p.walletId == widget.receiverPhone).isNotEmpty
+              ? state.quickProfiles.firstWhere((p) => p.walletId == widget.receiverPhone).verificationStatus
+              : null,
+        );
+        state.addTransaction(resultTx);
       }
 
       if (mounted) {
-        _showSuccess();
+        _showSuccess(resultTx);
       }
     } catch (e) {
       setState(() => _isProcessing = false);
@@ -243,36 +319,19 @@ class _ReviewScreenState extends State<ReviewScreen> {
     }
   }
 
-  void _showSuccess() {
+  void _showSuccess(model.Transaction? resultTx) {
     final state = Provider.of<AppState>(context, listen: false);
     final l10n = AppLocalizations.of(context)!;
-    double amountVal = double.tryParse(widget.amount.replaceAll(',', '')) ?? 0;
     
-    double fee = state.calculateFeeForSource(
-      amountVal, 
-      _sourceKey, 
-      payoutMethod: _getCanonicalMethod(widget.method)
-    );
-    double total = amountVal + fee;
-
-    final transactionData = {
+    final transactionData = resultTx?.toJson() ?? {
       'title': widget.receiverName,
-      'amount': "-${NumberFormat.simpleCurrency(name: widget.currencyCode).format(total)}",
-      'numericAmount': amountVal,
-      'fee': fee,
-      'currencyCode': widget.currencyCode,
-      'date': DateFormat('MMM dd, yyyy HH:mm').format(DateTime.now()),
+      'amount': "-${NumberFormat.simpleCurrency(name: widget.currencyCode).format(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0)}",
       'status': widget.method.contains("Bank") ? 'Pending' : 'Success',
       'id': 'TX${DateTime.now().millisecondsSinceEpoch}',
       'type': 'send',
       'method': widget.method,
       'paymentMethod': widget.paymentMethod,
       'purpose': widget.purpose,
-      'sourceOfFunds': widget.sourceOfFunds,
-      'swiftCode': widget.swiftCode,
-      'address': widget.address,
-      'city': widget.city,
-      'country': widget.country,
       'receiverPhone': widget.receiverPhone,
     };
 
@@ -292,6 +351,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           subMessage: "Transaction ID: ${transactionData['id']}",
           buttonText: l10n.backToHome,
           transactionData: transactionData,
+          verificationStatus: resultTx?.receiverVerificationStatus,
           onPressed: () {
             state.setNavIndex(0); // Reset to Home tab
             Navigator.pushAndRemoveUntil(
@@ -324,7 +384,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
       _sourceKey, 
       payoutMethod: _getCanonicalMethod(widget.method)
     );
-    double total = amountVal + fee;
+    double total = widget.isFeeIncluded ? amountVal : (amountVal + fee);
+    double receiveAmount = widget.isFeeIncluded ? (amountVal - fee) : amountVal;
 
     if (_isProcessing) {
       return _buildProcessingScreen(theme, l10n);
@@ -349,56 +410,78 @@ class _ReviewScreenState extends State<ReviewScreen> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildHeader(context, theme, l10n),
-            Padding(
-              padding: EdgeInsets.all(20 * context.fontSizeFactor),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
               child: Column(
                 children: [
-                  FadeInDown(
-                    child: _buildDetailsCard(context, theme, l10n, appState, amountVal, fee, total),
-                  ),
-                  if (widget.method.contains("Bank")) ...[
-                    SizedBox(height: 16 * context.fontSizeFactor),
-                    FadeInUp(
-                      child: Container(
-                        padding: EdgeInsets.all(16 * context.fontSizeFactor),
-                        decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-                          border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
+                  _buildHeader(context, theme, l10n),
+                  Padding(
+                    padding: EdgeInsets.all(20 * context.fontSizeFactor),
+                    child: Column(
+                      children: [
+                        FadeInDown(
+                          child: _buildDetailsCard(context, theme, l10n, appState, amountVal, fee, total),
                         ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.access_time_rounded, color: Colors.orange, size: 20 * context.fontSizeFactor),
-                            SizedBox(width: 12 * context.fontSizeFactor),
-                            Expanded(
-                              child: Text(
-                                appState.translate(
-                                  "Note: Bank transfers take up to 24 hours to process.",
-                                  "Ogeysiis: Xawaaladaha bangigu waxay qaataan ilaa 24 saac."
-                                ),
-                                style: TextStyle(
-                                  fontSize: 13 * context.fontSizeFactor, 
-                                  color: Colors.orange[900], 
-                                  fontWeight: FontWeight.bold
-                                ),
+                        if (widget.method.contains("Bank")) ...[
+                          SizedBox(height: 16 * context.fontSizeFactor),
+                          FadeInUp(
+                            child: Container(
+                              padding: EdgeInsets.all(16 * context.fontSizeFactor),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+                                border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.access_time_rounded, color: Colors.orange, size: 20 * context.fontSizeFactor),
+                                  SizedBox(width: 12 * context.fontSizeFactor),
+                                  Expanded(
+                                    child: Text(
+                                      appState.translate(
+                                        "Note: Bank transfers take up to 24 hours to process.",
+                                        "Ogeysiis: Xawaaladaha bangigu waxay qaataan ilaa 24 saac."
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 13 * context.fontSizeFactor, 
+                                        color: Colors.orange[900], 
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        ],
+                      ],
                     ),
-                  ],
-                  SizedBox(height: 24 * context.fontSizeFactor),
-                  FadeInUp(child: _buildActionButtons(theme, l10n, total)),
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          // Sticky Bottom Action Buttons
+          Container(
+            padding: EdgeInsets.fromLTRB(20 * context.fontSizeFactor, 10 * context.fontSizeFactor, 20 * context.fontSizeFactor, MediaQuery.of(context).padding.bottom + 10 * context.fontSizeFactor),
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
+            child: MaxWidthBox(
+              maxWidth: 500,
+              child: FadeInUp(child: _buildActionButtons(theme, l10n, total)),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -667,37 +750,32 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Widget _buildActionButtons(ThemeData theme, AppLocalizations l10n, double total) {
     return Column(
       children: [
-        SizedBox(
-          width: double.infinity,
-          height: 58 * context.fontSizeFactor,
-          child: ElevatedButton(
-            onPressed: _handlePayPress,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.secondary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18 * context.fontSizeFactor)),
-              elevation: 4,
-              shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.lock_outline_rounded, size: 20 * context.fontSizeFactor),
-                SizedBox(width: 12 * context.fontSizeFactor),
-                Flexible(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      "${l10n.confirmAndPay} (${NumberFormat.simpleCurrency(name: widget.currencyCode).format(total)})",
-                      style: TextStyle(
-                        fontSize: 18 * context.fontSizeFactor,
-                        fontWeight: FontWeight.w900,
-                      ),
+        ElevatedButton(
+          onPressed: _handlePayPress,
+          style: context.elevatedButtonStyle(
+            backgroundColor: theme.colorScheme.secondary,
+            borderRadius: 18,
+            elevation: 4,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.lock_outline_rounded, size: 20 * context.fontSizeFactor, color: Colors.white),
+              SizedBox(width: 12 * context.fontSizeFactor),
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    "${l10n.confirmAndPay} (${NumberFormat.simpleCurrency(name: widget.currencyCode).format(total)})",
+                    style: TextStyle(
+                      fontSize: 18 * context.fontSizeFactor,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         SizedBox(height: 16 * context.fontSizeFactor),
@@ -710,12 +788,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
               color: theme.brightness == Brightness.dark ? Colors.white54 : AppColors.grey.withValues(alpha: 0.6)
             ),
             SizedBox(width: 6 * context.fontSizeFactor),
-            Text(
-              l10n.securedBySSL,
-              style: TextStyle(
-                color: theme.brightness == Brightness.dark ? Colors.white54 : AppColors.grey.withValues(alpha: 0.6),
-                fontSize: 12 * context.fontSizeFactor, 
-                fontWeight: FontWeight.bold
+            Flexible(
+              child: Text(
+                l10n.securedBySSL,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: theme.brightness == Brightness.dark ? Colors.white54 : AppColors.grey.withValues(alpha: 0.6),
+                  fontSize: 12 * context.fontSizeFactor, 
+                  fontWeight: FontWeight.bold
+                ),
               ),
             ),
           ],

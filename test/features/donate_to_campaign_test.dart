@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:murtaaxpay_app/core/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:murtaaxpay_app/core/app_state.dart';
+import '../test_helper.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -9,6 +10,7 @@ void main() {
     late AppState appState;
 
     setUp(() async {
+      setupMockSecureStorage();
       SharedPreferences.setMockInitialValues({});
       appState = AppState();
       await appState.init();

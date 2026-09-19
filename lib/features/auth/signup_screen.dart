@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/responsive_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -142,21 +142,19 @@ class _SignupScreenState extends State<SignupScreen> {
                               child: Image.asset("assets/images/logo.png", height: 80 * context.fontSizeFactor),
                             ),
                           ),
-                          const SizedBox(height: 40),
+                          SizedBox(height: 40 * context.fontSizeFactor),
                           Text(l10n.createAccount, style: TextStyle(fontSize: 28 * context.fontSizeFactor, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8 * context.fontSizeFactor),
                           Text(l10n.joinMurtaaxPayToday, style: TextStyle(color: AppColors.grey, fontSize: 16 * context.fontSizeFactor)),
-                          const SizedBox(height: 32),
+                          SizedBox(height: 32 * context.fontSizeFactor),
                           _buildInput(context, l10n.fullName, Icons.person_outline_rounded),
                           _buildInput(context, l10n.emailAddress, Icons.email_outlined),
                           _buildPhoneInput(context, l10n.phoneNumber),
                           _buildInput(context, l10n.password, Icons.lock_outline_rounded, isPass: true),
                           const Spacer(),
-                          const SizedBox(height: 40),
+                          SizedBox(height: 40 * context.fontSizeFactor),
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: Size(double.infinity, 56 * context.fontSizeFactor),
-                            ),
+                            style: context.elevatedButtonStyle(),
                             onPressed: () {
                               Navigator.pushReplacement(
                                 context,
@@ -168,9 +166,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ),
                               );
                             },
-                             child: Text(l10n.signUp, style: TextStyle(fontSize: 16 * context.fontSizeFactor)),
+                             child: Text(l10n.signUp),
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24 * context.fontSizeFactor),
                           Center(
                             child: TextButton(
                               onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen())),

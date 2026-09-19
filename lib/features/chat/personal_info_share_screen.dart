@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/app_colors.dart';
 import '../../core/models/message_model.dart';
 import '../../core/responsive_utils.dart';
@@ -75,7 +75,7 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
                 l10n.infoSharedNotice,
                 style: TextStyle(
                   fontSize: 14 * context.fontSizeFactor,
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 24),
@@ -240,3 +240,4 @@ class _PersonalInfoShareScreenState extends State<PersonalInfoShareScreen> {
     }
   }
 }
+

@@ -9,8 +9,9 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui' as ui;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/widgets/success_screen.dart';
+import '../../core/widgets/pin_entry_dialog.dart';
 import '../../core/models/savings_goal.dart';
 import '../cards/models/card_model.dart';
 
@@ -340,10 +341,17 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       
                       Navigator.pop(context);
                       
-                      final pinSuccess = await _showSecurityPinDialog(screenContext);
-                      if (pinSuccess) {
-                        await _processWithdrawal(screenContext, l10n, amountController.text);
-                      }
+                      showDialog(
+                        context: screenContext,
+                        builder: (context) => PinEntryDialog(
+                          title: state.translate("Xaqiiji Kala Bixitaanka", "Confirm Withdrawal"),
+                          description: state.translate("Fadlan geli PIN-kaaga si aad u xaqiijiso kala bixitaanka.", "Please enter your PIN to confirm the withdrawal."),
+                          onValidate: (pin) async => state.verifyPin(pin),
+                          onConfirm: (pin) async {
+                            await _processWithdrawal(screenContext, l10n, amountController.text);
+                          },
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
                     child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
@@ -356,60 +364,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
       ),
     );
   }
-
-  Future<bool> _showSecurityPinDialog(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
-    final state = Provider.of<AppState>(context, listen: false);
-    final TextEditingController pinController = TextEditingController();
-    
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        scrollable: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * context.fontSizeFactor)),
-        title: Text(l10n.enterSecurityPin, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 * context.fontSizeFactor)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l10n.enterTransactionPin, textAlign: TextAlign.center, style: TextStyle(color: AppColors.grey, fontSize: 14 * context.fontSizeFactor)),
-            SizedBox(height: 20 * context.fontSizeFactor),
-            TextField(
-              controller: pinController,
-              keyboardType: TextInputType.number,
-              obscureText: true,
-              maxLength: 4,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold, letterSpacing: 10 * context.fontSizeFactor),
-              decoration: InputDecoration(
-                counterText: "",
-                filled: true,
-                fillColor: Colors.grey.withValues(alpha: 0.1),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor), borderSide: BorderSide.none),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: FittedBox(child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)))),
-          TextButton(
-            onPressed: () {
-              if (state.verifyPin(pinController.text)) {
-                Navigator.pop(context, true);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.invalidPin), duration: const Duration(seconds: 2)),
-                );
-              }
-            },
-            child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accentTeal, fontSize: 14 * context.fontSizeFactor))),
-          ),
-        ],
-      ),
-    );
-    return result ?? false;
-  }
-
-
 
   Future<void> _processWithdrawal(BuildContext context, AppLocalizations l10n, String amountStr, {String? toCardId}) async {
     final theme = Theme.of(context);
@@ -595,10 +549,17 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       
                       Navigator.pop(context);
                       
-                      final pinSuccess = await _showSecurityPinDialog(screenContext);
-                      if (pinSuccess) {
-                        await _processDeposit(screenContext, l10n, amountController.text);
-                      }
+                      showDialog(
+                        context: screenContext,
+                        builder: (context) => PinEntryDialog(
+                          title: state.translate("Xaqiiji Debo dhigista", "Confirm Deposit"),
+                          description: state.translate("Fadlan geli PIN-kaaga si aad u xaqiijiso debo dhigista.", "Please enter your PIN to confirm the deposit."),
+                          onValidate: (pin) async => state.verifyPin(pin),
+                          onConfirm: (pin) async {
+                            await _processDeposit(screenContext, l10n, amountController.text);
+                          },
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor))),
                     child: FittedBox(child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor))),
@@ -846,16 +807,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     ),
                   ),
                   SizedBox(height: 20 * context.fontSizeFactor),
-                  _dialogInputField(
-                    context, 
-                    l10n.walletPin, 
-                    Icons.lock_rounded, 
-                    pinController, 
-                    isNumber: true, 
-                    isObscure: true, 
-                    maxLength: 4, 
-                    onChanged: (_) => setDialogState(() {})
-                  ),
                 ],
               ),
               actions: [
@@ -863,25 +814,24 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 Padding(
                   padding: EdgeInsets.only(right: 8 * context.fontSizeFactor, bottom: 8 * context.fontSizeFactor),
                   child: ElevatedButton(
-                    onPressed: (amountController.text.isEmpty || pinController.text.length < 4) ? null : () async {
+                    onPressed: (amountController.text.isEmpty) ? null : () async {
                       final amount = double.tryParse(amountController.text) ?? 0;
                       final sourceBalance = state.balance;
-
-                      // Verify PIN
-                      bool pinValid = state.verifyPin(pinController.text);
-                      
-                      if (!pinValid) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(l10n.invalidPin),
-                          backgroundColor: Colors.red
-                        ));
-                        return;
-                      }
 
                       if (amount > 0 && amount <= sourceBalance) {
                         Navigator.pop(context);
                         final goal = state.savingsGoals[index];
-                        await _processDeposit(screenContext, l10n, amountController.text, goalName: goal.title, goalId: goal.id);
+                        showDialog(
+                          context: screenContext,
+                          builder: (context) => PinEntryDialog(
+                            title: state.translate("Ku dar Lacag", "Add Funds"),
+                            description: state.translate("Fadlan geli PIN-kaaga si aad ugu darto lacag yoolkan.", "Please enter your PIN to add funds to this goal."),
+                            onValidate: (pin) async => state.verifyPin(pin),
+                            onConfirm: (pin) async {
+                              await _processDeposit(screenContext, l10n, amountController.text, goalName: goal.title, goalId: goal.id);
+                            },
+                          ),
+                        );
                       } else if (amount > sourceBalance) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.insufficientBalance), backgroundColor: Colors.red));
                       }
@@ -1013,13 +963,13 @@ class _SavingsScreenState extends State<SavingsScreen> {
           height: MediaQuery.of(context).size.height * 0.85,
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32 * context.fontSizeFactor)),
           ),
           child: Column(
             children: [
-              const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 24),
+              SizedBox(height: 12 * context.fontSizeFactor),
+              Container(width: 40 * context.fontSizeFactor, height: 4 * context.fontSizeFactor, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(10 * context.fontSizeFactor))),
+              SizedBox(height: 24 * context.fontSizeFactor),
               Text(
                 l10n.createNewGoal,
                 style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22 * context.fontSizeFactor, letterSpacing: -0.5),
@@ -1099,10 +1049,10 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                 decoration: BoxDecoration(
                                   color: goalColors[index],
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.transparent, width: 3),
-                                  boxShadow: isSelected ? [BoxShadow(color: goalColors[index].withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 4))] : null,
+                                  border: Border.all(color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.transparent, width: 3 * context.fontSizeFactor),
+                                  boxShadow: isSelected ? [BoxShadow(color: goalColors[index].withValues(alpha: 0.4), blurRadius: 10 * context.fontSizeFactor, offset: Offset(0, 4 * context.fontSizeFactor))] : null,
                                 ),
-                                child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 24) : null,
+                                child: isSelected ? Icon(Icons.check, color: Colors.white, size: 24 * context.fontSizeFactor) : null,
                               ),
                             );
                           },
@@ -1189,7 +1139,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
       saved: 0.0, 
       target: double.tryParse(amount) ?? 0.0, 
       deadline: deadline.isNotEmpty ? deadline : "Ongoing", 
-      icon: icon, 
+      icon: icon,
       color: color, 
       delay: 0, 
       isPaused: false

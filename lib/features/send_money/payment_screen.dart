@@ -5,7 +5,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_state.dart';
 import '../../core/app_colors.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/responsive_utils.dart';
 import '../../core/widgets/step_indicator.dart';
 import 'package:intl/intl.dart';
@@ -32,6 +32,7 @@ class PaymentScreen extends StatefulWidget {
   final String? city;
   final String? country;
   final ScrollController? scrollController;
+  final bool isFeeIncluded;
 
   const PaymentScreen({
     super.key,
@@ -49,6 +50,7 @@ class PaymentScreen extends StatefulWidget {
     this.city,
     this.country,
     this.scrollController,
+    this.isFeeIncluded = false,
   });
 
   @override
@@ -122,6 +124,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             address: widget.address,
             city: widget.city,
             country: widget.country,
+            isFeeIncluded: widget.isFeeIncluded,
           ),
         ),
       );
@@ -137,6 +140,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             payoutMethod: widget.payoutMethod,
             currencyCode: widget.currencyCode,
             purpose: widget.purpose,
+            isFeeIncluded: widget.isFeeIncluded,
           ),
         ),
       );
@@ -162,6 +166,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             address: widget.address,
             city: widget.city,
             country: widget.country,
+            isFeeIncluded: widget.isFeeIncluded,
           ),
         ),
       );
@@ -186,6 +191,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             address: widget.address,
             city: widget.city,
             country: widget.country,
+            isFeeIncluded: widget.isFeeIncluded,
           ),
         ),
       );
@@ -201,6 +207,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             payoutMethod: widget.payoutMethod,
             currencyCode: widget.currencyCode,
             purpose: widget.purpose,
+            isFeeIncluded: widget.isFeeIncluded,
           ),
         ),
       );
@@ -216,10 +223,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
             payoutMethod: widget.payoutMethod,
             currencyCode: widget.currencyCode,
             purpose: widget.purpose,
+            isFeeIncluded: widget.isFeeIncluded,
           ),
         ),
       );
-    } else {
+    }
+else {
       String displayMethod = _selectedPaymentMethod;
       if (_selectedPaymentMethod == "Savings") {
         displayMethod = "Savings Account";
@@ -562,21 +571,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           
                           SizedBox(height: 30 * context.fontSizeFactor),
                           
-                          SizedBox(
-                            width: double.infinity,
-                            height: 56 * context.fontSizeFactor,
-                            child: ElevatedButton(
-                              onPressed: () => _handleContinue(l10n),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: theme.colorScheme.secondary,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
-                                elevation: 4,
-                                shadowColor: theme.colorScheme.secondary.withValues(alpha: 0.3),
-                              ),
-                              child: Text(
-                                l10n.continueToReview,
-                                style: TextStyle(fontSize: 18 * context.fontSizeFactor, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                          ElevatedButton(
+                            onPressed: () => _handleContinue(l10n),
+                            style: context.elevatedButtonStyle(
+                              backgroundColor: theme.colorScheme.secondary,
+                              borderRadius: 16,
+                              elevation: 4,
+                            ),
+                            child: Text(
+                              l10n.continueToReview,
+                              style: TextStyle(
+                                fontSize: 18 * context.fontSizeFactor,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.5,
+                                color: Colors.white,
                               ),
                             ),
                           ),

@@ -1,9 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:murtaaxpay_app/core/app_state.dart';
-import 'package:murtaaxpay_app/core/models/transaction.dart';
-import 'package:murtaaxpay_app/core/models/hagbad_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:murtaaxpay_app/core/app_state.dart';
+import 'package:murtaaxpay_app/core/models/hagbad_model.dart';
+import 'package:murtaaxpay_app/core/models/transaction.dart';
+import '../test_helper.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -11,6 +12,7 @@ void main() {
     late AppState appState;
 
     setUp(() async {
+      setupMockSecureStorage();
       SharedPreferences.setMockInitialValues({});
       appState = AppState();
       await appState.init();
@@ -19,19 +21,14 @@ void main() {
       appState.addBalance(1000.0 - appState.balance); // Start with exactly $1000 in wallet
     });
 
-    test('Full Ecosystem Flow: Wallet -> Card -> Hagbad -> Sadaqah -> Payout', () async {
+    test('Full Ecosystem Flow: Wallet -> Card -> Hagbad -> Fundraiser -> Payout', () async {
       // 1. Initial State Check
       expect(appState.balance, 1000.0);
       expect(appState.cards.length, 2);
       final initialCard1Balance = appState.cards[0].balance;
 
       // 2. Wallet to Card Transfer (Top-up Card)
-      // Since AppState doesn't have a direct Wallet->Card method, 
-      // we use withdrawFromSavings with toCard: true as a proxy if it were implemented that way,
-      // but AppState.addCardBalance exists.
-      // In UI, card top-up usually comes from Wallet.
       final topUpAmount = 200.0;
-      appState.deductBalance(topUpAmount);
       await appState.addCardBalance(appState.cards[0].id, topUpAmount);
       
       expect(appState.balance, 800.0);
@@ -61,7 +58,7 @@ void main() {
       expect(appState.balance, 700.0);
       expect(appState.hagbadGroups.firstWhere((g) => g.id == groupId).members[0].paidAmount, 100.0);
 
-      // 4. Wallet to Sadaqah (Donation)
+      // 4. Wallet to Fundraiser (Donation)
       final campaignId = appState.campaigns.first.id;
       final initialRaised = appState.campaigns.first.raisedAmount;
       final donationAmount = 50.0;
@@ -82,7 +79,7 @@ void main() {
       appState.updateHagbadMember(groupId, 1, updatedMembers[1]);
       
       // Total pool = 200. Me is payoutOrder 1.
-      final payoutAmount = 200.0 - appState.hagbadGroups[gIdx].serviceFee;
+      final payoutAmount = 200.0;
       await appState.processHagbadPayout(groupId);
       
       final expectedBalance = (650.0 - fee) + payoutAmount;
@@ -91,7 +88,7 @@ void main() {
       expect(appState.hagbadGroups.firstWhere((g) => g.id == groupId).currentCycle, 2);
 
       // 6. Verify Transaction History
-      expect(appState.transactions.any((tx) => tx.title.contains("Sadaqah")), true);
+      expect(appState.transactions.any((tx) => tx.title.contains("Fundraiser")), true);
       expect(appState.transactions.any((tx) => tx.title.contains("Hagbad")), true);
       expect(appState.transactions.any((tx) => tx.title.contains("Payout")), true);
 

@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:murtaaxpay_app/core/app_state.dart';
 import 'package:murtaaxpay_app/core/models/hagbad_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../test_helper.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -9,6 +10,7 @@ void main() {
   late AppState appState;
 
   setUp(() async {
+    setupMockSecureStorage();
     SharedPreferences.setMockInitialValues({});
     appState = AppState();
     // Since it's a singleton, we might need to reset its internal state if possible,
@@ -27,7 +29,7 @@ void main() {
         adminName: "Admin",
         amount: 100.0,
         frequency: HagbadFrequency.monthly,
-        status: HagbadStatus.pending,
+        status: HagbadStatus.active,
         startDate: DateTime.now(),
         totalCycles: 2,
         currentCycle: 1,

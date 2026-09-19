@@ -135,7 +135,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get bills => 'Biilasha';
 
   @override
-  String get fundraiser => 'Ururinta Lacagaha';
+  String get fundraiser => 'Sadaqo & Sakada';
 
   @override
   String get exchange => 'Sarif';
@@ -371,6 +371,9 @@ class AppLocalizationsSo extends AppLocalizations {
   String get cancel => 'Jooji';
 
   @override
+  String get orUseBiometrics => 'Or use Biometrics';
+
+  @override
   String get moneyOnWay => 'Your money is on its way.';
 
   @override
@@ -514,6 +517,21 @@ class AppLocalizationsSo extends AppLocalizations {
       'Please enter your 4-digit PIN to authorize this payment.';
 
   @override
+  String get statement => 'Statement';
+
+  @override
+  String get unfreeze => 'Unfreeze';
+
+  @override
+  String get freeze => 'Freeze';
+
+  @override
+  String get pinVerification => 'PIN Verification';
+
+  @override
+  String get enterPinToContinue => 'Please enter your PIN to continue.';
+
+  @override
   String get authorizing => 'Authorizing...';
 
   @override
@@ -530,6 +548,9 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get active => 'Firfircoon';
+
+  @override
+  String get cardBalance => 'Haraaga Kaadhka';
 
   @override
   String get availableBalance => 'AVAILABLE BALANCE';
@@ -626,6 +647,21 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get enterSecurityPin => 'Enter Security PIN';
+
+  @override
+  String get restoreCard => 'Restore Card';
+
+  @override
+  String get restoreCardDesc => 'Recover recently terminated card';
+
+  @override
+  String get selectCardToRestore => 'Select the card you want to restore';
+
+  @override
+  String get cardRestoredSuccess => 'Card restored successfully!';
+
+  @override
+  String get restore => 'Restore';
 
   @override
   String get cardInformation => 'Xogta Kaadhka';
@@ -970,6 +1006,18 @@ class AppLocalizationsSo extends AppLocalizations {
   @override
   String get enterPinConfirmAction =>
       'Fadlan geli PIN-kaaga si aad u xaqiijiso ficilkan.';
+
+  @override
+  String get cardLimit => 'Card Limit';
+
+  @override
+  String get cardLimitDesc =>
+      'You can only have a maximum of 2 virtual cards at a time. Please terminate an existing card to order a new one.';
+
+  @override
+  String spentAmount(String amount) {
+    return 'Spent: $amount';
+  }
 
   @override
   String get setNewPin => 'Deji PIN Cusub';
@@ -1341,6 +1389,16 @@ class AppLocalizationsSo extends AppLocalizations {
   String get noActiveCards => 'No active cards';
 
   @override
+  String get noActiveCardsDesc =>
+      'You don\'t have any active cards yet. Please create one to get started.';
+
+  @override
+  String get createFirstCard => 'Create Your First Card';
+
+  @override
+  String get restorePreviousCard => 'Restore previous card';
+
+  @override
   String get orderVirtualCard => 'Order Virtual Card';
 
   @override
@@ -1424,6 +1482,9 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get useFaceIdFingerprint => 'Use FaceID / Fingerprint';
+
+  @override
+  String get biometricAuth => 'Aqoonsiga Faraha/Wajiga';
 
   @override
   String get virtualCardBalance => 'HADHAAGA KAADHKA VIRTUAL-KA AH';
@@ -1676,7 +1737,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get whatsApp => 'WhatsApp';
 
   @override
-  String get fundraiserCommunity => 'Ururinta & Bulshada';
+  String get fundraiserCommunity => 'Sadaqo & Bulshada';
 
   @override
   String get medicalEmergency => 'Medical Emergency';
@@ -1715,7 +1776,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get goal => 'Goal';
 
   @override
-  String get startAFundraiser => 'Start a Fundraiser';
+  String get startAFundraiser => 'Start Sadaqah Campaign';
 
   @override
   String get totalInvestment => 'Total Investment';
@@ -2553,28 +2614,28 @@ class AppLocalizationsSo extends AppLocalizations {
   String get fundraiserDonations => 'donations';
 
   @override
-  String get fundraiserHistory => 'Taariikhda Deeqaha';
+  String get fundraiserHistory => 'Taariikhda Sadaqada';
 
   @override
   String get fundraiserTotal => 'Wadarta';
 
   @override
-  String get fundraiserSearchHint => 'Raadi ololaha ama qofka...';
+  String get fundraiserSearchHint => 'Raadi ololaha Sadaqo ama Sakada...';
 
   @override
-  String get fundraiserDonateTo => 'Ku deeq';
+  String get fundraiserDonateTo => 'Ku deeq Sadaqo';
 
   @override
   String get fundraiserThankYou => 'Mahadsanid! Deeqdaada waa la guddoomay.';
 
   @override
-  String get fundraiserConfirmDonation => 'Xaqiiji Deeqda';
+  String get fundraiserConfirmDonation => 'Xaqiiji Sadaqada';
 
   @override
-  String get fundraiserDonate => 'Bixi';
+  String get fundraiserDonate => 'Bixi Sadaqo';
 
   @override
-  String get fundraiserDonateNow => 'Bixi Hadda';
+  String get fundraiserDonateNow => 'Bixi Sadaqo Hadda';
 
   @override
   String get fundraiserBixiHadda => 'Bixi Hadda';
@@ -2714,6 +2775,12 @@ class AppLocalizationsSo extends AppLocalizations {
   String get shareThisCampaign => 'Kala Qaybi Ololahan';
 
   @override
+  String get supportCampaign => 'Taageer ololahan';
+
+  @override
+  String get linkCopied => 'Link-ga waa la koobiyey';
+
+  @override
   String get link => 'Link-ga';
 
   @override
@@ -2755,14 +2822,14 @@ class AppLocalizationsSo extends AppLocalizations {
   String get insufficientBalanceFundraiser => 'Haraagaagu kuguma filna.';
 
   @override
-  String get startFundraiser => 'Bilow Ururinta';
+  String get startFundraiser => 'Bilow Sadaqada';
 
   @override
-  String get createCampaign => 'Samee Ololaha';
+  String get createCampaign => 'Samee Ololaha Sadaqada';
 
   @override
   String get createCampaignDesc =>
-      'Lacag u soo ururi sabab aad danayso. Waxaan xaqiijin doونا ololahaaga si loo dhiso kalsoonida.';
+      'Sadaqo u soo ururi sabab aad danayso. Waxaan xaqiijin doonaa ololahaaga si loo dhiso kalsoonida.';
 
   @override
   String get campaignDetails => 'Faahfaahinta Ololaha';
@@ -2831,6 +2898,14 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get zakatCalculator => 'Xisaabiyaha Sakada';
+
+  @override
+  String get zakatPayment => 'Bixinta Sakada';
+
+  @override
+  String zakatSuccessMessage(String amount) {
+    return 'Sakadaada oo dhan $amount waa la bixiyay.';
+  }
 
   @override
   String get totalZakatToPay => 'Wadarta Sakada laga rabo';
@@ -3037,6 +3112,97 @@ class AppLocalizationsSo extends AppLocalizations {
   String belowNisabWarning(String threshold) {
     return 'Hantidaadu waxay ka hoosaysaa xadka nisaabka ($threshold). Sakadu waxay qasab tahay oo kaliya haddii hantidaadu ka badato xadkan.';
   }
+
+  @override
+  String get value => 'Qiimaha';
+
+  @override
+  String get grams => 'Garaam';
+
+  @override
+  String get currentNisab => 'Nisaabka hadda';
+
+  @override
+  String get estValue => 'Qiimaha qiyaasta:';
+
+  @override
+  String get whoIsEntitledToZakat => 'Yaa la siiyaa Zakada? (8-da Qaybood)';
+
+  @override
+  String get eightCategoriesOfZakat => '8-da Qaybood ee Zakada';
+
+  @override
+  String get evidenceFromQuran => 'Daliilka Quraanka';
+
+  @override
+  String get evidenceFromHadith => 'Daliilka Xadiiska';
+
+  @override
+  String get hadithReference =>
+      'Saxiixul Bukhaari - Nabiga (CSW) wuxuu ku yiri Mucaad (RC)';
+
+  @override
+  String get fuqaraTitle => 'Fuqarada (Dadka Baahan)';
+
+  @override
+  String get fuqaraDesc =>
+      'Dadka aan haysan wax ay cunaan ama wax ay quutaan, oo aan haysan hanti ku filan.';
+
+  @override
+  String get masakinTitle => 'Masaakiinta (Dadka Danyarta ah)';
+
+  @override
+  String get masakinDesc =>
+      'Dadka haysata dakhli yar balse aan ku filnayn baahiyahooda aasaasiga ah.';
+
+  @override
+  String get amilinaTitle => 'Kuwa ka Shaqeeya (Ururiyaasha)';
+
+  @override
+  String get amilinaDesc =>
+      'Dadka loo xilsaaray ururinta, maamulidda iyo qaybinta hantida Zakada.';
+
+  @override
+  String get muallafatiTitle => 'Kuwa Quluubtooda la soo dhoweynayo';
+
+  @override
+  String get muallafatiDesc =>
+      'Dadka ku cusub Islaamka ama kuwa loo soo dhoweynayo diinta si loo xoojiyo quluubtooda.';
+
+  @override
+  String get riqabTitle => 'Addoomada (Xoraynta)';
+
+  @override
+  String get riqabDesc =>
+      'Zaka waxaa loo isticmaali karaa in lagu xoreeyo addoomada ama maxaabiista laga rabo madax-furasho.';
+
+  @override
+  String get ghariminTitle => 'Kuwa lagu leeyahay deynta';
+
+  @override
+  String get ghariminDesc =>
+      'Dadka deyntu ku raagtay ee aan awoodin inay iska bixiyaan, haddii ay u soo deynteen baahi sharci ah.';
+
+  @override
+  String get fisabilillahTitle => 'Jidka Alle';
+
+  @override
+  String get fisabilillahDesc =>
+      'Kuwa u adeegaya jidka Alle, sida faafinta diinta, waxbarashada, iyo danta guud ee muslimiinta.';
+
+  @override
+  String get ibnusSabilTitle => 'Socotada (Musafirka)';
+
+  @override
+  String get ibnusSabilDesc =>
+      'Socotada ku go\'doontay safarka oo u baahan caawinaad lacageed si ay gurigooda u gaaraan.';
+
+  @override
+  String get fatwaTitle => 'Fatwada & Madhaahibta';
+
+  @override
+  String get fatwaDesc =>
+      'Sida ay qabaan badankood culimada (Shaafici, Maaliki, Xanbali, iyo Xanafi), Zakada waa in la siiyaa 8-dan qaybood. Qaar kamid ah madhaahibta ayaa oggol in la siiyo hal qayb haddii baahidu ku weyn tahay.';
 
   @override
   String get makeRecurringDonation => 'Ka dhig deeqdan mid joogto ah';

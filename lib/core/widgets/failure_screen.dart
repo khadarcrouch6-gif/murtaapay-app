@@ -47,7 +47,7 @@ class FailureScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFD32F2F).withOpacity(0.4),
+                          color: const Color(0xFFD32F2F).withValues(alpha: 0.4),
                           blurRadius: 20 * context.fontSizeFactor,
                           offset: Offset(0, 10 * context.fontSizeFactor),
                         )
@@ -84,25 +84,11 @@ class FailureScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: onPressed ?? () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
+                    style: context.elevatedButtonStyle(
                       backgroundColor: const Color(0xFFD32F2F),
-                      padding: EdgeInsets.symmetric(
-                        vertical: 16 * context.fontSizeFactor,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-                      ),
+                      foregroundColor: Colors.white,
                     ),
-                    child: FittedBox(
-                      child: Text(
-                        buttonText,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16 * context.fontSizeFactor,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    child: Text(buttonText),
                   ),
                 ),
               ],

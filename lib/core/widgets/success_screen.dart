@@ -4,10 +4,12 @@ import 'package:animate_do/animate_do.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:lottie/lottie.dart';
+import 'package:printing/printing.dart';
+import 'package:pdf/pdf.dart';
 import 'receipt_view.dart';
 import '../app_colors.dart';
 import '../responsive_utils.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 
 class SuccessScreen extends StatefulWidget {
   final String title;
@@ -15,6 +17,7 @@ class SuccessScreen extends StatefulWidget {
   final String buttonText;
   final String? subMessage; 
   final String? subtitle;
+  final String? verificationStatus;
   final Map<String, dynamic>? transactionData;
   final VoidCallback? onPressed;
 
@@ -25,6 +28,7 @@ class SuccessScreen extends StatefulWidget {
     required this.buttonText,
     this.subMessage,
     this.subtitle,
+    this.verificationStatus,
     this.transactionData,
     this.onPressed,
   });
@@ -53,9 +57,98 @@ class _SuccessScreenState extends State<SuccessScreen> {
     super.dispose();
   }
 
+  Widget _buildVerificationBadge(BuildContext context) {
+    final status = widget.verificationStatus ?? widget.transactionData?['receiverVerificationStatus'];
+    if (status == null || status == 'none') return const SizedBox.shrink();
+
+    Color badgeColor = Colors.grey;
+    IconData badgeIcon = Icons.help_outline;
+    String label = "";
+
+    if (status == 'verified') {
+      badgeColor = AppColors.statusSuccess;
+      badgeIcon = Icons.verified;
+      label = "Receiver Verified";
+    } else if (status == 'pending') {
+      badgeColor = AppColors.statusPending;
+      badgeIcon = Icons.hourglass_empty;
+      label = "Verification Pending";
+    } else if (status == 'failed') {
+      badgeColor = AppColors.statusFailed;
+      badgeIcon = Icons.error_outline;
+      label = "Verification Failed";
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    return FadeIn(
+      delay: const Duration(milliseconds: 600),
+      child: Container(
+        margin: EdgeInsets.only(top: 8 * context.fontSizeFactor),
+        padding: EdgeInsets.symmetric(
+          horizontal: 12 * context.fontSizeFactor,
+          vertical: 4 * context.fontSizeFactor,
+        ),
+        decoration: BoxDecoration(
+          color: badgeColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+          border: Border.all(color: badgeColor.withValues(alpha: 0.3), width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(badgeIcon, size: 14 * context.fontSizeFactor, color: badgeColor),
+            SizedBox(width: 6 * context.fontSizeFactor),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12 * context.fontSizeFactor,
+                fontWeight: FontWeight.bold,
+                color: badgeColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(BuildContext context, String label, IconData icon, Color color, VoidCallback onTap) {
+    return TextButton(
+      onPressed: onTap,
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.symmetric(horizontal: 12 * context.fontSizeFactor, vertical: 8 * context.fontSizeFactor),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * context.fontSizeFactor)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: EdgeInsets.all(8 * context.fontSizeFactor),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 20 * context.fontSizeFactor),
+          ),
+          SizedBox(height: 4 * context.fontSizeFactor),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 12 * context.fontSizeFactor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -92,7 +185,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                             errorBuilder: (context, error, stackTrace) {
                               return Icon(
                                 Icons.check_circle_outline,
-                                color: AppColors.accentTeal.withOpacity(0.2),
+                                color: AppColors.accentTeal.withValues(alpha: 0.2),
                                 size: 150 * context.fontSizeFactor,
                               );
                             },
@@ -109,7 +202,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF11998E).withOpacity(0.4),
+                                  color: const Color(0xFF11998E).withValues(alpha: 0.4),
                                   blurRadius: 20 * context.fontSizeFactor,
                                   offset: Offset(0, 10 * context.fontSizeFactor),
                                 )
@@ -135,6 +228,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       color: theme.textTheme.titleLarge?.color,
                     ),
                   ),
+                  _buildVerificationBadge(context),
                   if (widget.message.isNotEmpty) ...[
                     SizedBox(height: 12 * context.fontSizeFactor),
                     Text(
@@ -148,12 +242,29 @@ class _SuccessScreenState extends State<SuccessScreen> {
                   ],
                   if (widget.subtitle != null) ...[
                     SizedBox(height: 12 * context.fontSizeFactor),
-                    Text(
-                      widget.subtitle!,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.grey,
-                        height: 1.5,
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 14 * context.fontSizeFactor,
+                        vertical: 6 * context.fontSizeFactor,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryDark.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(10 * context.fontSizeFactor),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.repeat_rounded, size: 16 * context.fontSizeFactor, color: AppColors.primaryDark),
+                          SizedBox(width: 8 * context.fontSizeFactor),
+                          Text(
+                            widget.subtitle!,
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: AppColors.primaryDark,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -165,7 +276,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         vertical: 8 * context.fontSizeFactor,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.accentTeal.withOpacity(0.1),
+                        color: AppColors.accentTeal.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12 * context.fontSizeFactor),
                       ),
                       child: Text(
@@ -181,21 +292,44 @@ class _SuccessScreenState extends State<SuccessScreen> {
                   ],
                   if (widget.transactionData != null) ...[
                     SizedBox(height: 24 * context.fontSizeFactor),
-                    TextButton.icon(
-                      onPressed: () => ReceiptView.show(context, widget.transactionData!),
-                      icon: Icon(
-                        Icons.receipt_long_rounded,
-                        color: AppColors.accentTeal,
-                        size: 20 * context.fontSizeFactor,
-                      ),
-                      label: Text(
-                        AppLocalizations.of(context)?.viewReceipt ?? "View Receipt",
-                        style: TextStyle(
-                          color: AppColors.accentTeal,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14 * context.fontSizeFactor,
+                    Wrap(
+                      spacing: 12 * context.fontSizeFactor,
+                      runSpacing: 12 * context.fontSizeFactor,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        _buildActionButton(
+                          context, 
+                          l10n.viewReceipt ?? "View", 
+                          Icons.receipt_long_rounded, 
+                          AppColors.accentTeal,
+                          () => ReceiptView.show(context, widget.transactionData!),
                         ),
-                      ),
+                        _buildActionButton(
+                          context, 
+                          l10n.downloadPdf ?? "PDF", 
+                          Icons.download_rounded, 
+                          AppColors.primaryDark,
+                          () async {
+                            try {
+                              final pdfData = await ReceiptView.generateReceiptPdf(
+                                  context, l10n, widget.transactionData!);
+                              await Printing.layoutPdf(
+                                onLayout: (PdfPageFormat format) async => pdfData,
+                                name: 'MurtaaxPay_Receipt_${widget.transactionData!['id']}.pdf',
+                              );
+                            } catch (e) {
+                              debugPrint("Error generating PDF: $e");
+                            }
+                          },
+                        ),
+                        _buildActionButton(
+                          context, 
+                          l10n.shareReceipt ?? "Share", 
+                          Icons.share_rounded, 
+                          AppColors.primaryDark,
+                          () => ReceiptView.shareReceipt(context, widget.transactionData!),
+                        ),
+                      ],
                     ),
                   ],
                   SizedBox(height: 48 * context.fontSizeFactor),
@@ -203,25 +337,11 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: widget.onPressed ?? () => Navigator.of(context).popUntil((route) => route.isFirst),
-                      style: ElevatedButton.styleFrom(
+                      style: context.elevatedButtonStyle(
                         backgroundColor: AppColors.accentTeal,
-                        padding: EdgeInsets.symmetric(
-                          vertical: 16 * context.fontSizeFactor,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
-                        ),
+                        foregroundColor: Colors.white,
                       ),
-                      child: FittedBox(
-                        child: Text(
-                          widget.buttonText,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16 * context.fontSizeFactor,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                      child: Text(widget.buttonText),
                     ),
                   ),
                 ],

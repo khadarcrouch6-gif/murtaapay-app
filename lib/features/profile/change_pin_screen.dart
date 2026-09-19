@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
-import '../../l10n/app_localizations.dart';
+import '../../core/responsive_utils.dart';
+import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 
 class ChangePinScreen extends StatefulWidget {
   const ChangePinScreen({super.key});
@@ -80,14 +81,12 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                   Navigator.pop(context); // close dialog
                   Navigator.pop(context); // return to profile
                 },
-                style: ElevatedButton.styleFrom(
+                style: context.elevatedButtonStyle(
                   backgroundColor: AppColors.accentTeal,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  foregroundColor: Colors.white,
                 ),
                 child: Text(
                   l10n.done,
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
                 ),
               ),
             ),
@@ -110,14 +109,14 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.changePin, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(l10n.changePin, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.primaryDark,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(context.horizontalPadding),
         child: Form(
           key: _formKey,
           child: Column(
@@ -125,16 +124,17 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
             children: [
               Text(
                 l10n.createNewPin,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24 * context.fontSizeFactor, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
                 l10n.newPinDescription,
-                style: const TextStyle(fontSize: 14, color: AppColors.grey),
+                style: TextStyle(fontSize: 14 * context.fontSizeFactor, color: AppColors.grey),
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32 * context.fontSizeFactor),
               
               _buildPinField(
+                context: context,
                 label: l10n.currentPin,
                 controller: _oldPinController,
                 obscureText: _obscureOld,
@@ -149,9 +149,10 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20 * context.fontSizeFactor),
               
               _buildPinField(
+                context: context,
                 label: l10n.newPin,
                 controller: _newPinController,
                 obscureText: _obscureNew,
@@ -169,9 +170,10 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20 * context.fontSizeFactor),
               
               _buildPinField(
+                context: context,
                 label: l10n.confirmNewPin,
                 controller: _confirmPinController,
                 obscureText: _obscureConfirm,
@@ -187,20 +189,18 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                 },
               ),
               
-              const SizedBox(height: 48),
+              SizedBox(height: 48 * context.fontSizeFactor),
               
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _savePin,
-                  style: ElevatedButton.styleFrom(
+                  style: context.elevatedButtonStyle(
                     backgroundColor: AppColors.accentTeal,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    foregroundColor: Colors.white,
                   ),
                   child: Text(
                     l10n.saveChanges,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),
@@ -212,6 +212,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
   }
 
   Widget _buildPinField({
+    required BuildContext context,
     required String label,
     required TextEditingController controller,
     required bool obscureText,
@@ -221,7 +222,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14 * context.fontSizeFactor)),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
@@ -229,6 +230,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
           keyboardType: TextInputType.number,
           maxLength: 4,
           validator: validator,
+          style: TextStyle(fontSize: 16 * context.fontSizeFactor),
           decoration: InputDecoration(
             counterText: "",
             prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.accentTeal),
@@ -239,13 +241,13 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
               ),
               onPressed: onToggleVisibility,
             ),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
+              borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16 * context.fontSizeFactor),
               borderSide: const BorderSide(color: AppColors.accentTeal, width: 2),
             ),
             filled: true,
@@ -256,4 +258,5 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
     );
   }
 }
+
 

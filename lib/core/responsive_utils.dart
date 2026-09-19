@@ -50,6 +50,84 @@ extension ResponsiveUtils on BuildContext {
         desktop: 1.25,
       );
 
+  /// Standard button height that scales with screen size.
+  double get buttonHeight => 56.0 * fontSizeFactor;
+
+  /// Standard elevated button style.
+  ButtonStyle elevatedButtonStyle({
+    Color? backgroundColor,
+    Color? foregroundColor,
+    double? height,
+    double? borderRadius,
+    double? elevation,
+    EdgeInsetsGeometry? padding,
+    Size? minimumSize,
+    bool fullWidth = true,
+  }) {
+    return ElevatedButton.styleFrom(
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
+      minimumSize: minimumSize ?? (fullWidth ? Size(double.infinity, (height ?? 56.0) * fontSizeFactor) : null),
+      padding: padding ?? EdgeInsets.symmetric(horizontal: 16 * fontSizeFactor),
+      elevation: elevation,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular((borderRadius ?? 16.0) * fontSizeFactor),
+      ),
+      textStyle: TextStyle(
+        fontSize: 16 * fontSizeFactor,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  /// Standard outlined button style.
+  ButtonStyle outlinedButtonStyle({
+    Color? foregroundColor,
+    double? height,
+    double? borderRadius,
+    BorderSide? side,
+    EdgeInsetsGeometry? padding,
+    Size? minimumSize,
+    bool fullWidth = true,
+  }) {
+    return OutlinedButton.styleFrom(
+      foregroundColor: foregroundColor,
+      minimumSize: minimumSize ?? (fullWidth ? Size(double.infinity, (height ?? 56.0) * fontSizeFactor) : null),
+      padding: padding ?? EdgeInsets.symmetric(horizontal: 16 * fontSizeFactor),
+      side: side,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular((borderRadius ?? 16.0) * fontSizeFactor),
+      ),
+      textStyle: TextStyle(
+        fontSize: 16 * fontSizeFactor,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  /// Standard text button style.
+  ButtonStyle textButtonStyle({
+    Color? foregroundColor,
+    double? height,
+    double? fontSize,
+    bool fullWidth = true,
+  }) {
+    return TextButton.styleFrom(
+      foregroundColor: foregroundColor,
+      minimumSize: fullWidth ? Size(double.infinity, (height ?? 48.0) * fontSizeFactor) : null,
+      textStyle: TextStyle(
+        fontSize: (fontSize ?? 15.0) * fontSizeFactor,
+        fontWeight: FontWeight.w800,
+      ),
+    );
+  }
+
+  /// Standard button style that respects responsiveness.
+  ButtonStyle get responsiveButtonStyle => elevatedButtonStyle();
+
+  /// Standard outlined button style that respects responsiveness.
+  ButtonStyle get responsiveOutlinedButtonStyle => outlinedButtonStyle();
+
   /// Wrap content in a MaxWidthBox for desktop readability.
   Widget responsiveBody({required Widget child, double maxWidth = 1200}) {
     return MaxWidthBox(
