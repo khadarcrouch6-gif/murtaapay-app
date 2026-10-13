@@ -24,6 +24,7 @@ class WithdrawScreen extends StatefulWidget {
 
 class _WithdrawScreenState extends State<WithdrawScreen> {
   final TextEditingController _amountController = TextEditingController();
+  String? _selectedMethodId;
   bool _isCalculating = false;
   Timer? _calcTimer;
 
@@ -84,7 +85,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         child: MaxWidthBox(
           maxWidth: 800,
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(context.horizontalPadding),
+            padding: EdgeInsets.fromLTRB(
+              context.horizontalPadding,
+              24 * context.fontSizeFactor,
+              context.horizontalPadding,
+              context.horizontalPadding,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -200,17 +206,89 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 SizedBox(height: 16 * context.fontSizeFactor),
                 ...List.generate(_methods.length, (index) {
                   final method = _methods[index];
-                  final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
-                  final isAmountValid = (double.tryParse(_amountController.text) ?? 0) > 0 && 
-                                       (double.tryParse(_amountController.text) ?? 0) <= card.balance;
+                  final isSelected = _selectedMethodId == method["id"];
+                  
                   return FadeInUp(
                     delay: Duration(milliseconds: index * 80),
-                    child: Opacity(
-                      opacity: isAmountValid ? 1.0 : 0.6,
-                      child: GestureDetector(
-                        onTap: isAmountValid ? () {
-                          final double amount = double.tryParse(_amountController.text) ?? 0;
-                          if (method["id"] == "mobile") {
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() => _selectedMethodId = method["id"]);
+                        HapticFeedback.selectionClick();
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        margin: EdgeInsets.only(bottom: 14 * context.fontSizeFactor),
+                        padding: EdgeInsets.all(18 * context.fontSizeFactor),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
+                          border: Border.all(
+                            color: isSelected ? AppColors.accentTeal : Colors.transparent,
+                            width: 2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.03),
+                              blurRadius: 12 * context.fontSizeFactor,
+                              offset: Offset(0, 4 * context.fontSizeFactor),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 50 * context.fontSizeFactor, height: 50 * context.fontSizeFactor,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: (method["gradient"] as List<Color>),
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(14 * context.fontSizeFactor),
+                              ),
+                              child: Center(
+                                child: AdaptiveIcon(
+                                  method["icon"],
+                                  color: Colors.white,
+                                  size: 24 * context.fontSizeFactor,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16 * context.fontSizeFactor),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(_getMethodTitle(method["id"], l10n), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+                                  Text(_getMethodDesc(method["id"], l10n), style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
+                                ],
+                              ),
+                            ),
+                            if (isSelected)
+                              Icon(Icons.check_circle_rounded, color: AppColors.accentTeal, size: 24 * context.fontSizeFactor)
+                            else
+                              Icon(Icons.arrow_forward_ios_rounded, size: 16 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.4)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+    
+                SizedBox(height: 32 * context.fontSizeFactor),
+                ListenableBuilder(
+                  listenable: state,
+                  builder: (context, _) {
+                    final card = state.cards.firstWhere((c) => c.id == widget.cardId, orElse: () => state.cards.first);
+                    final double amount = double.tryParse(_amountController.text) ?? 0;
+                    final isAmountValid = amount > 0 && amount <= card.balance && _selectedMethodId != null;
+                    
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 60 * context.fontSizeFactor,
+                      child: ElevatedButton(
+                        onPressed: isAmountValid ? () {
+                          if (_selectedMethodId == "mobile") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -221,7 +299,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                 ),
                               ),
                             );
-                          } else if (method["id"] == "bank") {
+                          } else if (_selectedMethodId == "bank") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -234,61 +312,26 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                             );
                           }
                         } : null,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          margin: EdgeInsets.only(bottom: 14 * context.fontSizeFactor),
-                          padding: EdgeInsets.all(18 * context.fontSizeFactor),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surface,
-                            borderRadius: BorderRadius.circular(20 * context.fontSizeFactor),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.03),
-                                blurRadius: 12 * context.fontSizeFactor,
-                                offset: Offset(0, 4 * context.fontSizeFactor),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 50 * context.fontSizeFactor, height: 50 * context.fontSizeFactor,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: (method["gradient"] as List<Color>),
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(14 * context.fontSizeFactor),
-                                ),
-                                child: Center(
-                                  child: AdaptiveIcon(
-                                    method["icon"],
-                                    color: Colors.white,
-                                    size: 24 * context.fontSizeFactor,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 16 * context.fontSizeFactor),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(_getMethodTitle(method["id"], l10n), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
-                                    Text(_getMethodDesc(method["id"], l10n), style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor)),
-                                  ],
-                                ),
-                              ),
-                              Icon(Icons.arrow_forward_ios_rounded, size: 16 * context.fontSizeFactor, color: AppColors.grey.withValues(alpha: 0.4)),
-                            ],
+                        style: context.elevatedButtonStyle(
+                          backgroundColor: AppColors.primaryDark,
+                          foregroundColor: Colors.white,
+                        ).copyWith(
+                          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                          elevation: WidgetStateProperty.all(8),
+                        ),
+                        child: Text(
+                          l10n.continueLabel,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18 * context.fontSizeFactor,
+                            letterSpacing: 1,
                           ),
                         ),
                       ),
-                    ),
-                  );
-                }),
-    
-                SizedBox(height: 120 * context.fontSizeFactor),
+                    );
+                  },
+                ),
+                SizedBox(height: 24 * context.fontSizeFactor),
               ],
             ),
           ),

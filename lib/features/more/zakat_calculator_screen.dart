@@ -35,10 +35,10 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
   @override
   void initState() {
     super.initState();
-    _cashController.addListener(_calculateZakat);
-    _goldController.addListener(_calculateZakat);
-    _silverController.addListener(_calculateZakat);
-    _investmentsController.addListener(_calculateZakat);
+    _cashController.addListener(calculateZakat);
+    _goldController.addListener(calculateZakat);
+    _silverController.addListener(calculateZakat);
+    _investmentsController.addListener(calculateZakat);
     
     // Refresh Nisab on open
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -46,7 +46,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
     });
   }
 
-  void _calculateZakat() {
+  void calculateZakat() {
     final state = Provider.of<AppState>(context, listen: false);
     double cash = double.tryParse(_cashController.text) ?? 0.0;
     
@@ -110,8 +110,14 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
         child: MaxWidthBox(
           maxWidth: 800,
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(context.horizontalPadding),
+            padding: EdgeInsets.fromLTRB(
+              context.horizontalPadding,
+              24 * context.fontSizeFactor,
+              context.horizontalPadding,
+              context.horizontalPadding,
+            ),
             child: Column(
+              key: const Key('zakat_calculator_content'),
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FadeInDown(
@@ -179,7 +185,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                           selected: {state.preferredNisab},
                           onSelectionChanged: (Set<String> newSelection) {
                             state.setPreferredNisab(newSelection.first);
-                            _calculateZakat();
+                            calculateZakat();
                           },
                           style: SegmentedButton.styleFrom(
                             selectedBackgroundColor: AppColors.primary.withValues(alpha: 0.1),
@@ -212,7 +218,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                             mode: _goldInputMode,
                             onModeChanged: (val) {
                               setState(() => _goldInputMode = val);
-                              _calculateZakat();
+                              calculateZakat();
                             },
                             pricePerGram: state.goldPrice,
                             state: state,
@@ -228,7 +234,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                             mode: _silverInputMode,
                             onModeChanged: (val) {
                               setState(() => _silverInputMode = val);
-                              _calculateZakat();
+                              calculateZakat();
                             },
                             pricePerGram: state.silverPrice,
                             state: state,
@@ -288,27 +294,45 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 60 * scale),
-                Center(
-                  child: MaxWidthBox(
-                    maxWidth: 600,
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60 * scale,
-                      child: ElevatedButton(
-                        onPressed: _totalZakat > 0 ? _handleZakatDonation : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryDark,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20 * scale)),
-                          elevation: 4,
-                        ),
-                        child: Text(l10n.donateYourZakat, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16 * scale)),
-                      ),
-                    ),
-                  ),
-                ),
                 SizedBox(height: 40 * scale),
               ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(
+          context.horizontalPadding,
+          16 * scale,
+          context.horizontalPadding,
+          (16 + MediaQuery.of(context).padding.bottom) * scale,
+        ),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+              blurRadius: 20 * scale,
+              offset: Offset(0, -5 * scale),
+            )
+          ],
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24 * scale)),
+        ),
+        child: MaxWidthBox(
+          maxWidth: 600,
+          child: SizedBox(
+            width: double.infinity,
+            height: 60 * scale,
+            child: ElevatedButton(
+              key: const Key('donate_zakat_button'),
+              onPressed: _totalZakat > 0 ? _handleZakatDonation : null,
+              style: context.elevatedButtonStyle(
+                backgroundColor: AppColors.primaryDark,
+                height: 60,
+                elevation: 8,
+                borderRadius: 20,
+              ),
+              child: Text(l10n.donateYourZakat, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
             ),
           ),
         ),
@@ -409,7 +433,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
               SizedBox(height: 32 * context.fontSizeFactor),
               SizedBox(
                 width: double.infinity,
-                height: 56 * context.fontSizeFactor,
+                height: 60 * context.fontSizeFactor,
                 child: ElevatedButton(
                   onPressed: () {
                     String sourceKey = selectedMethod;
@@ -424,11 +448,13 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
                     Navigator.pop(context);
                     _showPinDialog(campaign, amount, selectedMethod, selectedCardId);
                   },
-                  style: ElevatedButton.styleFrom(
+                  style: context.elevatedButtonStyle(
                     backgroundColor: AppColors.primaryDark,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor)),
+                    height: 60,
+                    elevation: 8,
+                    borderRadius: 20,
                   ),
-                  child: Text(l10n.confirm, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text(l10n.confirm, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
                 ),
               ),
               SizedBox(height: 16 * context.fontSizeFactor),
@@ -687,20 +713,24 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
 
   Widget _buildToggleItem(String label, String value, String currentMode, Function(String) onModeChanged, double scale, AppLocalizations l10n) {
     bool isSelected = currentMode == value;
-    return GestureDetector(
-      onTap: () => onModeChanged(value),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 4 * scale),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(6 * scale),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 11 * scale,
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : AppColors.primary,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => onModeChanged(value),
+        borderRadius: BorderRadius.circular(6 * scale),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 4 * scale),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(6 * scale),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 11 * scale,
+              fontWeight: FontWeight.bold,
+              color: isSelected ? Colors.white : AppColors.primary,
+            ),
           ),
         ),
       ),
@@ -864,6 +894,7 @@ class _ZakatCalculatorScreenState extends State<ZakatCalculatorScreen> {
           SizedBox(width: 12 * scale),
           Expanded(
             child: Column(
+              key: const Key('zakat_calculator_content'),
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * scale)),

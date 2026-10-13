@@ -3218,4 +3218,17 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get recipient => 'Qaataha';
+
+  @override
+  String get biometricsNotAvailable => 'Aqoonsiga biometric lama heli karo';
+
+  @override
+  String get biometricsLockedOut =>
+      'Aqoonsiga biometric waa la xiray. Fadlan isticmaal PIN-ka';
+
+  @override
+  String get biometricAuthFailed => 'Aqoonsiga biometric wuu fashilmay';
+
+  @override
+  String get biometricAuthError => 'Khalad ayaa ka dhacay aqoonsiga biometric';
 }

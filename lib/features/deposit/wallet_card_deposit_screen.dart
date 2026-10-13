@@ -15,6 +15,7 @@ import 'package:murtaaxpay_app/l10n/app_localizations.dart';
 import '../../core/widgets/adaptive_icon.dart';
 import '../../core/models/transaction.dart' as model;
 import 'package:intl/intl.dart';
+import '../../core/widgets/pin_entry_dialog.dart';
 
 class WalletCardDepositScreen extends StatefulWidget {
   final double amount;
@@ -192,7 +193,16 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
       return;
     }
 
-    _processTransaction(context, l10n);
+    showDialog(
+      context: context,
+      builder: (context) => PinEntryDialog(
+        title: l10n.enterPin,
+        description: l10n.enterPinToContinue,
+        onConfirm: (pin) {
+          _processTransaction(context, l10n);
+        },
+      ),
+    );
   }
 
   void _processTransaction(BuildContext context, AppLocalizations l10n) async {
@@ -377,7 +387,12 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(24 * context.fontSizeFactor),
+                  padding: EdgeInsets.fromLTRB(
+                    24 * context.fontSizeFactor,
+                    24 * context.fontSizeFactor,
+                    24 * context.fontSizeFactor,
+                    24 * context.fontSizeFactor,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -386,7 +401,7 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
                       ),
                       SizedBox(height: 32 * context.fontSizeFactor),
                       _buildForm(l10n, theme),
-                      SizedBox(height: 120 * context.fontSizeFactor), // Added space for bottom button
+                      SizedBox(height: 20 * context.fontSizeFactor),
                     ],
                   ),
                 ),
@@ -410,13 +425,27 @@ class _WalletCardDepositScreenState extends State<WalletCardDepositScreen> {
           ),
           child: MaxWidthBox(
             maxWidth: 800,
-            child: ElevatedButton(
-              onPressed: isFormValid ? _processPayment : null,
-              style: context.elevatedButtonStyle(
-                backgroundColor: AppColors.accentTeal,
-                foregroundColor: Colors.white,
+            child: SizedBox(
+              width: double.infinity,
+              height: 60 * context.fontSizeFactor,
+              child: ElevatedButton(
+                onPressed: isFormValid ? _processPayment : null,
+                style: context.elevatedButtonStyle(
+                  backgroundColor: AppColors.accentTeal,
+                  foregroundColor: Colors.white,
+                ).copyWith(
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                  elevation: WidgetStateProperty.all(8),
+                ),
+                child: Text(
+                  l10n.confirmTopUp,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18 * context.fontSizeFactor,
+                    letterSpacing: 1,
+                  ),
+                ),
               ),
-              child: Text(l10n.confirmTopUp),
             ),
           ),
         ),

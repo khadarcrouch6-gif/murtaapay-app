@@ -146,7 +146,12 @@ class _UnifiedMobileWithdrawScreenState extends State<UnifiedMobileWithdrawScree
         child: MaxWidthBox(
           maxWidth: 800,
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(context.horizontalPadding),
+            padding: EdgeInsets.fromLTRB(
+              context.horizontalPadding,
+              24 * context.fontSizeFactor,
+              context.horizontalPadding,
+              context.horizontalPadding,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -202,7 +207,6 @@ class _UnifiedMobileWithdrawScreenState extends State<UnifiedMobileWithdrawScree
                       _buildErrorOrName(l10n, context),
                       SizedBox(height: 16 * context.fontSizeFactor),
                       _buildPurposeDropdown(theme, l10n, context),
-                      SizedBox(height: 120 * context.fontSizeFactor),
                     ],
                   ),
                 ),
@@ -553,7 +557,7 @@ class _UnifiedMobileWithdrawScreenState extends State<UnifiedMobileWithdrawScree
                   style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 12 * context.fontSizeFactor),
                 ),
               ),
-            if (isMonthlyLimitExceeded && !isDailyLimitExceeded)
+                        if (isMonthlyLimitExceeded && !isDailyLimitExceeded)
               Padding(
                 padding: EdgeInsets.only(bottom: 12 * context.fontSizeFactor),
                 child: Text(
@@ -563,11 +567,24 @@ class _UnifiedMobileWithdrawScreenState extends State<UnifiedMobileWithdrawScree
               ),
             SizedBox(
               width: double.infinity,
-              height: 56 * context.fontSizeFactor,
+              height: 60 * context.fontSizeFactor,
               child: ElevatedButton(
                 onPressed: isFormValid ? () => _showReviewSheet(context, l10n, state) : null,
-                style: context.elevatedButtonStyle(),
-                child: Text(l10n.confirmAndWithdraw, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor)),
+                style: context.elevatedButtonStyle(
+                  backgroundColor: AppColors.primaryDark,
+                  foregroundColor: Colors.white,
+                ).copyWith(
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                  elevation: WidgetStateProperty.all(8),
+                ),
+                child: Text(
+                  l10n.confirmAndWithdraw,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18 * context.fontSizeFactor,
+                    letterSpacing: 1,
+                  ),
+                ),
               ),
             ),
           ],
@@ -632,14 +649,27 @@ class _UnifiedMobileWithdrawScreenState extends State<UnifiedMobileWithdrawScree
                         padding: EdgeInsets.all(24 * context.fontSizeFactor),
                         child: SizedBox(
                           width: double.infinity,
-                          height: 56 * context.fontSizeFactor,
+                          height: 60 * context.fontSizeFactor,
                           child: ElevatedButton(
                             onPressed: () {
                               Navigator.pop(context);
                               _showPinDialog(context, l10n, state);
                             },
-                            style: context.elevatedButtonStyle(),
-                            child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16 * context.fontSizeFactor)),
+                            style: context.elevatedButtonStyle(
+                              backgroundColor: AppColors.primaryDark,
+                              foregroundColor: Colors.white,
+                            ).copyWith(
+                              shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                              elevation: WidgetStateProperty.all(8),
+                            ),
+                            child: Text(
+                              l10n.confirm,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 18 * context.fontSizeFactor,
+                                letterSpacing: 1,
+                              ),
+                            ),
                           ),
                         ),
                       ),

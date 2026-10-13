@@ -104,7 +104,12 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
         child: MaxWidthBox(
           maxWidth: 800,
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(context.horizontalPadding),
+            padding: EdgeInsets.fromLTRB(
+              context.horizontalPadding,
+              24 * context.fontSizeFactor,
+              context.horizontalPadding,
+              context.horizontalPadding,
+            ),
             child: Form(
               key: _formKey,
               child: Column(
@@ -151,7 +156,7 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
                       crossAxisCount: context.isMobile ? 2 : 4,
                       crossAxisSpacing: 16 * context.fontSizeFactor,
                       mainAxisSpacing: 16 * context.fontSizeFactor,
-                      childAspectRatio: 2.5,
+                      childAspectRatio: context.isMobile ? 2.5 : 3.0,
                     ),
                     itemCount: _providers.length,
                     itemBuilder: (context, index) {
@@ -231,28 +236,35 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
         ),
       ),
       bottomNavigationBar: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 12 * context.fontSizeFactor),
-          decoration: BoxDecoration(
-            color: theme.scaffoldBackgroundColor,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -5),
-              ),
-            ],
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            context.horizontalPadding,
+            0,
+            context.horizontalPadding,
+            12 * context.fontSizeFactor,
           ),
           child: MaxWidthBox(
             maxWidth: 800,
-            child: ElevatedButton(
-              onPressed: _selectedProvider != null ? _showReviewSheet : null,
-              style: context.elevatedButtonStyle(
-                backgroundColor: selectedProviderData?['color'] ?? AppColors.primaryDark,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(
-                l10n.continueLabel,
+            child: SizedBox(
+              width: double.infinity,
+              height: 60 * context.fontSizeFactor,
+              child: ElevatedButton(
+                onPressed: _selectedProvider != null ? _showReviewSheet : null,
+                style: context.elevatedButtonStyle(
+                  backgroundColor: selectedProviderData?['color'] ?? AppColors.primaryDark,
+                  foregroundColor: Colors.white,
+                ).copyWith(
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                  elevation: WidgetStateProperty.all(8),
+                ),
+                child: Text(
+                  l10n.continueLabel,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18 * context.fontSizeFactor,
+                    letterSpacing: 1,
+                  ),
+                ),
               ),
             ),
           ),
@@ -309,16 +321,30 @@ class _MobileDepositScreenState extends State<MobileDepositScreen> {
                     SafeArea(
                       child: Padding(
                         padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            _showPinDialog();
-                          },
-                          style: context.elevatedButtonStyle(
-                            backgroundColor: provider['color'],
-                            foregroundColor: Colors.white,
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60 * context.fontSizeFactor,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              _showPinDialog();
+                            },
+                            style: context.elevatedButtonStyle(
+                              backgroundColor: provider['color'],
+                              foregroundColor: Colors.white,
+                            ).copyWith(
+                              shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                              elevation: WidgetStateProperty.all(8),
+                            ),
+                            child: Text(
+                              l10n.confirmAndDeposit,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 18 * context.fontSizeFactor,
+                                letterSpacing: 1,
+                              ),
+                            ),
                           ),
-                          child: Text(l10n.confirmAndDeposit),
                         ),
                       ),
                     ),

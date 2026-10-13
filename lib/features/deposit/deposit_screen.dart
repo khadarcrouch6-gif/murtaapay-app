@@ -148,7 +148,12 @@ class _DepositScreenState extends State<DepositScreen> {
         child: MaxWidthBox(
           maxWidth: 800,
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(context.horizontalPadding),
+            padding: EdgeInsets.fromLTRB(
+              context.horizontalPadding,
+              24 * context.fontSizeFactor,
+              context.horizontalPadding,
+              context.horizontalPadding,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -305,11 +310,15 @@ class _DepositScreenState extends State<DepositScreen> {
                                   Text(
                                     _getMethodTitle(method["titleKey"], l10n),
                                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 * context.fontSizeFactor, color: theme.textTheme.bodyLarge?.color),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   SizedBox(height: 2 * context.fontSizeFactor),
                                   Text(
                                     _getMethodDesc(method["descKey"], l10n),
                                     style: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
@@ -324,36 +333,33 @@ class _DepositScreenState extends State<DepositScreen> {
                     ),
                   );
                 }),
-                SizedBox(height: 120 * context.fontSizeFactor), // Space for bottom button
+                SizedBox(height: 32 * context.fontSizeFactor),
+                SizedBox(
+                  width: double.infinity,
+                  height: 60 * context.fontSizeFactor,
+                  child: ElevatedButton(
+                    onPressed: (isAmountEntered && _selectedMethodId != null) 
+                        ? () => _navigateToMethod(_selectedMethodId!) 
+                        : null,
+                    style: context.elevatedButtonStyle(
+                      backgroundColor: AppColors.primaryDark,
+                      foregroundColor: Colors.white,
+                    ).copyWith(
+                      shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                      elevation: WidgetStateProperty.all(8),
+                    ),
+                    child: Text(
+                      l10n.continueLabel,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18 * context.fontSizeFactor,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 24 * context.fontSizeFactor),
               ],
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding, vertical: 12 * context.fontSizeFactor),
-          decoration: BoxDecoration(
-            color: theme.scaffoldBackgroundColor,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -5),
-              ),
-            ],
-          ),
-          child: MaxWidthBox(
-            maxWidth: 800,
-            child: ElevatedButton(
-              onPressed: (isAmountEntered && _selectedMethodId != null) 
-                  ? () => _navigateToMethod(_selectedMethodId!) 
-                  : null,
-              style: context.elevatedButtonStyle(
-                backgroundColor: AppColors.primaryDark,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(l10n.continueLabel),
             ),
           ),
         ),

@@ -351,7 +351,12 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
           actions: [
             TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n.cancel, style: TextStyle(color: AppColors.grey))),
             ElevatedButton(
-              onPressed: (_accountNumberController.text.isEmpty || _accountNameController.text.isEmpty || (_selectedBank == "Add Bank" && _bankNameController.text.isEmpty))
+              onPressed: (_accountNumberController.text.isEmpty || 
+                         _accountNameController.text.isEmpty || 
+                         (_selectedBank == "Add Bank" && _bankNameController.text.isEmpty) ||
+                         (_selectedBank == 'Salaam Bank' && _accountNumberController.text.length != 10) ||
+                         (_selectedBank == 'Premier Bank' && _accountNumberController.text.length != 10) ||
+                         (_selectedBank == 'IBS Bank' && _accountNumberController.text.length != 12))
                   ? null
                   : () {
                       final localContext = this.context;
@@ -455,6 +460,9 @@ class _DepositCardScreenState extends State<DepositCardScreen> {
         counterText: "",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
         contentPadding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 14 * context.fontSizeFactor),
+        errorText: (isNumber && label == AppLocalizations.of(context)!.accountNumber && controller.text.isNotEmpty && dynamicMaxLength != null && controller.text.length < dynamicMaxLength)
+            ? state.translate("Account number must be $dynamicMaxLength digits", "Lambarka akoonku waa inuu ahaadaa $dynamicMaxLength god")
+            : null,
       ),
     );
   }

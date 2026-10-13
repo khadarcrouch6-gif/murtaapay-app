@@ -3192,4 +3192,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recipient => 'Recipient';
+
+  @override
+  String get biometricsNotAvailable => 'Biometrics not available';
+
+  @override
+  String get biometricsLockedOut => 'Biometrics locked out. Please use PIN';
+
+  @override
+  String get biometricAuthFailed => 'Biometric authentication failed';
+
+  @override
+  String get biometricAuthError => 'An error occurred during biometric auth';
 }

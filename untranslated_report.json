@@ -266,7 +266,11 @@
     "exceedsLimitWarning",
     "limitExceeded",
     "approachingLimitWarning",
-    "recipient"
+    "recipient",
+    "biometricsNotAvailable",
+    "biometricsLockedOut",
+    "biometricAuthFailed",
+    "biometricAuthError"
   ],
 
   "de": [
@@ -789,7 +793,11 @@
     "fatwaDesc",
     "makeRecurringDonation",
     "campaignUpdates",
-    "recipient"
+    "recipient",
+    "biometricsNotAvailable",
+    "biometricsLockedOut",
+    "biometricAuthFailed",
+    "biometricAuthError"
   ],
 
   "et": [
@@ -1209,7 +1217,11 @@
     "fatwaDesc",
     "makeRecurringDonation",
     "campaignUpdates",
-    "recipient"
+    "recipient",
+    "biometricsNotAvailable",
+    "biometricsLockedOut",
+    "biometricAuthFailed",
+    "biometricAuthError"
   ],
 
   "so": [

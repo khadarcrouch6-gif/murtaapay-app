@@ -332,28 +332,6 @@ class _StripeScreenState extends State<StripeScreen> {
                       ),
                       SizedBox(height: 32 * scale),
                       
-                      // Pay Button
-                      FadeInUp(
-                        delay: const Duration(milliseconds: 300),
-                        child: ElevatedButton(
-                          onPressed: _processPayment,
-                          style: context.elevatedButtonStyle(
-                            backgroundColor: stripeColor,
-                            foregroundColor: Colors.white,
-                            borderRadius: 12,
-                            elevation: 0,
-                          ),
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              "Pay ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Stripe"))}",
-                              style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-                            ),
-                          ),
-                        ),
-                      ),
-                      
-                      SizedBox(height: 24 * scale),
                       Center(
                         child: FadeIn(
                           child: Text(
@@ -370,6 +348,47 @@ class _StripeScreenState extends State<StripeScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.fromLTRB(
+            24 * scale, 
+            12 * scale, 
+            24 * scale, 
+            MediaQuery.of(context).padding.bottom > 0 ? 0 : 12 * scale
+          ),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: MaxWidthBox(
+            maxWidth: 800,
+            child: FadeInUp(
+              child: ElevatedButton(
+                onPressed: _processPayment,
+                style: context.elevatedButtonStyle(
+                  backgroundColor: stripeColor,
+                  foregroundColor: Colors.white,
+                  borderRadius: 12,
+                  elevation: 0,
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    "Pay ${NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Stripe"))}",
+                    style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

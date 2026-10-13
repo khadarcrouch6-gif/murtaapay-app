@@ -1553,20 +1553,24 @@ class AppState extends ChangeNotifier {
   double get monthlyLimit => _userMonthlyLimit;
 
   double getDailyRemaining() {
+    final now = DateTime.now();
     double spentToday = _transactions
       .where((tx) => tx.isNegative && 
-                     tx.timestamp.day == DateTime.now().day &&
-                     tx.timestamp.month == DateTime.now().month &&
-                     tx.timestamp.year == DateTime.now().year)
+                     tx.timestamp != null &&
+                     tx.timestamp.day == now.day &&
+                     tx.timestamp.month == now.month &&
+                     tx.timestamp.year == now.year)
       .fold(0.0, (sum, tx) => sum + tx.numericAmount);
     return math.max(0.0, _userDailyLimit - spentToday);
   }
 
   double getMonthlyRemaining() {
+    final now = DateTime.now();
     double spentThisMonth = _transactions
       .where((tx) => tx.isNegative && 
-                     tx.timestamp.month == DateTime.now().month &&
-                     tx.timestamp.year == DateTime.now().year)
+                     tx.timestamp != null &&
+                     tx.timestamp.month == now.month &&
+                     tx.timestamp.year == now.year)
       .fold(0.0, (sum, tx) => sum + tx.numericAmount);
     return math.max(0.0, _userMonthlyLimit - spentThisMonth);
   }

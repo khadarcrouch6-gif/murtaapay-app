@@ -1205,5 +1205,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "biometricsNotAvailable": "Aqoonsiga biometric lama heli karo",
+  "biometricsLockedOut": "Aqoonsiga biometric waa la xiray. Fadlan isticmaal PIN-ka",
+  "biometricAuthFailed": "Aqoonsiga biometric wuu fashilmay",
+  "biometricAuthError": "Khalad ayaa ka dhacay aqoonsiga biometric"
 }

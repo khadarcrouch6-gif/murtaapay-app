@@ -98,7 +98,12 @@ class _BankDepositScreenState extends State<BankDepositScreen> with WithdrawalLo
         child: MaxWidthBox(
           maxWidth: 800,
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(context.horizontalPadding),
+            padding: EdgeInsets.fromLTRB(
+              context.horizontalPadding,
+              24 * context.fontSizeFactor,
+              context.horizontalPadding,
+              context.horizontalPadding,
+            ),
             child: Form(
               key: _formKey,
               child: Column(
@@ -405,13 +410,28 @@ class _BankDepositScreenState extends State<BankDepositScreen> with WithdrawalLo
           ),
           child: MaxWidthBox(
             maxWidth: 800,
-            child: ElevatedButton(
-              onPressed: _validateAndSubmit,
-              style: context.elevatedButtonStyle(
-                backgroundColor: AppColors.primaryDark,
-                foregroundColor: Colors.white,
+            child: Center(
+              child: MaxWidthBox(
+                maxWidth: 500,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 60 * context.fontSizeFactor,
+                  child: ElevatedButton(
+                    onPressed: _validateAndSubmit,
+                    style: context.elevatedButtonStyle(
+                      backgroundColor: AppColors.primaryDark,
+                      foregroundColor: Colors.white,
+                    ).copyWith(
+                      shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                      elevation: WidgetStateProperty.all(8),
+                    ),
+                    child: Text(
+                      l10n.confirmAndSubmit,
+                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18 * context.fontSizeFactor, letterSpacing: 1),
+                    ),
+                  ),
+                ),
               ),
-              child: Text(l10n.confirmAndSubmit),
             ),
           ),
         ),
@@ -572,7 +592,10 @@ class _BankDepositScreenState extends State<BankDepositScreen> with WithdrawalLo
         filled: true,
         fillColor: theme.cardColor,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide.none),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1))),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16 * context.fontSizeFactor), borderSide: const BorderSide(color: AppColors.accentTeal, width: 2)),
         labelStyle: TextStyle(color: AppColors.grey, fontSize: 13 * context.fontSizeFactor),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16 * context.fontSizeFactor, vertical: 18 * context.fontSizeFactor),
       ),
     );
   }
@@ -644,13 +667,30 @@ class _BankDepositScreenState extends State<BankDepositScreen> with WithdrawalLo
                     SafeArea(
                       child: Padding(
                         padding: EdgeInsets.all(24 * context.fontSizeFactor),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            _showPinDialog();
-                          },
-                          style: context.elevatedButtonStyle(backgroundColor: AppColors.accentTeal, foregroundColor: Colors.white),
-                          child: Text(l10n.confirmAndSubmit),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60 * context.fontSizeFactor,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              _showPinDialog();
+                            },
+                            style: context.elevatedButtonStyle(
+                              backgroundColor: AppColors.accentTeal,
+                              foregroundColor: Colors.white,
+                            ).copyWith(
+                              shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                              elevation: WidgetStateProperty.all(8),
+                            ),
+                            child: Text(
+                              l10n.confirmAndSubmit,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 18 * context.fontSizeFactor,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),

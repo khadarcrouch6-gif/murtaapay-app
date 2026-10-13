@@ -1434,5 +1434,9 @@
   "confirmTransfer": "Confirm Transfer",
   "recipient": "Recipient",
   "total": "Total",
-  "source": "Source"
+  "source": "Source",
+  "biometricsNotAvailable": "Biometrics not available",
+  "biometricsLockedOut": "Biometrics locked out. Please use PIN",
+  "biometricAuthFailed": "Biometric authentication failed",
+  "biometricAuthError": "An error occurred during biometric auth"
 }

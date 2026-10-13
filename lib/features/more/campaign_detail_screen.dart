@@ -373,6 +373,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: _buildStickyDonateAction(context, state, l10n, theme, isDark),
     );
   }
 

@@ -138,15 +138,21 @@ class _PinEntryDialogState extends State<PinEntryDialog> {
       }
     } on PlatformException catch (e) {
       debugPrint("Biometric auth error: ${e.code} - ${e.message}");
-      if (e.code == 'NotAvailable') {
-        _handleError("Biometrics not available or permissions denied.");
-      } else if (e.code == 'LockedOut' || e.code == 'PermanentlyLockedOut') {
-        _handleError("Biometrics locked. Please use your PIN.");
-      } else {
-        _handleError("Biometric authentication failed.");
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        if (e.code == 'NotAvailable') {
+          _handleError(l10n.biometricsNotAvailable);
+        } else if (e.code == 'LockedOut' || e.code == 'PermanentlyLockedOut') {
+          _handleError(l10n.biometricsLockedOut);
+        } else {
+          _handleError(l10n.biometricAuthFailed);
+        }
       }
     } catch (e) {
-      _handleError("Biometric authentication error occurred.");
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        _handleError(l10n.biometricAuthError);
+      }
     }
   }
 

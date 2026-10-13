@@ -441,25 +441,6 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
                           ),
 
                         SizedBox(height: 40 * scale),
-                        
-                        ElevatedButton(
-                          onPressed: (_selectedProvider != null && 
-                            ((!_isMerchantMode && _phoneController.text.length == 9 && prefixError == null) ||
-                             (_isMerchantMode && _merchantController.text.length >= 5 && _resolvedAccountName != null))) 
-                            ? _handleContinue : null,
-                          style: context.elevatedButtonStyle(
-                            backgroundColor: theme.colorScheme.secondary,
-                            borderRadius: 16,
-                            elevation: 4,
-                          ),
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Mobile Money"))),
-                              style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, color: Colors.white),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -467,6 +448,49 @@ class _MobileMoneyScreenState extends State<MobileMoneyScreen> {
               ),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.fromLTRB(
+            20 * scale, 
+            12 * scale, 
+            20 * scale, 
+            MediaQuery.of(context).padding.bottom > 0 ? 0 : 12 * scale
+          ),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: MaxWidthBox(
+            maxWidth: 500,
+            child: FadeInUp(
+              child: ElevatedButton(
+                onPressed: (_selectedProvider != null && 
+                  ((!_isMerchantMode && _phoneController.text.length == 9 && prefixError == null) ||
+                   (_isMerchantMode && _merchantController.text.length >= 5 && _resolvedAccountName != null))) 
+                  ? _handleContinue : null,
+                style: context.elevatedButtonStyle(
+                  backgroundColor: theme.colorScheme.secondary,
+                  borderRadius: 16,
+                  elevation: 4,
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l10n.confirmPaymentAmount(NumberFormat.simpleCurrency(name: widget.currencyCode).format(Provider.of<AppState>(context, listen: false).calculateTotalForSource(double.tryParse(widget.amount.replaceAll(',', '')) ?? 0, "Mobile Money"))),
+                    style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

@@ -6049,6 +6049,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recipient'**
   String get recipient;
+
+  /// No description provided for @biometricsNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics not available'**
+  String get biometricsNotAvailable;
+
+  /// No description provided for @biometricsLockedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics locked out. Please use PIN'**
+  String get biometricsLockedOut;
+
+  /// No description provided for @biometricAuthFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication failed'**
+  String get biometricAuthFailed;
+
+  /// No description provided for @biometricAuthError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred during biometric auth'**
+  String get biometricAuthError;
 }
 
 class _AppLocalizationsDelegate

@@ -93,7 +93,12 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
         child: MaxWidthBox(
           maxWidth: 800,
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(context.horizontalPadding),
+            padding: EdgeInsets.fromLTRB(
+              context.horizontalPadding,
+              24 * context.fontSizeFactor,
+              context.horizontalPadding,
+              context.horizontalPadding,
+            ),
             child: Form(
               key: _formKey,
               child: Column(
@@ -818,8 +823,9 @@ class _UnifiedBankWithdrawScreenState extends State<UnifiedBankWithdrawScreen> w
                           },
                           style: context.elevatedButtonStyle().copyWith(
                             shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                            elevation: WidgetStateProperty.all(8),
                           ),
-                          child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 18 * context.fontSizeFactor)),
+                          child: Text(l10n.confirm, style: TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 18 * context.fontSizeFactor, letterSpacing: 1)),
                         ),
                       ),
                     ),

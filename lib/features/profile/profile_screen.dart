@@ -130,16 +130,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ], isDark, context),
                     SizedBox(height: 32 * context.fontSizeFactor),
-                    _buildSectionHeader(state.translate("Personal Details", "Faahfaahinta Shakhsiga", ar: "تفاصيل شخصية", de: "Persönliche Details", et: "Isikuandmed"), context),
-                    SizedBox(height: 12 * context.fontSizeFactor),
-                    _buildSettingsCard([
-                      _buildInfoTile(context, Icons.badge_outlined, state.translate("ID Number", "Lambarka Aqoonsiga"), state.userIdNumber),
-                      _buildInfoTile(context, Icons.calendar_today_outlined, state.translate("Date of Birth", "Taariikhda Dhalashada"), state.userDob),
-                      _buildInfoTile(context, Icons.flag_outlined, state.translate("Nationality", "Dhalashada"), state.userNationality),
-                      _buildInfoTile(context, Icons.work_outline, state.translate("Occupation", "Shaqada"), state.userOccupation),
-                      _buildInfoTile(context, Icons.location_on_outlined, state.translate("Address", "Cinwaanka"), "${state.userStreet}, ${state.userCity}, ${state.userCountry}"),
-                    ], isDark, context),
-                    SizedBox(height: 32 * context.fontSizeFactor),
                     _buildSectionHeader(state.translate("Support", "Taageero", ar: "الدعم", de: "Support", et: "Tugi"), context),
                     SizedBox(height: 12 * context.fontSizeFactor),
                     _buildSettingsCard([

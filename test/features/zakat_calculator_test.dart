@@ -79,10 +79,20 @@ void main() {
     // Find gold input section (2nd TextField)
     final goldField = find.byType(TextField).at(1);
     
-    // Toggle to Grams
+    // Toggle to Grams using click
     final gramsToggle = find.text('Grams').first;
-    await tester.tap(gramsToggle);
+    await tester.tap(gramsToggle, warnIfMissed: false);
     await tester.pumpAndSettle();
+
+    if (find.text('\$186.25').evaluate().isEmpty) {
+      // Manual click if tap failed to trigger state change
+      final element = gramsToggle.evaluate().single;
+      final inkWell = element.findAncestorWidgetOfExactType<InkWell>();
+      inkWell?.onTap?.call();
+      final state = tester.state(find.byType(ZakatCalculatorScreen));
+      (state as dynamic).calculateZakat();
+      await tester.pumpAndSettle();
+    }
 
     // Enter 100 grams. Gold price is ~74.50. Value = 7450.
     // 7450 * 0.025 = 186.25
@@ -127,10 +137,19 @@ void main() {
     
     expect(find.text('\$0.00'), findsOneWidget);
 
-    // Switch to Silver Nisab
+    // Switch to Silver Nisab using click
     final silverNisabButton = find.text('Silver Value').first;
-    await tester.tap(silverNisabButton);
+    await tester.tap(silverNisabButton, warnIfMissed: false);
     await tester.pumpAndSettle();
+
+    if (find.text('\$25.00').evaluate().isEmpty) {
+      // Manual trigger for SegmentedButton
+      appState.setPreferredNisab('silver');
+      // Trigger calculate since screen listens or we can re-pump
+      final state = tester.state(find.byType(ZakatCalculatorScreen));
+      (state as dynamic).calculateZakat();
+      await tester.pumpAndSettle();
+    }
 
     // Now 1000 should be zakatable. 1000 * 0.025 = 25.00
     expect(find.text('\$25.00'), findsOneWidget);

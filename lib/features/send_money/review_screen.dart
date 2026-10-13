@@ -340,7 +340,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
       MaterialPageRoute(
         builder: (context) => SuccessScreen(
           title: widget.method.contains("Bank") 
-              ? state.translate("Transfer Processing", "Xawaaladda waa la farsameeyay")
+              ? "waa la helay fariintaada na sug 24hrs"
               : l10n.transferSuccessful,
           message: widget.method.contains("Bank")
               ? state.translate(
@@ -463,25 +463,29 @@ class _ReviewScreenState extends State<ReviewScreen> {
               ),
             ),
           ),
-          // Sticky Bottom Action Buttons
-          Container(
-            padding: EdgeInsets.fromLTRB(20 * context.fontSizeFactor, 10 * context.fontSizeFactor, 20 * context.fontSizeFactor, MediaQuery.of(context).padding.bottom + 10 * context.fontSizeFactor),
-            decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -5),
-                ),
-              ],
-            ),
-            child: MaxWidthBox(
-              maxWidth: 500,
-              child: FadeInUp(child: _buildActionButtons(theme, l10n, total)),
-            ),
-          ),
         ],
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(
+          20 * context.fontSizeFactor, 
+          10 * context.fontSizeFactor, 
+          20 * context.fontSizeFactor, 
+          MediaQuery.of(context).padding.bottom + 10 * context.fontSizeFactor
+        ),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: MaxWidthBox(
+          maxWidth: 500,
+          child: FadeInUp(child: _buildActionButtons(theme, l10n, total)),
+        ),
       ),
     );
   }

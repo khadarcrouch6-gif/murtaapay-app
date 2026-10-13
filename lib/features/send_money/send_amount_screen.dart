@@ -40,8 +40,8 @@ class SendAmountScreen extends StatefulWidget {
 }
 
 class _SendAmountScreenState extends State<SendAmountScreen> {
-  final TextEditingController _sendController = TextEditingController(text: "0.00");
-  final TextEditingController _receiveController = TextEditingController(text: "0.00");
+  final TextEditingController _sendController = TextEditingController();
+  final TextEditingController _receiveController = TextEditingController();
   final FocusNode _sendFocusNode = FocusNode();
   final FocusNode _receiveFocusNode = FocusNode();
   String _sendCurrency = "USD";
@@ -161,7 +161,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     });
 
     _sendFocusNode.addListener(() {
-      if (_sendFocusNode.hasFocus && _sendController.text == "0.00") _sendController.clear();
+      if (_sendFocusNode.hasFocus && (_sendController.text == "0.00" || _sendController.text == "0")) _sendController.clear();
     });
   }
 
@@ -389,48 +389,6 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
     );
   }
 
-  Widget _buildSourceChip({
-    required String title,
-    required bool isSelected,
-    required VoidCallback onTap,
-    required IconData icon,
-  }) {
-    final theme = Theme.of(context);
-    final factor = context.fontSizeFactor.toDouble();
-    return Padding(
-      padding: EdgeInsets.only(right: 8 * factor),
-      child: ChoiceChip(
-        label: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 16 * factor,
-              color: isSelected ? Colors.white : theme.colorScheme.secondary,
-            ),
-            SizedBox(width: 8 * factor),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 12 * factor,
-                fontWeight: FontWeight.w900,
-                color: isSelected ? Colors.white : theme.textTheme.bodyMedium?.color,
-              ),
-            ),
-          ],
-        ),
-        selected: isSelected,
-        onSelected: (_) => onTap(),
-        selectedColor: theme.colorScheme.secondary,
-        backgroundColor: theme.colorScheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12 * factor)),
-        side: BorderSide(color: isSelected ? theme.colorScheme.secondary : theme.dividerColor.withValues(alpha: 0.1)),
-        padding: EdgeInsets.symmetric(horizontal: 4 * factor),
-        showCheckmark: false,
-      ),
-    );
-  }
-
   Widget _buildAmountInput({
     required String label,
     required TextEditingController controller,
@@ -635,7 +593,8 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
         top: false,
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: Center(
+          child: Align(
+            alignment: Alignment.topCenter,
             child: MaxWidthBox(
               maxWidth: 500,
               child: SingleChildScrollView(
@@ -665,7 +624,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: EdgeInsets.symmetric(horizontal: context.horizontalPadding),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -689,54 +648,6 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                             ],
                           ),
                           const SizedBox(height: 8),
-
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.paymentMethod,
-                                style: TextStyle(
-                                  fontSize: 14 * factor,
-                                  fontWeight: FontWeight.bold,
-                                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              SizedBox(
-                                height: 50 * factor,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: [
-                                    _buildSourceChip(
-                                      title: l10n.mainWallet,
-                                      isSelected: _selectedSource == "Main Wallet",
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedSource = "Main Wallet";
-                                          _selectedCardId = null;
-                                          _updateReceiveAmount(_sendController.text, state);
-                                        });
-                                      },
-                                      icon: Icons.account_balance_wallet_rounded,
-                                    ),
-                                    ...state.cards.map((card) => _buildSourceChip(
-                                      title: "Card ****${card.cardNumber.substring(card.cardNumber.length - 4)}",
-                                      isSelected: _selectedCardId == card.id,
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedSource = "Debit Card";
-                                          _selectedCardId = card.id;
-                                          _updateReceiveAmount(_sendController.text, state);
-                                        });
-                                      },
-                                      icon: Icons.credit_card_rounded,
-                                    )),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                          ),
                           
                           _buildAmountInput(
                             label: l10n.youSend,
@@ -822,7 +733,11 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                             decimals: _receiveCurrencyDecimals,
                           ),
 
+                          const SizedBox(height: 12),
+                          Text(l10n.stepPayment, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16 * factor, color: theme.textTheme.titleMedium?.color)),
                           const SizedBox(height: 8),
+                          _buildPayoutMethodsGrid(theme, l10n),
+                          const SizedBox(height: 12),
                           
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 10 * factor, vertical: 4 * factor),
@@ -856,11 +771,6 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                               ],
                             ),
                           ),
-                          
-                          SizedBox(height: 16 * factor),
-                          Text(l10n.payoutMethod, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16 * factor, color: theme.textTheme.titleMedium?.color)),
-                          SizedBox(height: 4 * factor),
-                          _buildPayoutMethodsGrid(theme, l10n),
                           
                           SizedBox(height: 8 * factor),
                           
@@ -910,28 +820,28 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 16 * factor),
+                          SizedBox(height: 32 * factor),
                           ShakeX(
                             duration: const Duration(milliseconds: 500),
                             animate: _showShakeError,
                             child: ElevatedButton(
-                                onPressed: () => _handleContinue(l10n, state),
-                                style: context.elevatedButtonStyle(
-                                  backgroundColor: canProceed ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300]),
-                                  foregroundColor: canProceed ? theme.colorScheme.onSecondary : Colors.white70,
-                                  height: 52,
-                                  borderRadius: 16,
-                                  elevation: canProceed ? 4 : 0,
-                                ),
-                                child: Text(
-                                  _selectedMethod == "Bank Transfer" 
-                                    ? l10n.continueToBank 
-                                    : (_selectedMethod == "Murtaax Wallet" ? l10n.continueToWallet : l10n.continueToReceiver), 
-                                  style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5)
-                                ),
+                              onPressed: () => _handleContinue(l10n, state),
+                              style: context.elevatedButtonStyle(
+                                backgroundColor: canProceed ? theme.colorScheme.secondary : (theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300]),
+                                foregroundColor: canProceed ? theme.colorScheme.onSecondary : Colors.white70,
+                                height: 52,
+                                borderRadius: 16,
+                                elevation: canProceed ? 4 : 0,
                               ),
+                              child: Text(
+                                _selectedMethod == "Bank Transfer" 
+                                  ? l10n.continueToBank 
+                                  : (_selectedMethod == "Murtaax Wallet" ? l10n.continueToWallet : l10n.continueToReceiver), 
+                                style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5)
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 20 * factor),
+                          SizedBox(height: 24 * factor),
                         ],
                       ),
                     ),
